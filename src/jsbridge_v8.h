@@ -1,13 +1,13 @@
 //
 //  jsbridge_v8.h
-//  Ghostlab
+//  Zephyros
 //
 //  Created by Matthias Christen on 10.12.13.
 //
 //
 
-#ifndef Ghostlab_jsbridge_v8_h
-#define Ghostlab_jsbridge_v8_h
+#ifndef Zephyros_jsbridge_v8_h
+#define Zephyros_jsbridge_v8_h
 
 
 namespace JavaScript {

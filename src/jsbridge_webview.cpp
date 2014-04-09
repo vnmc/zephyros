@@ -1,6 +1,6 @@
 //
 //  jsbridge_webview.cpp
-//  GhostlabMac
+//  Zephyros
 //
 //  Created by Matthias Christen on 10.12.13.
 //  Copyright (c) 2013 Vanamco AG. All rights reserved.

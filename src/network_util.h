@@ -1,6 +1,6 @@
 //
 //  NetworkUtil.h
-//  Ghostlab
+//  Zephyros
 //
 //  Created by Matthias Christen on 06.09.13.
 //

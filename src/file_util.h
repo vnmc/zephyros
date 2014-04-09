@@ -1,6 +1,6 @@
 //
 //  FileUtilMac.h
-//  Ghostlab
+//  Zephyros
 //
 //  Created by Matthias Christen on 10.09.13.
 //

@@ -1,13 +1,13 @@
 //
 //  webview_extension.h
-//  GhostlabMac
+//  Zephyros
 //
 //  Created by Matthias Christen on 10.12.13.
 //  Copyright (c) 2013 Vanamco AG. All rights reserved.
 //
 
-#ifndef __GhostlabMac__webview_extension__
-#define __GhostlabMac__webview_extension__
+#ifndef __Zephyros__webview_extension__
+#define __Zephyros__webview_extension__
 
 
 #include <map>
@@ -120,4 +120,4 @@ private:
 };
 
 
-#endif /* defined(__GhostlabMac__webview_extension__) */
+#endif /* defined(__Zephyros__webview_extension__) */

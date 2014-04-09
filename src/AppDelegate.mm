@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  Ghostlab
+//  Zephyros
 //
 //  Created by Matthias Christen on 24.11.13.
 //  Copyright (c) 2013 Vanamco AG. All rights reserved.

@@ -1,13 +1,13 @@
 //
 //  jsbridge_webview.h
-//  Ghostlab
+//  Zephyros
 //
 //  Created by Matthias Christen on 10.12.13.
 //
 //
 
-#ifndef Ghostlab_jsbridge_webview_h
-#define Ghostlab_jsbridge_webview_h
+#ifndef Zephyros_jsbridge_webview_h
+#define Zephyros_jsbridge_webview_h
 
 
 #include <vector>

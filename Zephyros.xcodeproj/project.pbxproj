@@ -219,7 +219,7 @@
 			dependencies = (
 			);
 			name = Zephyros;
-			productName = Ghostlab;
+			productName = Zephyros;
 			productReference = CCFAD3E418420E600076EA0D /* Zephyros.app */;
 			productType = "com.apple.product-type.application";
 		};

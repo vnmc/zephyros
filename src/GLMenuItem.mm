@@ -1,6 +1,6 @@
 //
 //  GLMenuItem.m
-//  Ghostlab
+//  Zephyros
 //
 //  Created by Matthias Christen on 20.09.13.
 //

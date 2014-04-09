@@ -6,8 +6,6 @@
 #import <Cocoa/Cocoa.h>
 #include <sstream>
 
-#include <Sparkle/SUUpdater.h>
-
 #include "include/cef_app.h"
 #include "include/cef_application_mac.h"
 #include "include/cef_browser.h"
@@ -19,7 +17,6 @@
 #include "resource_util.h"
 #include "string_util.h"
 #include "extension_handler.h"
-#include "licensing.h"
 #include "GLMenuItem.h"
 
 
@@ -159,42 +156,15 @@ const int kDefaultWindowHeight = 600;
 // Receives notifications from the application. Will delete itself when done.
 //
 @interface ClientAppDelegate : NSObject
-{
-#if APPSTORE == 0
-    @public
-    LicenseManager* m_pLicenseManager;
-#endif
-}
 
 @property(retain) NSWindow *window;
 
-#if APPSTORE == 0
-@property(retain) SUUpdater *updater;
-#endif
-
 - (void) createApp: (id) object;
-- (void) setMenuItemStatuses: (NSDictionary*) statuses;
 
 @end
 
 
 @implementation ClientAppDelegate
-
-- (id) init
-{
-    self = [super init];
-    
-    m_pLicenseManager = NULL;
-    self.updater = [[SUUpdater alloc] init];
-    
-    return self;
-}
-
-- (void) dealloc
-{
-    [self.updater release];
-    [super dealloc];
-}
 
 //
 // Create the application on the UI thread.
@@ -207,17 +177,7 @@ const int kDefaultWindowHeight = 600;
     // set the delegate for application events
     [NSApp setDelegate: self];
     
-    // register URL drops to the dock
-    // http://stackoverflow.com/questions/3115657/nsapplicationdelegate-application-active-because-of-url-protocol
-    NSAppleEventManager *appleEventManager = [NSAppleEventManager sharedAppleEventManager];
-    [appleEventManager setEventHandler: self
-                           andSelector: @selector(handleGetURLEvent:withReplyEvent:)
-                         forEventClass: kInternetEventClass
-                            andEventID: kAEGetURL];
-    
-    [self createMenuItems];
-    if (m_pLicenseManager->CanStartApp())
-        [self createMainWindow];
+    [self createMainWindow];
 }
 
 - (void) createMainWindow
@@ -265,7 +225,7 @@ const int kDefaultWindowHeight = 600;
                                                                  styleMask: (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask )
                                                                    backing: NSBackingStoreBuffered
                                                                      defer: NO];
-    self.window.title = @"Ghostlab";
+    self.window.title = @"Zephyros";
     self.window.delegate = delegate;
     self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
 
@@ -300,7 +260,7 @@ const int kDefaultWindowHeight = 600;
 //
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication*) sender
 {
-    return !m_pLicenseManager->CanStartApp();
+    return NO;
 }
 
 //
@@ -308,9 +268,6 @@ const int kDefaultWindowHeight = 600;
 //
 - (BOOL) applicationShouldHandleReopen: (NSApplication*) sender hasVisibleWindows: (BOOL) flag
 {
-    if ((g_isWindowBeingLoaded && !g_isWindowLoaded) || m_pLicenseManager == nil || !m_pLicenseManager->CanStartApp())
-        return NO;
-    
     if (flag)
         [self.window orderFront: self];
     else
@@ -320,43 +277,6 @@ const int kDefaultWindowHeight = 600;
     }
     
     return YES;
-}
-
-// TODO: make ready for sandboxing
-- (void) application: (NSApplication*) sender openFiles: (NSArray*) filenames
-{
-    CefRefPtr<CefListValue> listFilenames = CefListValue::Create();
-    int i = 0;
-    for (NSString* filename in filenames)
-    {
-        // check if the filename is a directory, otherwise take the parent directory
-        BOOL isDirectory = NO;
-        if (![[NSFileManager defaultManager] fileExistsAtPath: filename isDirectory: &isDirectory])
-            continue;
-        if (!isDirectory)
-            filename = [filename stringByDeletingLastPathComponent];
-        
-        listFilenames->SetString(i++, std::string([filename UTF8String]));
-    }
-    
-    CefRefPtr<CefListValue> args = CefListValue::Create();
-    args->SetList(0, listFilenames);
-    g_handler->GetClientExtensionHandler()->InvokeCallbacks("onAddURLs", args);
-}
-
-//
-// Called when an URL is dropped on the dock icon.
-//
-- (void) handleGetURLEvent: (NSAppleEventDescriptor*) event withReplyEvent: (NSAppleEventDescriptor*) replyEvent
-{
-    NSString *url = [[event paramDescriptorForKeyword: keyDirectObject] stringValue];
-    
-    CefRefPtr<CefListValue> listURLs = CefListValue::Create();
-    listURLs->SetString(0, std::string([url UTF8String]));
-    
-    CefRefPtr<CefListValue> args = CefListValue::Create();
-    args->SetList(0, listURLs);
-    g_handler->GetClientExtensionHandler()->InvokeCallbacks("onAddURLs", args);
 }
 
 //
@@ -387,114 +307,13 @@ const int kDefaultWindowHeight = 600;
 }
 
 //
-// Create help menu items.
-//
-- (void) createMenuItems
-{
-    NSMenu *ghostlabMenu = [[[NSApp mainMenu] itemWithTag: 100] submenu];
-    NSMenu *helpMenu = [[[NSApp mainMenu] itemWithTag: 111] submenu];
-    int menuIdx = 1;
-    
-#if APPSTORE == 0
-    // create the "check for updates" menu item
-    NSMenuItem *checkUpdatesMenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Check for Updates", @"Check for Updates")
-                                                                  action: @selector(checkForUpdates:)
-                                                           keyEquivalent: @"u"];
-    checkUpdatesMenuItem.keyEquivalentModifierMask = NSShiftKeyMask | NSCommandKeyMask;
-    checkUpdatesMenuItem.target = self.updater;
-    [ghostlabMenu insertItem: checkUpdatesMenuItem atIndex: 1];
-
-    // if in demo mode, add "purchase license" and "enter license key" menu items
-    if (!m_pLicenseManager->IsActivated())
-    {
-        GLMenuItem *miPurchase = [[GLMenuItem alloc] initWithTitle: NSLocalizedString(@"Purchase License", @"Purchase License")
-                                                            action: @selector(performClick:)
-                                                            target: self
-                                                         commandId: @"purchase_license"];
-
-        GLMenuItem *miEnterLicense = [[GLMenuItem alloc] initWithTitle: NSLocalizedString(@"Enter License Key", @"Enter License Key")
-                                                                action: @selector(performClick:)
-                                                                target: self
-                                                             commandId: @"enter_license"];
-        
-        [helpMenu insertItem: [NSMenuItem separatorItem] atIndex: menuIdx++];
-        [helpMenu insertItem: miPurchase atIndex: menuIdx++];
-        [helpMenu insertItem: miEnterLicense atIndex: menuIdx++];
-    }
-#endif
-    
-    [helpMenu insertItem: [NSMenuItem separatorItem] atIndex: menuIdx++];
-    GLMenuItem *miCredits = [[GLMenuItem alloc] initWithTitle: NSLocalizedString(@"Credits", @"Credits")
-                                                       action: @selector(performClick:)
-                                                       target: self
-                                                    commandId: @"show_credits"];
-    [helpMenu insertItem: miCredits atIndex: menuIdx++];
-    
-#if APPSTORE == 0
-    GLMenuItem *miEULA = [[GLMenuItem alloc] initWithTitle: NSLocalizedString(@"EULA", @"EULA")
-                                                    action: @selector(performClick:)
-                                                    target: self
-                                                 commandId: @"show_eula"];
-    [helpMenu insertItem: miEULA atIndex: menuIdx++];
-#endif
-    
-#ifndef NDEBUG
-    NSMenuItem *reloadMenuItem = [[NSMenuItem alloc] initWithTitle: @"Reload" action: @selector(reloadPage:) keyEquivalent: @"r"];
-    reloadMenuItem.keyEquivalentModifierMask = NSControlKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
-    [ghostlabMenu insertItem: reloadMenuItem atIndex: 0];
-#endif
-}
-
-//
-// Enables/disables menu items.
-// NOTE: for this to work, the menu containing the menu item must have autoEnablesMenuItems=NO.
-//
-- (void) setMenuItemStatuses: (NSDictionary*) statuses
-{
-    [self setMenuItemStatusesRecursive: statuses forMenu: [NSApp mainMenu]];
-}
-
-- (void) setMenuItemStatusesRecursive: (NSDictionary*) statuses forMenu: (NSMenu*) menu
-{
-    for (NSMenuItem *item in menu.itemArray)
-    {
-        if ([item isKindOfClass: GLMenuItem.class])
-        {
-            NSNumber *newStatus = [statuses objectForKey: [(GLMenuItem*) item commandId]];
-            if (newStatus != nil)
-            {
-                int status = [newStatus intValue];
-                
-                [item setEnabled: (status & 0x01) ? YES : NO];
-                item.state = (status & 0x02) ? NSOnState : NSOffState;
-            }
-        }
-        
-        if (item.hasSubmenu)
-            [self setMenuItemStatusesRecursive: statuses forMenu: item.submenu];
-    }
-}
-
-#ifndef NDEBUG
-- (IBAction) reloadPage: (id) sender
-{
-    if (g_handler.get())
-        g_handler->GetBrowser()->ReloadIgnoreCache();
-}
-#endif
-
-//
 // Invoked when a menu has been clicked.
 //
 - (IBAction) performClick: (id) sender
 {
     NSString *commandId = [sender valueForKey: @"commandId"];
     
-    if ([commandId isEqualToString: @"enter_license"])
-        m_pLicenseManager->ShowEnterLicenseDialog();
-    else if ([commandId isEqualToString: @"purchase_license"])
-        m_pLicenseManager->OpenPurchaseLicenseURL();
-    else if (g_handler.get())
+    if (g_handler.get())
     {
         CefRefPtr<CefListValue> args = CefListValue::Create();
         args->SetString(0, String([commandId UTF8String]));
@@ -538,18 +357,6 @@ const int kDefaultWindowHeight = 600;
     [alert runModal];
 }
 
-#if APPSTORE == 0
-- (void) removeDemoMenuItems
-{
-    NSMenu *helpMenu = [[[NSApp mainMenu] itemWithTag: 111] submenu];
-
-    // remove the separator and the two demo-related menu items
-    [helpMenu removeItemAtIndex: 1];
-    [helpMenu removeItemAtIndex: 1];
-    [helpMenu removeItemAtIndex: 1];
-}
-#endif
-
 @end
 
 
@@ -582,25 +389,15 @@ int main(int argc, char* argv[])
     // initialize CEF
     CefInitialize(main_args, settings, app.get());
 
-    LicenseManager* pLicenseMgr = new LicenseManager();
     g_appDelegate = [[ClientAppDelegate alloc] init];
-    g_appDelegate->m_pLicenseManager = pLicenseMgr;
 
-    pLicenseMgr->Start();
+    // create the application window
+    [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: NO];
 
-    if (pLicenseMgr->CanStartApp())
-    {
-        // create the application window
-        [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: NO];
-
-        // run the application message loop
-        g_isMessageLoopRunning = true;
-        CefRunMessageLoop();
-        g_isMessageLoopRunning = false;
-
-        // the message loop has terminated
-        g_appDelegate->m_pLicenseManager = NULL;
-    }
+    // run the application message loop
+    g_isMessageLoopRunning = true;
+    CefRunMessageLoop();
+    g_isMessageLoopRunning = false;
 
     // shut down CEF
     if (g_handler != NULL)
@@ -614,8 +411,6 @@ int main(int argc, char* argv[])
     if (g_appDelegate != nil)
         [g_appDelegate release];
     
-    delete pLicenseMgr;
-
     // release the AutoRelease pool
     [autopool release];
 
@@ -654,33 +449,10 @@ void BeginWait()
 void EndWait()
 {
 }
-    
-void RemoveDemoMenuItems(CefWindowHandle wnd)
-{
-#if APPSTORE == 0
-    [g_appDelegate performSelectorOnMainThread: @selector(removeDemoMenuItems) withObject: nil waitUntilDone: NO];
-#endif
-}
 
 void Log(String msg)
 {
     NSLog(@"%@", [NSString stringWithUTF8String: msg.c_str()]);
-}
-    
-void SetMenuItemStatuses(JavaScript::Object items)
-{
-    if (g_appDelegate == nil)
-        return;
-    
-    NSMutableDictionary *statuses = [[NSMutableDictionary alloc] init];
-    
-    JavaScript::KeyList keys;
-    items->GetKeys(keys);
-    for (JavaScript::KeyType commandId : keys)
-        [statuses setObject: [NSNumber numberWithInt: items->GetInt(commandId)] forKey: [NSString stringWithUTF8String: String(commandId).c_str()]];
-    
-    [g_appDelegate setMenuItemStatuses: statuses];
-    [statuses release];
 }
 
 } // namespace App
