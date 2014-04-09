@@ -1,0 +1,470 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CC31F9A618532FBC00114FEF /* base32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC31F97C18532FBC00114FEF /* base32.cpp */; };
+		CC31F9A718532FBC00114FEF /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC31F97E18532FBC00114FEF /* base64.cpp */; };
+		CC31F9AA18532FBC00114FEF /* file_util_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC31F98318532FBC00114FEF /* file_util_mac.mm */; };
+		CC31F9B418532FBC00114FEF /* native_extensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC31F99418532FBC00114FEF /* native_extensions.cpp */; };
+		CC31F9B718532FBC00114FEF /* NSData+Base64.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC31F99A18532FBC00114FEF /* NSData+Base64.mm */; };
+		CC31F9C8185752DB00114FEF /* jsbridge_webview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC31F9C7185752DB00114FEF /* jsbridge_webview.cpp */; };
+		CC31F9CB1857555D00114FEF /* webview_extension.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC31F9C91857555D00114FEF /* webview_extension.mm */; };
+		CC31F9CF18576E8900114FEF /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC31F9CE18576E8900114FEF /* IOKit.framework */; };
+		CC31F9D61857775700114FEF /* app_webview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC31F9D41857775700114FEF /* app_webview.mm */; };
+		CC4913EA18F5462B00729474 /* GLMenuItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC4913E618F5462B00729474 /* GLMenuItem.mm */; };
+		CC4913EB18F5462B00729474 /* GLWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC4913E818F5462B00729474 /* GLWebView.mm */; };
+		CC4913EF18F54AFE00729474 /* network_util_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC4913EC18F54AFE00729474 /* network_util_mac.mm */; };
+		CC4913F218F5548000729474 /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC4913F118F5548000729474 /* app */; };
+		CCEE42CA1859F480000BB278 /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCEE42C81859F480000BB278 /* jsbridge.cpp */; };
+		CCFAD3E818420E600076EA0D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFAD3E718420E600076EA0D /* Cocoa.framework */; };
+		CCFAD3F418420E600076EA0D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CCFAD3F318420E600076EA0D /* main.m */; };
+		CCFAD3FB18420E600076EA0D /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCFAD3FA18420E600076EA0D /* AppDelegate.mm */; };
+		CCFAD3FE18420E600076EA0D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCFAD3FC18420E600076EA0D /* MainMenu.xib */; };
+		CCFAD41C18420F440076EA0D /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFAD41B18420F440076EA0D /* WebKit.framework */; };
+		CCFAD41E184273DD0076EA0D /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCFAD41D184273DD0076EA0D /* JavaScriptCore.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CC31F97C18532FBC00114FEF /* base32.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base32.cpp; sourceTree = "<group>"; };
+		CC31F97D18532FBC00114FEF /* base32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base32.h; sourceTree = "<group>"; };
+		CC31F97E18532FBC00114FEF /* base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
+		CC31F97F18532FBC00114FEF /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		CC31F98318532FBC00114FEF /* file_util_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = file_util_mac.mm; sourceTree = "<group>"; };
+		CC31F98418532FBC00114FEF /* file_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file_util.h; sourceTree = "<group>"; };
+		CC31F99418532FBC00114FEF /* native_extensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = native_extensions.cpp; sourceTree = "<group>"; };
+		CC31F99518532FBC00114FEF /* native_extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = native_extensions.h; sourceTree = "<group>"; };
+		CC31F99918532FBC00114FEF /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		CC31F99A18532FBC00114FEF /* NSData+Base64.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "NSData+Base64.mm"; sourceTree = "<group>"; };
+		CC31F9A318532FBC00114FEF /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		CC31F9C418574AC300114FEF /* jsbridge_webview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsbridge_webview.h; sourceTree = "<group>"; };
+		CC31F9C7185752DB00114FEF /* jsbridge_webview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsbridge_webview.cpp; sourceTree = "<group>"; };
+		CC31F9C91857555D00114FEF /* webview_extension.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = webview_extension.mm; sourceTree = "<group>"; };
+		CC31F9CA1857555D00114FEF /* webview_extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = webview_extension.h; sourceTree = "<group>"; };
+		CC31F9CE18576E8900114FEF /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		CC31F9D41857775700114FEF /* app_webview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = app_webview.mm; sourceTree = "<group>"; };
+		CC31F9D71857777100114FEF /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
+		CC4913E518F5462B00729474 /* GLMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLMenuItem.h; sourceTree = "<group>"; };
+		CC4913E618F5462B00729474 /* GLMenuItem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLMenuItem.mm; sourceTree = "<group>"; };
+		CC4913E718F5462B00729474 /* GLWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLWebView.h; sourceTree = "<group>"; };
+		CC4913E818F5462B00729474 /* GLWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLWebView.mm; sourceTree = "<group>"; };
+		CC4913EC18F54AFE00729474 /* network_util_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = network_util_mac.mm; sourceTree = "<group>"; };
+		CC4913EE18F54AFE00729474 /* network_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = network_util.h; sourceTree = "<group>"; };
+		CC4913F118F5548000729474 /* app */ = {isa = PBXFileReference; lastKnownFileType = folder; path = app; sourceTree = "<group>"; };
+		CCEE42C81859F480000BB278 /* jsbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsbridge.cpp; sourceTree = "<group>"; };
+		CCEE42C91859F480000BB278 /* jsbridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsbridge.h; sourceTree = "<group>"; };
+		CCFAD3E418420E600076EA0D /* Zephyros.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zephyros.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCFAD3E718420E600076EA0D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		CCFAD3EA18420E600076EA0D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		CCFAD3EB18420E600076EA0D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		CCFAD3EC18420E600076EA0D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CCFAD3F318420E600076EA0D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		CCFAD3F518420E600076EA0D /* Zephyros-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Zephyros-Prefix.pch"; sourceTree = "<group>"; };
+		CCFAD3F918420E600076EA0D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		CCFAD3FA18420E600076EA0D /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		CCFAD3FD18420E600076EA0D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = mac/Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		CCFAD41B18420F440076EA0D /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		CCFAD41D184273DD0076EA0D /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CCFAD3E118420E600076EA0D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC31F9CF18576E8900114FEF /* IOKit.framework in Frameworks */,
+				CCFAD41E184273DD0076EA0D /* JavaScriptCore.framework in Frameworks */,
+				CCFAD41C18420F440076EA0D /* WebKit.framework in Frameworks */,
+				CCFAD3E818420E600076EA0D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CC31F9BD18532FCA00114FEF /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				CC31F99918532FBC00114FEF /* NSData+Base64.h */,
+				CC31F99A18532FBC00114FEF /* NSData+Base64.mm */,
+				CC31F97C18532FBC00114FEF /* base32.cpp */,
+				CC31F97D18532FBC00114FEF /* base32.h */,
+				CC31F97E18532FBC00114FEF /* base64.cpp */,
+				CC31F97F18532FBC00114FEF /* base64.h */,
+			);
+			name = Util;
+			sourceTree = "<group>";
+		};
+		CC31F9C518574AED00114FEF /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CCFAD3F918420E600076EA0D /* AppDelegate.h */,
+				CCFAD3FA18420E600076EA0D /* AppDelegate.mm */,
+				CCFAD3FC18420E600076EA0D /* MainMenu.xib */,
+				CC31F99418532FBC00114FEF /* native_extensions.cpp */,
+				CC31F99518532FBC00114FEF /* native_extensions.h */,
+				CC31F98318532FBC00114FEF /* file_util_mac.mm */,
+				CC31F98418532FBC00114FEF /* file_util.h */,
+				CC4913EC18F54AFE00729474 /* network_util_mac.mm */,
+				CC4913EE18F54AFE00729474 /* network_util.h */,
+				CC31F9A318532FBC00114FEF /* types.h */,
+				CC31F9D41857775700114FEF /* app_webview.mm */,
+				CC31F9D71857777100114FEF /* app.h */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+		CC31F9C618574AF600114FEF /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				CCEE42C81859F480000BB278 /* jsbridge.cpp */,
+				CCEE42C91859F480000BB278 /* jsbridge.h */,
+				CC31F9C7185752DB00114FEF /* jsbridge_webview.cpp */,
+				CC31F9C418574AC300114FEF /* jsbridge_webview.h */,
+				CC31F9C91857555D00114FEF /* webview_extension.mm */,
+				CC31F9CA1857555D00114FEF /* webview_extension.h */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
+		CC4913E218F5460400729474 /* Custom Controls */ = {
+			isa = PBXGroup;
+			children = (
+				CC4913E518F5462B00729474 /* GLMenuItem.h */,
+				CC4913E618F5462B00729474 /* GLMenuItem.mm */,
+				CC4913E718F5462B00729474 /* GLWebView.h */,
+				CC4913E818F5462B00729474 /* GLWebView.mm */,
+			);
+			name = "Custom Controls";
+			sourceTree = "<group>";
+		};
+		CCFAD3DB18420E600076EA0D = {
+			isa = PBXGroup;
+			children = (
+				CC4913F118F5548000729474 /* app */,
+				CCFAD3ED18420E600076EA0D /* src */,
+				CCFAD3E618420E600076EA0D /* Frameworks */,
+				CCFAD3E518420E600076EA0D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CCFAD3E518420E600076EA0D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CCFAD3E418420E600076EA0D /* Zephyros.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CCFAD3E618420E600076EA0D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CC31F9CE18576E8900114FEF /* IOKit.framework */,
+				CCFAD41D184273DD0076EA0D /* JavaScriptCore.framework */,
+				CCFAD41B18420F440076EA0D /* WebKit.framework */,
+				CCFAD3E718420E600076EA0D /* Cocoa.framework */,
+				CCFAD3E918420E600076EA0D /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CCFAD3E918420E600076EA0D /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CCFAD3EA18420E600076EA0D /* AppKit.framework */,
+				CCFAD3EB18420E600076EA0D /* CoreData.framework */,
+				CCFAD3EC18420E600076EA0D /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		CCFAD3ED18420E600076EA0D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				CC31F9C618574AF600114FEF /* Framework */,
+				CC31F9C518574AED00114FEF /* App */,
+				CC4913E218F5460400729474 /* Custom Controls */,
+				CC31F9BD18532FCA00114FEF /* Util */,
+				CCFAD3EE18420E600076EA0D /* Supporting Files */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		CCFAD3EE18420E600076EA0D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CCFAD3F318420E600076EA0D /* main.m */,
+				CCFAD3F518420E600076EA0D /* Zephyros-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CCFAD3E318420E600076EA0D /* Zephyros */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CCFAD41518420E600076EA0D /* Build configuration list for PBXNativeTarget "Zephyros" */;
+			buildPhases = (
+				CCFAD3E018420E600076EA0D /* Sources */,
+				CCFAD3E118420E600076EA0D /* Frameworks */,
+				CCFAD3E218420E600076EA0D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Zephyros;
+			productName = Ghostlab;
+			productReference = CCFAD3E418420E600076EA0D /* Zephyros.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CCFAD3DC18420E600076EA0D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Vanamco AG";
+				TargetAttributes = {
+					CCFAD3E318420E600076EA0D = {
+						DevelopmentTeam = LXJYPFT25V;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = CCFAD3DF18420E600076EA0D /* Build configuration list for PBXProject "Zephyros" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				de,
+				English,
+			);
+			mainGroup = CCFAD3DB18420E600076EA0D;
+			productRefGroup = CCFAD3E518420E600076EA0D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CCFAD3E318420E600076EA0D /* Zephyros */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CCFAD3E218420E600076EA0D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC4913F218F5548000729474 /* app in Resources */,
+				CCFAD3FE18420E600076EA0D /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CCFAD3E018420E600076EA0D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC4913EB18F5462B00729474 /* GLWebView.mm in Sources */,
+				CCEE42CA1859F480000BB278 /* jsbridge.cpp in Sources */,
+				CC4913EF18F54AFE00729474 /* network_util_mac.mm in Sources */,
+				CC31F9AA18532FBC00114FEF /* file_util_mac.mm in Sources */,
+				CC31F9CB1857555D00114FEF /* webview_extension.mm in Sources */,
+				CC31F9D61857775700114FEF /* app_webview.mm in Sources */,
+				CC31F9A718532FBC00114FEF /* base64.cpp in Sources */,
+				CC31F9B718532FBC00114FEF /* NSData+Base64.mm in Sources */,
+				CC31F9C8185752DB00114FEF /* jsbridge_webview.cpp in Sources */,
+				CCFAD3FB18420E600076EA0D /* AppDelegate.mm in Sources */,
+				CC31F9B418532FBC00114FEF /* native_extensions.cpp in Sources */,
+				CC4913EA18F5462B00729474 /* GLMenuItem.mm in Sources */,
+				CC31F9A618532FBC00114FEF /* base32.cpp in Sources */,
+				CCFAD3F418420E600076EA0D /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CCFAD3FC18420E600076EA0D /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CCFAD3FD18420E600076EA0D /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CCFAD41318420E600076EA0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-DOS_MACOSX",
+					"-DUSE_WEBVIEW",
+				);
+				SDKROOT = macosx;
+				SEPARATE_STRIP = NO;
+				STRIP_STYLE = all;
+			};
+			name = Debug;
+		};
+		CCFAD41418420E600076EA0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = (
+					"-DOS_MACOSX",
+					"-DUSE_WEBVIEW",
+				);
+				SDKROOT = macosx;
+				SEPARATE_STRIP = YES;
+				STRIP_STYLE = "non-global";
+			};
+			name = Release;
+		};
+		CCFAD41618420E600076EA0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "src/Zephyros-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"APPSTORE=0",
+				);
+				INFOPLIST_FILE = src/mac/Info.plist;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CODE_SIGN_FLAGS = "";
+				PRODUCT_NAME = Zephyros;
+				PROVISIONING_PROFILE = "";
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		CCFAD41718420E600076EA0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "";
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "src/Zephyros-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "APPSTORE=0";
+				INFOPLIST_FILE = src/mac/Info.plist;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CODE_SIGN_FLAGS = "";
+				PRODUCT_NAME = Zephyros;
+				PROVISIONING_PROFILE = "";
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CCFAD3DF18420E600076EA0D /* Build configuration list for PBXProject "Zephyros" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CCFAD41318420E600076EA0D /* Debug */,
+				CCFAD41418420E600076EA0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CCFAD41518420E600076EA0D /* Build configuration list for PBXNativeTarget "Zephyros" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CCFAD41618420E600076EA0D /* Debug */,
+				CCFAD41718420E600076EA0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CCFAD3DC18420E600076EA0D /* Project object */;
+}

@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\internal">
+      <UniqueIdentifier>{1D4CEA7C-B637-77CF-7A24-85ABD36F82A8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\wrapper">
+      <UniqueIdentifier>{6EC44E64-2A08-7BA1-DD52-37662FF8BB3A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{D274B8E6-49FB-E975-44BB-8C73F7EB86AD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\res">
+      <UniqueIdentifier>{1177910C-2DCE-8F2F-24FB-580080DDACDC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{9314713e-69f7-4254-bc93-8ccb22bbf5e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{6090a21a-ebe9-4c72-ace6-276a3d3933eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\JSON">
+      <UniqueIdentifier>{e87536b1-cc30-475a-a6d0-56d6105fc928}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\string_util.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource_util.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client_handler.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClCompile Include="src\string_util.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client_handler.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClInclude Include="src\client_app.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClCompile Include="src\resource_util_win.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client_handler_win.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client_app.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <None Include="src\win\small.ico">
+      <Filter>Framework\res</Filter>
+    </None>
+    <None Include="src\win\cefclient.ico">
+      <Filter>Framework\res</Filter>
+    </None>
+    <ClInclude Include="src\base32.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lib\json\picojson.h">
+      <Filter>Util\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dialog_win.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\updater.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\os_util.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\jsbridge.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\jsbridge_v8.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_trace.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_geolocation_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_download_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_request.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_resource_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_drag_data.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_dom.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_cookie.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_request_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_frame.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_command_line.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_app.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_life_span_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_v8.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_download_item.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_render_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_scheme.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_xml_reader.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_process_message.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_base.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_trace_event.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_runnable.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_pack_strings.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_keyboard_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_context_menu_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_menu_model.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_display_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_pack_resources.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_dialog_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_stream.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_url.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_callback.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_values.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_response.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_string_visitor.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_task.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_web_plugin.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_path_util.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_browser.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_origin_whitelist.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_zip_reader.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_geolocation.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_jsdialog_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_client.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_drag_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_load_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_focus_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_process_util.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_urlrequest.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_render_process_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_version.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_browser_process_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\cef_resource_bundle_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_string_list.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_time.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_ptr.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_string_multimap.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_export.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_win.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_string_types.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_types_wrappers.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_types_win.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_string.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_tuple.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_build.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_string_map.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_types.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\internal\cef_string_wrappers.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\wrapper\cef_xml_object.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\wrapper\cef_byte_read_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\wrapper\cef_stream_resource_handler.h" />
+    <ClInclude Include="..\..\Lib\Libcef\Include\wrapper\cef_zip_archive.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\extension_handler.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\v8_util.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app_win.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\browser.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\browser_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\file_util_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network_util_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server_manager_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\file_watcher_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server_manager.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\image_util_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base64.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\file_watcher.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\licensing.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\licensing_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base32.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dialog_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\updater_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\os_util_win.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\jsbridge.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\extension_handler.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\v8_util.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\browser.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\file_util.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network_util.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\path.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\server_manager.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\file_watcher.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\types.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="src\image_util_win.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base64.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\licensing.h">
+      <Filter>App</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\app.rc">
+      <Filter>Framework</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\win\ghostlab.ico">
+      <Filter>Framework\res</Filter>
+    </Image>
+    <Image Include="src\res\img\ghostie-64.png" />
+    <Image Include="src\res\img\ghostie.png" />
+    <Image Include="src\res\img\ghostlab-welcome.jpg" />
+    <Image Include="src\res\img\browsericons\chrome.png" />
+    <Image Include="src\res\img\browsericons\firefox.png" />
+    <Image Include="src\res\img\browsericons\ie.png" />
+    <Image Include="src\res\img\browsericons\konqueror.png" />
+    <Image Include="src\res\img\browsericons\opera.png" />
+    <Image Include="src\res\img\browsericons\safari.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\tmp\App\app.html" />
+    <None Include="..\tmp\App\app\i18n\strings_de.js" />
+    <None Include="..\tmp\App\app\i18n\strings_en.js" />
+    <None Include="..\tmp\App\app\lib\cm\closebrackets.js" />
+    <None Include="..\tmp\App\app\lib\cm\cmdevtools.css" />
+    <None Include="..\tmp\App\app\lib\cm\codemirror.css" />
+    <None Include="..\tmp\App\app\lib\cm\codemirror.js" />
+    <None Include="..\tmp\App\app\lib\cm\comment.js" />
+    <None Include="..\tmp\App\app\lib\cm\headlesscodemirror.js" />
+    <None Include="..\tmp\App\app\lib\cm\javascript.js" />
+    <None Include="..\tmp\App\app\lib\cm\markselection.js" />
+    <None Include="..\tmp\App\app\lib\cm\matchbrackets.js" />
+    <None Include="..\tmp\App\app\lib\cm\overlay.js" />
+    <None Include="..\tmp\App\style\fonts\ghostlab-icon-fonts\ghostlab-icon-fonts.svg" />
+    <None Include="..\tmp\App\style\fonts\ghostlab-icon-fonts\style.css" />
+    <None Include="..\tmp\App\style\fonts\Source_Sans_Pro\SourceSansPro-Bold.ttf.woff" />
+    <None Include="..\tmp\App\style\fonts\Source_Sans_Pro\SourceSansPro-Regular.ttf.woff" />
+    <None Include="..\tmp\App\style\fonts\Source_Sans_Pro\SourceSansPro-Semibold.ttf.woff" />
+    <None Include="..\tmp\App\style\stylesheets\style.css" />
+    <None Include="..\tmp\App\style\stylesheets\vendor\hint.css" />
+  </ItemGroup>
+</Project>

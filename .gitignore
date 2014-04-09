@@ -1,0 +1,9 @@
+.DS_Store
+/Lib/Libcef/DLL/libcef/
+*.sdf
+*.v11.suo
+*.vcxproj.user
+*.aps
+Thumbs.db
+/Zephyros.xcodeproj/project.xcworkspace/xcuserdata/
+/Zephyros.xcodeproj/xcuserdata/*.xcuserdatad/
