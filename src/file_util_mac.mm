@@ -125,5 +125,41 @@ void ShowInFileManager(String path)
         [[NSWorkspace sharedWorkspace] openURL: url];
 }
 
+bool ReadFile(String filename, JavaScript::Object options, String& result)
+{
+    NSData *data = [[NSData alloc] initWithContentsOfFile: [NSString stringWithUTF8String: filename.c_str()]];
+    bool ret = false;
+    if (data != nil)
+    {
+        std::string encoding = "";
+        if (options->HasKey("encoding"))
+            encoding = options->GetString("encoding");
+            
+        if (encoding == "" || encoding == "utf-8" || encoding == "text/plain;utf-8")
+        {
+            // plain text
+            NSString *text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+            if (text == nil)
+                text = [[NSString alloc] initWithData: data encoding: NSASCIIStringEncoding];
+                
+            if (text != nil)
+            {
+                result = [text UTF8String];
+                    
+#if !(__has_feature(objc_arc))
+                [text release];
+#endif
+                    
+                ret = true;
+            }
+        }
+        
+#if !(__has_feature(objc_arc))
+        [data release];
+#endif
+    }
+        
+    return ret;
+}
 
 } // namespace FileUtil
