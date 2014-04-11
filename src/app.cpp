@@ -7,12 +7,12 @@
 #include <sstream>
 #include <string>
 
-#include "..\..\..\Lib\Libcef\Include/cef_app.h"
-#include "..\..\..\Lib\Libcef\Include/cef_browser.h"
-#include "..\..\..\Lib\Libcef\Include/cef_command_line.h"
-#include "..\..\..\Lib\Libcef\Include/cef_frame.h"
-#include "..\..\..\Lib\Libcef\Include/cef_runnable.h"
-#include "..\..\..\Lib\Libcef\Include/cef_web_plugin.h"
+#include "lib/Libcef/Include/cef_app.h"
+#include "lib/Libcef/Include/cef_browser.h"
+#include "lib/Libcef/Include/cef_command_line.h"
+#include "lib/Libcef/Include/cef_frame.h"
+#include "lib/Libcef/Include/cef_runnable.h"
+#include "lib/Libcef/Include/cef_web_plugin.h"
 
 #include "app.h"
 #include "client_handler.h"

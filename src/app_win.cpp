@@ -116,7 +116,6 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 
 	// open the log file for writing
 	g_hndLogFile = App::OpenLogFile();
-	InstallCrashReporting();
 
 	g_hInst = hInstance;
 
@@ -136,9 +135,6 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	CefSettings settings;
 	App::GetSettings(settings);
 
-	// set the user agent
-	SetUserAgentString(settings);
-	
 	g_isMultithreadedMessageLoop = settings.multi_threaded_message_loop;
 
 	// initialize CEF

@@ -2,8 +2,8 @@
 #include <sstream>
 
 #ifndef USE_WEBVIEW
-#include "../../../Lib/Libcef/Include/cef_base.h"
-#include "../../../Lib/Libcef/Include/cef_values.h"
+#include "lib/Libcef/Include/cef_base.h"
+#include "lib/Libcef/Include/cef_values.h"
 #else
 #endif
 

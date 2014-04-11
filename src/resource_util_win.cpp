@@ -5,8 +5,8 @@
 #include <string.h>
 #include <tchar.h>
 
-#include "..\..\..\Lib\Libcef\Include/cef_stream.h"
-#include "..\..\..\Lib\Libcef\Include/wrapper/cef_byte_read_handler.h"
+#include "lib/Libcef/Include/cef_stream.h"
+#include "lib/Libcef/Include/wrapper/cef_byte_read_handler.h"
 
 #include "resource_util.h"
 #include "resource.h"
@@ -45,7 +45,10 @@ int GetResourceId(const TCHAR* resource_name)
 		int id;
 	} resource_map[] = {
 		// @RESOURCE_MAPPING_START
-		{ TEXT("app.html"), 3001 },
+		{ TEXT("index.html"), 3001 },
+		{ TEXT("css/screen.css"), 3002 },
+		{ TEXT("js/mock-app.js"), 3003 },
+		{ TEXT("js/zepto.js"), 3004 },
 		// @RESOURCE_MAPPING_END
 	};
 

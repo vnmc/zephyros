@@ -16,6 +16,9 @@
 #endif
 
 
+//////////////////////////////////////////////////////////////////////
+// Native Extensions
+
 //
 //
 // function implementation
@@ -98,9 +101,9 @@ void AddNativeExtensions(NativeJavaScriptFunctionAdder* e)
         TEXT("showOpenFileDialog"),
 #ifndef USE_WEBVIEW
         FUNC({
-            Path path;
-            if (FileUtil::ShowOpenFileDialog(path))
-                ret->SetDictionary(0, path.CreateJSRepresentation());
+            String file = FileUtil::ShowOpenFileDialog();
+			if (file.length() > 0)
+                ret->SetString(0, file);
             else
                 ret->SetNull(0);
             return NO_ERROR;
@@ -118,9 +121,9 @@ void AddNativeExtensions(NativeJavaScriptFunctionAdder* e)
         TEXT("showOpenDirectoryDialog"),
 #ifndef USE_WEBVIEW
         FUNC({
-            Path path;
-            if (FileUtil::ShowOpenDirectoryDialog(path))
-                ret->SetDictionary(0, path.CreateJSRepresentation());
+            String path = FileUtil::ShowOpenDirectoryDialog();
+            if (path.length() > 0)
+                ret->SetString(0, path);
             else
                 ret->SetNull(0);
             return NO_ERROR;
@@ -137,14 +140,29 @@ void AddNativeExtensions(NativeJavaScriptFunctionAdder* e)
     e->AddNativeJavaScriptProcedure(
         TEXT("showInFileManager"),
         FUNC({
-            JavaScript::Object path = args->GetDictionary(0);
-            FileUtil::ShowInFileManager(path->GetString("path"));
+            FileUtil::ShowInFileManager(args->GetString(0));
             return NO_ERROR;
         },
-        ARG(VTYPE_DICTIONARY, "path")
+        ARG(VTYPE_STRING, "path")
     ));
 
+	// void readFile(string path, json<readFileOptions> options, function(string contents))
+    e->AddNativeJavaScriptFunction(
+        TEXT("readFile"),
+        FUNC({
+            String result;
+            if (FileUtil::ReadFile(args->GetString(0), args->GetDictionary(1), result))
+                ret->SetString(0, result);
+            else
+                ret->SetNull(0);
+
+            return NO_ERROR;
+        },
+        ARG(VTYPE_STRING, "path")
+        ARG(VTYPE_DICTIONARY, "options")
+    ));
     
+
     //////////////////////////////////////////////////////////////////////
     // Networking
     
@@ -192,6 +210,12 @@ void AddNativeExtensions(NativeJavaScriptFunctionAdder* e)
 #endif
 }
 
+
+//////////////////////////////////////////////////////////////////////
+// State Object for the Native Extensions
+
+// Add any references to long lived objects used in the
+// native extensions to this class.
 
 ExtensionState::ExtensionState()
 {

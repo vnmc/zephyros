@@ -70,23 +70,12 @@ END
 // 256
 //
 
-3001 BINARY "..\\..\\..\\tmp\\App\\app.html"
-3002 BINARY "..\\..\\..\\tmp\\App\\app\\i18n\\strings_de.js"
-3003 BINARY "..\\..\\..\\tmp\\App\\app\\i18n\\strings_en.js"
-3004 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\closebrackets.js"
-3005 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\cmdevtools.css"
-3006 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\codemirror.css"
-3007 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\codemirror.js"
-3008 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\comment.js"
-3009 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\headlesscodemirror.js"
-3010 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\javascript.js"
-3011 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\markselection.js"
-3012 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\matchbrackets.js"
-3013 BINARY "..\\..\\..\\tmp\\App\\app\\lib\\cm\\overlay.js"
+3001 BINARY "..\\app\\index.html"
+3002 BINARY "..\\app\\css\\screen.css"
+3003 BINARY "..\\app\\js\\mock-app.js"
+3004 BINARY "..\\app\\js\\zepto.js"
 
 
-
-#ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
 // TEXTINCLUDE
@@ -152,9 +141,6 @@ BEGIN
     IDC_CEFCLIENT           "Zephyros"
 END
 
-#endif    // English (United States) resources
-/////////////////////////////////////////////////////////////////////////////
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -194,9 +180,6 @@ BEGIN
         VALUE "Translation", 0x807, 1200
     END
 END
-
-#endif    // German (Switzerland) resources
-/////////////////////////////////////////////////////////////////////////////
 
 
 

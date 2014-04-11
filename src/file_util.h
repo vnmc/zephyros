@@ -15,10 +15,12 @@ namespace FileUtil {
 void ShowOpenFileDialog(JSObjectRef callback);
 void ShowOpenDirectoryDialog(JSObjectRef callback);
 #else
-bool ShowOpenFileDialog(String path);
-bool ShowOpenDirectoryDialog(String path);
+String ShowOpenFileDialog();
+String ShowOpenDirectoryDialog();
 #endif
 
 void ShowInFileManager(String path);
+
+bool ReadFile(String filename, JavaScript::Object options, String& result);
 
 } // namespace FileUtil

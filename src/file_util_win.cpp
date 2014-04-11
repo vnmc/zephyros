@@ -10,12 +10,11 @@
 #include <tchar.h>
 
 #include "file_util.h"
-#include "image_util_win.h"
 
 
 namespace FileUtil {
 
-bool ShowOpenFileDialog(Path& path)
+String ShowOpenFileDialog()
 {
 	OPENFILENAME ofn;
 	TCHAR szFile[MAX_PATH];
@@ -32,16 +31,14 @@ bool ShowOpenFileDialog(Path& path)
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
 
     if (GetOpenFileName(&ofn))
-	{
-		path = Path(szFile);
-		return true;
-	}
+		return String(szFile);
 
-	return false;
+	return String();
 }
 
-bool ShowOpenDirectoryDialog(Path& path)
+String ShowOpenDirectoryDialog()
 {
+	String ret;
 	bool pathSelected = false;
 
 	// check current OS version
@@ -71,7 +68,7 @@ bool ShowOpenDirectoryDialog(Path& path)
 						{
 							// Add directory path to the result
 							//ConvertToUnixPath(pathName);
-							path = Path(lpwszName);
+							ret = lpwszName;
 							pathSelected = true;
 
 							::CoTaskMemFree(lpwszName);
@@ -102,7 +99,7 @@ bool ShowOpenDirectoryDialog(Path& path)
 			{
 				// Add directory path to the result
 				//ConvertToUnixPath(pathName);
-				path = Path(szFile);
+				ret = szFile;
 				pathSelected = true;
 			}
 
@@ -116,7 +113,7 @@ bool ShowOpenDirectoryDialog(Path& path)
 		}
 	}
 
-	return pathSelected;
+	return ret;
 }
 
 void ShowInFileManager(String path)
@@ -158,19 +155,6 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
 		}
 
 		CloseHandle(hFile);
-		return true;
-	}
-	
-	// image file; return as base64-encoded PNG
-	if (encoding == TEXT("image/png;base64"))
-	{
-		BYTE* pData;
-		DWORD length;
-		if (!ImageUtil::ImageFileToPNG(filename, &pData, &length))
-			return false;
-
-		result = ImageUtil::Base64Encode(pData, length);
-		delete[] pData;
 		return true;
 	}
 
