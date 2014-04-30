@@ -41,6 +41,7 @@ Currently, Zephyros only comes with a handful of exemplary native extension func
 * ```app.showInFileManager(path /*string*/)```
 * ```app.readFile(path /*string*/, options /*object*/, function(fileContents /*string*/) {})```
 
+
 * ```app.onMenuCommand(function(cmdId /*string*/) {})```
 * ```app.onAppTerminating(function() {})```
 
@@ -89,7 +90,7 @@ A ```NativeFunction``` object basically stores a function pointer and argument d
 
 Say, we want to create a native function which adds two numbers provided as arguments, i.e., something like
 
-```
+```c++
 int myFunction(int firstNumber, int secondNumber) {
     return firstNumber + secondNumber;
 }
@@ -97,7 +98,7 @@ int myFunction(int firstNumber, int secondNumber) {
 
 We want to make ```myFunction``` available to JavaScript so it can be invoked like so:
 
-```
+```javascript
 var num1 = ...;
 var num2 = ...;
 app.myFunction(num1, num2, function(result) {
@@ -107,7 +108,7 @@ app.myFunction(num1, num2, function(result) {
 
 Here's the C++ code implementing this function natively:
 
-```
+```c++
 e->AddNativeJavaScriptFunction(
     // function name
     TEXT("myFunction"),
@@ -141,7 +142,7 @@ You'll also find this example in _src/native_extensions.cpp_.
 
 First, you'll need to register a event handler in your JavaScript app:
 
-```
+```javascript
 app.onMenuCommand(function(cmdId) {
     switch(cmdId) {
     case 'show_about':
