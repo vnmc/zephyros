@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="12E55" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="5053"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
+        <plugIn identifier="com.apple.WebKitIBPlugin" version="5056"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -203,7 +203,7 @@
                                     <userDefinedRuntimeAttribute type="string" keyPath="commandId" value="show_help"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="performClick:" target="494" id="8g8-pq-RY7"/>
+                                    <action selector="performClick:" target="494" id="R6l-8f-P3f"/>
                                 </connections>
                             </menuItem>
                         </items>
