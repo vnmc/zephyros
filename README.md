@@ -5,7 +5,7 @@ Zephyros
 **A Multi-platform HTML5 application wrapper.**
 
 
-![Intro Zephyros](http://s16.postimg.org/ih73p08it/Newsletter_open_source.png)
+![Intro Zephyros](http://s22.postimg.org/9ml8jvre9/Newsletter_open_source.png)
 
 
 ## Synopsis
