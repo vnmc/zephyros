@@ -1,0 +1,23 @@
+body {
+	font-family: "Helvetica Neue", Arial;
+}
+
+#browsers {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#browsers li {
+	margin: 2px 0;
+	padding: 4px;
+	background-color: #eee;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	cursor: pointer;
+}
+
+#browsers img {
+	width: 16px;
+	height: auto;
+}

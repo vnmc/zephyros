@@ -1,0 +1,295 @@
+#include <tchar.h>
+
+#include "browser.h"
+#include "app.h"
+#include "image_util_win.h"
+
+
+#define MAX_LEN 2048
+
+
+namespace BrowserUtil {
+
+//
+// Returns the name of the default browser
+//
+String GetDefaultBrowserKey()
+{
+	bool defaultBrowserKeyFound = false;
+	String defaultBrowserKey;
+
+	HKEY hKey1, hKey2;
+	DWORD len;
+	DWORD type;
+	BYTE data[MAX_LEN + 1];
+
+	// first look under HKEY_CURRENT_USER
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Clients\\StartMenuInternet"), 0, KEY_READ, &hKey1) == ERROR_SUCCESS)
+	{
+		DEBUG_LOG(TEXT("Opened HKCU\\SOFTWARE\\Clients\\StartMenuInternet"));
+
+		len = MAX_LEN;
+		if (RegQueryValueEx(hKey1, TEXT(""), NULL, &type, data, &len) == ERROR_SUCCESS)
+		{
+			DEBUG_LOG(TEXT("Queried value (1), len=") + TO_STRING(len));
+
+			if (type == REG_SZ && len > 0)
+			{
+				defaultBrowserKey = String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + len - sizeof(TCHAR)));
+				defaultBrowserKeyFound = true;
+
+				DEBUG_LOG(TEXT("defaultBrowserKey (1) =") + defaultBrowserKey);
+			}
+		}
+
+		if (!defaultBrowserKeyFound)
+		{
+			DEBUG_LOG(TEXT("default browser not found in HKCU"));
+
+			// if no StartMenuInternet entry found in current user, look in HKEY_LOCAL_MACHINE
+			if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Clients\\StartMenuInternet"), 0, KEY_READ, &hKey2) == ERROR_SUCCESS)
+			{
+				DEBUG_LOG(TEXT("Opened HKLM\\SOFTWARE\\Clients\\StartMenuInternet"));
+
+				len = MAX_LEN;
+				if (RegQueryValueEx(hKey2, TEXT(""), NULL, &type, data, &len) == ERROR_SUCCESS)
+				{
+					DEBUG_LOG(TEXT("Queried value (2), len=") + TO_STRING(len));
+
+					if (type == REG_SZ && len > 0)
+					{
+						defaultBrowserKey = String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + len - sizeof(TCHAR)));
+						defaultBrowserKeyFound = true;
+
+						DEBUG_LOG(TEXT("defaultBrowserKey (2) =") + defaultBrowserKey);
+					}
+				}
+
+				RegCloseKey(hKey2);
+				DEBUG_LOG(TEXT("Closed key (2)"));
+			}
+		}
+
+		RegCloseKey(hKey1);
+		DEBUG_LOG(TEXT("Closed key (1)"));
+	}
+
+	return defaultBrowserKey;
+}
+
+HICON LoadLibIcon(TCHAR* szLibIcon)
+{
+	// find the icon ID in szLibIcon (after the comma)
+	// start at the second-to-last character (there must be something after the comma...)
+	int pos = (int) (_tcslen(szLibIcon)) - 2;
+	if (pos <= 0)
+		return NULL;
+
+	int id = INT_MIN;
+	for ( ; pos >= 0; --pos)
+	{
+		if (szLibIcon[pos] == ',')
+		{
+			id = _tstoi(szLibIcon + pos + 1);
+			szLibIcon[pos] = 0;
+			break;
+		}
+	}
+
+	if (id == INT_MIN)
+		return NULL;
+
+	if (szLibIcon[0] == TEXT('"'))
+		szLibIcon++;
+	if (pos >= 2 && szLibIcon[pos - 2] == TEXT('"'))
+		szLibIcon[pos - 2] = 0;
+
+	DEBUG_LOG(String(TEXT("lib icon=")) + szLibIcon);
+
+	HICON hIcon = NULL;
+	ExtractIconEx(szLibIcon, id, &hIcon, NULL, 1);
+
+	return hIcon;
+}
+
+//
+// Returns an array of all browsers available on the system.
+//
+void FindBrowsers(std::vector<Browser*>& browsers)
+{
+	String strDefaultBrowserKey = GetDefaultBrowserKey();
+
+	HKEY hKey;
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Clients\\StartMenuInternet"), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+	{
+		DEBUG_LOG(TEXT("Opened HKLM\\SOFTWARE\\Clients\\StartMenuInternet"));
+
+		// enumerate the subkeys
+		TCHAR szSubkeyName[MAX_LEN + 1];
+		DWORD len;
+		DWORD type;
+		BYTE data[MAX_LEN + 1];
+
+		for (DWORD idx = 0; ; ++idx)
+		{
+			DEBUG_LOG(TEXT("Trying to read key #") + TO_STRING(idx));
+
+			len = MAX_LEN;
+			LONG res = RegEnumKeyEx(hKey, idx, szSubkeyName, &len, NULL, NULL, NULL, NULL);
+			
+			if (res == ERROR_NO_MORE_ITEMS)
+			{
+				DEBUG_LOG(TEXT("No more items"));
+				break;
+			}
+			if (res != ERROR_SUCCESS)
+			{
+				DEBUG_LOG(TEXT("Failed to enum key"));
+				continue;
+			}
+
+			bool success = true;
+			String strBrowserName;
+			String strBrowserCommand;
+			String strIcon;
+			//String strGrayscaleIcon;
+
+			HKEY hKeyBrowser;
+			if (RegOpenKeyEx(hKey, szSubkeyName, 0, KEY_READ, &hKeyBrowser) == ERROR_SUCCESS)
+			{
+				DEBUG_LOG(String(TEXT("Opened ")) + szSubkeyName);
+
+				// get the default value of the subkey: this is the name of the browser
+				len = MAX_LEN;
+				if (RegQueryValueEx(hKeyBrowser, TEXT(""), NULL, &type, data, &len) == ERROR_SUCCESS)
+				{
+					DEBUG_LOG(TEXT("Queried value (3), len=") + TO_STRING(len));
+
+					if (type == REG_SZ && len > 0)
+					{
+						strBrowserName = String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + len - sizeof(TCHAR)));
+						DEBUG_LOG(TEXT("Found browser ") + strBrowserName);
+					}
+					else
+						success = false;
+				}
+				else
+					success = false;
+
+				// get the path to the browser program: this is contained in the default value of "shell\open\command"
+				HKEY hKeyCommand;
+				if (success && RegOpenKeyEx(hKeyBrowser, TEXT("shell\\open\\command"), 0, KEY_READ, &hKeyCommand) == ERROR_SUCCESS)
+				{
+					DEBUG_LOG(TEXT("Opened shell\\open\\command"));
+
+					len = MAX_LEN;
+					if (RegQueryValueEx(hKeyCommand, TEXT(""), NULL, &type, data, &len) == ERROR_SUCCESS)
+					{
+						DEBUG_LOG(TEXT("Queried value (4), len=") + TO_STRING(len));
+
+						if (type == REG_SZ && len > 0)
+						{
+							strBrowserCommand = String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + len - sizeof(TCHAR)));
+							DEBUG_LOG(TEXT("Found browser command ") + strBrowserCommand);
+						}
+						else
+							success = false;
+					}
+					else
+						success = false;
+
+					RegCloseKey(hKeyCommand);
+					DEBUG_LOG(TEXT("Closed key (3)"));
+				}
+
+				// get the default icon: the path is contained in the default value of the "DefaultIcon" subkey
+				HKEY hKeyIcon;
+				if (success && RegOpenKeyEx(hKeyBrowser, TEXT("DefaultIcon"), 0, KEY_READ, &hKeyIcon) == ERROR_SUCCESS)
+				{
+					DEBUG_LOG(TEXT("Opened DefaultIcon"));
+
+					len = MAX_LEN;
+					if (RegQueryValueEx(hKeyIcon, TEXT(""), NULL, &type, data, &len) == ERROR_SUCCESS)
+					{
+						DEBUG_LOG(TEXT("Queried value (5), len=") + TO_STRING(len));
+
+						if (type == REG_SZ && len > 0)
+						{
+							HICON hIcon = LoadLibIcon(reinterpret_cast<TCHAR*>(data));
+							if (hIcon != NULL)
+							{
+								BYTE* pData = NULL;
+								DWORD length;
+								if (ImageUtil::IconToPNG(hIcon, &pData, &length))
+								{
+									strIcon = TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length);
+									delete[] pData;
+								}
+
+								/*
+								// currently not used
+								if (ImageUtil::IconToGrayscalePNG(hIcon, &pData, &length))
+								{
+									strGrayscaleIcon = TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length);
+									delete[] pData;
+								}
+								*/
+
+								DestroyIcon(hIcon);
+							}
+						}
+					}
+
+					RegCloseKey(hKeyIcon);
+					DEBUG_LOG(TEXT("Closed key (4)"));
+				}
+
+				RegCloseKey(hKeyBrowser);
+				DEBUG_LOG(TEXT("Closed key (5)"));
+
+				// add a new browser object to the list
+				if (success)
+				{
+					bool isDefaultBrowser = strDefaultBrowserKey.length() > 0 ?
+						_tcscmp(strDefaultBrowserKey.c_str(), szSubkeyName) == 0 :
+						idx == 0;
+
+					DEBUG_LOG(TEXT("Adding browser ") + strBrowserName);
+					browsers.push_back(new Browser(strBrowserName, strBrowserCommand, strIcon, isDefaultBrowser));
+					DEBUG_LOG(TEXT("Added browser"));
+				}
+			}
+		}
+
+		RegCloseKey(hKey);
+		DEBUG_LOG(TEXT("Closed key (6)"));
+	}
+}
+
+bool OpenURLInBrowser(String url, Browser* browser)
+{
+	if (!browser)
+		return false;
+
+	SHELLEXECUTEINFO execInfo = { 0 };
+
+	execInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+	execInfo.fMask = SEE_MASK_DEFAULT;
+	execInfo.lpVerb = TEXT("open");
+
+	String id = browser->GetIdentifier();
+	execInfo.lpFile = id.c_str();
+
+	execInfo.lpParameters = url.c_str();
+	execInfo.nShow = SW_SHOW;
+
+	return ShellExecuteEx(&execInfo) == TRUE;
+}
+
+void CleanUp(std::vector<Browser*>& browsers)
+{
+	for (Browser* pBrowser : browsers)
+		delete pBrowser;
+}
+
+} // namespace BrowserUtil
