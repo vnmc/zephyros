@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <tchar.h>
 
 #include "browser.h"
@@ -110,6 +111,53 @@ HICON LoadLibIcon(TCHAR* szLibIcon)
 	ExtractIconEx(szLibIcon, id, &hIcon, NULL, 1);
 
 	return hIcon;
+}
+
+String ExtractFilename(String strCommand)
+{
+	if (strCommand[0] != TEXT('"'))
+		return strCommand;
+
+	size_t pos = strCommand.find(TEXT('"'), 1);
+	if (pos == String::npos)
+		return strCommand;
+
+	return strCommand.substr(1, pos - 1);
+}
+
+String GetExeVersion(String strCommand)
+{
+	String strResult(TEXT(""));
+	String strFilename = ExtractFilename(strCommand);
+	DWORD dwHandle = 0;
+	DWORD dwSize = GetFileVersionInfoSize(strFilename.c_str(), &dwHandle);
+
+    if (dwSize > 0)
+    {
+        BYTE* pbBuf = new BYTE[dwSize];
+		if (GetFileVersionInfo(strFilename.c_str(), dwHandle, dwSize, pbBuf))
+        {
+            UINT uiSize = 0;
+            BYTE* lpb = NULL;
+
+            if (VerQueryValue(pbBuf, TEXT("\\VarFileInfo\\Translation"), (void**) &lpb, &uiSize))
+            {
+                WORD* lpw = (WORD*) lpb;
+				StringStream ssQuery;
+				ssQuery << TEXT("\\StringFileInfo\\");
+				ssQuery << std::setfill(TEXT('0')) << std::setw(4) << std::hex << lpw[0];
+				ssQuery << std::setfill(TEXT('0')) << std::setw(4) << std::hex << lpw[1];
+				ssQuery << TEXT("\\ProductVersion");
+
+                if (VerQueryValue(pbBuf, ssQuery.str().c_str(), (void**) &lpb, &uiSize) && uiSize > 0)
+                    strResult = (LPCTSTR) lpb;
+            }
+        }
+
+		delete[] pbBuf;
+    }
+
+    return strResult;
 }
 
 //
@@ -255,7 +303,7 @@ void FindBrowsers(std::vector<Browser*>& browsers)
 						idx == 0;
 
 					DEBUG_LOG(TEXT("Adding browser ") + strBrowserName);
-					browsers.push_back(new Browser(strBrowserName, strBrowserCommand, strIcon, isDefaultBrowser));
+					browsers.push_back(new Browser(strBrowserName, GetExeVersion(strBrowserCommand), strBrowserCommand, strIcon, isDefaultBrowser));
 					DEBUG_LOG(TEXT("Added browser"));
 				}
 			}

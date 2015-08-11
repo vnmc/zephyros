@@ -17,7 +17,6 @@
 		CC0FA30D1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
 		CC0FA30E1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
 		CC608F4A1B5CF0CE003D185F /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC608F491B5CF0CE003D185F /* app */; };
-		CC608F4B1B5CF15A003D185F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCC019D11B4FDC360015B0FA /* MainMenu.xib */; };
 		CC608F4C1B5CF15A003D185F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCC019D11B4FDC360015B0FA /* MainMenu.xib */; };
 		CC608F4D1B5CF160003D185F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */; };
 		CC608F4E1B5CF161003D185F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */; };
@@ -26,8 +25,6 @@
 		CC608F571B5CF2A4003D185F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC019CC1B4FDC180015B0FA /* main.mm */; };
 		CC608F581B5CF327003D185F /* Zephyros_WebView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC8BA4531B4D568A006C8CAE /* Zephyros_WebView.framework */; };
 		CC608F591B5CF334003D185F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
-		CC608F5A1B5CF342003D185F /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019FF1B513A950015B0FA /* Sparkle.framework */; };
-		CC608F5B1B5CF342003D185F /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019FF1B513A950015B0FA /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CC608F611B5CF4CD003D185F /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F5F1B5CF4CD003D185F /* app.cpp */; };
 		CC608F621B5CF4CD003D185F /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F5F1B5CF4CD003D185F /* app.cpp */; };
 		CC608F631B5CF4CD003D185F /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F5F1B5CF4CD003D185F /* app.cpp */; };
@@ -254,21 +251,14 @@
 		CC60913B1B5D4B03003D185F /* cef_zip_archive.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC6090781B5D4B03003D185F /* cef_zip_archive.cc */; };
 		CC60913C1B5D4B03003D185F /* libcef_dll_wrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC6090791B5D4B03003D185F /* libcef_dll_wrapper.cc */; };
 		CC60913D1B5D4B03003D185F /* libcef_dll_wrapper2.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC60907A1B5D4B03003D185F /* libcef_dll_wrapper2.cc */; };
-		CC6091621B5D4F5A003D185F /* liblibcef_dll_wrapper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC608FAB1B5D495B003D185F /* liblibcef_dll_wrapper.a */; };
 		CC6091631B5D4F62003D185F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
-		CC6091661B5D4FA9003D185F /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091641B5D4F68003D185F /* OpenGL.framework */; };
-		CC6091681B5D4FD3003D185F /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */; };
 		CC6091691B5D4FF1003D185F /* Zephyros_CEF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A2E1B4D771200E4F261 /* Zephyros_CEF.framework */; };
-		CC60916A1B5D4FFB003D185F /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */; };
 		CC6091701B5D50C0003D185F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC60916F1B5D50C0003D185F /* main.cpp */; };
 		CC6091711B5D50C0003D185F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC60916F1B5D50C0003D185F /* main.cpp */; };
 		CC6092231B5D5AAD003D185F /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F5F1B5CF4CD003D185F /* app.cpp */; };
 		CC6092241B5E55B7003D185F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
 		CC6092251B5E55BE003D185F /* Zephyros_AppStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A501B4D782000E4F261 /* Zephyros_AppStore.framework */; };
-		CC6092301B5E5720003D185F /* liblibcef_dll_wrapper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC608FAB1B5D495B003D185F /* liblibcef_dll_wrapper.a */; };
-		CC6092311B5E5720003D185F /* Zephyros_CEF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A2E1B4D771200E4F261 /* Zephyros_CEF.framework */; };
 		CC6092321B5E5720003D185F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
-		CC6092331B5E5735003D185F /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */; };
 		CC6092341B5E5816003D185F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
 		CC6092351B5E581C003D185F /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A231B4D764300E4F261 /* JavaScriptCore.framework */; };
 		CC6092361B5E5825003D185F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A271B4D765500E4F261 /* Cocoa.framework */; };
@@ -285,6 +275,97 @@
 		CC6092431B5E83B3003D185F /* liblibcef_dll_wrapper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC608FAB1B5D495B003D185F /* liblibcef_dll_wrapper.a */; };
 		CC6092451B5E86FA003D185F /* resource_util_posix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC6092441B5E86FA003D185F /* resource_util_posix.cpp */; };
 		CC6092461B5E880C003D185F /* process_helper_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC608F7F1B5D275F003D185F /* process_helper_mac.mm */; };
+		CCBDB3C41B79FD4C00D168AB /* Zephyros_WebView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC8BA4531B4D568A006C8CAE /* Zephyros_WebView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCBDB3C71B79FDE000D168AB /* Zephyros_CEF.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A2E1B4D771200E4F261 /* Zephyros_CEF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCBDB3CD1B7A0A8400D168AB /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A781B4D7EE400E4F261 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCBDB3CF1B7A0CC700D168AB /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A7C1B4D7F1C00E4F261 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCBDB3D01B7A0D1E00D168AB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091641B5D4F68003D185F /* OpenGL.framework */; };
+		CCBDB3D31B7A129600D168AB /* Zephyros_CEF.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A2E1B4D771200E4F261 /* Zephyros_CEF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCBDB3D81B7A160200D168AB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCC019D11B4FDC360015B0FA /* MainMenu.xib */; };
+		CCBDB3DD1B7A20F200D168AB /* Chromium Embedded Framework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCBDB3DF1B7A29F600D168AB /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */; };
+		CCBDB3E01B7A2A6E00D168AB /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */; };
+		CCBDB3E31B7A30B300D168AB /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */; };
+		CCBDB3E51B7A33F400D168AB /* Zephyros_SampleApp_CEF Helper.app in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091421B5D4EF0003D185F /* Zephyros_SampleApp_CEF Helper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CCBDB4041B7A368C00D168AB /* base32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC0196C1B4FDA420015B0FA /* base32.cpp */; };
+		CCBDB4051B7A369200D168AB /* base32.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC0196D1B4FDA420015B0FA /* base32.h */; };
+		CCBDB4061B7A369800D168AB /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC0196E1B4FDA420015B0FA /* base64.cpp */; };
+		CCBDB4071B7A369C00D168AB /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC0196F1B4FDA420015B0FA /* base64.h */; };
+		CCBDB4081B7A36A200D168AB /* EMKeychainItem.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019701B4FDA420015B0FA /* EMKeychainItem.h */; };
+		CCBDB4091B7A36A500D168AB /* EMKeychainItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC019711B4FDA420015B0FA /* EMKeychainItem.m */; };
+		CCBDB40A1B7A36A900D168AB /* GetPrimaryMACAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC019721B4FDA420015B0FA /* GetPrimaryMACAddress.cpp */; };
+		CCBDB40B1B7A36AC00D168AB /* GetPrimaryMACAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019731B4FDA420015B0FA /* GetPrimaryMACAddress.h */; };
+		CCBDB40C1B7A36B000D168AB /* MurmurHash3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC019741B4FDA420015B0FA /* MurmurHash3.cpp */; };
+		CCBDB40D1B7A36B300D168AB /* MurmurHash3.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019751B4FDA420015B0FA /* MurmurHash3.h */; };
+		CCBDB40E1B7A36B700D168AB /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019761B4FDA420015B0FA /* NSData+Base64.h */; };
+		CCBDB40F1B7A36BA00D168AB /* NSData+Base64.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC019771B4FDA420015B0FA /* NSData+Base64.mm */; };
+		CCBDB4101B7A36BE00D168AB /* Zephyros.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF48A6F1B4D7C7500E4F261 /* Zephyros.h */; };
+		CCBDB4111B7A36CD00D168AB /* native_extensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018DD1B4FD9D20015B0FA /* native_extensions.cpp */; };
+		CCBDB4121B7A36D100D168AB /* native_extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018DE1B4FD9D20015B0FA /* native_extensions.h */; };
+		CCBDB4131B7A36D400D168AB /* browser_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC018CC1B4FD9D20015B0FA /* browser_mac.mm */; };
+		CCBDB4141B7A36D800D168AB /* browser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018CE1B4FD9D20015B0FA /* browser.cpp */; };
+		CCBDB4151B7A36DC00D168AB /* browser.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018CF1B4FD9D20015B0FA /* browser.h */; };
+		CCBDB4161B7A36DF00D168AB /* custom_url_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018D01B4FD9D20015B0FA /* custom_url_manager.cpp */; };
+		CCBDB4171B7A36E200D168AB /* custom_url_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018D11B4FD9D20015B0FA /* custom_url_manager.h */; };
+		CCBDB4181B7A36E600D168AB /* file_util_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC018D21B4FD9D20015B0FA /* file_util_mac.mm */; };
+		CCBDB4191B7A36E900D168AB /* file_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018D41B4FD9D20015B0FA /* file_util.h */; };
+		CCBDB41A1B7A36EC00D168AB /* file_watcher_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC018D51B4FD9D20015B0FA /* file_watcher_mac.mm */; };
+		CCBDB41B1B7A36EF00D168AB /* file_watcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018D71B4FD9D20015B0FA /* file_watcher.cpp */; };
+		CCBDB41C1B7A36F200D168AB /* file_watcher.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018D81B4FD9D20015B0FA /* file_watcher.h */; };
+		CCBDB41D1B7A36F500D168AB /* image_util_mac.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018D91B4FD9D20015B0FA /* image_util_mac.h */; };
+		CCBDB41E1B7A36F800D168AB /* image_util_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC018DA1B4FD9D20015B0FA /* image_util_mac.mm */; };
+		CCBDB41F1B7A36FB00D168AB /* network_util_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC018DF1B4FD9D20015B0FA /* network_util_mac.mm */; };
+		CCBDB4201B7A36FE00D168AB /* network_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018E11B4FD9D20015B0FA /* network_util.h */; };
+		CCBDB4221B7A370300D168AB /* os_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018E41B4FD9D20015B0FA /* os_util.h */; };
+		CCBDB4241B7A370900D168AB /* pageimage.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018E71B4FD9D20015B0FA /* pageimage.h */; };
+		CCBDB4251B7A370D00D168AB /* path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018E81B4FD9D20015B0FA /* path.cpp */; };
+		CCBDB4261B7A371000D168AB /* path.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018E91B4FD9D20015B0FA /* path.h */; };
+		CCBDB4271B7A371300D168AB /* process_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018EC1B4FD9D20015B0FA /* process_manager.h */; };
+		CCBDB42A1B7A372200D168AB /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
+		CCBDB42B1B7A372F00D168AB /* zephyros_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = CC0FA3031B52AD3D00C5AC33 /* zephyros_impl.h */; };
+		CCBDB42C1B7A373200D168AB /* app_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC019F21B4FF79A0015B0FA /* app_mac.mm */; };
+		CCBDB42D1B7A373500D168AB /* app.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019D41B4FEE0F0015B0FA /* app.h */; };
+		CCBDB4301B7A374B00D168AB /* licensing.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019E21B4FF43C0015B0FA /* licensing.h */; };
+		CCBDB4311B7A374E00D168AB /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
+		CCBDB4321B7A375300D168AB /* jsbridge.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018BC1B4FD9B70015B0FA /* jsbridge.h */; };
+		CCBDB4331B7A375600D168AB /* logging.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018BD1B4FD9B70015B0FA /* logging.h */; };
+		CCBDB4341B7A375900D168AB /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018BE1B4FD9B70015B0FA /* types.h */; };
+		CCBDB4351B7A37DF00D168AB /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
+		CCBDB4361B7A37F200D168AB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A1D1B4D762400E4F261 /* SystemConfiguration.framework */; };
+		CCBDB4371B7A37F900D168AB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A211B4D763A00E4F261 /* IOKit.framework */; };
+		CCBDB4381B7A380500D168AB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A1F1B4D763500E4F261 /* Security.framework */; };
+		CCBDB4391B7A381200D168AB /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A251B4D764C00E4F261 /* WebKit.framework */; };
+		CCBDB43A1B7A382200D168AB /* liblibcef_dll_wrapper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC608FAB1B5D495B003D185F /* liblibcef_dll_wrapper.a */; };
+		CCBDB43B1B7A383A00D168AB /* Chromium Embedded Framework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */; };
+		CCBDB43D1B7A38D900D168AB /* Zephyros_CEF_Helper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCBDB3EB1B7A358A00D168AB /* Zephyros_CEF_Helper.framework */; };
+		CCBDB4411B7A3C2C00D168AB /* Info_ZephyrosCEF_Helper.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCBDB4401B7A3C2C00D168AB /* Info_ZephyrosCEF_Helper.plist */; };
+		CCBDB4441B7A4B0400D168AB /* zephyros_cef.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608FA51B5D441B003D185F /* zephyros_cef.h */; };
+		CCBDB4451B7A4B7000D168AB /* client_app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F761B5D275F003D185F /* client_app.cpp */; };
+		CCBDB4461B7A4B7300D168AB /* client_app.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F771B5D275F003D185F /* client_app.h */; };
+		CCBDB4481B7A4B7E00D168AB /* client_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F7A1B5D275F003D185F /* client_handler.cpp */; };
+		CCBDB4491B7A4B8400D168AB /* client_handler.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F7B1B5D275F003D185F /* client_handler.h */; };
+		CCBDB44A1B7A4B8700D168AB /* extension_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F7C1B5D275F003D185F /* extension_handler.cpp */; };
+		CCBDB44B1B7A4B8A00D168AB /* extension_handler.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F7D1B5D275F003D185F /* extension_handler.h */; };
+		CCBDB44C1B7A4B8D00D168AB /* jsbridge_v8.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F7E1B5D275F003D185F /* jsbridge_v8.h */; };
+		CCBDB44D1B7A4B9000D168AB /* resource_util_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC608F801B5D275F003D185F /* resource_util_mac.mm */; };
+		CCBDB44E1B7A4B9300D168AB /* resource_util_posix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC6092441B5E86FA003D185F /* resource_util_posix.cpp */; };
+		CCBDB44F1B7A4B9700D168AB /* resource_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F831B5D275F003D185F /* resource_util.h */; };
+		CCBDB4501B7A4B9A00D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F841B5D275F003D185F /* string_util.cpp */; };
+		CCBDB4511B7A4B9E00D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F851B5D275F003D185F /* string_util.h */; };
+		CCBDB4521B7A4BA100D168AB /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F861B5D275F003D185F /* util.h */; };
+		CCBDB4531B7A4BA700D168AB /* v8_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F871B5D275F003D185F /* v8_util.cpp */; };
+		CCBDB4541B7A4BAA00D168AB /* v8_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F881B5D275F003D185F /* v8_util.h */; };
+		CCBDB4571B7A4C9100D168AB /* licensing_stub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4561B7A4C9100D168AB /* licensing_stub.cpp */; };
+		CCBDB4591B7A4CC200D168AB /* client_handler_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4581B7A4CC200D168AB /* client_handler_mac_stub.mm */; };
+		CCBDB45A1B7A4EC300D168AB /* ZPYMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC0195C1B4FDA2A0015B0FA /* ZPYMenu.h */; };
+		CCBDB45B1B7A4EC600D168AB /* ZPYMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC0195D1B4FDA2A0015B0FA /* ZPYMenu.m */; };
+		CCBDB45C1B7A4EC900D168AB /* ZPYMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC0195E1B4FDA2A0015B0FA /* ZPYMenuItem.h */; };
+		CCBDB45D1B7A4ECC00D168AB /* ZPYMenuItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC0195F1B4FDA2A0015B0FA /* ZPYMenuItem.mm */; };
+		CCBDB45E1B7A4F2C00D168AB /* updater.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC018EF1B4FD9D20015B0FA /* updater.h */; };
+		CCBDB4601B7A4F4700D168AB /* updater_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB45F1B7A4F4700D168AB /* updater_mac_stub.mm */; };
+		CCBDB4621B7A4FB600D168AB /* zephyros_cef_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4611B7A4FB600D168AB /* zephyros_cef_mac_stub.mm */; };
+		CCBDB4641B7A518200D168AB /* pageimage_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4631B7A518200D168AB /* pageimage_mac_stub.mm */; };
+		CCBDB4661B7A525100D168AB /* os_util_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4651B7A525100D168AB /* os_util_mac_stub.mm */; };
 		CCC018BF1B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
 		CCC018C01B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
 		CCC018C11B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
@@ -505,19 +586,19 @@
 			remoteGlobalIDString = CCF48A2D1B4D771200E4F261;
 			remoteInfo = Zephyros_CEF;
 		};
-		CC60922C1B5E5702003D185F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC8BA44A1B4D568A006C8CAE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CCF48A2D1B4D771200E4F261;
-			remoteInfo = Zephyros_CEF;
-		};
 		CC60922E1B5E5702003D185F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CC8BA44A1B4D568A006C8CAE /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = CC608FAA1B5D495B003D185F;
 			remoteInfo = libcef_dll_wrapper;
+		};
+		CCBDB43E1B7A38F900D168AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC8BA44A1B4D568A006C8CAE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CCBDB3EA1B7A358A00D168AB;
+			remoteInfo = Zephyros_CEF_Helper;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -528,7 +609,53 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CC608F5B1B5CF342003D185F /* Sparkle.framework in Embed Frameworks */,
+				CCBDB3C41B79FD4C00D168AB /* Zephyros_WebView.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCBDB3C51B79FDAE00D168AB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CCBDB3DD1B7A20F200D168AB /* Chromium Embedded Framework.framework in Embed Frameworks */,
+				CCBDB3C71B79FDE000D168AB /* Zephyros_CEF.framework in Embed Frameworks */,
+				CCBDB3E51B7A33F400D168AB /* Zephyros_SampleApp_CEF Helper.app in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCBDB3CC1B7A0A6100D168AB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CCBDB3CD1B7A0A8400D168AB /* Sparkle.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCBDB3CE1B7A0CA800D168AB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CCBDB3CF1B7A0CC700D168AB /* Sparkle.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCBDB3D21B7A127F00D168AB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CCBDB3D31B7A129600D168AB /* Zephyros_CEF.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -769,7 +896,7 @@
 		CC6090781B5D4B03003D185F /* cef_zip_archive.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cef_zip_archive.cc; sourceTree = "<group>"; };
 		CC6090791B5D4B03003D185F /* libcef_dll_wrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libcef_dll_wrapper.cc; sourceTree = "<group>"; };
 		CC60907A1B5D4B03003D185F /* libcef_dll_wrapper2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libcef_dll_wrapper2.cc; sourceTree = "<group>"; };
-		CC6091421B5D4EF0003D185F /* Zephyros_SampleApp_CEF_Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zephyros_SampleApp_CEF_Helper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC6091421B5D4EF0003D185F /* Zephyros_SampleApp_CEF Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zephyros_SampleApp_CEF Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC6091641B5D4F68003D185F /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "lib/Chromium Embedded Framework.framework"; sourceTree = SOURCE_ROOT; };
 		CC60916F1B5D50C0003D185F /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = sample/res/mac/main.cpp; sourceTree = SOURCE_ROOT; };
@@ -945,6 +1072,14 @@
 		CC60923B1B5E598A003D185F /* app */ = {isa = PBXFileReference; lastKnownFileType = folder; name = app; path = sample/app; sourceTree = SOURCE_ROOT; };
 		CC6092441B5E86FA003D185F /* resource_util_posix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resource_util_posix.cpp; path = src/base/cef/resource_util_posix.cpp; sourceTree = SOURCE_ROOT; };
 		CC8BA4531B4D568A006C8CAE /* Zephyros_WebView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Zephyros_WebView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCBDB3EB1B7A358A00D168AB /* Zephyros_CEF_Helper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Zephyros_CEF_Helper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCBDB4401B7A3C2C00D168AB /* Info_ZephyrosCEF_Helper.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_ZephyrosCEF_Helper.plist; path = src/res/mac/Info_ZephyrosCEF_Helper.plist; sourceTree = SOURCE_ROOT; };
+		CCBDB4561B7A4C9100D168AB /* licensing_stub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = licensing_stub.cpp; path = src/base/licensing_stub.cpp; sourceTree = SOURCE_ROOT; };
+		CCBDB4581B7A4CC200D168AB /* client_handler_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = client_handler_mac_stub.mm; path = src/base/cef/client_handler_mac_stub.mm; sourceTree = SOURCE_ROOT; };
+		CCBDB45F1B7A4F4700D168AB /* updater_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = updater_mac_stub.mm; path = src/native_extensions/updater_mac_stub.mm; sourceTree = "<group>"; };
+		CCBDB4611B7A4FB600D168AB /* zephyros_cef_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = zephyros_cef_mac_stub.mm; path = src/base/cef/zephyros_cef_mac_stub.mm; sourceTree = SOURCE_ROOT; };
+		CCBDB4631B7A518200D168AB /* pageimage_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = pageimage_mac_stub.mm; path = src/native_extensions/pageimage_mac_stub.mm; sourceTree = "<group>"; };
+		CCBDB4651B7A525100D168AB /* os_util_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = os_util_mac_stub.mm; path = src/native_extensions/os_util_mac_stub.mm; sourceTree = "<group>"; };
 		CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jsbridge.cpp; path = src/base/jsbridge.cpp; sourceTree = "<group>"; };
 		CCC018BC1B4FD9B70015B0FA /* jsbridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jsbridge.h; path = src/base/jsbridge.h; sourceTree = "<group>"; };
 		CCC018BD1B4FD9B70015B0FA /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = logging.h; path = src/base/logging.h; sourceTree = "<group>"; };
@@ -1033,7 +1168,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC608F591B5CF334003D185F /* AppKit.framework in Frameworks */,
-				CC608F5A1B5CF342003D185F /* Sparkle.framework in Frameworks */,
 				CC608F581B5CF327003D185F /* Zephyros_WebView.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1052,10 +1186,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC6091691B5D4FF1003D185F /* Zephyros_CEF.framework in Frameworks */,
-				CC6091621B5D4F5A003D185F /* liblibcef_dll_wrapper.a in Frameworks */,
 				CC6091631B5D4F62003D185F /* AppKit.framework in Frameworks */,
-				CC6091661B5D4FA9003D185F /* OpenGL.framework in Frameworks */,
-				CC60916A1B5D4FFB003D185F /* Chromium Embedded Framework.framework in Frameworks */,
+				CCBDB3DF1B7A29F600D168AB /* Chromium Embedded Framework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1070,10 +1202,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC6092301B5E5720003D185F /* liblibcef_dll_wrapper.a in Frameworks */,
-				CC6092311B5E5720003D185F /* Zephyros_CEF.framework in Frameworks */,
+				CCBDB43D1B7A38D900D168AB /* Zephyros_CEF_Helper.framework in Frameworks */,
 				CC6092321B5E5720003D185F /* AppKit.framework in Frameworks */,
-				CC6092331B5E5735003D185F /* Chromium Embedded Framework.framework in Frameworks */,
+				CCBDB3E31B7A30B300D168AB /* Chromium Embedded Framework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1092,6 +1223,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CCBDB3E71B7A358A00D168AB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CCBDB4351B7A37DF00D168AB /* AppKit.framework in Frameworks */,
+				CCBDB4361B7A37F200D168AB /* SystemConfiguration.framework in Frameworks */,
+				CCBDB4371B7A37F900D168AB /* IOKit.framework in Frameworks */,
+				CCBDB4381B7A380500D168AB /* Security.framework in Frameworks */,
+				CCBDB4391B7A381200D168AB /* WebKit.framework in Frameworks */,
+				CCBDB43A1B7A382200D168AB /* liblibcef_dll_wrapper.a in Frameworks */,
+				CCBDB43B1B7A383A00D168AB /* Chromium Embedded Framework.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CCF48A2A1B4D771200E4F261 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1102,9 +1247,10 @@
 				CC6092411B5E836D003D185F /* IOKit.framework in Frameworks */,
 				CC60923E1B5E8328003D185F /* Security.framework in Frameworks */,
 				CC60923D1B5E8322003D185F /* WebKit.framework in Frameworks */,
+				CCBDB3D01B7A0D1E00D168AB /* OpenGL.framework in Frameworks */,
 				CCF48A7D1B4D7F1C00E4F261 /* Sparkle.framework in Frameworks */,
 				CC6092431B5E83B3003D185F /* liblibcef_dll_wrapper.a in Frameworks */,
-				CC6091681B5D4FD3003D185F /* Chromium Embedded Framework.framework in Frameworks */,
+				CCBDB3E01B7A2A6E00D168AB /* Chromium Embedded Framework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1637,6 +1783,7 @@
 			children = (
 				CCF48A6C1B4D7B9F00E4F261 /* Zephyros */,
 				CCF48A2F1B4D771200E4F261 /* Zephyros_CEF */,
+				CCBDB3EC1B7A358A00D168AB /* Zephyros_CEF_Helper */,
 				CC8BA4551B4D568A006C8CAE /* Zephyros_WebView */,
 				CCF48A511B4D782000E4F261 /* Zephyros_AppStore */,
 				CC6091721B5D515A003D185F /* include */,
@@ -1659,7 +1806,8 @@
 				CC608F051B5CEFD6003D185F /* Zephyros_SampleApp_AppStore.app */,
 				CC608F291B5CEFF1003D185F /* Zephyros_SampleApp_CEF.app */,
 				CC608FAB1B5D495B003D185F /* liblibcef_dll_wrapper.a */,
-				CC6091421B5D4EF0003D185F /* Zephyros_SampleApp_CEF_Helper.app */,
+				CC6091421B5D4EF0003D185F /* Zephyros_SampleApp_CEF Helper.app */,
+				CCBDB3EB1B7A358A00D168AB /* Zephyros_CEF_Helper.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1684,11 +1832,38 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CCBDB3EC1B7A358A00D168AB /* Zephyros_CEF_Helper */ = {
+			isa = PBXGroup;
+			children = (
+				CCBDB4551B7A4C4300D168AB /* Base */,
+				CCBDB3ED1B7A358A00D168AB /* Supporting Files */,
+			);
+			path = Zephyros_CEF_Helper;
+			sourceTree = "<group>";
+		};
+		CCBDB3ED1B7A358A00D168AB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				CCBDB4401B7A3C2C00D168AB /* Info_ZephyrosCEF_Helper.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CCBDB4551B7A4C4300D168AB /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				CCBDB4581B7A4CC200D168AB /* client_handler_mac_stub.mm */,
+				CCBDB4561B7A4C9100D168AB /* licensing_stub.cpp */,
+			);
+			name = Base;
+			sourceTree = "<group>";
+		};
 		CCC018CB1B4FD9BD0015B0FA /* Base */ = {
 			isa = PBXGroup;
 			children = (
 				CC608FA51B5D441B003D185F /* zephyros_cef.h */,
 				CC608F731B5D275F003D185F /* zephyros_cef_mac.mm */,
+				CCBDB4611B7A4FB600D168AB /* zephyros_cef_mac_stub.mm */,
 				CC608F741B5D275F003D185F /* cef_app.cpp */,
 				CC608F761B5D275F003D185F /* client_app.cpp */,
 				CC608F771B5D275F003D185F /* client_app.h */,
@@ -1888,13 +2063,16 @@
 				CCC018DF1B4FD9D20015B0FA /* network_util_mac.mm */,
 				CCC018E11B4FD9D20015B0FA /* network_util.h */,
 				CCC018E21B4FD9D20015B0FA /* os_util_mac.mm */,
+				CCBDB4651B7A525100D168AB /* os_util_mac_stub.mm */,
 				CCC018E41B4FD9D20015B0FA /* os_util.h */,
 				CCC018E51B4FD9D20015B0FA /* pageimage_mac.mm */,
+				CCBDB4631B7A518200D168AB /* pageimage_mac_stub.mm */,
 				CCC018E71B4FD9D20015B0FA /* pageimage.h */,
 				CCC018E81B4FD9D20015B0FA /* path.cpp */,
 				CCC018E91B4FD9D20015B0FA /* path.h */,
 				CCC018EC1B4FD9D20015B0FA /* process_manager.h */,
 				CCC018ED1B4FD9D20015B0FA /* updater_mac.mm */,
+				CCBDB45F1B7A4F4700D168AB /* updater_mac_stub.mm */,
 				CCC018EF1B4FD9D20015B0FA /* updater.h */,
 			);
 			name = "Native Extensions";
@@ -2074,6 +2252,49 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CCBDB3E81B7A358A00D168AB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CCBDB42D1B7A373500D168AB /* app.h in Headers */,
+				CCBDB40E1B7A36B700D168AB /* NSData+Base64.h in Headers */,
+				CCBDB4151B7A36DC00D168AB /* browser.h in Headers */,
+				CCBDB4521B7A4BA100D168AB /* util.h in Headers */,
+				CCBDB4051B7A369200D168AB /* base32.h in Headers */,
+				CCBDB4301B7A374B00D168AB /* licensing.h in Headers */,
+				CCBDB42B1B7A372F00D168AB /* zephyros_impl.h in Headers */,
+				CCBDB4491B7A4B8400D168AB /* client_handler.h in Headers */,
+				CCBDB41D1B7A36F500D168AB /* image_util_mac.h in Headers */,
+				CCBDB45A1B7A4EC300D168AB /* ZPYMenu.h in Headers */,
+				CCBDB40D1B7A36B300D168AB /* MurmurHash3.h in Headers */,
+				CCBDB44C1B7A4B8D00D168AB /* jsbridge_v8.h in Headers */,
+				CCBDB4271B7A371300D168AB /* process_manager.h in Headers */,
+				CCBDB4241B7A370900D168AB /* pageimage.h in Headers */,
+				CCBDB4171B7A36E200D168AB /* custom_url_manager.h in Headers */,
+				CCBDB41C1B7A36F200D168AB /* file_watcher.h in Headers */,
+				CCBDB4541B7A4BAA00D168AB /* v8_util.h in Headers */,
+				CCBDB4191B7A36E900D168AB /* file_util.h in Headers */,
+				CCBDB4101B7A36BE00D168AB /* Zephyros.h in Headers */,
+				CCBDB4261B7A371000D168AB /* path.h in Headers */,
+				CCBDB45C1B7A4EC900D168AB /* ZPYMenuItem.h in Headers */,
+				CCBDB44B1B7A4B8A00D168AB /* extension_handler.h in Headers */,
+				CCBDB40B1B7A36AC00D168AB /* GetPrimaryMACAddress.h in Headers */,
+				CCBDB4461B7A4B7300D168AB /* client_app.h in Headers */,
+				CCBDB45E1B7A4F2C00D168AB /* updater.h in Headers */,
+				CCBDB4331B7A375600D168AB /* logging.h in Headers */,
+				CCBDB4321B7A375300D168AB /* jsbridge.h in Headers */,
+				CCBDB4511B7A4B9E00D168AB /* string_util.h in Headers */,
+				CCBDB4341B7A375900D168AB /* types.h in Headers */,
+				CCBDB4071B7A369C00D168AB /* base64.h in Headers */,
+				CCBDB4441B7A4B0400D168AB /* zephyros_cef.h in Headers */,
+				CCBDB4201B7A36FE00D168AB /* network_util.h in Headers */,
+				CCBDB4121B7A36D100D168AB /* native_extensions.h in Headers */,
+				CCBDB44F1B7A4B9700D168AB /* resource_util.h in Headers */,
+				CCBDB4221B7A370300D168AB /* os_util.h in Headers */,
+				CCBDB4081B7A36A200D168AB /* EMKeychainItem.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CCF48A2B1B4D771200E4F261 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2208,6 +2429,10 @@
 				CC608F251B5CEFF1003D185F /* Sources */,
 				CC608F261B5CEFF1003D185F /* Frameworks */,
 				CC608F271B5CEFF1003D185F /* Resources */,
+				CCBDB3C51B79FDAE00D168AB /* Embed Frameworks */,
+				CCBDB3DE1B7A292500D168AB /* Fix Framework Path */,
+				CCBDB3E11B7A2D7500D168AB /* Make more helpers */,
+				CCBDB3E21B7A2DB000D168AB /* Change Mach-O Flags */,
 			);
 			buildRules = (
 			);
@@ -2238,23 +2463,25 @@
 			productReference = CC608FAB1B5D495B003D185F /* liblibcef_dll_wrapper.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		CC6091411B5D4EF0003D185F /* Zephyros_SampleApp_CEF_Helper */ = {
+		CC6091411B5D4EF0003D185F /* Zephyros_SampleApp_CEF Helper */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CC60915C1B5D4EF1003D185F /* Build configuration list for PBXNativeTarget "Zephyros_SampleApp_CEF_Helper" */;
+			buildConfigurationList = CC60915C1B5D4EF1003D185F /* Build configuration list for PBXNativeTarget "Zephyros_SampleApp_CEF Helper" */;
 			buildPhases = (
 				CC60913E1B5D4EF0003D185F /* Sources */,
 				CC60913F1B5D4EF0003D185F /* Frameworks */,
 				CC6091401B5D4EF0003D185F /* Resources */,
+				CCBDB3D21B7A127F00D168AB /* Embed Frameworks */,
+				CCBDB3E41B7A315C00D168AB /* Fix Framework Path */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				CC60922D1B5E5702003D185F /* PBXTargetDependency */,
+				CCBDB43F1B7A38F900D168AB /* PBXTargetDependency */,
 				CC60922F1B5E5702003D185F /* PBXTargetDependency */,
 			);
-			name = Zephyros_SampleApp_CEF_Helper;
+			name = "Zephyros_SampleApp_CEF Helper";
 			productName = Zephyros_SampleApp_CEF_Helper;
-			productReference = CC6091421B5D4EF0003D185F /* Zephyros_SampleApp_CEF_Helper.app */;
+			productReference = CC6091421B5D4EF0003D185F /* Zephyros_SampleApp_CEF Helper.app */;
 			productType = "com.apple.product-type.application";
 		};
 		CC8BA4521B4D568A006C8CAE /* Zephyros_WebView */ = {
@@ -2265,6 +2492,7 @@
 				CC8BA44F1B4D568A006C8CAE /* Frameworks */,
 				CC8BA4501B4D568A006C8CAE /* Headers */,
 				CC8BA4511B4D568A006C8CAE /* Resources */,
+				CCBDB3CC1B7A0A6100D168AB /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2275,6 +2503,25 @@
 			productReference = CC8BA4531B4D568A006C8CAE /* Zephyros_WebView.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		CCBDB3EA1B7A358A00D168AB /* Zephyros_CEF_Helper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CCBDB3FE1B7A358A00D168AB /* Build configuration list for PBXNativeTarget "Zephyros_CEF_Helper" */;
+			buildPhases = (
+				CCBDB3E61B7A358A00D168AB /* Sources */,
+				CCBDB3E71B7A358A00D168AB /* Frameworks */,
+				CCBDB3E81B7A358A00D168AB /* Headers */,
+				CCBDB3E91B7A358A00D168AB /* Resources */,
+				CCBDB43C1B7A38AC00D168AB /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Zephyros_CEF_Helper;
+			productName = Zephyros_CEF_Helper;
+			productReference = CCBDB3EB1B7A358A00D168AB /* Zephyros_CEF_Helper.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		CCF48A2D1B4D771200E4F261 /* Zephyros_CEF */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CCF48A411B4D771200E4F261 /* Build configuration list for PBXNativeTarget "Zephyros_CEF" */;
@@ -2283,6 +2530,8 @@
 				CCF48A2A1B4D771200E4F261 /* Frameworks */,
 				CCF48A2B1B4D771200E4F261 /* Headers */,
 				CCF48A2C1B4D771200E4F261 /* Resources */,
+				CCBDB3CE1B7A0CA800D168AB /* Embed Frameworks */,
+				CCBDB3D91B7A188A00D168AB /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -2338,6 +2587,9 @@
 					CC8BA4521B4D568A006C8CAE = {
 						CreatedOnToolsVersion = 6.4;
 					};
+					CCBDB3EA1B7A358A00D168AB = {
+						CreatedOnToolsVersion = 6.4;
+					};
 					CCF48A2D1B4D771200E4F261 = {
 						CreatedOnToolsVersion = 6.4;
 					};
@@ -2360,11 +2612,12 @@
 			projectRoot = "";
 			targets = (
 				CCF48A2D1B4D771200E4F261 /* Zephyros_CEF */,
+				CCBDB3EA1B7A358A00D168AB /* Zephyros_CEF_Helper */,
 				CC8BA4521B4D568A006C8CAE /* Zephyros_WebView */,
 				CCF48A4F1B4D782000E4F261 /* Zephyros_AppStore */,
 				CC608FAA1B5D495B003D185F /* libcef_dll_wrapper */,
 				CC608F281B5CEFF1003D185F /* Zephyros_SampleApp_CEF */,
-				CC6091411B5D4EF0003D185F /* Zephyros_SampleApp_CEF_Helper */,
+				CC6091411B5D4EF0003D185F /* Zephyros_SampleApp_CEF Helper */,
 				CC608EE01B5CEFA7003D185F /* Zephyros_SampleApp_WebView */,
 				CC608F041B5CEFD6003D185F /* Zephyros_SampleApp_AppStore */,
 			);
@@ -2378,7 +2631,7 @@
 			files = (
 				CC608F4D1B5CF160003D185F /* Images.xcassets in Resources */,
 				CC608F4A1B5CF0CE003D185F /* app in Resources */,
-				CC608F4B1B5CF15A003D185F /* MainMenu.xib in Resources */,
+				CCBDB3D81B7A160200D168AB /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2415,6 +2668,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CCBDB3E91B7A358A00D168AB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CCBDB4411B7A3C2C00D168AB /* Info_ZephyrosCEF_Helper.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CCF48A2C1B4D771200E4F261 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2432,6 +2693,91 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CCBDB3D91B7A188A00D168AB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec install_name_tool -change \"@executable_path/Chromium Embedded Framework\" \"@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\nexit 1";
+		};
+		CCBDB3DE1B7A292500D168AB /* Fix Framework Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Fix Framework Path";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec install_name_tool -change \"@executable_path/Chromium Embedded Framework\" \"@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\nexit 1";
+		};
+		CCBDB3E11B7A2D7500D168AB /* Make more helpers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Make more helpers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec tools/make_more_helpers.sh Frameworks Zephyros_SampleApp_CEF\nexit 1";
+		};
+		CCBDB3E21B7A2DB000D168AB /* Change Mach-O Flags */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Change Mach-O Flags";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec tools/change_mach_o_flags_from_xcode.sh\nexit 1";
+		};
+		CCBDB3E41B7A315C00D168AB /* Fix Framework Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Fix Framework Path";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec install_name_tool -change \"@executable_path/Chromium Embedded Framework\" \"@executable_path/../../../../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\nexit 1";
+		};
+		CCBDB43C1B7A38AC00D168AB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "exec install_name_tool -change \"@executable_path/Chromium Embedded Framework\" \"@executable_path/../../../../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"\nexit 1";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CC608EDD1B5CEFA7003D185F /* Sources */ = {
@@ -2622,6 +2968,47 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CCBDB3E61B7A358A00D168AB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CCBDB4641B7A518200D168AB /* pageimage_mac_stub.mm in Sources */,
+				CCBDB44E1B7A4B9300D168AB /* resource_util_posix.cpp in Sources */,
+				CCBDB41A1B7A36EC00D168AB /* file_watcher_mac.mm in Sources */,
+				CCBDB40A1B7A36A900D168AB /* GetPrimaryMACAddress.cpp in Sources */,
+				CCBDB4251B7A370D00D168AB /* path.cpp in Sources */,
+				CCBDB4531B7A4BA700D168AB /* v8_util.cpp in Sources */,
+				CCBDB42A1B7A372200D168AB /* zephyros_impl.cpp in Sources */,
+				CCBDB4141B7A36D800D168AB /* browser.cpp in Sources */,
+				CCBDB44D1B7A4B9000D168AB /* resource_util_mac.mm in Sources */,
+				CCBDB4311B7A374E00D168AB /* jsbridge.cpp in Sources */,
+				CCBDB4111B7A36CD00D168AB /* native_extensions.cpp in Sources */,
+				CCBDB4621B7A4FB600D168AB /* zephyros_cef_mac_stub.mm in Sources */,
+				CCBDB4181B7A36E600D168AB /* file_util_mac.mm in Sources */,
+				CCBDB4601B7A4F4700D168AB /* updater_mac_stub.mm in Sources */,
+				CCBDB42C1B7A373200D168AB /* app_mac.mm in Sources */,
+				CCBDB41E1B7A36F800D168AB /* image_util_mac.mm in Sources */,
+				CCBDB4131B7A36D400D168AB /* browser_mac.mm in Sources */,
+				CCBDB4591B7A4CC200D168AB /* client_handler_mac_stub.mm in Sources */,
+				CCBDB41F1B7A36FB00D168AB /* network_util_mac.mm in Sources */,
+				CCBDB40F1B7A36BA00D168AB /* NSData+Base64.mm in Sources */,
+				CCBDB41B1B7A36EF00D168AB /* file_watcher.cpp in Sources */,
+				CCBDB4481B7A4B7E00D168AB /* client_handler.cpp in Sources */,
+				CCBDB45B1B7A4EC600D168AB /* ZPYMenu.m in Sources */,
+				CCBDB4061B7A369800D168AB /* base64.cpp in Sources */,
+				CCBDB4041B7A368C00D168AB /* base32.cpp in Sources */,
+				CCBDB4571B7A4C9100D168AB /* licensing_stub.cpp in Sources */,
+				CCBDB4661B7A525100D168AB /* os_util_mac_stub.mm in Sources */,
+				CCBDB4501B7A4B9A00D168AB /* string_util.cpp in Sources */,
+				CCBDB4091B7A36A500D168AB /* EMKeychainItem.m in Sources */,
+				CCBDB44A1B7A4B8700D168AB /* extension_handler.cpp in Sources */,
+				CCBDB4161B7A36DF00D168AB /* custom_url_manager.cpp in Sources */,
+				CCBDB45D1B7A4ECC00D168AB /* ZPYMenuItem.mm in Sources */,
+				CCBDB4451B7A4B7000D168AB /* client_app.cpp in Sources */,
+				CCBDB40C1B7A36B000D168AB /* MurmurHash3.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CCF48A291B4D771200E4F261 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2715,7 +3102,7 @@
 		};
 		CC60916E1B5D5022003D185F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CC6091411B5D4EF0003D185F /* Zephyros_SampleApp_CEF_Helper */;
+			target = CC6091411B5D4EF0003D185F /* Zephyros_SampleApp_CEF Helper */;
 			targetProxy = CC60916D1B5D5022003D185F /* PBXContainerItemProxy */;
 		};
 		CC6092271B5E5601003D185F /* PBXTargetDependency */ = {
@@ -2733,15 +3120,15 @@
 			target = CCF48A2D1B4D771200E4F261 /* Zephyros_CEF */;
 			targetProxy = CC60922A1B5E565D003D185F /* PBXContainerItemProxy */;
 		};
-		CC60922D1B5E5702003D185F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CCF48A2D1B4D771200E4F261 /* Zephyros_CEF */;
-			targetProxy = CC60922C1B5E5702003D185F /* PBXContainerItemProxy */;
-		};
 		CC60922F1B5E5702003D185F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CC608FAA1B5D495B003D185F /* libcef_dll_wrapper */;
 			targetProxy = CC60922E1B5E5702003D185F /* PBXContainerItemProxy */;
+		};
+		CCBDB43F1B7A38F900D168AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CCBDB3EA1B7A358A00D168AB /* Zephyros_CEF_Helper */;
+			targetProxy = CCBDB43E1B7A38F900D168AB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2761,7 +3148,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2786,7 +3173,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2811,7 +3198,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					OS_MACOSX,
@@ -2833,7 +3220,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					OS_MACOSX,
@@ -2855,7 +3242,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2882,7 +3269,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3023,7 +3410,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3050,7 +3437,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3159,7 +3546,7 @@
 		CC8BA46A1B4D568A006C8CAE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -3192,7 +3579,7 @@
 		CC8BA46B1B4D568A006C8CAE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -3215,6 +3602,72 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/res/mac/Info_ZephyrosWebView.plist";
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		CCBDB3FF1B7A358A00D168AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					USE_CEF,
+					OS_MACOSX,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					.,
+					src,
+					lib/cef,
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/src/res/mac/Info_ZephyrosCEF_Helper.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		CCBDB4001B7A358A00D168AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					USE_CEF,
+					OS_MACOSX,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					.,
+					src,
+					lib/cef,
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/src/res/mac/Info_ZephyrosCEF_Helper.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -3358,6 +3811,7 @@
 				CC608EFD1B5CEFA7003D185F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CC608F1F1B5CEFD6003D185F /* Build configuration list for PBXNativeTarget "Zephyros_SampleApp_AppStore" */ = {
 			isa = XCConfigurationList;
@@ -3366,6 +3820,7 @@
 				CC608F211B5CEFD6003D185F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CC608F431B5CEFF2003D185F /* Build configuration list for PBXNativeTarget "Zephyros_SampleApp_CEF" */ = {
 			isa = XCConfigurationList;
@@ -3374,6 +3829,7 @@
 				CC608F451B5CEFF2003D185F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CC608FAC1B5D495B003D185F /* Build configuration list for PBXNativeTarget "libcef_dll_wrapper" */ = {
 			isa = XCConfigurationList;
@@ -3382,14 +3838,16 @@
 				CC608FAE1B5D495B003D185F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
-		CC60915C1B5D4EF1003D185F /* Build configuration list for PBXNativeTarget "Zephyros_SampleApp_CEF_Helper" */ = {
+		CC60915C1B5D4EF1003D185F /* Build configuration list for PBXNativeTarget "Zephyros_SampleApp_CEF Helper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CC60915D1B5D4EF1003D185F /* Debug */,
 				CC60915E1B5D4EF1003D185F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CC8BA44D1B4D568A006C8CAE /* Build configuration list for PBXProject "Zephyros" */ = {
 			isa = XCConfigurationList;
@@ -3408,6 +3866,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		CCBDB3FE1B7A358A00D168AB /* Build configuration list for PBXNativeTarget "Zephyros_CEF_Helper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CCBDB3FF1B7A358A00D168AB /* Debug */,
+				CCBDB4001B7A358A00D168AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		CCF48A411B4D771200E4F261 /* Build configuration list for PBXNativeTarget "Zephyros_CEF" */ = {
 			isa = XCConfigurationList;

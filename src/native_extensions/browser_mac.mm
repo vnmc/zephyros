@@ -50,7 +50,7 @@ void FindBrowsers(std::vector<Browser*>& browsers)
             appName = range.location == NSNotFound ? bundleID : [bundleID substringFromIndex: range.location + 1];
         }
         
-        NSString *version = [[bundle infoDictionary] objectForKey: @"CFBundleShortVersionString"];
+        NSString *appVersion = [[bundle infoDictionary] objectForKey: @"CFBundleShortVersionString"];
 
         // if "Parallels" is contained in the path, check whether the bundle identifier contains the name of a known browser
         if ([bundleID rangeOfString: @"parallels" options: NSCaseInsensitiveSearch].location != NSNotFound)
@@ -63,7 +63,7 @@ void FindBrowsers(std::vector<Browser*>& browsers)
         
         browsers.push_back(new Browser(
             [appName UTF8String],
-            version == nil ? "" : [version UTF8String],
+            appVersion != nil ? [appVersion UTF8String] : TEXT(""),
             [bundleID UTF8String],
             ImageUtil::NSImageToBase64EncodedPNG(image),
             [bundleID isEqualToString: strDefaultBrowser]

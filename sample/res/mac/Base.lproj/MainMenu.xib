@@ -670,8 +670,7 @@
         </menu>
         <window title="Zephyros Sample App" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="480" height="360"/>
+            <rect key="contentRect" x="1124" y="515" width="480" height="360"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
@@ -691,6 +690,7 @@
                     <constraint firstAttribute="trailing" secondItem="BNJ-8y-3X8" secondAttribute="trailing" id="KjR-iZ-Ach"/>
                 </constraints>
             </view>
+            <point key="canvasLocation" x="339" y="366"/>
         </window>
     </objects>
 </document>

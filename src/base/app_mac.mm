@@ -14,9 +14,14 @@ namespace Zephyros {
 namespace App {
     
     
-void QuitMessageLoop()
+void Quit()
 {
     [NSApp terminate: [NSApp delegate]];
+}
+    
+void QuitMessageLoop()
+{
+    App::Quit();
 }
     
 void Alert(String title, String msg, AlertStyle style)
@@ -51,9 +56,7 @@ void EndWait()
 
 String LocalizeString(String src)
 {
-    
-    NSString *nsStr = NSLocalizedString([NSString stringWithUTF8String:src.c_str()], nil);
-    return [nsStr UTF8String];
+    return [NSLocalizedString([NSString stringWithUTF8String:src.c_str()], nil) UTF8String];
 }
     
 void Log(String msg)

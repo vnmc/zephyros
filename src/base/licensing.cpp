@@ -154,7 +154,6 @@ bool LicenseManager::ParseResponse(String url, std::string data, String errorMsg
     
 		std::string respMsg = objResponse.find("message") != objResponse.end() ? objResponse["message"].get<std::string>() : "";
 		msg.append(respMsg.begin(), respMsg.end());
-		msg.append(TTEXT("\n\nPlease try again later."));
     
 	    App::Alert(title, msg, App::AlertStyle::AlertError);
 		return false;
@@ -243,10 +242,6 @@ int LicenseManager::Activate(String name, String company, String licenseKey)
 		msgSuccess += Zephyros::g_szAppName;
 		msgSuccess += TEXT(".");
         App::Alert(title, msgSuccess, App::AlertStyle::AlertInfo);
-
-#ifdef OS_WIN
-        App::RemoveDemoMenuItems(App::GetMainHwnd());
-#endif
     }
 
     m_canStartApp = ret;

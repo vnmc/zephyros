@@ -38,10 +38,6 @@ void BeginWait()
 void EndWait()
 {
 }
-
-void RemoveDemoMenuItems(CefWindowHandle wnd)
-{
-}
     
 void Log(String msg)
 {

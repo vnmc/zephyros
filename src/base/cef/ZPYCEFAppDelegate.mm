@@ -45,7 +45,12 @@ extern bool g_isWindowBeingLoaded;
 - (id) init
 {
     self = [super init];
-    self.updater = [[SUUpdater alloc] init];
+    
+    if (_tcslen(Zephyros::GetUpdaterURL()) > 0)
+    {
+        self.updater = [[SUUpdater alloc] init];
+        self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
+    }
     
     // TODO: check if this works (not too early)
     // register ourselves as delegate for the notification center
@@ -92,11 +97,11 @@ extern bool g_isWindowBeingLoaded;
     {
         NSDictionary *dictWndRect = [NSKeyedUnarchiver unarchiveObjectWithData: dataDefaults];
         rectWindow = NSMakeRect(
-                                [(NSNumber*)[dictWndRect objectForKey: @"x"] doubleValue],
-                                [(NSNumber*)[dictWndRect objectForKey: @"y"] doubleValue],
-                                [(NSNumber*)[dictWndRect objectForKey: @"w"] doubleValue],
-                                [(NSNumber*)[dictWndRect objectForKey: @"h"] doubleValue]
-                                );
+            [(NSNumber*)[dictWndRect objectForKey: @"x"] doubleValue],
+            [(NSNumber*)[dictWndRect objectForKey: @"y"] doubleValue],
+            [(NSNumber*)[dictWndRect objectForKey: @"w"] doubleValue],
+            [(NSNumber*)[dictWndRect objectForKey: @"h"] doubleValue]
+        );
         
         if (rectWindow.origin.x + rectWindow.size.width > rectScreen.size.width)
             rectWindow.origin.x = rectScreen.size.width - rectWindow.size.width;

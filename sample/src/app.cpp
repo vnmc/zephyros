@@ -10,14 +10,16 @@
 #include "app.h"
 
 #include "path.h"
+
+// TODO remove this somehow...
+#if USE_CEF
 #include "client_handler.h"
 #include "extension_handler.h"
+#endif
 
 
 void StartApplication(int argc, const char* argv[])
 {
-    Zephyros::Init(argc, argv, TEXT("ZephyrosSampleApp"), TEXT("1.0.0"));
-    
     Zephyros::LicenseManagerInfo info;
     memset(&info, 0, sizeof(Zephyros::LicenseManagerInfo));
     
@@ -46,4 +48,7 @@ void StartApplication(int argc, const char* argv[])
 #endif
     
     //    Zephyros::SetNativeExtension();
+
+
+    Zephyros::Init(argc, argv, TEXT("ZephyrosSampleApp"), TEXT("1.0.0"));
 }

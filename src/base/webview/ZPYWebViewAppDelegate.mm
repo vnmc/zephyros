@@ -86,8 +86,11 @@ JSContextRef g_ctx = NULL;
     }
     
     // create and initialize the updater
-    self.updater = [[SUUpdater alloc] init];
-    self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
+    if (_tcslen(Zephyros::GetUpdaterURL()) > 0)
+    {
+        self.updater = [[SUUpdater alloc] init];
+        self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
+    }
 #endif
     
     [self createMenuItems];

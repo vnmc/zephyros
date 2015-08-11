@@ -198,10 +198,24 @@
 
 /**
  * Create extra menu items.
+ * Subclasses should override if desired
  */
 - (void) createMenuItems
 {
-    // subclasses should override if desired
+#ifndef APPSTORE
+    if (_tcslen(Zephyros::GetUpdaterURL()) > 0)
+    {
+        NSMenu *appMenu = [[[NSApp mainMenu] itemAtIndex: 0] submenu];
+    
+        // create the "check for updates" menu item
+        NSMenuItem *checkUpdatesMenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Check for Updates", @"Check for Updates")
+                                                                      action: @selector(checkForUpdates:)
+                                                               keyEquivalent: @"u"];
+        checkUpdatesMenuItem.keyEquivalentModifierMask = NSShiftKeyMask | NSCommandKeyMask;
+        checkUpdatesMenuItem.target = self.updater;
+        [appMenu insertItem: checkUpdatesMenuItem atIndex: 1];
+    }
+#endif
 }
 
 /**
