@@ -2,8 +2,10 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+#include "util/string_util.h"
+
+#ifdef USE_CEF
 #include "lib/cef/include/cef_request.h"
-#include "base/cef/string_util.h"
 
 
 void DumpRequestContents(CefRefPtr<CefRequest> request, String& str)
@@ -62,6 +64,8 @@ void DumpRequestContents(CefRefPtr<CefRequest> request, String& str)
 
     str = ss.str();
 }
+#endif
+
 
 String StringReplace(const String& str, const String& from, const String& to)
 {

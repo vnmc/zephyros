@@ -54,11 +54,6 @@ void EndWait()
 {
 }
 
-String LocalizeString(String src)
-{
-    return [NSLocalizedString([NSString stringWithUTF8String:src.c_str()], nil) UTF8String];
-}
-    
 void Log(String msg)
 {
     NSLog(@"%@", [NSString stringWithUTF8String: msg.c_str()]);

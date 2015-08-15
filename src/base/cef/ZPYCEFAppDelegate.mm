@@ -62,8 +62,9 @@ extern bool g_isWindowBeingLoaded;
 - (void) createApp: (id) object
 {
     NSApplication* app = [NSApplication sharedApplication];
-    [NSBundle loadNibNamed: @"MainMenu" owner: NSApp];
-    
+    NSArray* tl;
+    [[NSBundle mainBundle] loadNibNamed: @"MainMenu" owner: app topLevelObjects: &tl];
+
     // set the delegate for application events
     [app setDelegate: self];
     
@@ -71,7 +72,7 @@ extern bool g_isWindowBeingLoaded;
     [self applicationWillFinishLaunching: nil];
 
     Zephyros::LicenseManager* pMgr = Zephyros::GetLicenseManager();
-    if (pMgr != NULL && pMgr->CanStartApp())
+    if (pMgr == NULL || pMgr->CanStartApp())
         [self createMainWindow];
 }
 
@@ -120,7 +121,8 @@ extern bool g_isWindowBeingLoaded;
                                                                  styleMask: (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask )
                                                                    backing: NSBackingStoreBuffered
                                                                      defer: NO];
-    self.window.title = @"Ghostlab";
+    
+    self.window.title = [NSString stringWithUTF8String: Zephyros::GetAppName()];
     self.window.delegate = delegate;
     self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     
@@ -134,14 +136,14 @@ extern bool g_isWindowBeingLoaded;
     g_handler->SetMainHwnd(contentView);
     
     // create the browser view
-    CefWindowInfo window_info;
+    CefWindowInfo windowInfo;
     CefBrowserSettings settings;
     settings.web_security = STATE_DISABLED;
     
     // initialize window info to the defaults for a child window
-    window_info.SetAsChild(contentView, 0, 0, rectWindow.size.width, rectWindow.size.height);
+    windowInfo.SetAsChild(contentView, 0, 0, rectWindow.size.width, rectWindow.size.height);
     
-    CefBrowserHost::CreateBrowser(window_info, g_handler.get(), g_handler->GetStartupURL(), settings, NULL);
+    CefBrowserHost::CreateBrowser(windowInfo, g_handler.get(), Zephyros::GetAppURL(), settings, NULL);
     
     // size the window
     NSRect r = [self.window contentRectForFrameRect: self.window.frame];
@@ -164,7 +166,8 @@ extern bool g_isWindowBeingLoaded;
 //
 - (BOOL) applicationShouldHandleReopen: (NSApplication*) sender hasVisibleWindows: (BOOL) flag
 {
-    [super applicationShouldHandleReopen: sender hasVisibleWindows: flag];
+    if ([super applicationShouldHandleReopen: sender hasVisibleWindows: flag] == NO)
+        return NO;
     
     // TODO: check if super class implementation works with this
     if (!flag)

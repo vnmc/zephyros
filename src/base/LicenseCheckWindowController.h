@@ -18,9 +18,23 @@
 @property (weak) IBOutlet NSTextField *dialogTitle;
 @property (weak) IBOutlet NSTextField *dialogDescription;
 @property (weak) IBOutlet NSImageView *imageDemo;
-@property (weak) IBOutlet NSTextField *dialogPrevVersionLicenseHintTitle;
-@property (weak) IBOutlet NSTextField *dialogPrevVersionLicenseHintDescription;
-@property (weak) IBOutlet NSImageView *imagePrevVersionLicenseHintSheet;
+@property (weak) IBOutlet NSTextField *remainingTimeTitle;
+@property (weak) IBOutlet NSTextField *remainingTimeDescription;
+@property (weak) IBOutlet NSButton *purchaseLicense;
+@property (weak) IBOutlet NSButton *enterLicenseKey;
+
+@property (weak) IBOutlet NSTextField *enterLicenseKeyTitle;
+@property (weak) IBOutlet NSTextField *enterLicenseKeyFullName;
+@property (weak) IBOutlet NSTextField *enterLicenseKeyOrganization;
+@property (weak) IBOutlet NSTextField *enterLicenseKeyLicenseKey;
+@property (weak) IBOutlet NSButton *enterLicenseKeyCancel;
+@property (weak) IBOutlet NSButton *enterLicenseKeyActivate;
+
+@property (weak) IBOutlet NSTextField *prevVersionLicenseHintTitle;
+@property (weak) IBOutlet NSTextField *prevVersionLicenseHintDescription;
+@property (weak) IBOutlet NSImageView *prevVersionLicenseHintImage;
+@property (weak) IBOutlet NSButton *prevVersionLicenseHintBack;
+@property (weak) IBOutlet NSButton *prevVersionLicenseHintUpgrade;
 
 @property (copy) NSNumber *numDemoDays;
 @property (copy) NSNumber *numWarningDays;

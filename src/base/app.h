@@ -86,11 +86,6 @@ void BeginWait();
 void EndWait();
 
 /**
- * Localize a string.
- */
-String LocalizeString(String str);
-
-/**
  * Log.
  */
 void Log(String msg);
@@ -108,7 +103,7 @@ void SetMenuItemStatuses(JavaScript::Object items);
 /**
  * Returns a reference to the license manager or NULL if there is none.
  */
-LicenseManager* GetLicenseManager();
+Zephyros::LicenseManager* GetLicenseManager();
 
 } // namespace App
 } // namespace Zephyros

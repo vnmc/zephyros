@@ -100,6 +100,15 @@ JSContextRef g_ctx = NULL;
     [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate: self];
 }
 
+- (void) awakeFromNib
+{
+    if (self.window != nil)
+    {
+        self.window.title = [NSString stringWithUTF8String: Zephyros::GetAppName()];
+        self.window.frameAutosaveName = [NSString stringWithFormat: @"%s:MainWindow", Zephyros::GetAppName()];
+    }
+}
+
 //
 // This is called as soon as the script environment is ready in the webview
 //

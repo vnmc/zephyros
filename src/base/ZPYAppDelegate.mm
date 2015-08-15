@@ -75,7 +75,7 @@
 - (BOOL) applicationShouldHandleReopen: (NSApplication*) sender hasVisibleWindows: (BOOL) flag
 {
 #ifndef APPSTORE
-    if (Zephyros::GetLicenseManager() == nil || !Zephyros::GetLicenseManager()->CanStartApp())
+    if (Zephyros::GetLicenseManager() != nil && !Zephyros::GetLicenseManager()->CanStartApp())
         return NO;
 #endif
     

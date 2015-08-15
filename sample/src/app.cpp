@@ -18,23 +18,14 @@
 #endif
 
 
-void StartApplication(int argc, const char* argv[])
+int main(int argc, const char * argv[])
 {
-    Zephyros::LicenseManagerInfo info;
-    memset(&info, 0, sizeof(Zephyros::LicenseManagerInfo));
-    
-    info.currentLicenseInfo.productId = 1002;
-    info.currentLicenseInfo.pubkey = "";
-    info.numDemoDays = 7;
-    
-    /*
     Zephyros::LicenseManager* pLicenseManager = new Zephyros::LicenseManager();
-    pLicenseManager->SetLicenseInfo(1002, "");
-    pLicenseManager->AddObsoleteLicenseInfo(1001, "");
+    pLicenseManager->SetLicenseInfo(1002, TEXT(""));
+    pLicenseManager->AddObsoleteLicenseInfo(1001, TEXT(""));
     pLicenseManager->SetNumberOfDemoDays(7);
-     */
     
-    //Zephyros::SetLicenseManager(new Zephyros::LicenseManager(&info));
+    Zephyros::SetLicenseManager(pLicenseManager);
     
 #ifdef OS_MACOSX
     Zephyros::SetUpdaterURL("http://awesome.vanamco.com/Ghostlab2/update/ghostlab2-cast.xml");
@@ -48,7 +39,7 @@ void StartApplication(int argc, const char* argv[])
 #endif
     
     //    Zephyros::SetNativeExtension();
-
-
-    Zephyros::Init(argc, argv, TEXT("ZephyrosSampleApp"), TEXT("1.0.0"));
+    
+    
+    return Zephyros::Init(argc, argv, TEXT("ZephyrosSampleApp"), TEXT("1.0.0"), TEXT("app/index.html"));
 }

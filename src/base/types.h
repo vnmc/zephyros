@@ -11,7 +11,6 @@
 
 #define TCHAR        char
 #define TEXT(string) string
-#define TTEXT(str)   App::LocalizeString(str)
 
 #define _tprintf     printf
 #define _tcscpy      strcpy
@@ -37,8 +36,6 @@ typedef std::string String;
 typedef std::stringstream StringStream;
 #define TO_STRING std::to_string
 #endif
-
-#define TTEXT(str) App::LocalizeString(TEXT(str))
 
 #endif  // OS_WIN
 

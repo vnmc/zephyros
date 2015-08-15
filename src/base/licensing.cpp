@@ -3,11 +3,15 @@
 #endif
 
 #include "base/zephyros_impl.h"
+#include "base/zephyros_strings.h"
 #include "base/app.h"
 #include "base/licensing.h"
 
 #include "native_extensions/network_util.h"
 #include "native_extensions/os_util.h"
+
+
+#define DIE(msg) { Zephyros::App::Log(msg); Zephyros::App::Quit(); }
 
 
 namespace Zephyros {
@@ -19,7 +23,7 @@ namespace Zephyros {
 
 char LicenseData::gheim[] = "zM#>Vj|wx+RG>)t/a@'Y>Pg^VmPK$Tq<<RWLz8.H2~8\\#m!s+;]Pk%vQoiVH7ILTAl:h~Bi9~8%c*aHK/O2JS2X&f%Z%B~&@8-W-C.V[HrrgvdE~70l?jxv*1^')t@1\"";
 
-String LicenseData::Encrype(String s)
+String LicenseData::Encrypt(String s)
 {
     StringStream ss;
     
@@ -30,7 +34,7 @@ String LicenseData::Encrype(String s)
     return ss.str();
 }
 
-String LicenseData::Decrype(String s)
+String LicenseData::Decrypt(String s)
 {
     StringStream ss;
     StringStream ssChar;
@@ -56,47 +60,12 @@ String LicenseData::Decrype(String s)
 //////////////////////////////////////////////////////////////////////////
 // LicenseManager Implementation
     
-String LicenseManager::GetDialogTitle()
-{
-    if (m_info->dialogTitle)
-        return m_info->dialogTitle;
-    
-    StringStream ssTitle;
-    ssTitle << TTEXT("Thank you for trying") << TEXT(" ") << Zephyros::GetAppName() << TEXT(".");
-    return ssTitle.str();
-}
-    
-String LicenseManager::GetDialogDescription()
-{
-    if (m_info->dialogDescription)
-        return m_info->dialogDescription;
-    
-    StringStream ssDescription;
-    ssDescription << TTEXT("You are using") << TEXT(" ") << Zephyros::GetAppName() << TEXT(" ") <<
-        TTEXT("in demo mode.\nThe software will stop functioning when the end of the trial period is reached.");
-    return ssDescription.str();
-}
-    
-String LicenseManager::GetDialogPrevLicenseHintTitle()
-{
-    if (m_info->dialogPrevLicenseHintTitle)
-        return m_info->dialogPrevLicenseHintTitle;
-    return TTEXT("You need to upgrade your license.");
-}
-    
-String LicenseManager::GetDialogPrevLicenseHintDescription()
-{
-    if (m_info->dialogPrevLicenseHintDescription)
-        return m_info->dialogPrevLicenseHintDescription;
-    return TTEXT("You have entered an obsolete license key.\nThis version requires a new license key.");
-}
-
 String LicenseManager::GetDemoButtonCaption()
 {
-	bool isDemoStarted = m_licenseData.m_timestampLastDemoTokenUsed != TEXT("");
+	bool isDemoStarted = m_pLicenseData->m_timestampLastDemoTokenUsed != TEXT("");
 	if (!isDemoStarted)
-		return TTEXT("Start Demo");
-	return GetNumDaysLeft() > 0 ? TTEXT("Continue Demo") : TTEXT("Close");
+		return Zephyros::GetString(ZS_DEMODLG_START_DEMO);
+	return GetNumDaysLeft() > 0 ? Zephyros::GetString(ZS_DEMODLG_CONTINUE_DEMO) : Zephyros::GetString(ZS_DEMODLG_CLOSE);
 }
 
 String LicenseManager::GetDaysCountLabelText()
@@ -106,28 +75,25 @@ String LicenseManager::GetDaysCountLabelText()
 	if (numDaysLeft > 1)
 	{
 		StringStream ss;
-		ss << numDaysLeft << TTEXT(" days left.");
+        ss << numDaysLeft << TEXT(" ") << Zephyros::GetString(ZS_DEMODLG_DAYS_LEFT);
 		return ss.str();
 	}
 
 	if (numDaysLeft == 1)
-		return TTEXT("1 day left.");
+		return Zephyros::GetString(ZS_DEMODLG_1DAY_LEFT);
 
-	return TTEXT("No days left. Please purchase a license.");
+	return Zephyros::GetString(ZS_DEMODLG_NO_DAYS_LEFT);
 }
 
 bool LicenseManager::ParseResponse(String url, std::string data, String errorMsg, picojson::object& result)
 {
-	String title = Zephyros::g_szAppName;
-	title += TEXT(" ");
-	title += TTEXT("Licensing Error");
-
+	String title = Zephyros::GetString(ZS_LIC_LICERROR);
     String msg = errorMsg;
 
 	std::stringstream out;
 	if (!SendRequest(url, data, out))
     {
-        msg.append(TTEXT("Failed to contact the licensing server.\n\nPlease try again later."));
+        msg.append(Zephyros::GetString(ZS_LIC_CONNECTION_FAILED));
         App::Alert(title, msg, App::AlertStyle::AlertError);
         return false;
     }
@@ -136,7 +102,7 @@ bool LicenseManager::ParseResponse(String url, std::string data, String errorMsg
 	std::string err = picojson::parse(value, out);
 	if (err.length() > 0)
 	{
-		msg.append(TTEXT("Failed to parse response from the licensing server.\n\nPlease try again later."));
+		msg.append(Zephyros::GetString(ZS_LIC_PARSE_ERROR));
 		msg.append(err.begin(), err.end());
 		App::Alert(title, msg, App::AlertStyle::AlertError);
 		return false;
@@ -159,7 +125,7 @@ bool LicenseManager::ParseResponse(String url, std::string data, String errorMsg
 		return false;
 	}
 
-	msg.append(TTEXT("Unexpected response from the licensing server:\n"));
+	msg.append(Zephyros::GetString(ZS_LIC_UNEXPECTED_RESPONSE));
 	std::string resp = out.str();
 	msg.append(resp.begin(), resp.end());
 	App::Alert(title, msg, App::AlertStyle::AlertError);
@@ -174,25 +140,23 @@ bool LicenseManager::ParseResponse(String url, std::string data, String errorMsg
  */
 int LicenseManager::Activate(String name, String company, String licenseKey)
 {
-	String title = Zephyros::g_szAppName;
-	title += TEXT(" ");
-	title += TTEXT("Activation");
+    String title = Zephyros::GetString(ZS_LIC_ACTIVATION);
 
 	// verify that the entered data is OK
 	StringStream ssInfo;
-	ssInfo << name << TEXT("|") << company << TEXT("|") << m_info->currentLicenseInfo.productId;
-	if (!VerifyKey(licenseKey, ssInfo.str(), m_info->currentLicenseInfo.pubkey))
+	ssInfo << name << TEXT("|") << company << TEXT("|") << m_config.currentLicenseInfo.productId;
+	if (!VerifyKey(licenseKey, ssInfo.str(), m_config.currentLicenseInfo.pubkey))
 	{
         // check if the user entered an obsolete license;
         // in case it's an obsolete license, don't alert user - notification about upgrade
         // is handled via separate dialog
 
         bool isObsoleteLicense = false;
-        for (int i = 0; i < m_info->prevLicenseInfoCount; ++i)
+        for (LicenseInfo info : m_config.prevLicenseInfo)
         {
             StringStream ssInfoPrevVersion;
-            ssInfoPrevVersion << name << TEXT("|") << company << TEXT("|") << m_info->prevLicenseInfo[i].productId;
-            if (!VerifyKey(licenseKey, ssInfoPrevVersion.str(), m_info->prevLicenseInfo[i].pubkey))
+            ssInfoPrevVersion << name << TEXT("|") << company << TEXT("|") << info.productId;
+            if (!VerifyKey(licenseKey, ssInfoPrevVersion.str(), info.pubkey))
             {
                 isObsoleteLicense = true;
                 break;
@@ -201,7 +165,7 @@ int LicenseManager::Activate(String name, String company, String licenseKey)
         
         if (!isObsoleteLicense)
         {
-            App::Alert(title, TTEXT("This license key is not valid. Please try again."), App::AlertStyle::AlertError);
+            App::Alert(title, Zephyros::GetString(ZS_LIC_LICINVALID), App::AlertStyle::AlertError);
             return ACTIVATION_FAILED;
         }
         
@@ -215,33 +179,27 @@ int LicenseManager::Activate(String name, String company, String licenseKey)
 	ssData <<
 		"license=" << std::string(licenseKey.begin(), licenseKey.end()) <<
 		"&eth0=" << std::string(strMACAddr.begin(), strMACAddr.end()) <<
-		"&productcode=" << m_info->currentLicenseInfo.productId <<
+		"&productcode=" << m_config.currentLicenseInfo.productId <<
         "&os=" << std::string(strOS.begin(), strOS.end());
 	std::string strData = ssData.str();
 
 	App::BeginWait();
     picojson::object result;
 
-	String msg(TTEXT("Unfortunately, an error occurred during the activation of"));
-	msg += Zephyros::g_szAppName;
-	msg += TEXT(":\n\n");
-    
-	bool ret = ParseResponse(m_info->activationURL, strData, msg, result);
+	String msg = Zephyros::GetString(ZS_LIC_ACTIVATION_ERROR);
+	bool ret = ParseResponse(m_config.activationURL, strData, msg, result);
     App::EndWait();
 
     if (ret)
     {
         std::string cookie = result["activation"].get<std::string>();
-		m_licenseData.m_activationCookie = String(cookie.begin(), cookie.end());
-        m_licenseData.m_licenseKey = licenseKey;
-        m_licenseData.m_name = name;
-        m_licenseData.m_company = company;
-		m_licenseData.Save();
+		m_pLicenseData->m_activationCookie = String(cookie.begin(), cookie.end());
+        m_pLicenseData->m_licenseKey = licenseKey;
+        m_pLicenseData->m_name = name;
+        m_pLicenseData->m_company = company;
+		m_pLicenseData->Save();
         
-		String msgSuccess(TTEXT("Thank you for activating "));
-		msgSuccess += Zephyros::g_szAppName;
-		msgSuccess += TEXT(".");
-        App::Alert(title, msgSuccess, App::AlertStyle::AlertInfo);
+        App::Alert(title, Zephyros::GetString(ZS_LIC_ACTIVATION_SUCCESS), App::AlertStyle::AlertInfo);
     }
 
     m_canStartApp = ret;
@@ -255,7 +213,7 @@ int LicenseManager::ActivateFromURL(String url)
 	if (!LicenseManager::IsLicensingLink(url))
 		return ACTIVATION_FAILED;
         
-    StringStream ssUrl(url.c_str() + _tcslen(m_info->activationLinkPrefix));
+    StringStream ssUrl(url.c_str() + _tcslen(m_config.activationLinkPrefix));
     std::vector<String> parts;
     while (!ssUrl.eof())
     {
@@ -274,49 +232,64 @@ int LicenseManager::ActivateFromURL(String url)
 
 bool LicenseManager::Deactivate()
 {
-    if (m_licenseData.m_activationCookie.length() == 0 || m_licenseData.m_licenseKey.length() == 0)
+    if (!m_config.deactivationURL || m_pLicenseData->m_activationCookie.length() == 0 || m_pLicenseData->m_licenseKey.length() == 0)
         return false;
     
     std::stringstream ssData;
     String strMACAddr = NetworkUtil::GetPrimaryMACAddress();
     ssData <<
-        "license=" << std::string(m_licenseData.m_licenseKey.begin(), m_licenseData.m_licenseKey.end()) <<
+        "license=" << std::string(m_pLicenseData->m_licenseKey.begin(), m_pLicenseData->m_licenseKey.end()) <<
         "&eth0=" << std::string(strMACAddr.begin(), strMACAddr.end()) <<
-        "&productcode=" << m_info->currentLicenseInfo.productId;
+        "&productcode=" << m_config.currentLicenseInfo.productId;
     std::string strData = ssData.str();
 
-    String msg(TTEXT("Unfortunately, an error occurred during deactivating"));
-    msg += Zephyros::g_szAppName;
-    msg += TEXT(":\n\n");
-
     picojson::object result;
-    
-    bool ret = ParseResponse(m_info->deactivationURL, strData, msg, result);
+    bool ret = ParseResponse(m_config.deactivationURL, strData, Zephyros::GetString(ZS_LIC_DEACTIVATION_ERROR), result);
     
     if (ret)
     {
         // write new (empty) license data
-        m_licenseData.m_activationCookie = TEXT("");
-        m_licenseData.m_licenseKey = TEXT("");
-        m_licenseData.m_name = TEXT("");
-        m_licenseData.m_company = TEXT("");
-        m_licenseData.Save();
+        m_pLicenseData->m_activationCookie = TEXT("");
+        m_pLicenseData->m_licenseKey = TEXT("");
+        m_pLicenseData->m_name = TEXT("");
+        m_pLicenseData->m_company = TEXT("");
+        m_pLicenseData->Save();
 
         // show information message
-        String title = Zephyros::g_szAppName;
-        title += TEXT(" ");
-        title += TTEXT("Deactivation");
-
-        String msgSuccess(TTEXT("You have successfully deactivated "));
-        msgSuccess += Zephyros::g_szAppName;
-        msgSuccess += TEXT(".\n");
-        msgSuccess += TTEXT("The application will quit now.");
-
-        App::Alert(title, msgSuccess, App::AlertStyle::AlertInfo);
-        App::QuitMessageLoop();
+        App::Alert(Zephyros::GetString(ZS_LIC_DEACTIVATION), Zephyros::GetString(ZS_LIC_DEACTIVATION_SUCCESS), App::AlertStyle::AlertInfo);
+        App::Quit();
     }
     
     return ret;
+}
+    
+/**
+ * Starts the license manager.
+ */
+void LicenseManager::Start()
+{
+    // check the configuration
+    if (m_config.demoTokensURL == NULL || m_config.activationURL == NULL)
+        DIE(TEXT("You must call LicenseManager::SetAPIURLs before you can use the license manager."));
+    if (m_config.currentLicenseInfo.pubkey == NULL)
+        DIE(TEXT("The public key must not be NULL. Please set it using LicenseManager::SetLicenseInfo."));
+    if (m_config.licenseInfoFilename == NULL)
+        DIE(TEXT("The license info filename must not be NULL. Please set it using LicenseManager::SetLicenseInfoFilename."));
+        
+    // create and read the license data
+    if (m_pLicenseData == NULL)
+        m_pLicenseData = new LicenseData(m_config.licenseInfoFilename);
+        
+    m_canStartApp = false;
+        
+#ifdef OS_WIN
+    m_lastDemoValidityCheck = 0;
+#endif
+        
+    if (!IsActivated())
+        ShowDemoDialog();
+    else
+        m_canStartApp = true;
 }
 
 /**
@@ -333,13 +306,13 @@ bool LicenseManager::RequestDemoTokens(String strMACAddr)
 	String strOS = OSUtil::GetOSVersion();
 	ssData <<
 		"eth0=" << std::string(strMACAddr.begin(), strMACAddr.end()) <<
-		"&productcode=" << m_info->currentLicenseInfo.productId <<
+		"&productcode=" << m_config.currentLicenseInfo.productId <<
 		"&os=" << std::string(strOS.begin(), strOS.end());
 	std::string strData = ssData.str();
 
 	App::BeginWait();
     picojson::object result;
-	bool ret = ParseResponse(m_info->demoTokensURL, strData, TTEXT("Unfortunately, an error while retrieving a demo license from the licensing server:\n"), result);
+    bool ret = ParseResponse(m_config.demoTokensURL, strData, Zephyros::GetString(ZS_LIC_DEMO_ERROR), result);
     App::EndWait();
     
     if (ret)
@@ -351,11 +324,11 @@ bool LicenseManager::RequestDemoTokens(String strMACAddr)
 			for (picojson::value token : tokens)
 			{
 				std::string strToken = token.get<std::string>();
-				m_licenseData.m_demoTokens.push_back(String(strToken.begin(), strToken.end()));
+				m_pLicenseData->m_demoTokens.push_back(String(strToken.begin(), strToken.end()));
 			}
 		}
         
-		m_licenseData.Save();
+		m_pLicenseData->Save();
         
 		bool canContinueDemo = ContinueDemo();
 		if (!canContinueDemo)

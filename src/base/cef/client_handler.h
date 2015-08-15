@@ -169,17 +169,15 @@ public:
         return m_isClosing;
     }
     
-    // Returns the startup URL.
-    String GetStartupURL()
-    {
-        return m_startupURL;
-    }
-
     // Create an external browser window that loads the specified URL.
     static void LaunchExternalBrowser(const String& url);
 
 
-protected:    
+private:
+    void InitializeMIMETypes();
+
+
+protected:
     // The child browser window
     CefRefPtr<CefBrowser> m_browser;
 
@@ -205,9 +203,6 @@ protected:
     // If true DevTools will be opened in an external browser window.
     bool m_useExternalDevTools;
 
-    // The startup URL.
-    String m_startupURL;
-
     // Number of currently existing browser windows. The application will exit
     // when the number of windows reaches 0.
     static int m_browserCount;
@@ -215,15 +210,14 @@ protected:
     CefRefPtr<ClientExtensionHandler> m_clientExtensionHandler;
 
 private:
-	 // Lock used to protect members accessed on multiple threads. Make it mutable
+    std::map<String, String> m_mimeTypes;
+
+    // Lock used to protect members accessed on multiple threads. Make it mutable
 	// so that it can be used from const methods.
 	mutable base::Lock m_lock;
 
     // Include the default reference counting implementation.
     IMPLEMENT_REFCOUNTING(ClientHandler);
-    
-    // Include the default locking implementation.
-    //IMPLEMENT_LOCKING(ClientHandler);
 };
 
 } // namespace Zephyros

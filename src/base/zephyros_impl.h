@@ -22,28 +22,17 @@
 
 namespace Zephyros {
     
-    
-//////////////////////////////////////////////////////////////////////////
-// Global Variables
-
-extern TCHAR* g_szAppName;
-extern TCHAR* g_szAppVersion;
-extern TCHAR* g_szRegistryKey;
-extern TCHAR* g_szUpdaterURL;
-extern TCHAR* g_szLicenseInfoFilename;
-
-extern LicenseManager* g_pLicenseManager;   
-extern NativeExtensions* g_pNativeExtensions;
-    
 
 //////////////////////////////////////////////////////////////////////////
 // Zephyros Functions
 
-void Init(int argc, const char* argv[], const TCHAR* appName, const TCHAR* appVersion);
+int Init(int argc, const char* argv[], const TCHAR* appName, const TCHAR* appVersion, const TCHAR* appURL);
+int InitApplication(int argc, const char** argv);
 void Shutdown();
     
 const TCHAR* GetAppName();
 const TCHAR* GetAppVersion();
+const TCHAR* GetAppURL();
     
 const TCHAR* GetRegistryKey();
 void SetRegistryKey(const TCHAR* registryKey);
@@ -51,14 +40,14 @@ void SetRegistryKey(const TCHAR* registryKey);
 const TCHAR* GetUpdaterURL();
 void SetUpdaterURL(const TCHAR* url);
     
-const TCHAR* GetLicenseInfoFilename();
-void SetLicenseInfoFilename(const TCHAR* licenseInfoFilename);
-
 LicenseManager* GetLicenseManager();
 void SetLicenseManager(LicenseManager* pLicenseManager);
     
 NativeExtensions* GetNativeExtensions();
 void SetNativeExtensions(NativeExtensions* pNativeExtensions);
+    
+String GetString(int stringId);
+void SetString(int stringId, String str);
 
 } // namespace Zephyros
 

@@ -4,25 +4,18 @@
 // found in the LICENSE file.
 
 #import <Cocoa/Cocoa.h>
-#include <sstream>
+#import <sstream>
 
-#include "lib/cef/include/cef_app.h"
-#include "lib/cef/include/cef_application_mac.h"
-#include "lib/cef/include/cef_browser.h"
-#include "lib/cef/include/cef_frame.h"
-#include "lib/cef/include/cef_runnable.h"
+#import "lib/cef/include/cef_app.h"
+#import "lib/cef/include/cef_application_mac.h"
+#import "lib/cef/include/cef_browser.h"
+#import "lib/cef/include/cef_frame.h"
+#import "lib/cef/include/cef_runnable.h"
 
-#include "base/zephyros_impl.h"
-#include "base/app.h"
-
-#include "base/cef/client_app.h"
-//#include "client_handler.h"
-//#include "resource_util.h"
-//#include "string_util.h"
-//#include "extension_handler.h"
-//#include "licensing.h"
-
-#include "base/cef/ZPYCEFAppDelegate.h"
+#import "base/zephyros_impl.h"
+#import "base/app.h"
+#import "base/cef/client_app.h"
+#import "base/cef/ZPYCEFAppDelegate.h"
 
 
 // the global ClientHandler reference
@@ -78,7 +71,7 @@ ZPYCEFAppDelegate *g_appDelegate = nil;
 
 namespace Zephyros {
 
-int InitCEFApplication(int argc, const char* argv[])
+int InitApplication(int argc, const char* argv[])
 {
     CefMainArgs main_args(argc, (char**) argv);
     CefRefPtr<Zephyros::ClientApp> app(new Zephyros::ClientApp);
@@ -87,9 +80,6 @@ int InitCEFApplication(int argc, const char* argv[])
     int exit_code = CefExecuteProcess(main_args, app.get(), NULL);
     if (exit_code >= 0)
         return exit_code;
-
-    // initialize the AutoRelease pool
-//    NSAutoreleasePool* autopool = [[NSAutoreleasePool alloc] init];
 
     // initialize the ClientApplication instance
     [ClientApplication sharedApplication];
@@ -130,13 +120,6 @@ int InitCEFApplication(int argc, const char* argv[])
     // release the handler
     g_handler = NULL;
 
-    // release the delegate
-//    if (g_appDelegate != nil)
-//        [g_appDelegate release];
-    
-    // release the AutoRelease pool
-//    [autopool release];
-    
     return 0;
 }
     

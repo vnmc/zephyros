@@ -9,6 +9,7 @@
 #ifndef APPSTORE
 
 #import "base/zephyros_impl.h"
+#import "base/zephyros_strings.h"
 #import "base/licensing.h"
 #import "base/LicenseCheckWindowController.h"
 
@@ -22,7 +23,7 @@
     
     int numDemoDays = 0;
     if (Zephyros::GetLicenseManager())
-        numDemoDays = Zephyros::GetLicenseManager()->GetNumDemoDays();
+        numDemoDays = Zephyros::GetLicenseManager()->GetNumberOfDemoDays();
     
     self.numDemoDays = [NSNumber numberWithInt: numDemoDays];
     self.numWarningDays = [NSNumber numberWithInt: numDemoDays - 2];
@@ -33,13 +34,35 @@
 
 - (void) awakeFromNib
 {
-    self.dialogTitle.stringValue = [NSString stringWithUTF8String: Zephyros::GetLicenseManager()->GetDialogTitle().c_str()];
-    self.dialogDescription.stringValue = [NSString stringWithUTF8String: Zephyros::GetLicenseManager()->GetDialogDescription().c_str()];
+    self.window.title =[NSString stringWithUTF8String: Zephyros::GetString(ZS_DEMODLG_WNDTITLE).c_str()];
+    self.dialogTitle.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_DEMODLG_TITLE).c_str()];
+    self.dialogDescription.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_DEMODLG_DESCRIPTION).c_str()];
+    self.remainingTimeTitle.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_DEMODLG_REMAINING_TIME).c_str()];
+    self.remainingTimeDescription.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_DEMODLG_REMAINING_TIME_DESC).c_str()];
+    self.purchaseLicense.title = [NSString stringWithUTF8String: Zephyros::GetString(ZS_DEMODLG_PURCHASE_LICENSE).c_str()];
+    self.enterLicenseKey.title = [NSString stringWithUTF8String: Zephyros::GetString(ZS_DEMODLG_ENTER_LICKEY).c_str()];
     self.imageDemo.image = [NSApp applicationIconImage];
     
-    self.dialogPrevVersionLicenseHintTitle.stringValue = [NSString stringWithUTF8String: Zephyros::GetLicenseManager()->GetDialogPrevLicenseHintTitle().c_str()];
-    self.dialogPrevVersionLicenseHintDescription.stringValue = [NSString stringWithUTF8String: Zephyros::GetLicenseManager()->GetDialogPrevLicenseHintDescription().c_str()];
-    self.imagePrevVersionLicenseHintSheet.image = [NSApp applicationIconImage];
+    self.enterLicenseSheet.title = [NSString stringWithUTF8String: Zephyros::GetString(ZS_ENTERLICKEYDLG_WNDTITLE).c_str()];
+    self.enterLicenseKeyTitle.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_ENTERLICKEYDLG_TITLE).c_str()];
+    self.enterLicenseKeyFullName.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_ENTERLICKEYDLG_FULL_NAME).c_str()];
+    self.enterLicenseKeyOrganization.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_ENTERLICKEYDLG_ORGANIZATION).c_str()];
+    self.enterLicenseKeyLicenseKey.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_ENTERLICKEYDLG_LICKEY).c_str()];
+    self.enterLicenseKeyCancel.title = [NSString stringWithUTF8String: Zephyros::GetString(ZS_ENTERLICKEYDLG_CANCEL).c_str()];
+    self.enterLicenseKeyActivate.title = [NSString stringWithUTF8String: Zephyros::GetString(ZS_ENTERLICKEYDLG_ACTIVATE).c_str()];
+    
+    self.prevVersionLicenseHintSheet.title = [NSString stringWithUTF8String: Zephyros::GetString(ZS_PREVVERSIONDLG_WNDTITLE).c_str()];
+    self.prevVersionLicenseHintTitle.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_PREVVERSIONDLG_TITLE).c_str()];
+    self.prevVersionLicenseHintDescription.stringValue = [NSString stringWithUTF8String: Zephyros::GetString(ZS_PREVVERSIONDLG_DESCRIPTION).c_str()];
+    self.prevVersionLicenseHintBack.title =[NSString stringWithUTF8String: Zephyros::GetString(ZS_PREVVERSIONDLG_BACK).c_str()];
+    self.prevVersionLicenseHintUpgrade.title =[NSString stringWithUTF8String: Zephyros::GetString(ZS_PREVVERSIONDLG_UPGRADE).c_str()];
+    self.prevVersionLicenseHintImage.image = [NSApp applicationIconImage];
+    
+    if (Zephyros::GetLicenseManager()->GetShopURL() == NULL)
+        self.purchaseLicense.hidden = YES;
+    
+    if (Zephyros::GetLicenseManager()->GetUpgradeURL() == NULL)
+        self.prevVersionLicenseHintUpgrade.hidden = YES;
 }
 
 - (void) windowWillClose: (NSNotification*) notification
@@ -65,7 +88,7 @@
 - (IBAction) onContinueDemoClicked: (id) sender
 {
     int numDaysUsed = [_numDaysUsed intValue];
-    bool canContinue = numDaysUsed < Zephyros::GetLicenseManager()->GetNumDemoDays();
+    bool canContinue = numDaysUsed < Zephyros::GetLicenseManager()->GetNumberOfDemoDays();
     if (canContinue)
         canContinue = Zephyros::GetLicenseManager()->ContinueDemo();
     
@@ -99,11 +122,13 @@
 
 - (IBAction) onEnterLicenseActivateClicked: (id) sender
 {
-    switch(Zephyros::GetLicenseManager()->Activate(
+    int ret = Zephyros::GetLicenseManager()->Activate(
         _name == nil ? "" : [_name UTF8String],
         _organization == nil ? "" : [_organization UTF8String],
         _licenseKey == nil ? "" : [_licenseKey UTF8String]
-    ))
+    );
+    
+    switch(ret)
     {
     case ACTIVATION_SUCCEEDED:
         [NSApp endSheet: _enterLicenseSheet];

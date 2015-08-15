@@ -54,9 +54,7 @@ typedef struct
 typedef struct
 {
     LicenseInfo currentLicenseInfo;
-    
-    LicenseInfo* prevLicenseInfo;
-    int prevLicenseInfoCount;
+    std::vector<LicenseInfo> prevLicenseInfo;
     
     int numDemoDays;
     
@@ -68,14 +66,11 @@ typedef struct
     const TCHAR* upgradeURL;
     
     const TCHAR* activationLinkPrefix;
+    
+    const TCHAR* licenseInfoFilename;
 
     ReceiptChecker* pReceiptChecker;
-    
-    const TCHAR* dialogTitle;
-    const TCHAR* dialogDescription;
-    const TCHAR* dialogPrevLicenseHintTitle;
-    const TCHAR* dialogPrevLicenseHintDescription;
-} LicenseManagerInfo;
+} LicenseManagerConfig;
     
 } // namespace Zephyros
 
@@ -124,7 +119,7 @@ class LicenseData
 	friend class LicenseManager;
 
 public:
-	LicenseData();
+	LicenseData(const TCHAR* szLicenseInfoFilename);
 	inline bool GetDemoToken()
     {
         if (m_demoTokens.size() == 0)
@@ -146,8 +141,10 @@ public:
 private:
 	void Save();
     
-    static String Encrype(String s);
-    static String Decrype(String s);
+    static String Encrypt(String s);
+    static String Decrypt(String s);
+    
+    const TCHAR* m_szLicenseInfoFilename;
 
 	std::vector<String> m_demoTokens;
 	String m_timestampLastDemoTokenUsed;
@@ -174,32 +171,57 @@ public:
 class LicenseManager
 {
 public:
-	LicenseManager(LicenseManagerInfo* info);
+	LicenseManager();
 	~LicenseManager();
     
-    inline int GetNumDemoDays() { return m_info->numDemoDays; }
-    String GetDialogTitle();
-    String GetDialogDescription();
-    String GetDialogPrevLicenseHintTitle();
-    String GetDialogPrevLicenseHintDescription();
-    inline ReceiptChecker* GetReceiptChecker() { return m_info->pReceiptChecker; }
+    inline void SetLicenseInfo(int productId, const TCHAR* szPublicKey)
+    {
+        m_config.currentLicenseInfo.productId = productId;
+        m_config.currentLicenseInfo.pubkey = szPublicKey;
+    }
+    
+    inline void AddObsoleteLicenseInfo(int productId, const TCHAR* szPublicKey)
+    {
+        LicenseInfo info;
+        info.productId = productId;
+        info.pubkey = szPublicKey;
+        
+        m_config.prevLicenseInfo.push_back(info);
+    }
+    
+    inline int GetNumberOfDemoDays() { return m_config.numDemoDays; }
+    inline void SetNumberOfDemoDays(int numDemoDays) { m_config.numDemoDays = numDemoDays; }
+    
+    inline void SetAPIURLs(const TCHAR* demoTokensURL, const TCHAR* activationURL, const TCHAR* deactivationURL)
+    {
+        m_config.demoTokensURL = demoTokensURL;
+        m_config.activationURL = activationURL;
+        m_config.deactivationURL = deactivationURL;
+    }
+    
+    inline const TCHAR* GetShopURL() { return m_config.shopURL; }
+    inline void SetShopURL(const TCHAR* shopURL) { m_config.shopURL = shopURL; }
+    
+    inline const TCHAR* GetUpgradeURL() { return m_config.upgradeURL; }
+    inline void SetUpgradeURL(const TCHAR* upgradeURL) { m_config.upgradeURL = upgradeURL; }
+    
+    inline void SetActivationLinkPrefix(const TCHAR* activationLinkPrefix)
+    {
+        m_config.activationLinkPrefix = activationLinkPrefix;
+    }
+    
+    inline void SetLicenseInfoFilename(const TCHAR* licenseInfoFilename)
+    {
+        m_config.licenseInfoFilename = licenseInfoFilename;
+    }
+    
+    inline void SetReceiptChecker(ReceiptChecker* pReceiptChecker) { m_config.pReceiptChecker = pReceiptChecker; }
+    inline ReceiptChecker* GetReceiptChecker() { return m_config.pReceiptChecker; }
 
     /**
      * Starts the license manager.
      */
-	inline void Start()
-    {
-        m_canStartApp = false;
-        
-#ifdef OS_WIN
-        m_lastDemoValidityCheck = 0;
-#endif
-        
-        if (!IsActivated())
-            ShowDemoDialog();
-        else
-            m_canStartApp = true;
-    }
+    void Start();
 
 	bool RequestDemoTokens(String strMACAddr = TEXT(""));
     
@@ -216,11 +238,11 @@ public:
     
     inline bool IsLicensingLink(const TCHAR* url)
     {
-        if (!m_info->activationLinkPrefix || !url)
+        if (!m_config.activationLinkPrefix || !url)
             return false;
         
-        size_t len = _tcslen(m_info->activationLinkPrefix);
-        return _tcsnccmp(url, m_info->activationLinkPrefix, len) == 0;
+        size_t len = _tcslen(m_config.activationLinkPrefix);
+        return _tcsnccmp(url, m_config.activationLinkPrefix, len) == 0;
     }
 
     /**
@@ -231,14 +253,14 @@ public:
     inline bool ContinueDemo()
     {
         // has the demo been started yet? if not, request demo tokens
-        if (m_licenseData.m_demoTokens.size() == 0 && m_licenseData.m_timestampLastDemoTokenUsed == TEXT(""))
+        if (m_pLicenseData->m_demoTokens.size() == 0 && m_pLicenseData->m_timestampLastDemoTokenUsed == TEXT(""))
             return m_canStartApp = RequestDemoTokens();
         
-        if (!m_licenseData.GetDemoToken() || !VerifyAll(m_licenseData.m_demoTokens.at(0), NetworkUtil::GetAllMACAddresses(), m_info->currentLicenseInfo.pubkey))
+        if (!m_pLicenseData->GetDemoToken() || !VerifyAll(m_pLicenseData->m_demoTokens.at(0), NetworkUtil::GetAllMACAddresses(), m_config.currentLicenseInfo.pubkey))
         {
             // invalid token; destroy demo tokens
-            m_licenseData.m_demoTokens.clear();
-            m_licenseData.Save();
+            m_pLicenseData->m_demoTokens.clear();
+            m_pLicenseData->Save();
             m_canStartApp = false;
             return false;
         }
@@ -267,7 +289,7 @@ public:
         
         // consume a token if it isn't the same day
         m_canStartApp = false;
-        m_licenseData.GetDemoToken();
+        m_pLicenseData->GetDemoToken();
         ShowDemoDialog();
         return false;
     }
@@ -288,8 +310,8 @@ public:
 	inline bool IsActivated()
     {
         bool ret =
-            m_licenseData.m_activationCookie.length() > 0 &&
-            VerifyAll(m_licenseData.m_activationCookie, NetworkUtil::GetAllMACAddresses(), m_info->currentLicenseInfo.pubkey);
+            m_pLicenseData->m_activationCookie.length() > 0 &&
+            VerifyAll(m_pLicenseData->m_activationCookie, NetworkUtil::GetAllMACAddresses(), m_config.currentLicenseInfo.pubkey);
         
 #ifdef OS_MACOSX
         // on Mac, if the activation check wasn't successful, also check whether there
@@ -299,17 +321,17 @@ public:
 #endif
         
         // Try to activate with stored license
-        if (!ret && m_licenseData.m_licenseKey != TEXT(""))
-            ret = Activate(m_licenseData.m_name, m_licenseData.m_company, m_licenseData.m_licenseKey);
+        if (!ret && m_pLicenseData->m_licenseKey != TEXT(""))
+            ret = Activate(m_pLicenseData->m_name, m_pLicenseData->m_company, m_pLicenseData->m_licenseKey);
             
         return ret;
     }
     
-    inline bool HasDemoTokens() { return m_licenseData.m_demoTokens.size() > 0; }
+    inline bool HasDemoTokens() { return m_pLicenseData->m_demoTokens.size() > 0; }
     
-    inline const String GetFullName() { return String(m_licenseData.m_name); }
-    inline const String GetCompany() { return String(m_licenseData.m_company); }
-    inline const String GetLicenseKey() { return String(m_licenseData.m_licenseKey); }
+    inline const String GetFullName() { return String(m_pLicenseData->m_name); }
+    inline const String GetCompany() { return String(m_pLicenseData->m_company); }
+    inline const String GetLicenseKey() { return String(m_pLicenseData->m_licenseKey); }
     
     bool CheckReceipt();
 
@@ -317,13 +339,34 @@ public:
 	String GetDaysCountLabelText();
     
 private:
+    inline void InitConfig()
+    {
+        m_pLicenseData = NULL;
+        
+        m_config.currentLicenseInfo.productId = 0;
+        m_config.currentLicenseInfo.pubkey = NULL;
+        
+        m_config.numDemoDays = 7;
+        
+        m_config.demoTokensURL = NULL;
+        m_config.activationURL = NULL;
+        m_config.deactivationURL = NULL;
+        
+        m_config.shopURL = NULL;
+        m_config.upgradeURL = NULL;
+        
+        m_config.activationLinkPrefix = NULL;
+        
+        m_config.licenseInfoFilename = TEXT("lic.dat");
+    }
+    
 	inline int GetNumDaysLeft()
 	{
-		int numDaysLeft = (int) m_licenseData.m_demoTokens.size();
-		if (m_licenseData.m_timestampLastDemoTokenUsed == TEXT("") || m_licenseData.m_timestampLastDemoTokenUsed != LicenseData::Now())
+		int numDaysLeft = (int) m_pLicenseData->m_demoTokens.size();
+		if (m_pLicenseData->m_timestampLastDemoTokenUsed == TEXT("") || m_pLicenseData->m_timestampLastDemoTokenUsed != LicenseData::Now())
 			numDaysLeft--;
 		if (numDaysLeft < 0)
-			numDaysLeft = m_licenseData.m_timestampLastDemoTokenUsed == TEXT("") ? m_info->numDemoDays : 0;
+			numDaysLeft = m_pLicenseData->m_timestampLastDemoTokenUsed == TEXT("") ? m_config.numDemoDays : 0;
 
 		return numDaysLeft;
 	}
@@ -382,10 +425,12 @@ private:
 		*pRetBufLen = base32_decode(*pRetBuf, *pRetBufLen, pRawKey, rawKeyLen);
 		return *pRetBufLen > 0;
 	}
-
+    
+protected:
+    LicenseManagerConfig m_config;
+    
 private:
-    LicenseManagerInfo* m_info;
-	LicenseData m_licenseData;
+	LicenseData* m_pLicenseData;
 	bool m_canStartApp;
 
     

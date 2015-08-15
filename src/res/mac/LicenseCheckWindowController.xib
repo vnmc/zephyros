@@ -378,7 +378,7 @@
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="322452613"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {2560, 1417}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 877}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -753,7 +753,7 @@
 					<reference key="NSNextKeyView" ref="598815130"/>
 					<string key="NSReuseIdentifierKey">_NS:20</string>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {2560, 1417}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 877}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -846,7 +846,7 @@
 						<object class="NSButton" id="951088425">
 							<reference key="NSNextResponder" ref="300431415"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{139, 13}, {86, 32}}</string>
+							<string key="NSFrame">{{360, 13}, {86, 32}}</string>
 							<reference key="NSSuperview" ref="300431415"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="97971288"/>
@@ -871,7 +871,7 @@
 						<object class="NSButton" id="97971288">
 							<reference key="NSNextResponder" ref="300431415"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{225, 13}, {221, 32}}</string>
+							<string key="NSFrame">{{139, 13}, {221, 32}}</string>
 							<reference key="NSSuperview" ref="300431415"/>
 							<reference key="NSWindow"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
@@ -899,7 +899,7 @@
 					<reference key="NSNextKeyView" ref="761614405"/>
 					<string key="NSReuseIdentifierKey">_NS:20</string>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {2560, 1417}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 877}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -980,14 +980,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">imagePrevVersionLicenseHintSheet</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="761614405"/>
-					</object>
-					<int key="connectionID">711</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">dialogTitle</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="427571671"/>
@@ -1001,22 +993,6 @@
 						<reference key="destination" ref="288848342"/>
 					</object>
 					<int key="connectionID">717</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">dialogPrevVersionLicenseHintTitle</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="412118706"/>
-					</object>
-					<int key="connectionID">718</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">dialogPrevVersionLicenseHintDescription</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="195341912"/>
-					</object>
-					<int key="connectionID">719</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1033,6 +1009,126 @@
 						<reference key="destination" ref="97971288"/>
 					</object>
 					<int key="connectionID">721</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">remainingTimeTitle</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="306870505"/>
+					</object>
+					<int key="connectionID">725</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">remainingTimeDescription</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="772103128"/>
+					</object>
+					<int key="connectionID">726</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">enterLicenseKeyTitle</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="751698508"/>
+					</object>
+					<int key="connectionID">727</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">enterLicenseKeyFullName</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="594036928"/>
+					</object>
+					<int key="connectionID">728</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">enterLicenseKeyOrganization</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="581898693"/>
+					</object>
+					<int key="connectionID">729</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">enterLicenseKeyLicenseKey</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="475202531"/>
+					</object>
+					<int key="connectionID">730</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">purchaseLicense</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="777514094"/>
+					</object>
+					<int key="connectionID">731</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">enterLicenseKey</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="21260372"/>
+					</object>
+					<int key="connectionID">732</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">enterLicenseKeyCancel</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="70978635"/>
+					</object>
+					<int key="connectionID">733</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">enterLicenseKeyActivate</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="261401734"/>
+					</object>
+					<int key="connectionID">734</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">prevVersionLicenseHintTitle</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="412118706"/>
+					</object>
+					<int key="connectionID">735</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">prevVersionLicenseHintDescription</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="195341912"/>
+					</object>
+					<int key="connectionID">736</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">prevVersionLicenseHintImage</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="761614405"/>
+					</object>
+					<int key="connectionID">737</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">prevVersionLicenseHintBack</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="951088425"/>
+					</object>
+					<int key="connectionID">738</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">prevVersionLicenseHintUpgrade</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="97971288"/>
+					</object>
+					<int key="connectionID">739</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -3410,8 +3506,26 @@
 						<int key="objectID">658</int>
 						<reference key="object" ref="300431415"/>
 						<array class="NSMutableArray" key="children">
+							<object class="IBNSLayoutConstraint" id="118166182">
+								<reference key="firstItem" ref="951088425"/>
+								<int key="firstAttribute">5</int>
+								<int key="relation">0</int>
+								<reference key="secondItem" ref="97971288"/>
+								<int key="secondAttribute">6</int>
+								<float key="multiplier">1</float>
+								<string key="multiplierString">1</string>
+								<object class="IBNSLayoutSymbolicConstant" key="constant">
+									<double key="value">12</double>
+								</object>
+								<float key="priority">1000</float>
+								<reference key="containingView" ref="300431415"/>
+								<int key="scoringType">6</int>
+								<float key="scoringTypeFloat">24</float>
+								<int key="contentType">3</int>
+								<bool key="placeholder">NO</bool>
+							</object>
 							<object class="IBNSLayoutConstraint" id="762275489">
-								<reference key="firstItem" ref="97971288"/>
+								<reference key="firstItem" ref="951088425"/>
 								<int key="firstAttribute">6</int>
 								<int key="relation">0</int>
 								<reference key="secondItem" ref="195341912"/>
@@ -3426,24 +3540,6 @@
 								<int key="scoringType">6</int>
 								<float key="scoringTypeFloat">24</float>
 								<int key="contentType">2</int>
-								<bool key="placeholder">NO</bool>
-							</object>
-							<object class="IBNSLayoutConstraint" id="118166182">
-								<reference key="firstItem" ref="97971288"/>
-								<int key="firstAttribute">5</int>
-								<int key="relation">0</int>
-								<reference key="secondItem" ref="951088425"/>
-								<int key="secondAttribute">6</int>
-								<float key="multiplier">1</float>
-								<string key="multiplierString">1</string>
-								<object class="IBNSLayoutSymbolicConstant" key="constant">
-									<double key="value">12</double>
-								</object>
-								<float key="priority">1000</float>
-								<reference key="containingView" ref="300431415"/>
-								<int key="scoringType">6</int>
-								<float key="scoringTypeFloat">24</float>
-								<int key="contentType">3</int>
 								<bool key="placeholder">NO</bool>
 							</object>
 							<object class="IBNSLayoutConstraint" id="24752100">
@@ -3468,7 +3564,7 @@
 								<reference key="firstItem" ref="300431415"/>
 								<int key="firstAttribute">4</int>
 								<int key="relation">0</int>
-								<reference key="secondItem" ref="951088425"/>
+								<reference key="secondItem" ref="97971288"/>
 								<int key="secondAttribute">4</int>
 								<float key="multiplier">1</float>
 								<string key="multiplierString">1</string>
@@ -3593,8 +3689,8 @@
 							<reference ref="412118706"/>
 							<reference ref="195341912"/>
 							<reference ref="761614405"/>
-							<reference ref="97971288"/>
 							<reference ref="951088425"/>
+							<reference ref="97971288"/>
 						</array>
 						<reference key="parent" ref="277502046"/>
 					</object>
@@ -3817,21 +3913,6 @@
 						<reference key="parent" ref="300431415"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">701</int>
-						<reference key="object" ref="985900394"/>
-						<reference key="parent" ref="300431415"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">703</int>
-						<reference key="object" ref="24752100"/>
-						<reference key="parent" ref="300431415"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">706</int>
-						<reference key="object" ref="118166182"/>
-						<reference key="parent" ref="300431415"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">707</int>
 						<reference key="object" ref="917397924"/>
 						<reference key="parent" ref="951088425"/>
@@ -3842,13 +3923,28 @@
 						<reference key="parent" ref="195341912"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">723</int>
+						<int key="objectID">724</int>
+						<reference key="object" ref="499050239"/>
+						<reference key="parent" ref="300431415"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">743</int>
 						<reference key="object" ref="762275489"/>
 						<reference key="parent" ref="300431415"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">724</int>
-						<reference key="object" ref="499050239"/>
+						<int key="objectID">744</int>
+						<reference key="object" ref="985900394"/>
+						<reference key="parent" ref="300431415"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">745</int>
+						<reference key="object" ref="24752100"/>
+						<reference key="parent" ref="300431415"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">746</int>
+						<reference key="object" ref="118166182"/>
 						<reference key="parent" ref="300431415"/>
 					</object>
 				</array>
@@ -4128,8 +4224,8 @@
 					<reference ref="499050239"/>
 					<reference ref="985900394"/>
 					<reference ref="24752100"/>
-					<reference ref="118166182"/>
 					<reference ref="762275489"/>
+					<reference ref="118166182"/>
 				</array>
 				<reference key="658.IBNSViewMetadataGestureRecognizers" ref="0"/>
 				<string key="658.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -4179,13 +4275,13 @@
 				<string key="684.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="685.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="687.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="701.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="703.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="706.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="707.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="722.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="723.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="724.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="743.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="744.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="745.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="746.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<array key="95.IBNSViewMetadataConstraints">
 					<reference ref="753420742"/>
 				</array>
@@ -4197,7 +4293,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">724</int>
+			<int key="maxID">746</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4245,29 +4341,61 @@
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="dialogDescription">NSTextField</string>
-						<string key="dialogPrevVersionLicenseHintDescription">NSTextField</string>
-						<string key="dialogPrevVersionLicenseHintTitle">NSTextField</string>
 						<string key="dialogTitle">NSTextField</string>
+						<string key="enterLicenseKey">NSButton</string>
+						<string key="enterLicenseKeyActivate">NSButton</string>
+						<string key="enterLicenseKeyCancel">NSButton</string>
+						<string key="enterLicenseKeyFullName">NSTextField</string>
+						<string key="enterLicenseKeyLicenseKey">NSTextField</string>
+						<string key="enterLicenseKeyOrganization">NSTextField</string>
+						<string key="enterLicenseKeyTitle">NSTextField</string>
 						<string key="enterLicenseSheet">NSWindow</string>
 						<string key="imageDemo">NSImageView</string>
-						<string key="imagePrevVersionLicenseHintSheet">NSImageView</string>
+						<string key="prevVersionLicenseHintBack">NSButton</string>
+						<string key="prevVersionLicenseHintDescription">NSTextField</string>
+						<string key="prevVersionLicenseHintImage">NSImageView</string>
 						<string key="prevVersionLicenseHintSheet">NSWindow</string>
+						<string key="prevVersionLicenseHintTitle">NSTextField</string>
+						<string key="prevVersionLicenseHintUpgrade">NSButton</string>
+						<string key="purchaseLicense">NSButton</string>
+						<string key="remainingTimeDescription">NSTextField</string>
+						<string key="remainingTimeTitle">NSTextField</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="dialogDescription">
 							<string key="name">dialogDescription</string>
 							<string key="candidateClassName">NSTextField</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="dialogPrevVersionLicenseHintDescription">
-							<string key="name">dialogPrevVersionLicenseHintDescription</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="dialogPrevVersionLicenseHintTitle">
-							<string key="name">dialogPrevVersionLicenseHintTitle</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
 						<object class="IBToOneOutletInfo" key="dialogTitle">
 							<string key="name">dialogTitle</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="enterLicenseKey">
+							<string key="name">enterLicenseKey</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="enterLicenseKeyActivate">
+							<string key="name">enterLicenseKeyActivate</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="enterLicenseKeyCancel">
+							<string key="name">enterLicenseKeyCancel</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="enterLicenseKeyFullName">
+							<string key="name">enterLicenseKeyFullName</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="enterLicenseKeyLicenseKey">
+							<string key="name">enterLicenseKeyLicenseKey</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="enterLicenseKeyOrganization">
+							<string key="name">enterLicenseKeyOrganization</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="enterLicenseKeyTitle">
+							<string key="name">enterLicenseKeyTitle</string>
 							<string key="candidateClassName">NSTextField</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="enterLicenseSheet">
@@ -4278,13 +4406,41 @@
 							<string key="name">imageDemo</string>
 							<string key="candidateClassName">NSImageView</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="imagePrevVersionLicenseHintSheet">
-							<string key="name">imagePrevVersionLicenseHintSheet</string>
+						<object class="IBToOneOutletInfo" key="prevVersionLicenseHintBack">
+							<string key="name">prevVersionLicenseHintBack</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="prevVersionLicenseHintDescription">
+							<string key="name">prevVersionLicenseHintDescription</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="prevVersionLicenseHintImage">
+							<string key="name">prevVersionLicenseHintImage</string>
 							<string key="candidateClassName">NSImageView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="prevVersionLicenseHintSheet">
 							<string key="name">prevVersionLicenseHintSheet</string>
 							<string key="candidateClassName">NSWindow</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="prevVersionLicenseHintTitle">
+							<string key="name">prevVersionLicenseHintTitle</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="prevVersionLicenseHintUpgrade">
+							<string key="name">prevVersionLicenseHintUpgrade</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="purchaseLicense">
+							<string key="name">purchaseLicense</string>
+							<string key="candidateClassName">NSButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="remainingTimeDescription">
+							<string key="name">remainingTimeDescription</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="remainingTimeTitle">
+							<string key="name">remainingTimeTitle</string>
+							<string key="candidateClassName">NSTextField</string>
 						</object>
 					</dictionary>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">

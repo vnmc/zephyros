@@ -29,7 +29,7 @@
 }
 
 
-@property (assign) IBOutlet NSWindow *window;
+@property (retain) IBOutlet NSWindow *window;
 
 #ifndef APPSTORE
 @property (retain) SUUpdater *updater;

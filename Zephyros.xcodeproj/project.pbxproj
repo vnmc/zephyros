@@ -21,8 +21,6 @@
 		CC608F4D1B5CF160003D185F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */; };
 		CC608F4E1B5CF161003D185F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */; };
 		CC608F4F1B5CF161003D185F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */; };
-		CC608F561B5CF2A4003D185F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC019CC1B4FDC180015B0FA /* main.mm */; };
-		CC608F571B5CF2A4003D185F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC019CC1B4FDC180015B0FA /* main.mm */; };
 		CC608F581B5CF327003D185F /* Zephyros_WebView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC8BA4531B4D568A006C8CAE /* Zephyros_WebView.framework */; };
 		CC608F591B5CF334003D185F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
 		CC608F611B5CF4CD003D185F /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F5F1B5CF4CD003D185F /* app.cpp */; };
@@ -48,8 +46,6 @@
 		CC608F941B5D275F003D185F /* jsbridge_v8.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F7E1B5D275F003D185F /* jsbridge_v8.h */; };
 		CC608F961B5D275F003D185F /* resource_util_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC608F801B5D275F003D185F /* resource_util_mac.mm */; };
 		CC608F991B5D275F003D185F /* resource_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F831B5D275F003D185F /* resource_util.h */; };
-		CC608F9A1B5D275F003D185F /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F841B5D275F003D185F /* string_util.cpp */; };
-		CC608F9B1B5D275F003D185F /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F851B5D275F003D185F /* string_util.h */; };
 		CC608F9C1B5D275F003D185F /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F861B5D275F003D185F /* util.h */; };
 		CC608F9D1B5D275F003D185F /* v8_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F871B5D275F003D185F /* v8_util.cpp */; };
 		CC608F9E1B5D275F003D185F /* v8_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F881B5D275F003D185F /* v8_util.h */; };
@@ -253,8 +249,6 @@
 		CC60913D1B5D4B03003D185F /* libcef_dll_wrapper2.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC60907A1B5D4B03003D185F /* libcef_dll_wrapper2.cc */; };
 		CC6091631B5D4F62003D185F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
 		CC6091691B5D4FF1003D185F /* Zephyros_CEF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A2E1B4D771200E4F261 /* Zephyros_CEF.framework */; };
-		CC6091701B5D50C0003D185F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC60916F1B5D50C0003D185F /* main.cpp */; };
-		CC6091711B5D50C0003D185F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC60916F1B5D50C0003D185F /* main.cpp */; };
 		CC6092231B5D5AAD003D185F /* app.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F5F1B5CF4CD003D185F /* app.cpp */; };
 		CC6092241B5E55B7003D185F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC019DC1B4FF1470015B0FA /* AppKit.framework */; };
 		CC6092251B5E55BE003D185F /* Zephyros_AppStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A501B4D782000E4F261 /* Zephyros_AppStore.framework */; };
@@ -265,7 +259,6 @@
 		CC6092371B5E582E003D185F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A251B4D764C00E4F261 /* WebKit.framework */; };
 		CC6092381B5E5839003D185F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A211B4D763A00E4F261 /* IOKit.framework */; };
 		CC60923A1B5E5852003D185F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A1D1B4D762400E4F261 /* SystemConfiguration.framework */; };
-		CC60923C1B5E598A003D185F /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC60923B1B5E598A003D185F /* app */; };
 		CC60923D1B5E8322003D185F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A251B4D764C00E4F261 /* WebKit.framework */; };
 		CC60923E1B5E8328003D185F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A1F1B4D763500E4F261 /* Security.framework */; };
 		CC60923F1B5E8332003D185F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A271B4D765500E4F261 /* Cocoa.framework */; };
@@ -350,8 +343,6 @@
 		CCBDB44D1B7A4B9000D168AB /* resource_util_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC608F801B5D275F003D185F /* resource_util_mac.mm */; };
 		CCBDB44E1B7A4B9300D168AB /* resource_util_posix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC6092441B5E86FA003D185F /* resource_util_posix.cpp */; };
 		CCBDB44F1B7A4B9700D168AB /* resource_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F831B5D275F003D185F /* resource_util.h */; };
-		CCBDB4501B7A4B9A00D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F841B5D275F003D185F /* string_util.cpp */; };
-		CCBDB4511B7A4B9E00D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F851B5D275F003D185F /* string_util.h */; };
 		CCBDB4521B7A4BA100D168AB /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F861B5D275F003D185F /* util.h */; };
 		CCBDB4531B7A4BA700D168AB /* v8_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC608F871B5D275F003D185F /* v8_util.cpp */; };
 		CCBDB4541B7A4BAA00D168AB /* v8_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CC608F881B5D275F003D185F /* v8_util.h */; };
@@ -366,6 +357,25 @@
 		CCBDB4621B7A4FB600D168AB /* zephyros_cef_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4611B7A4FB600D168AB /* zephyros_cef_mac_stub.mm */; };
 		CCBDB4641B7A518200D168AB /* pageimage_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4631B7A518200D168AB /* pageimage_mac_stub.mm */; };
 		CCBDB4661B7A525100D168AB /* os_util_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4651B7A525100D168AB /* os_util_mac_stub.mm */; };
+		CCBDB4681B7DC07E00D168AB /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCBDB4671B7DC07E00D168AB /* MainWindow.xib */; };
+		CCBDB4691B7DC07E00D168AB /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCBDB4671B7DC07E00D168AB /* MainWindow.xib */; };
+		CCBDB46B1B7DE59600D168AB /* zephyros_webview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB46A1B7DE59600D168AB /* zephyros_webview.mm */; };
+		CCBDB46C1B7DE59600D168AB /* zephyros_webview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB46A1B7DE59600D168AB /* zephyros_webview.mm */; };
+		CCBDB4761B7E0A6800D168AB /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC608F491B5CF0CE003D185F /* app */; };
+		CCBDB4771B7E0A6800D168AB /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC608F491B5CF0CE003D185F /* app */; };
+		CCBDB4781B7E217D00D168AB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCC019D11B4FDC360015B0FA /* MainMenu.xib */; };
+		CCBDB47A1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; };
+		CCBDB47B1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; };
+		CCBDB47C1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; };
+		CCBDB47D1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; };
+		CCBDB4801B7E4FC700D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB47E1B7E4FC700D168AB /* string_util.cpp */; };
+		CCBDB4811B7E4FC700D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB47E1B7E4FC700D168AB /* string_util.cpp */; };
+		CCBDB4821B7E4FC700D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB47E1B7E4FC700D168AB /* string_util.cpp */; };
+		CCBDB4831B7E4FC700D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB47E1B7E4FC700D168AB /* string_util.cpp */; };
+		CCBDB4841B7E4FC700D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB47F1B7E4FC700D168AB /* string_util.h */; };
+		CCBDB4851B7E4FC700D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB47F1B7E4FC700D168AB /* string_util.h */; };
+		CCBDB4861B7E4FC700D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB47F1B7E4FC700D168AB /* string_util.h */; };
+		CCBDB4871B7E4FC700D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB47F1B7E4FC700D168AB /* string_util.h */; };
 		CCC018BF1B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
 		CCC018C01B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
 		CCC018C11B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
@@ -692,8 +702,6 @@
 		CC608F7F1B5D275F003D185F /* process_helper_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = process_helper_mac.mm; path = src/base/cef/process_helper_mac.mm; sourceTree = SOURCE_ROOT; };
 		CC608F801B5D275F003D185F /* resource_util_mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = resource_util_mac.mm; path = src/base/cef/resource_util_mac.mm; sourceTree = SOURCE_ROOT; };
 		CC608F831B5D275F003D185F /* resource_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = resource_util.h; path = src/base/cef/resource_util.h; sourceTree = SOURCE_ROOT; };
-		CC608F841B5D275F003D185F /* string_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = string_util.cpp; path = src/base/cef/string_util.cpp; sourceTree = SOURCE_ROOT; };
-		CC608F851B5D275F003D185F /* string_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = string_util.h; path = src/base/cef/string_util.h; sourceTree = SOURCE_ROOT; };
 		CC608F861B5D275F003D185F /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = src/base/cef/util.h; sourceTree = SOURCE_ROOT; };
 		CC608F871B5D275F003D185F /* v8_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = v8_util.cpp; path = src/base/cef/v8_util.cpp; sourceTree = SOURCE_ROOT; };
 		CC608F881B5D275F003D185F /* v8_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = v8_util.h; path = src/base/cef/v8_util.h; sourceTree = SOURCE_ROOT; };
@@ -899,7 +907,6 @@
 		CC6091421B5D4EF0003D185F /* Zephyros_SampleApp_CEF Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zephyros_SampleApp_CEF Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC6091641B5D4F68003D185F /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		CC6091671B5D4FD3003D185F /* Chromium Embedded Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Chromium Embedded Framework.framework"; path = "lib/Chromium Embedded Framework.framework"; sourceTree = SOURCE_ROOT; };
-		CC60916F1B5D50C0003D185F /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = sample/res/mac/main.cpp; sourceTree = SOURCE_ROOT; };
 		CC6091741B5D515A003D185F /* cef_atomic_ref_count.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cef_atomic_ref_count.h; sourceTree = "<group>"; };
 		CC6091751B5D515A003D185F /* cef_atomicops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cef_atomicops.h; sourceTree = "<group>"; };
 		CC6091761B5D515A003D185F /* cef_basictypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cef_basictypes.h; sourceTree = "<group>"; };
@@ -1069,7 +1076,6 @@
 		CC60921E1B5D515B003D185F /* cef_xml_object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cef_xml_object.h; sourceTree = "<group>"; };
 		CC60921F1B5D515B003D185F /* cef_zip_archive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cef_zip_archive.h; sourceTree = "<group>"; };
 		CC6092201B5D522C003D185F /* Info-CEF-Helper.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-CEF-Helper.plist"; path = "sample/res/mac/Info-CEF-Helper.plist"; sourceTree = SOURCE_ROOT; };
-		CC60923B1B5E598A003D185F /* app */ = {isa = PBXFileReference; lastKnownFileType = folder; name = app; path = sample/app; sourceTree = SOURCE_ROOT; };
 		CC6092441B5E86FA003D185F /* resource_util_posix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resource_util_posix.cpp; path = src/base/cef/resource_util_posix.cpp; sourceTree = SOURCE_ROOT; };
 		CC8BA4531B4D568A006C8CAE /* Zephyros_WebView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Zephyros_WebView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCBDB3EB1B7A358A00D168AB /* Zephyros_CEF_Helper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Zephyros_CEF_Helper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1080,6 +1086,11 @@
 		CCBDB4611B7A4FB600D168AB /* zephyros_cef_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = zephyros_cef_mac_stub.mm; path = src/base/cef/zephyros_cef_mac_stub.mm; sourceTree = SOURCE_ROOT; };
 		CCBDB4631B7A518200D168AB /* pageimage_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = pageimage_mac_stub.mm; path = src/native_extensions/pageimage_mac_stub.mm; sourceTree = "<group>"; };
 		CCBDB4651B7A525100D168AB /* os_util_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = os_util_mac_stub.mm; path = src/native_extensions/os_util_mac_stub.mm; sourceTree = "<group>"; };
+		CCBDB4671B7DC07E00D168AB /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainWindow.xib; path = src/res/mac/MainWindow.xib; sourceTree = SOURCE_ROOT; };
+		CCBDB46A1B7DE59600D168AB /* zephyros_webview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = zephyros_webview.mm; path = src/base/webview/zephyros_webview.mm; sourceTree = SOURCE_ROOT; };
+		CCBDB4791B7E306A00D168AB /* zephyros_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zephyros_strings.h; path = src/base/zephyros_strings.h; sourceTree = "<group>"; };
+		CCBDB47E1B7E4FC700D168AB /* string_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = string_util.cpp; path = src/util/string_util.cpp; sourceTree = "<group>"; };
+		CCBDB47F1B7E4FC700D168AB /* string_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = string_util.h; path = src/util/string_util.h; sourceTree = "<group>"; };
 		CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jsbridge.cpp; path = src/base/jsbridge.cpp; sourceTree = "<group>"; };
 		CCC018BC1B4FD9B70015B0FA /* jsbridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jsbridge.h; path = src/base/jsbridge.h; sourceTree = "<group>"; };
 		CCC018BD1B4FD9B70015B0FA /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = logging.h; path = src/base/logging.h; sourceTree = "<group>"; };
@@ -1136,7 +1147,6 @@
 		CCC019C21B4FDB190015B0FA /* Info_ZephyrosCEF.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_ZephyrosCEF.plist; path = src/res/mac/Info_ZephyrosCEF.plist; sourceTree = SOURCE_ROOT; };
 		CCC019C51B4FDB280015B0FA /* Info_ZephyrosWebView.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_ZephyrosWebView.plist; path = src/res/mac/Info_ZephyrosWebView.plist; sourceTree = SOURCE_ROOT; };
 		CCC019C81B4FDB360015B0FA /* Info_ZephyrosAppStore.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_ZephyrosAppStore.plist; path = src/res/mac/Info_ZephyrosAppStore.plist; sourceTree = SOURCE_ROOT; };
-		CCC019CC1B4FDC180015B0FA /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = sample/res/mac/main.mm; sourceTree = SOURCE_ROOT; };
 		CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = sample/res/mac/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		CCC019D21B4FDC360015B0FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = sample/res/mac/Base.lproj/MainMenu.xib; sourceTree = SOURCE_ROOT; };
 		CCC019D41B4FEE0F0015B0FA /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = app.h; path = src/base/app.h; sourceTree = "<group>"; };
@@ -1273,7 +1283,6 @@
 		CC608EE21B5CEFA7003D185F /* Zephyros_SampleApp_WebView */ = {
 			isa = PBXGroup;
 			children = (
-				CC608F491B5CF0CE003D185F /* app */,
 				CC608EE31B5CEFA7003D185F /* Supporting Files */,
 				CCF48A761B4D7E9200E4F261 /* Frameworks */,
 			);
@@ -1291,7 +1300,6 @@
 		CC608F061B5CEFD6003D185F /* Zephyros_SampleApp_AppStore */ = {
 			isa = PBXGroup;
 			children = (
-				CC60923B1B5E598A003D185F /* app */,
 				CC608F071B5CEFD6003D185F /* Supporting Files */,
 			);
 			path = Zephyros_SampleApp_AppStore;
@@ -1309,7 +1317,6 @@
 			isa = PBXGroup;
 			children = (
 				CC608F2B1B5CEFF1003D185F /* Supporting Files */,
-				CC60916F1B5D50C0003D185F /* main.cpp */,
 				CC608F7F1B5D275F003D185F /* process_helper_mac.mm */,
 			);
 			path = Zephyros_SampleApp_CEF;
@@ -1828,6 +1835,7 @@
 			isa = PBXGroup;
 			children = (
 				CCC019C51B4FDB280015B0FA /* Info_ZephyrosWebView.plist */,
+				CCBDB4671B7DC07E00D168AB /* MainWindow.xib */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1876,8 +1884,6 @@
 				CC608F801B5D275F003D185F /* resource_util_mac.mm */,
 				CC6092441B5E86FA003D185F /* resource_util_posix.cpp */,
 				CC608F831B5D275F003D185F /* resource_util.h */,
-				CC608F841B5D275F003D185F /* string_util.cpp */,
-				CC608F851B5D275F003D185F /* string_util.h */,
 				CC608F861B5D275F003D185F /* util.h */,
 				CC608F871B5D275F003D185F /* v8_util.cpp */,
 				CC608F881B5D275F003D185F /* v8_util.h */,
@@ -1892,6 +1898,7 @@
 		CCF489D81B4D732400E4F261 /* Zephyros_SampleApp */ = {
 			isa = PBXGroup;
 			children = (
+				CC608F491B5CF0CE003D185F /* app */,
 				CC608F5F1B5CF4CD003D185F /* app.cpp */,
 				CC608F601B5CF4CD003D185F /* app.h */,
 				CCC019D11B4FDC360015B0FA /* MainMenu.xib */,
@@ -1905,7 +1912,6 @@
 		CCF489D91B4D732400E4F261 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				CCC019CC1B4FDC180015B0FA /* main.mm */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -2003,6 +2009,8 @@
 		CCF48B611B4D838F00E4F261 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CCBDB47E1B7E4FC700D168AB /* string_util.cpp */,
+				CCBDB47F1B7E4FC700D168AB /* string_util.h */,
 				CCC019D81B4FEFF00015B0FA /* picojson.h */,
 				CCC0196C1B4FDA420015B0FA /* base32.cpp */,
 				CCC0196D1B4FDA420015B0FA /* base32.h */,
@@ -2039,6 +2047,7 @@
 				CCC019DE1B4FF43C0015B0FA /* LicenseCheckWindowController.h */,
 				CCC019DF1B4FF43C0015B0FA /* LicenseCheckWindowController.mm */,
 				CC0FA3071B52B5B900C5AC33 /* LicenseCheckWindowController.xib */,
+				CCBDB4791B7E306A00D168AB /* zephyros_strings.h */,
 			);
 			name = Base;
 			sourceTree = "<group>";
@@ -2107,6 +2116,7 @@
 				CCC019A71B4FDA980015B0FA /* webview_extension.mm */,
 				CCC019A81B4FDA980015B0FA /* ZPYWebViewAppDelegate.h */,
 				CCC019A91B4FDA980015B0FA /* ZPYWebViewAppDelegate.mm */,
+				CCBDB46A1B7DE59600D168AB /* zephyros_webview.mm */,
 			);
 			name = Base;
 			sourceTree = "<group>";
@@ -2224,7 +2234,9 @@
 				CCC0195A1B4FD9D20015B0FA /* updater.h in Headers */,
 				CCC019D61B4FEE0F0015B0FA /* app.h in Headers */,
 				CCC018C91B4FD9B70015B0FA /* types.h in Headers */,
+				CCBDB47C1B7E306A00D168AB /* zephyros_strings.h in Headers */,
 				CCC019DA1B4FEFF00015B0FA /* picojson.h in Headers */,
+				CCBDB4861B7E4FC700D168AB /* string_util.h in Headers */,
 				CCC019F01B4FF43C0015B0FA /* licensing.h in Headers */,
 				CCC018FA1B4FD9D20015B0FA /* browser.h in Headers */,
 				CCC019991B4FDA420015B0FA /* NSData+Base64.h in Headers */,
@@ -2271,6 +2283,7 @@
 				CCBDB4271B7A371300D168AB /* process_manager.h in Headers */,
 				CCBDB4241B7A370900D168AB /* pageimage.h in Headers */,
 				CCBDB4171B7A36E200D168AB /* custom_url_manager.h in Headers */,
+				CCBDB4851B7E4FC700D168AB /* string_util.h in Headers */,
 				CCBDB41C1B7A36F200D168AB /* file_watcher.h in Headers */,
 				CCBDB4541B7A4BAA00D168AB /* v8_util.h in Headers */,
 				CCBDB4191B7A36E900D168AB /* file_util.h in Headers */,
@@ -2278,12 +2291,12 @@
 				CCBDB4261B7A371000D168AB /* path.h in Headers */,
 				CCBDB45C1B7A4EC900D168AB /* ZPYMenuItem.h in Headers */,
 				CCBDB44B1B7A4B8A00D168AB /* extension_handler.h in Headers */,
+				CCBDB47B1B7E306A00D168AB /* zephyros_strings.h in Headers */,
 				CCBDB40B1B7A36AC00D168AB /* GetPrimaryMACAddress.h in Headers */,
 				CCBDB4461B7A4B7300D168AB /* client_app.h in Headers */,
 				CCBDB45E1B7A4F2C00D168AB /* updater.h in Headers */,
 				CCBDB4331B7A375600D168AB /* logging.h in Headers */,
 				CCBDB4321B7A375300D168AB /* jsbridge.h in Headers */,
-				CCBDB4511B7A4B9E00D168AB /* string_util.h in Headers */,
 				CCBDB4341B7A375900D168AB /* types.h in Headers */,
 				CCBDB4071B7A369C00D168AB /* base64.h in Headers */,
 				CCBDB4441B7A4B0400D168AB /* zephyros_cef.h in Headers */,
@@ -2331,15 +2344,16 @@
 				CCC019831B4FDA420015B0FA /* base64.h in Headers */,
 				CCC018C81B4FD9B70015B0FA /* types.h in Headers */,
 				CC608F931B5D275F003D185F /* extension_handler.h in Headers */,
-				CC608F9B1B5D275F003D185F /* string_util.h in Headers */,
 				CC608FA61B5D441B003D185F /* zephyros_cef.h in Headers */,
 				CC608F991B5D275F003D185F /* resource_util.h in Headers */,
 				CC608F8D1B5D275F003D185F /* client_app.h in Headers */,
 				CCC019411B4FD9D20015B0FA /* pageimage.h in Headers */,
+				CCBDB47A1B7E306A00D168AB /* zephyros_strings.h in Headers */,
 				CCC0198F1B4FDA420015B0FA /* GetPrimaryMACAddress.h in Headers */,
 				CCC019E31B4FF43C0015B0FA /* LicenseCheckWindowController.h in Headers */,
 				CCF48A701B4D7C7500E4F261 /* Zephyros.h in Headers */,
 				CCC018FF1B4FD9D20015B0FA /* custom_url_manager.h in Headers */,
+				CCBDB4841B7E4FC700D168AB /* string_util.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2369,6 +2383,7 @@
 				CCC0193A1B4FD9D20015B0FA /* os_util.h in Headers */,
 				CCC018C41B4FD9B70015B0FA /* jsbridge.h in Headers */,
 				CCC019621B4FDA2A0015B0FA /* ZPYMenu.h in Headers */,
+				CCBDB47D1B7E306A00D168AB /* zephyros_strings.h in Headers */,
 				CCC019191B4FD9D20015B0FA /* image_util_mac.h in Headers */,
 				CCC0190A1B4FD9D20015B0FA /* file_util.h in Headers */,
 				CCC0199A1B4FDA420015B0FA /* NSData+Base64.h in Headers */,
@@ -2377,6 +2392,7 @@
 				CCC018C71B4FD9B70015B0FA /* logging.h in Headers */,
 				CCC019521B4FD9D20015B0FA /* process_manager.h in Headers */,
 				CCC019851B4FDA420015B0FA /* base64.h in Headers */,
+				CCBDB4871B7E4FC700D168AB /* string_util.h in Headers */,
 				CCC019911B4FDA420015B0FA /* GetPrimaryMACAddress.h in Headers */,
 				CC0FA3061B52AD3D00C5AC33 /* zephyros_impl.h in Headers */,
 			);
@@ -2639,7 +2655,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC60923C1B5E598A003D185F /* app in Resources */,
+				CCBDB4771B7E0A6800D168AB /* app in Resources */,
 				CC608F4E1B5CF161003D185F /* Images.xcassets in Resources */,
 				CC608F4C1B5CF15A003D185F /* MainMenu.xib in Resources */,
 			);
@@ -2649,7 +2665,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCBDB4761B7E0A6800D168AB /* app in Resources */,
 				CC608F4F1B5CF161003D185F /* Images.xcassets in Resources */,
+				CCBDB4781B7E217D00D168AB /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2664,6 +2682,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCBDB4681B7DC07E00D168AB /* MainWindow.xib in Resources */,
 				CC0FA3091B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2688,6 +2707,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCBDB4691B7DC07E00D168AB /* MainWindow.xib in Resources */,
 				CC0FA30A1B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2785,7 +2805,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC608F611B5CF4CD003D185F /* app.cpp in Sources */,
-				CC608F561B5CF2A4003D185F /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2794,7 +2813,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC608F621B5CF4CD003D185F /* app.cpp in Sources */,
-				CC608F571B5CF2A4003D185F /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2802,7 +2820,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC6091701B5D50C0003D185F /* main.cpp in Sources */,
 				CC608F631B5CF4CD003D185F /* app.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2924,7 +2941,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC6092461B5E880C003D185F /* process_helper_mac.mm in Sources */,
-				CC6091711B5D50C0003D185F /* main.cpp in Sources */,
 				CC6092231B5D5AAD003D185F /* app.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2935,6 +2951,7 @@
 			files = (
 				CCC0190C1B4FD9D20015B0FA /* file_watcher_mac.mm in Sources */,
 				CCC0199C1B4FDA420015B0FA /* NSData+Base64.mm in Sources */,
+				CCBDB4821B7E4FC700D168AB /* string_util.cpp in Sources */,
 				CCC0198D1B4FDA420015B0FA /* GetPrimaryMACAddress.cpp in Sources */,
 				CCC018F71B4FD9D20015B0FA /* browser.cpp in Sources */,
 				CCC0191B1B4FD9D20015B0FA /* image_util_mac.mm in Sources */,
@@ -2959,6 +2976,7 @@
 				CCC019E71B4FF43C0015B0FA /* LicenseCheckWindowController.mm in Sources */,
 				CC608F6E1B5D1CC5003D185F /* ZPYAppDelegate.mm in Sources */,
 				CCC018C01B4FD9B70015B0FA /* jsbridge.cpp in Sources */,
+				CCBDB46B1B7DE59600D168AB /* zephyros_webview.mm in Sources */,
 				CCC019B41B4FDA980015B0FA /* webview_extension.mm in Sources */,
 				CCC018F11B4FD9D20015B0FA /* browser_mac.mm in Sources */,
 				CCC019331B4FD9D20015B0FA /* os_util_mac.mm in Sources */,
@@ -2974,6 +2992,7 @@
 			files = (
 				CCBDB4641B7A518200D168AB /* pageimage_mac_stub.mm in Sources */,
 				CCBDB44E1B7A4B9300D168AB /* resource_util_posix.cpp in Sources */,
+				CCBDB4811B7E4FC700D168AB /* string_util.cpp in Sources */,
 				CCBDB41A1B7A36EC00D168AB /* file_watcher_mac.mm in Sources */,
 				CCBDB40A1B7A36A900D168AB /* GetPrimaryMACAddress.cpp in Sources */,
 				CCBDB4251B7A370D00D168AB /* path.cpp in Sources */,
@@ -2999,7 +3018,6 @@
 				CCBDB4041B7A368C00D168AB /* base32.cpp in Sources */,
 				CCBDB4571B7A4C9100D168AB /* licensing_stub.cpp in Sources */,
 				CCBDB4661B7A525100D168AB /* os_util_mac_stub.mm in Sources */,
-				CCBDB4501B7A4B9A00D168AB /* string_util.cpp in Sources */,
 				CCBDB4091B7A36A500D168AB /* EMKeychainItem.m in Sources */,
 				CCBDB44A1B7A4B8700D168AB /* extension_handler.cpp in Sources */,
 				CCBDB4161B7A36DF00D168AB /* custom_url_manager.cpp in Sources */,
@@ -3017,6 +3035,7 @@
 				CCC019111B4FD9D20015B0FA /* file_watcher.cpp in Sources */,
 				CCC0190B1B4FD9D20015B0FA /* file_watcher_mac.mm in Sources */,
 				CCC019F31B4FF79A0015B0FA /* app_mac.mm in Sources */,
+				CCBDB4801B7E4FC700D168AB /* string_util.cpp in Sources */,
 				CC6092451B5E86FA003D185F /* resource_util_posix.cpp in Sources */,
 				CCC019291B4FD9D20015B0FA /* network_util_mac.mm in Sources */,
 				CC608F6C1B5CFC00003D185F /* ZPYCEFAppDelegate.mm in Sources */,
@@ -3037,7 +3056,6 @@
 				CC608F961B5D275F003D185F /* resource_util_mac.mm in Sources */,
 				CCC019921B4FDA420015B0FA /* MurmurHash3.cpp in Sources */,
 				CCC019891B4FDA420015B0FA /* EMKeychainItem.m in Sources */,
-				CC608F9A1B5D275F003D185F /* string_util.cpp in Sources */,
 				CC608F6D1B5D1CC4003D185F /* ZPYAppDelegate.mm in Sources */,
 				CCC019691B4FDA2A0015B0FA /* ZPYMenuItem.mm in Sources */,
 				CC0FA30C1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */,
@@ -3065,9 +3083,11 @@
 				CCC019341B4FD9D20015B0FA /* os_util_mac.mm in Sources */,
 				CCC019551B4FD9D20015B0FA /* updater_mac.mm in Sources */,
 				CCC0197C1B4FDA420015B0FA /* base32.cpp in Sources */,
+				CCBDB46C1B7DE59600D168AB /* zephyros_webview.mm in Sources */,
 				CCC019F51B4FF79A0015B0FA /* app_mac.mm in Sources */,
 				CCC0192B1B4FD9D20015B0FA /* network_util_mac.mm in Sources */,
 				CCC019C11B4FDAB10015B0FA /* ZPYWebView.mm in Sources */,
+				CCBDB4831B7E4FC700D168AB /* string_util.cpp in Sources */,
 				CCC019461B4FD9D20015B0FA /* path.cpp in Sources */,
 				CCC019941B4FDA420015B0FA /* MurmurHash3.cpp in Sources */,
 				CCC019AC1B4FDA980015B0FA /* jsbridge_webview.cpp in Sources */,

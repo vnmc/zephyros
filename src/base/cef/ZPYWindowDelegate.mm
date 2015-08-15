@@ -152,18 +152,18 @@ extern bool g_isWindowLoaded;
 - (BOOL) windowShouldClose: (id) window
 {
     // save the window geometry
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSRect rectWindow = [(NSWindow*) window frame];
     NSRect rectView = [[(NSWindow*) window contentView] frame];
     
-    [defaults setObject: [NSKeyedArchiver archivedDataWithRootObject: @{
-                                                                        @"x": [NSNumber numberWithDouble: rectWindow.origin.x],
-                                                                        @"y": [NSNumber numberWithDouble: rectWindow.origin.y],
-                                                                        @"w": [NSNumber numberWithDouble: rectView.size.width],
-                                                                        @"h": [NSNumber numberWithDouble: rectView.size.height]
-                                                                        }]
-                 forKey: @"wnd2"];
+    NSDictionary* data = @{
+        @"x": [NSNumber numberWithDouble: rectWindow.origin.x],
+        @"y": [NSNumber numberWithDouble: rectWindow.origin.y],
+        @"w": [NSNumber numberWithDouble: rectView.size.width],
+        @"h": [NSNumber numberWithDouble: rectView.size.height]
+    };
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject: [NSKeyedArchiver archivedDataWithRootObject: data] forKey: @"wnd2"];
     [defaults synchronize];
     
     if (g_handler.get() && !g_handler->IsClosing())

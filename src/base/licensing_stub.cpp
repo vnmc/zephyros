@@ -11,17 +11,17 @@ namespace Zephyros {
 
 #ifndef APPSTORE
 
-String LicenseData::Encrype(String s)
+String LicenseData::Encrypt(String s)
 {
     return TEXT("");
 }
 
-String LicenseData::Decrype(String s)
+String LicenseData::Decrypt(String s)
 {
     return TEXT("");
 }
     
-LicenseData::LicenseData()
+LicenseData::LicenseData(const TCHAR* szLicenseInfoFilename)
 {
 }
     
@@ -38,7 +38,7 @@ String LicenseData::Now()
 //////////////////////////////////////////////////////////////////////////
 // LicenseManager Implementation
     
-LicenseManager::LicenseManager(LicenseManagerInfo* info)
+LicenseManager::LicenseManager()
 {
 }
     
@@ -99,26 +99,6 @@ void ReceiptChecker::CopyAppStoreReceipt()
 {
 }
     
-String LicenseManager::GetDialogTitle()
-{
-    return TEXT("");
-}
-    
-String LicenseManager::GetDialogDescription()
-{
-    return TEXT("");
-}
-    
-String LicenseManager::GetDialogPrevLicenseHintTitle()
-{
-    return TEXT("");
-}
-    
-String LicenseManager::GetDialogPrevLicenseHintDescription()
-{
-    return TEXT("");
-}
-
 String LicenseManager::GetDemoButtonCaption()
 {
     return TEXT("");

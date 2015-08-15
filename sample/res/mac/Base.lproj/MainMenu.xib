@@ -2,22 +2,11 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="7706"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application" customClass="NSObject">
-            <connections>
-                <outlet property="delegate" destination="hI1-3A-tm4" id="NDg-Ha-LQq"/>
-            </connections>
-        </customObject>
-        <customObject id="hI1-3A-tm4" customClass="ZPYWebViewAppDelegate">
-            <connections>
-                <outlet property="view" destination="BNJ-8y-3X8" id="kdx-f5-BMA"/>
-                <outlet property="window" destination="QvC-M9-y7g" id="lPo-Sz-YBg"/>
-            </connections>
-        </customObject>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
@@ -668,29 +657,5 @@
                 </menuItem>
             </items>
         </menu>
-        <window title="Zephyros Sample App" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <rect key="contentRect" x="1124" y="515" width="480" height="360"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
-            <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <webView translatesAutoresizingMaskIntoConstraints="NO" id="BNJ-8y-3X8" customClass="ZPYWebView">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
-                        <webPreferences key="preferences" defaultFontSize="12" defaultFixedFontSize="12" javaEnabled="NO">
-                            <nil key="identifier"/>
-                        </webPreferences>
-                    </webView>
-                </subviews>
-                <constraints>
-                    <constraint firstAttribute="bottom" secondItem="BNJ-8y-3X8" secondAttribute="bottom" id="42M-qI-Jd0"/>
-                    <constraint firstItem="BNJ-8y-3X8" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="7Ph-7M-RnM"/>
-                    <constraint firstItem="BNJ-8y-3X8" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="Jxb-7R-AcR"/>
-                    <constraint firstAttribute="trailing" secondItem="BNJ-8y-3X8" secondAttribute="trailing" id="KjR-iZ-Ach"/>
-                </constraints>
-            </view>
-            <point key="canvasLocation" x="339" y="366"/>
-        </window>
     </objects>
 </document>

@@ -9,6 +9,6 @@
 #ifndef __Zephyros__app__
 #define __Zephyros__app__
 
-void StartApplication(int argc, const char* argv[]);
+int StartApplication(int argc, const char* argv[]);
 
 #endif /* defined(__Zephyros__app__) */

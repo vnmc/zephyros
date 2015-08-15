@@ -37,7 +37,8 @@ namespace Zephyros {
 //////////////////////////////////////////////////////////////////////////
 // LicenseData Implementation
 
-LicenseData::LicenseData()
+LicenseData::LicenseData(const TCHAR* szLicenseInfoFilename)
+    : m_szLicenseInfoFilename(szLicenseInfoFilename)
 {
     NSArray *pathList = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString *dataFilePath = [[pathList objectAtIndex: 0] stringByAppendingPathComponent: [[NSBundle mainBundle] bundleIdentifier]];
@@ -47,7 +48,7 @@ LicenseData::LicenseData()
     if (![fileManager fileExistsAtPath: dataFilePath isDirectory: &isDir])
         [fileManager createDirectoryAtPath: dataFilePath withIntermediateDirectories: YES attributes: nil error: NULL];
     
-    NSString *licenseFileName = [NSString stringWithUTF8String: Zephyros::GetLicenseInfoFilename()];
+    NSString *licenseFileName = [NSString stringWithUTF8String: szLicenseInfoFilename];
     
     NSString *licenseFilePath = [dataFilePath stringByAppendingPathComponent: licenseFileName];
     
@@ -83,16 +84,16 @@ LicenseData::LicenseData()
     
     m_timestampLastDemoTokenUsed = timestamp == nil ? "" : String([timestamp UTF8String]);
     m_activationCookie = activationCookie == nil ? "" : String([activationCookie UTF8String]);
-    m_licenseKey = licenseKey == nil ? "" : LicenseData::Decrype(String([licenseKey UTF8String]));
-    m_name = name == nil ? "" : LicenseData::Decrype(String([name UTF8String]));
-    m_company = company == nil ? "" : LicenseData::Decrype(String([company UTF8String]));
+    m_licenseKey = licenseKey == nil ? "" : LicenseData::Decrypt(String([licenseKey UTF8String]));
+    m_name = name == nil ? "" : LicenseData::Decrypt(String([name UTF8String]));
+    m_company = company == nil ? "" : LicenseData::Decrypt(String([company UTF8String]));
 }
 
 void LicenseData::Save()
 {
     NSArray *pathList = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString *dataFilePath = [[pathList objectAtIndex: 0] stringByAppendingPathComponent: [[NSBundle mainBundle] bundleIdentifier]];
-    dataFilePath = [dataFilePath stringByAppendingPathComponent: [NSString stringWithUTF8String: Zephyros::GetLicenseInfoFilename()]];
+    dataFilePath = [dataFilePath stringByAppendingPathComponent: [NSString stringWithUTF8String: m_szLicenseInfoFilename]];
 
     NSMutableDictionary *root = [[NSMutableDictionary alloc] init];
     
@@ -103,9 +104,9 @@ void LicenseData::Save()
     
     [root setValue: [NSString stringWithUTF8String: m_timestampLastDemoTokenUsed.c_str()] forKey: @"tstmp"];
     [root setValue: [NSString stringWithUTF8String: m_activationCookie.c_str()] forKey: @"ac"];
-    [root setValue: [NSString stringWithUTF8String: LicenseData::Encrype(m_licenseKey).c_str()] forKey: @"lk"];
-    [root setValue: [NSString stringWithUTF8String: LicenseData::Encrype(m_name).c_str()] forKey: @"n"];
-    [root setValue: [NSString stringWithUTF8String: LicenseData::Encrype(m_company).c_str()] forKey: @"c"];
+    [root setValue: [NSString stringWithUTF8String: LicenseData::Encrypt(m_licenseKey).c_str()] forKey: @"lk"];
+    [root setValue: [NSString stringWithUTF8String: LicenseData::Encrypt(m_name).c_str()] forKey: @"n"];
+    [root setValue: [NSString stringWithUTF8String: LicenseData::Encrypt(m_company).c_str()] forKey: @"c"];
     
     [NSKeyedArchiver archiveRootObject: root toFile: dataFilePath];
     
@@ -138,10 +139,11 @@ String LicenseData::Now()
 //////////////////////////////////////////////////////////////////////////
 // LicenseManager Implementation
 
-LicenseManager::LicenseManager(LicenseManagerInfo* info)
-  : m_info(info),
-    m_windowController(nil)
+LicenseManager::LicenseManager()
+    : m_windowController(nil)
 {
+    InitConfig();
+    
     m_timerDelegate = [[LicenseManagerTimerDelegate alloc] init];
     m_timerDelegate->m_pLicenseManager = this;
     
@@ -153,6 +155,9 @@ LicenseManager::LicenseManager(LicenseManagerInfo* info)
 
 LicenseManager::~LicenseManager()
 {
+    if (m_pLicenseData != NULL)
+        delete m_pLicenseData;
+    
 #if !(__has_feature(objc_arc))
     if (m_windowController != nil)
         [m_windowController release];
@@ -237,15 +242,15 @@ String LicenseManager::DecodeURI(String uri)
 
 bool LicenseManager::CheckReceipt()
 {
-    if (!m_info->pReceiptChecker)
+    if (!m_config.pReceiptChecker)
         return false;
     
     // copy the receipt to check to the standard location
     NSBundle* bundle = [NSBundle mainBundle];
     NSFileManager* fileManager= [NSFileManager defaultManager];
     
-    NSString* masBundleIdentifier = [NSString stringWithUTF8String: m_info->pReceiptChecker->GetAppStoreBundleName().c_str()];
-    String receiptFilename = m_info->pReceiptChecker->GetReceiptFilename();
+    NSString* masBundleIdentifier = [NSString stringWithUTF8String: m_config.pReceiptChecker->GetAppStoreBundleName().c_str()];
+    String receiptFilename = m_config.pReceiptChecker->GetReceiptFilename();
     
     // the receipt is saved in the sandbox app container at
     // ~/Library/Containers/<bundle-id>/Data/Library/Application Support/<bundle-id>/MASReceipts/<mac-addr>
@@ -299,7 +304,7 @@ bool LicenseManager::CheckReceipt()
             stringByAppendingPathComponent: @"rvl"]
                           atomically: NO])
         {
-            return m_info->pReceiptChecker->CheckReceipt();
+            return m_config.pReceiptChecker->CheckReceipt();
         }
     }
     
@@ -308,14 +313,14 @@ bool LicenseManager::CheckReceipt()
 
 void LicenseManager::OpenPurchaseLicenseURL()
 {
-    if (m_info->shopURL)
-        [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: [NSString stringWithUTF8String: m_info->shopURL]]];
+    if (m_config.shopURL)
+        [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: [NSString stringWithUTF8String: m_config.shopURL]]];
 }
 
 void LicenseManager::OpenUpgradeLicenseURL()
 {
-    if (m_info->upgradeURL)
-        [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: [NSString stringWithUTF8String: m_info->upgradeURL]]];
+    if (m_config.upgradeURL)
+        [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: [NSString stringWithUTF8String: m_config.upgradeURL]]];
 }
 
 bool LicenseManager::SendRequest(String urlPath, String postData, StringStream& out)
@@ -349,7 +354,7 @@ void LicenseManager::ShowDemoDialog()
     if (m_windowController == nil)
         m_windowController = [[LicenseCheckWindowController alloc] init];
     
-    m_windowController.numDaysUsed = [NSNumber numberWithInt: m_info->numDemoDays - GetNumDaysLeft()];
+    m_windowController.numDaysUsed = [NSNumber numberWithInt: m_config.numDemoDays - GetNumDaysLeft()];
     m_windowController.daysLeftCaption = [NSString stringWithUTF8String: GetDaysCountLabelText().c_str()];
     m_windowController.demoButtonCaption = [NSString stringWithUTF8String: GetDemoButtonCaption().c_str()];
     

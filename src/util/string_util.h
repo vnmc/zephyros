@@ -10,11 +10,12 @@
 #include "base/types.h"
 
 
+#ifdef USE_CEF
 class CefRequest;
-
 
 // Dump the contents of the request into a string.
 void DumpRequestContents(CefRefPtr<CefRequest> request, String& str);
+#endif
 
 // Replace all instances of |from| with |to| in |str|.
 String StringReplace(const String& str, const String& from, const String& to);

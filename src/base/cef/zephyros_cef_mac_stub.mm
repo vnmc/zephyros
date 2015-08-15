@@ -16,20 +16,11 @@
 #include "base/app.h"
 
 #include "base/cef/client_app.h"
-//#include "client_handler.h"
-//#include "resource_util.h"
-//#include "string_util.h"
-//#include "extension_handler.h"
-//#include "licensing.h"
-
-
-// the global ClientHandler reference
-extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
 
 namespace Zephyros {
 
-int InitCEFApplication(int argc, const char* argv[])
+int InitApplication(int argc, const char* argv[])
 {
     CefMainArgs main_args(argc, (char**) argv);
     CefRefPtr<Zephyros::ClientApp> app(new Zephyros::ClientApp);
