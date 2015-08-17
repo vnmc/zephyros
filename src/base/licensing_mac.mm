@@ -1,17 +1,18 @@
-#include <Foundation/Foundation.h>
-#include <CoreFoundation/CoreFoundation.h>
+#import <Foundation/Foundation.h>
+#import <CoreFoundation/CoreFoundation.h>
 
-#include <Security/Security.h>
-#include <CommonCrypto/CommonDigest.h>
+#import <Security/Security.h>
+#import <CommonCrypto/CommonDigest.h>
 
-#include <iomanip>
+#import <iomanip>
 
-#include "base/zephyros_impl.h"
-#include "base/app.h"
-#include "base/licensing.h"
-#include "base/LicenseCheckWindowController.h"
+#import "base/zephyros_impl.h"
+#import "base/app.h"
+#import "base/licensing.h"
 
-#include "native_extensions/network_util.h"
+#import "components/LicenseCheckWindowController.h"
+
+#import "native_extensions/network_util.h"
 
 
 @implementation LicenseManagerTimerDelegate

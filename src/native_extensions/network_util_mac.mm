@@ -179,27 +179,39 @@ static void ResultCallback(void * client, CFArrayRef proxies, CFErrorRef error)
  */
 bool GetProxyForURL(String url, String& type, String& host, int& port, String& username, String& password)
 {
+    DEBUG_LOG(@"GetProxyForURL %s", url.c_str());
+    
     bool ret = false;
     NSURL *pUrl = [NSURL URLWithString: [NSString stringWithUTF8String: url.c_str()]];
         
     CFDictionaryRef proxySettings = SCDynamicStoreCopyProxies(NULL);
     if (proxySettings != NULL)
     {
+        DEBUG_LOG(@"GetProxyForURL has proxy settings");
+        
         CFArrayRef proxies = CFNetworkCopyProxiesForURL((__bridge CFURLRef) pUrl, proxySettings);
         if (proxies != NULL && CFArrayGetCount(proxies) > 0)
         {
+            DEBUG_LOG(@"GetProxyForURL has proxies");
+            
             CFDictionaryRef bestProxy = (CFDictionaryRef) CFArrayGetValueAtIndex(proxies, 0);
             if (bestProxy != NULL)
             {
+                DEBUG_LOG(@"GetProxyForURL has best proxy");
+                
                 CFStringRef proxyType = (CFStringRef) CFDictionaryGetValue(bestProxy, kCFProxyTypeKey);
                 
                 // get the proxy from the autoconfig
                 if (proxyType != NULL && !CFEqual(proxyType, kCFProxyTypeNone) && CFEqual(proxyType, kCFProxyTypeAutoConfigurationURL))
                 {
+                    DEBUG_LOG(@"GetProxyForURL autoconfig, proxyType=%@", proxyType);
+                    
                     CFURLRef scriptURL = (CFURLRef) CFDictionaryGetValue(bestProxy, kCFProxyAutoConfigurationURLKey);
                     if (scriptURL != NULL)
                     {
-                        CFTypeRef res;
+                        DEBUG_LOG(@"GetProxyForURL has script URL %@", scriptURL);
+                        
+                        CFTypeRef res = NULL;
                         CFStreamClientContext context = { 0, &res, NULL, NULL, NULL };
                             
                         // Work around <rdar://problem/5530166>.  This dummy call to
@@ -210,28 +222,42 @@ bool GetProxyForURL(String url, String& type, String& host, int& port, String& u
                         CFRunLoopSourceRef rls = CFNetworkExecuteProxyAutoConfigurationURL(scriptURL, (__bridge CFURLRef) pUrl, ResultCallback, &context);
                         if (rls != NULL)
                         {
+                            DEBUG_LOG(@"GetProxyForURL has run loop source");
+                            
                             CFRunLoopAddSource(CFRunLoopGetCurrent(), rls, kCFRunLoopDefaultMode);
                             CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1.0e10, false);
                             CFRunLoopRemoveSource(CFRunLoopGetCurrent(), rls, kCFRunLoopDefaultMode);
                             
+                            DEBUG_LOG(@"GetProxyForURL releaseing run loop source");
                             CFRelease(rls);
-                                
+                            
                             if (res && CFGetTypeID(res) == CFArrayGetTypeID())
                             {
+                                DEBUG_LOG(@"GetProxyForURL has res");
+                                
                                 bestProxy = (CFDictionaryRef) CFArrayGetValueAtIndex((CFArrayRef) res, 0);
                                 if (bestProxy != NULL)
+                                {
+                                    DEBUG_LOG(@"GetProxyForURL has best proxy (2)");
                                     proxyType = (CFStringRef) CFDictionaryGetValue(bestProxy, kCFProxyTypeKey);
+                                    DEBUG_LOG(@"GetProxyForURL proxyType=%@", proxyType);
+                                }
                             }
                         }
                         
                         if (res != NULL)
+                        {
+                            DEBUG_LOG(@"GetProxyForURL releasing res");
                             CFRelease(res);
+                        }
                     }
                 }
                 
                 // parse the proxy information
                 if (bestProxy != NULL && proxyType != NULL)
                 {
+                    DEBUG_LOG(@"GetProxyForURL has bestProxy and proxyType");
+                    
                     ret = true;
                     
                     if (CFEqual(proxyType, kCFProxyTypeNone))
@@ -244,61 +270,107 @@ bool GetProxyForURL(String url, String& type, String& host, int& port, String& u
                         type = "socks";
                     else
                         type = "unknown";
+                    
+                    DEBUG_LOG(@"GetProxyForURL set type=%s", type.c_str());
 
                     host = "";
                     port = -1;
                     username = "";
                     password = "";
 
-                    char buf[200];
+                    char buf[512];
 
                     CFStringRef hostStr = (CFStringRef) CFDictionaryGetValue(bestProxy, kCFProxyHostNameKey);
                     if (hostStr != NULL)
                     {
-                        CFStringGetCString(hostStr, buf, sizeof(buf), kCFStringEncodingUTF8);
-                        host = String(buf);
-                    }
-                    
-                    CFNumberRef portNum = (CFNumberRef) CFDictionaryGetValue(bestProxy, kCFProxyPortNumberKey);
-                    if (portNum != NULL)
-                        CFNumberGetValue(portNum, kCFNumberIntType, &port);
-                    
-                    CFStringRef userStr = (CFStringRef) CFDictionaryGetValue(bestProxy, kCFProxyUsernameKey);
-                    if (userStr != NULL)
-                    {
-                        CFStringGetCString(userStr, buf, sizeof(buf), kCFStringEncodingUTF8);
-                        username = String(buf);
-                    }
-
-                    CFStringRef passwordStr = (CFStringRef) CFDictionaryGetValue(bestProxy, kCFProxyPasswordKey);
-                    if (passwordStr != NULL)
-                    {
-                        CFStringGetCString(passwordStr, buf, sizeof(buf), kCFStringEncodingUTF8);
-                        password = String(buf);
-                    }
-                    
-                    // if no user name / password is in the dictionary, check the keychain
-                    if (userStr == NULL || passwordStr == NULL)
-                    {
-                        EMInternetKeychainItem *keychainItem = [EMInternetKeychainItem internetKeychainItemForServer: [NSString stringWithUTF8String: host.c_str()]
-                                                                                                        withUsername: @""
-                                                                                                                path: @""
-                                                                                                                port: port
-                                                                                                            protocol: kSecProtocolTypeAny];
-                        if (keychainItem != nil)
+                        DEBUG_LOG(@"GetProxyForURL has hostStr");
+                        
+                        if (CFStringGetCString(hostStr, buf, sizeof(buf) - 1, kCFStringEncodingUTF8))
                         {
-                            username = String([keychainItem.username UTF8String]);
-                            password = String([keychainItem.password UTF8String]);
+                            host = String(buf);
+                            DEBUG_LOG(@"GetProxyForURL set host=%s", host.c_str());
                         }
+
+                        if (host.length() > 0)
+                        {
+                            DEBUG_LOG(@"GetProxyForURL get port");
+                            CFNumberRef portNum = (CFNumberRef) CFDictionaryGetValue(bestProxy, kCFProxyPortNumberKey);
+                            if (portNum != NULL)
+                            {
+                                DEBUG_LOG(@"GetProxyForURL has portNum");
+                            
+                                CFNumberGetValue(portNum, kCFNumberIntType, &port);
+                                DEBUG_LOG(@"GetProxyForURL set port=%d", port);
+                            }
+                        
+                            DEBUG_LOG(@"GetProxyForURL get port");
+                            CFStringRef userStr = (CFStringRef) CFDictionaryGetValue(bestProxy, kCFProxyUsernameKey);
+                            if (userStr != NULL)
+                            {
+                                DEBUG_LOG(@"GetProxyForURL has userStr");
+                            
+                                if (CFStringGetCString(userStr, buf, sizeof(buf) - 1, kCFStringEncodingUTF8))
+                                {
+                                    username = String(buf);
+                                    DEBUG_LOG(@"GetProxyForURL set username=%s", username.c_str());
+                                }
+                            }
+                        
+                            DEBUG_LOG(@"GetProxyForURL get port");
+                            CFStringRef passwordStr = (CFStringRef) CFDictionaryGetValue(bestProxy, kCFProxyPasswordKey);
+                            if (passwordStr != NULL)
+                            {
+                                DEBUG_LOG(@"GetProxyForURL has passwordStr");
+                            
+                                if (CFStringGetCString(passwordStr, buf, sizeof(buf) - 1, kCFStringEncodingUTF8))
+                                {
+                                    password = String(buf);
+                                    DEBUG_LOG(@"GetProxyForURL set password=%s", password.c_str());
+                                }
+                            }
+                        
+                            // if no user name / password is in the dictionary, check the keychain
+                            DEBUG_LOG(@"GetProxyForURL get username/password from key chain?");
+                            if (userStr == NULL || passwordStr == NULL)
+                            {
+                                DEBUG_LOG(@"GetProxyForURL has host but no user/password");
+                            
+                                EMInternetKeychainItem *keychainItem = [EMInternetKeychainItem internetKeychainItemForServer: [NSString stringWithUTF8String: host.c_str()]
+                                                                                                                withUsername: @""
+                                                                                                                        path: @""
+                                                                                                                        port: port
+                                                                                                                    protocol: kSecProtocolTypeAny];
+                                DEBUG_LOG(@"GetProxyForURL retrieved keychain item");
+                            
+                                if (keychainItem != nil)
+                                {
+                                    DEBUG_LOG(@"GetProxyForURL has keychain item");
+                                
+                                    username = String([keychainItem.username UTF8String]);
+                                    password = String([keychainItem.password UTF8String]);
+                                
+                                    DEBUG_LOG(@"GetProxyForURL from keychain item: username=%s, password=%s", username.c_str(), password.c_str());
+                                }
+                            }
+                        }
+                        else
+                            type = "none";
                     }
+                    else
+                        type = "none";
                 }
             }
-            
+
+            DEBUG_LOG(@"GetProxyForURL releasing proxies");
             CFRelease(proxies);
         }
         else if (proxies != NULL && CFArrayGetCount(proxies) == 0)
+        {
+            DEBUG_LOG(@"GetProxyForURL no proxies");
             ret = true;
+        }
         
+        DEBUG_LOG(@"GetProxyForURL releasing proxySettings");
         CFRelease(proxySettings);
     }
  

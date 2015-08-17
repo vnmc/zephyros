@@ -11,7 +11,8 @@
 #import "base/zephyros_impl.h"
 #import "base/zephyros_strings.h"
 #import "base/licensing.h"
-#import "base/LicenseCheckWindowController.h"
+
+#import "components/LicenseCheckWindowController.h"
 
 
 @implementation LicenseCheckWindowController
