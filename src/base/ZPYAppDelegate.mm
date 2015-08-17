@@ -48,8 +48,9 @@
 
 - (void) awakeFromNib
 {
-    if (Zephyros::GetLicenseManager() && Zephyros::GetLicenseManager()->GetReceiptChecker())
-        Zephyros::GetLicenseManager()->GetReceiptChecker()->CopyAppStoreReceipt();
+    Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
+    if (pMgr && pMgr->GetReceiptChecker())
+        pMgr->GetReceiptChecker()->CopyAppStoreReceipt();
 }
 
 - (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication*) sender

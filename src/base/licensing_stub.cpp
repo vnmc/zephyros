@@ -46,6 +46,10 @@ LicenseManager::~LicenseManager()
 {
 }
     
+void LicenseManager::Start()
+{
+}
+    
 bool LicenseManager::VerifyKey(String key, String info, const TCHAR* pubkey)
 {
     return false;

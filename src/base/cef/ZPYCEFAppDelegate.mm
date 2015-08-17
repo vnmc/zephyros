@@ -71,7 +71,7 @@ extern bool g_isWindowBeingLoaded;
     [self createMenuItems];
     [self applicationWillFinishLaunching: nil];
 
-    Zephyros::LicenseManager* pMgr = Zephyros::GetLicenseManager();
+    Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
     if (pMgr == NULL || pMgr->CanStartApp())
         [self createMainWindow];
 }

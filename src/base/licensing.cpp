@@ -210,7 +210,7 @@ int LicenseManager::Activate(String name, String company, String licenseKey)
 
 int LicenseManager::ActivateFromURL(String url)
 {
-	if (!LicenseManager::IsLicensingLink(url))
+    if (!AbstractLicenseManager::IsLicensingLink(url))
 		return ACTIVATION_FAILED;
         
     StringStream ssUrl(url.c_str() + _tcslen(m_config.activationLinkPrefix));

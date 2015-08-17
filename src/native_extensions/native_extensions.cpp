@@ -763,14 +763,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptFunction(
         TEXT("getLicenseData"),
         FUNC({
-            LicenseManager* pMgr = Zephyros::GetLicenseManager();
+            AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
+            if (pMgr)
+                ret->SetDictionary(0, pMgr->GetLicenseInformation());
+            else
+                ret->SetNull(0);
         
-            JavaScript::Object data = JavaScript::CreateObject();
-            data->SetString(TEXT("licenseKey"), pMgr ? pMgr->GetLicenseKey() : TEXT(""));
-            data->SetString(TEXT("fullName"), pMgr ? pMgr->GetFullName() : TEXT(""));
-            data->SetString(TEXT("company"), pMgr ? pMgr->GetCompany() : TEXT(""));
-        
-            ret->SetDictionary(0, data);
             return NO_ERROR;
         }
     ));
@@ -779,7 +777,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptProcedure(
         TEXT("deactivateLicense"),
         FUNC({
-            LicenseManager* pMgr = Zephyros::GetLicenseManager();
+            AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
             if (pMgr)
                 pMgr->Deactivate();
             return NO_ERROR;

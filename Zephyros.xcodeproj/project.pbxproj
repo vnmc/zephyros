@@ -376,6 +376,7 @@
 		CCBDB4851B7E4FC700D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB47F1B7E4FC700D168AB /* string_util.h */; };
 		CCBDB4861B7E4FC700D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB47F1B7E4FC700D168AB /* string_util.h */; };
 		CCBDB4871B7E4FC700D168AB /* string_util.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB47F1B7E4FC700D168AB /* string_util.h */; };
+		CCBDB4891B7F5AA800D168AB /* Zephyros_AppStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCF48A501B4D782000E4F261 /* Zephyros_AppStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CCC018BF1B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
 		CCC018C01B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
 		CCC018C11B4FD9B70015B0FA /* jsbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC018BB1B4FD9B70015B0FA /* jsbridge.cpp */; };
@@ -666,6 +667,17 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CCBDB3D31B7A129600D168AB /* Zephyros_CEF.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CCBDB4881B7F5A8600D168AB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CCBDB4891B7F5AA800D168AB /* Zephyros_AppStore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2427,6 +2439,7 @@
 				CC608F011B5CEFD6003D185F /* Sources */,
 				CC608F021B5CEFD6003D185F /* Frameworks */,
 				CC608F031B5CEFD6003D185F /* Resources */,
+				CCBDB4881B7F5A8600D168AB /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

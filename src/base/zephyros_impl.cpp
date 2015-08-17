@@ -29,7 +29,7 @@ TCHAR* g_szAppURL = NULL;
 TCHAR* g_szRegistryKey = NULL;
 TCHAR* g_szUpdaterURL = NULL;
 
-LicenseManager* g_pLicenseManager = NULL;
+AbstractLicenseManager* g_pLicenseManager = NULL;
 NativeExtensions* g_pNativeExtensions = NULL;
     
 std::map<int, String> g_mapStrings;
@@ -144,6 +144,12 @@ void Shutdown()
     
     if (g_szUpdaterURL != NULL)
         delete[] g_szUpdaterURL;
+    
+    if (g_pLicenseManager != NULL)
+        delete g_pLicenseManager;
+    
+    if (g_pNativeExtensions != NULL)
+        delete g_pNativeExtensions;
 }
     
 const TCHAR* GetAppName()
@@ -187,12 +193,12 @@ void SetUpdaterURL(const TCHAR* url)
     _tcscpy(g_szUpdaterURL, url);
 }
     
-LicenseManager* GetLicenseManager()
+AbstractLicenseManager* GetLicenseManager()
 {
     return g_pLicenseManager;
 }
     
-void SetLicenseManager(LicenseManager* pLicenseManager)
+void SetLicenseManager(AbstractLicenseManager* pLicenseManager)
 {
     g_pLicenseManager = pLicenseManager;
 }

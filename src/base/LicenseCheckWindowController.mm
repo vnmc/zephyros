@@ -23,7 +23,7 @@
     
     int numDemoDays = 0;
     if (Zephyros::GetLicenseManager())
-        numDemoDays = Zephyros::GetLicenseManager()->GetNumberOfDemoDays();
+        numDemoDays = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetNumberOfDemoDays();
     
     self.numDemoDays = [NSNumber numberWithInt: numDemoDays];
     self.numWarningDays = [NSNumber numberWithInt: numDemoDays - 2];
@@ -58,10 +58,10 @@
     self.prevVersionLicenseHintUpgrade.title =[NSString stringWithUTF8String: Zephyros::GetString(ZS_PREVVERSIONDLG_UPGRADE).c_str()];
     self.prevVersionLicenseHintImage.image = [NSApp applicationIconImage];
     
-    if (Zephyros::GetLicenseManager()->GetShopURL() == NULL)
+    if (static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetShopURL() == NULL)
         self.purchaseLicense.hidden = YES;
     
-    if (Zephyros::GetLicenseManager()->GetUpgradeURL() == NULL)
+    if (static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetUpgradeURL() == NULL)
         self.prevVersionLicenseHintUpgrade.hidden = YES;
 }
 
@@ -88,11 +88,11 @@
 - (IBAction) onContinueDemoClicked: (id) sender
 {
     int numDaysUsed = [_numDaysUsed intValue];
-    bool canContinue = numDaysUsed < Zephyros::GetLicenseManager()->GetNumberOfDemoDays();
+    bool canContinue = numDaysUsed < static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetNumberOfDemoDays();
     if (canContinue)
-        canContinue = Zephyros::GetLicenseManager()->ContinueDemo();
+        canContinue = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->ContinueDemo();
     
-    if (!canContinue || Zephyros::GetLicenseManager()->HasDemoTokens())
+    if (!canContinue || static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->HasDemoTokens())
         [self close: canContinue ? NSModalResponseContinue : NSModalResponseAbort];
 }
 
@@ -122,7 +122,7 @@
 
 - (IBAction) onEnterLicenseActivateClicked: (id) sender
 {
-    int ret = Zephyros::GetLicenseManager()->Activate(
+    int ret = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->Activate(
         _name == nil ? "" : [_name UTF8String],
         _organization == nil ? "" : [_organization UTF8String],
         _licenseKey == nil ? "" : [_licenseKey UTF8String]
@@ -152,7 +152,7 @@
 
 - (IBAction) onPrevVersionLicenseHintUpgradeClicked: (id) sender
 {
-    Zephyros::GetLicenseManager()->OpenUpgradeLicenseURL();
+    static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->OpenUpgradeLicenseURL();
 }
 
 /**

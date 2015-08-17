@@ -95,7 +95,7 @@ int InitApplication(int argc, const char* argv[])
     // initialize CEF
     CefInitialize(main_args, settings, app.get(), NULL);
 
-    Zephyros::LicenseManager* pLicenseMgr = Zephyros::GetLicenseManager();
+    Zephyros::AbstractLicenseManager* pLicenseMgr = Zephyros::GetLicenseManager();
     g_appDelegate = [[ZPYCEFAppDelegate alloc] init];
 
     if (pLicenseMgr != NULL)

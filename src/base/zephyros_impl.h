@@ -40,8 +40,8 @@ void SetRegistryKey(const TCHAR* registryKey);
 const TCHAR* GetUpdaterURL();
 void SetUpdaterURL(const TCHAR* url);
     
-LicenseManager* GetLicenseManager();
-void SetLicenseManager(LicenseManager* pLicenseManager);
+AbstractLicenseManager* GetLicenseManager();
+void SetLicenseManager(AbstractLicenseManager* pLicenseManager);
     
 NativeExtensions* GetNativeExtensions();
 void SetNativeExtensions(NativeExtensions* pNativeExtensions);

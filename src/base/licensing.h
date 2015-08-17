@@ -41,8 +41,9 @@
 
 namespace Zephyros {
 
-class ReceiptChecker;
+class AbstractLicenseManager;
 class LicenseManager;
+class ReceiptChecker;
 
 
 typedef struct
@@ -78,42 +79,31 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////
 // Classes
 
-//#if APPSTORE == 0 || !defined(APPSTORE)
-#ifdef OS_MACOSX
-#if __OBJC__
-
-@class LicenseCheckWindowController;
-
-@interface LicenseManagerTimerDelegate : NSObject
-{
-    @public
-    Zephyros::LicenseManager* m_pLicenseManager;
-}
-
-- (void) onTimeout: (NSTimer*) timer;
-- (void) onSysTimeChanged: (NSNotification*) notification;
-
-@end
-
-typedef LicenseCheckWindowController* LicenseCheckWindowControllerRef;
-typedef LicenseManagerTimerDelegate* LicenseManagerTimerDelegateRef;
-
-#else
-
-typedef id LicenseCheckWindowControllerRef;
-typedef id LicenseManagerTimerDelegateRef;
-
-#endif // __OBJC__
-#endif // OS_MACOSX
-
-
 namespace Zephyros {
+    
+class AbstractLicenseManager
+{
+public:
+    virtual ~AbstractLicenseManager() {}
+    
+    virtual void Start() {}
+    virtual bool CanStartApp() = 0;
+    
+    virtual JavaScript::Object GetLicenseInformation() = 0;
 
-#ifdef OS_WIN
-class DemoDialog;
-#endif
+    virtual int ActivateFromURL(String url) { return ACTIVATION_FAILED; }
+    virtual bool Deactivate() { return false; }
 
+    inline bool IsLicensingLink(String url) { return IsLicensingLink(url.c_str()); }
+    virtual bool IsLicensingLink(const TCHAR* url) { return false; }
+    
+    virtual void ShowEnterLicenseDialog() {}
+    virtual void OpenPurchaseLicenseURL() {}
 
+    virtual ReceiptChecker* GetReceiptChecker() { return NULL; }
+};
+
+    
 class LicenseData
 {
 	friend class LicenseManager;
@@ -167,12 +157,49 @@ public:
     virtual bool CheckReceipt() = 0;
 };
 
+} // namespace Zephyros
 
-class LicenseManager
+
+//#if APPSTORE == 0 || !defined(APPSTORE)
+#ifdef OS_MACOSX
+#if __OBJC__
+
+@class LicenseCheckWindowController;
+
+@interface LicenseManagerTimerDelegate : NSObject
+{
+@public
+    Zephyros::LicenseManager* m_pLicenseManager;
+}
+
+- (void) onTimeout: (NSTimer*) timer;
+- (void) onSysTimeChanged: (NSNotification*) notification;
+
+@end
+
+typedef LicenseCheckWindowController* LicenseCheckWindowControllerRef;
+typedef LicenseManagerTimerDelegate* LicenseManagerTimerDelegateRef;
+
+#else
+
+typedef id LicenseCheckWindowControllerRef;
+typedef id LicenseManagerTimerDelegateRef;
+
+#endif // __OBJC__
+#endif // OS_MACOSX
+
+
+namespace Zephyros {
+
+#ifdef OS_WIN
+    class DemoDialog;
+#endif
+
+class LicenseManager : public AbstractLicenseManager
 {
 public:
 	LicenseManager();
-	~LicenseManager();
+	virtual ~LicenseManager();
     
     inline void SetLicenseInfo(int productId, const TCHAR* szPublicKey)
     {
@@ -216,27 +243,22 @@ public:
     }
     
     inline void SetReceiptChecker(ReceiptChecker* pReceiptChecker) { m_config.pReceiptChecker = pReceiptChecker; }
-    inline ReceiptChecker* GetReceiptChecker() { return m_config.pReceiptChecker; }
+    virtual inline ReceiptChecker* GetReceiptChecker() final { return m_config.pReceiptChecker; }
 
     /**
      * Starts the license manager.
      */
-    void Start();
+    virtual void Start();
 
 	bool RequestDemoTokens(String strMACAddr = TEXT(""));
     
     String DecodeURI(String uri);
 
 	int Activate(String name, String company, String licenseKey);
-    int ActivateFromURL(String url);
-    bool Deactivate();
+    virtual int ActivateFromURL(String url);
+    virtual bool Deactivate();
 
-    inline bool IsLicensingLink(String url)
-    {
-        return IsLicensingLink(url.c_str());
-    }
-    
-    inline bool IsLicensingLink(const TCHAR* url)
+    virtual bool IsLicensingLink(const TCHAR* url)
     {
         if (!m_config.activationLinkPrefix || !url)
             return false;
@@ -294,14 +316,11 @@ public:
         return false;
     }
     
-    void ShowEnterLicenseDialog();
-    void OpenPurchaseLicenseURL();
+    virtual void ShowEnterLicenseDialog();
+    virtual void OpenPurchaseLicenseURL();
     void OpenUpgradeLicenseURL();
 
-	inline bool CanStartApp()
-	{
-		return m_canStartApp;
-	}
+    inline virtual bool CanStartApp() final { return m_canStartApp; }
 
     /**
      * Tests whether the product has been activated.
@@ -329,9 +348,16 @@ public:
     
     inline bool HasDemoTokens() { return m_pLicenseData->m_demoTokens.size() > 0; }
     
-    inline const String GetFullName() { return String(m_pLicenseData->m_name); }
-    inline const String GetCompany() { return String(m_pLicenseData->m_company); }
-    inline const String GetLicenseKey() { return String(m_pLicenseData->m_licenseKey); }
+    inline virtual JavaScript::Object GetLicenseInformation() final
+    {
+        JavaScript::Object info = JavaScript::CreateObject();
+
+        info->SetString(TEXT("licenseKey"), m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT(""));
+        info->SetString(TEXT("fullName"), m_pLicenseData ? m_pLicenseData->m_name : TEXT(""));
+        info->SetString(TEXT("company"), m_pLicenseData ? m_pLicenseData->m_company : TEXT(""));
+        
+        return info;
+    }
     
     bool CheckReceipt();
 
