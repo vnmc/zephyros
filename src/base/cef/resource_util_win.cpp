@@ -5,12 +5,13 @@
 #include <string.h>
 #include <tchar.h>
 
-#include "..\..\..\Lib\Libcef\Include/cef_stream.h"
-#include "..\..\..\Lib\Libcef\Include/wrapper/cef_byte_read_handler.h"
+#include "include/cef_stream.h"
+#include "include/wrapper/cef_byte_read_handler.h"
 
-#include "resource_util.h"
+#include "base/cef/resource_util.h"
+#include "base/cef/util.h"
+
 #include "resource.h"
-#include "util.h"
 
 
 namespace {

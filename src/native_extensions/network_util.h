@@ -21,9 +21,6 @@ std::vector<String> GetAllMACAddresses();
     
 bool GetProxyForURL(String url, String& proxyType, String& host, int& port, String& username, String& password);
 
-// For Windows 8: put/remove IE onto/from the loopback list
-void SetIELoopbackExemption(bool bSetLoopbackExempt);
-
 #ifdef USE_WEBVIEW
 // For Mac/WebView: Make a HTTP request
 void MakeRequest(JSObjectRef callback, String httpMethod, String url, String postData, String postDataContentType, String responseDataType);

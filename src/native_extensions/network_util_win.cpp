@@ -14,14 +14,17 @@
 #include <winhttp.h>
 #include <regex>
 
-#include "network_util.h"
-#include "licensing.h"
-#include "app.h"
+#include "base/zephyros_impl.h"
+#include "base/app.h"
+#include "base/licensing.h"
+
+#include "native_extensions/network_util.h"
 
 
 #define MAX_BUF_LEN 128
 
 
+namespace Zephyros {
 namespace NetworkUtil {
 
 //
@@ -225,7 +228,7 @@ bool GetProxyForURL(String url, String& proxyType, String& host, int& port, Stri
 	username = TEXT("");
 	password = TEXT("");
 
-	HINTERNET hSession = WinHttpOpen(TEXT(APP_NAME), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+	HINTERNET hSession = WinHttpOpen(Zephyros::GetAppName(), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 	if (hSession != NULL)
 	{
 		WINHTTP_PROXY_INFO proxyInfo = { 0 };
@@ -291,27 +294,5 @@ bool GetProxyForURL(String url, String& proxyType, String& host, int& port, Stri
 	return ret;
 }
 
-void SetIELoopbackExemption(bool bSetLoopbackExempt)
-{
-	SHELLEXECUTEINFO execInfo = {0};
-	execInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-	execInfo.fMask = SEE_MASK_NO_CONSOLE;
-	execInfo.lpVerb = TEXT("runas");
-	execInfo.nShow = SW_HIDE;
-
-	TCHAR szModuleFilename[MAX_PATH + 1];
-	GetModuleFileName(NULL, szModuleFilename, MAX_PATH);
-	TCHAR* pLastSep = _tcsrchr(szModuleFilename, TEXT('\\'));
-	_tcscpy(pLastSep + 1, TEXT("IELoopbackExemption.exe"));
-	execInfo.lpFile = szModuleFilename;
-
-	execInfo.lpParameters = bSetLoopbackExempt ? TEXT("set-for windows_ie_ac") : TEXT("reset-for windows_ie_ac");
-
-	if (!ShellExecuteEx(&execInfo))
-	{
-		if (GetLastError() != ERROR_CANCELLED)
-			App::ShowErrorMessage();
-	}
-}
-
 } // namespace NetworkUtil
+} // namespace Zephyros

@@ -28,6 +28,7 @@ TCHAR* g_szAppVersion = NULL;
 TCHAR* g_szAppURL = NULL;
 TCHAR* g_szRegistryKey = NULL;
 TCHAR* g_szUpdaterURL = NULL;
+int g_nIconID = 0;
 
 AbstractLicenseManager* g_pLicenseManager = NULL;
 NativeExtensions* g_pNativeExtensions = NULL;
@@ -178,6 +179,16 @@ void SetRegistryKey(const TCHAR* registryKey)
         delete g_szRegistryKey;
     g_szRegistryKey = new TCHAR[_tcslen(registryKey) + 1];
     _tcscpy(g_szRegistryKey, registryKey);
+}
+
+int GetIconID()
+{
+	return g_nIconID;
+}
+
+void SetIconID(int nIconID)
+{
+	g_nIconID = nIconID;
 }
     
 const TCHAR* GetUpdaterURL()

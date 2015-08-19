@@ -1,7 +1,8 @@
-#include "updater.h"
-#include "../winsparkle/winsparkle.h"
+#include "lib/winsparkle/winsparkle.h"
+#include "native_extensions/updater.h"
 
 
+namespace Zephyros {
 namespace UpdaterUtil {
 
 JavaScript::Object GetSettings()
@@ -24,3 +25,4 @@ void SetSettings(JavaScript::Object settings)
 }
 
 } // namespace UpdaterUtil
+} // namespace Zephyros

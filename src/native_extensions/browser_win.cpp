@@ -1,14 +1,16 @@
 #include <iomanip>
 #include <tchar.h>
 
-#include "browser.h"
-#include "app.h"
-#include "image_util_win.h"
+#include "base/app.h"
+
+#include "native_extensions/browser.h"
+#include "native_extensions/image_util_win.h"
 
 
 #define MAX_LEN 2048
 
 
+namespace Zephyros {
 namespace BrowserUtil {
 
 //
@@ -341,3 +343,4 @@ void CleanUp(std::vector<Browser*>& browsers)
 }
 
 } // namespace BrowserUtil
+} // namespace Zephyros

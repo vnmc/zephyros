@@ -2,13 +2,14 @@
 #include <map>
 #include <ShlObj.h>
 
-#include "client_handler.h"
-#include "extension_handler.h"
-#include "resource.h"
-#include "os_util.h"
-#include "app.h"
-#include "image_util_win.h"
-#include "process_manager.h"
+#include "base/zephyros_impl.h"
+#include "base/app.h"
+#include "base/cef/client_handler.h"
+#include "base/cef/extension_handler.h"
+
+#include "native_extensions/os_util.h"
+#include "native_extensions/image_util_win.h"
+#include "native_extensions/process_manager.h"
 
 #include <strsafe.h>
 
@@ -22,6 +23,7 @@ extern int g_nMinWindowWidth;
 extern int g_nMinWindowHeight;
 
 
+namespace Zephyros {
 namespace OSUtil {
 
 //
@@ -375,8 +377,9 @@ void DisplayNotification(String title, String details)
 		g_pnfiNotifyIcon = new NOTIFYICONDATA;
 		ZeroMemory(g_pnfiNotifyIcon, sizeof(NOTIFYICONDATA));
 
-		g_hIconSmall = static_cast<HICON>(LoadImage(g_hInst, MAKEINTRESOURCE(IDI_CEFCLIENT), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR));
-		g_hIconLarge = static_cast<HICON>(LoadImage(g_hInst, MAKEINTRESOURCE(IDI_CEFCLIENT), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR));
+		int nIconID = Zephyros::GetIconID();
+		g_hIconSmall = static_cast<HICON>(LoadImage(g_hInst, MAKEINTRESOURCE(nIconID), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR));
+		g_hIconLarge = static_cast<HICON>(LoadImage(g_hInst, MAKEINTRESOURCE(nIconID), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR));
 
 		g_pnfiNotifyIcon->cbSize = sizeof(NOTIFYICONDATA);
 		g_pnfiNotifyIcon->hWnd = App::GetMainHwnd();
@@ -447,4 +450,5 @@ void CleanUp()
 		DestroyIcon(g_hIconLarge);
 }
 
-}
+} // namespace OSUtil
+} // namespace Zephyros

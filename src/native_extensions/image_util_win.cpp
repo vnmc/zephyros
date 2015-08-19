@@ -1,7 +1,7 @@
 #include <Shlwapi.h>
 
-#include "image_util_win.h"
-#include "base64.h"
+#include "util/base64.h"
+#include "native_extensions/image_util_win.h"
 
 
 namespace ImageUtil {

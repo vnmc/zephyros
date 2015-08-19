@@ -88,6 +88,7 @@ public:
     
     virtual void Start() {}
     virtual bool CanStartApp() = 0;
+	virtual bool CheckDemoValidity() {}
     
     virtual JavaScript::Object GetLicenseInformation() = 0;
 
@@ -295,7 +296,7 @@ public:
      * If the product hasn't been activated, the demo dialog is shown.
      * Returns true iff the product has been activated.
      */
-	inline bool CheckDemoValidity()
+	inline virtual bool CheckDemoValidity() final
     {
 #ifdef OS_WIN
         // prevent showing too many demo dialogs when WM_TIMECHANGE is sent multiple times
@@ -339,9 +340,9 @@ public:
             ret = CheckReceipt();
 #endif
         
-        // Try to activate with stored license
+        // try to activate with stored license
         if (!ret && m_pLicenseData->m_licenseKey != TEXT(""))
-            ret = Activate(m_pLicenseData->m_name, m_pLicenseData->m_company, m_pLicenseData->m_licenseKey);
+            ret = Activate(m_pLicenseData->m_name, m_pLicenseData->m_company, m_pLicenseData->m_licenseKey) == ACTIVATION_SUCCEEDED;
             
         return ret;
     }

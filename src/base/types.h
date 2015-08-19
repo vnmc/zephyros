@@ -49,7 +49,7 @@ class ClientExtensionHandler;
 
 #ifdef USE_CEF
 
-#include "jsbridge_v8.h"
+#include "base/cef/jsbridge_v8.h"
 
 class ClientHandler;
 class CefBrowser;

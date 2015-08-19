@@ -17,26 +17,28 @@
 #include <minmax.h>
 #include <gdiplus.h>
 
-#include "..\..\..\Lib\Libcef\Include\cef_app.h"
-#include "..\..\..\Lib\Libcef\Include\cef_browser.h"
-#include "..\..\..\Lib\Libcef\Include\cef_frame.h"
-#include "..\..\..\Lib\Libcef\Include\cef_runnable.h"
+#include "include\cef_app.h"
+#include "include\cef_browser.h"
+#include "include\cef_frame.h"
+#include "include\cef_runnable.h"
 
-#include "..\..\..\Lib/winsparkle\winsparkle.h"
-#include "..\..\..\Lib/CrashRpt\CrashRpt.h"
+#include "lib/winsparkle\winsparkle.h"
+#include "lib/CrashRpt\CrashRpt.h"
 
-#include "app.h"
-#include "client_handler.h"
-#include "custom_url_manager.h"
-#include "resource_util.h"
-#include "dialog_win.h"
-#include "extension_handler.h"
-#include "resource.h"
-#include "string_util.h"
-#include "network_util.h"
-#include "os_util.h"
-#include "licensing.h"
-#include "special_commandlines_win.h"
+#include "base/zephyros_impl.h"
+#include "base/app.h"
+#include "base/licensing.h"
+#include "base/cef/client_handler.h"
+#include "base/cef/resource_util.h"
+#include "base/cef/extension_handler.h"
+
+#include "util/string_util.h"
+
+#include "components/dialog_win.h"
+
+#include "native_extensions/custom_url_manager.h"
+#include "native_extensions/network_util.h"
+#include "native_extensions/os_util.h"
 
 
 #define MAX_LOADSTRING 100
@@ -52,7 +54,7 @@
 HINSTANCE g_hInst;
 
 // the global ClientHandler reference.
-extern CefRefPtr<ClientHandler> g_handler;
+extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
 // is the message loop running?
 bool g_isMessageLoopRunning = false;
@@ -139,13 +141,13 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 
 	// determine if another instance of the application is already running
 	bool bOtherInstanceRunning = false;
-	HANDLE hMutex = CreateMutex(NULL, FALSE, TEXT(APP_NAME));
+	HANDLE hMutex = CreateMutex(NULL, FALSE, Zephyros::GetAppName());
 	DWORD dwErr = GetLastError();
 	if (dwErr == ERROR_ALREADY_EXISTS)
 		bOtherInstanceRunning = true;
 	else if (dwErr == ERROR_ACCESS_DENIED)
 	{
-		hMutex = OpenMutex(SYNCHRONIZE, FALSE, TEXT(APP_NAME));
+		hMutex = OpenMutex(SYNCHRONIZE, FALSE, Zephyros::GetAppName());
 		if (hMutex != NULL)
 			bOtherInstanceRunning = true;
 	}
@@ -164,7 +166,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 #endif
 
 	// open the log file for writing
-	g_hndLogFile = App::OpenLogFile();
+	g_hndLogFile = Zephyros::App::OpenLogFile();
 	InstallCrashReporting();
 
 	g_hInst = hInstance;
@@ -172,7 +174,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	InitLocalizedStrings();
 
 	CefMainArgs main_args(hInstance);
-	CefRefPtr<ClientApp> app(new ClientApp);
+	CefRefPtr<Zephyros::ClientApp> app(new Zephyros::ClientApp());
 
 	// execute the secondary process, if any
 	int exit_code = CefExecuteProcess(main_args, app.get(), NULL);
@@ -185,12 +187,12 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 
 	// parse command line arguments
 	// the passed in values are ignored on Windows
-	App::InitCommandLine(0, NULL);
+	Zephyros::App::InitCommandLine(0, NULL);
 
 	// populate the settings based on command line arguments
 	CefSettings settings;
 	settings.no_sandbox = true;
-	App::GetSettings(settings);
+	Zephyros::App::GetSettings(settings);
 
 	// set the user agent
 	SetUserAgentString(settings);
@@ -207,13 +209,16 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	CefCookieManager::GetGlobalManager()->SetSupportedSchemes(schemes);
 
 	// check the license
-	g_pLicenseManager = new LicenseManager();
-	if (LicenseManager::IsLicensingLink(g_strCustomUrlToAdd))
+	Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
+	if (pMgr)
 	{
-		g_pLicenseManager->ActivateFromURL(g_strCustomUrlToAdd);
-		g_strCustomUrlToAdd = TEXT("");
+		if (pMgr->IsLicensingLink(g_strCustomUrlToAdd))
+		{
+			pMgr->ActivateFromURL(g_strCustomUrlToAdd);
+			g_strCustomUrlToAdd = TEXT("");
+		}
+		pMgr->Start();
 	}
-	g_pLicenseManager->Start();
 
 	ULONG_PTR gdiplusToken;
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
@@ -221,7 +226,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 
 	// create the main window and run
 	int result = 0;
-	if (g_pLicenseManager->CanStartApp())
+	if (pMgr == NULL || pMgr->CanStartApp())
 	{
 		InitMenuCommands();
 		result = CreateMainWindow();
@@ -229,7 +234,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	
 	// shut down CEF
 	CefShutdown();
-	delete g_pLicenseManager;
+//	delete g_pLicenseManager;
 
 	Gdiplus::GdiplusShutdown(gdiplusToken);
 
@@ -246,12 +251,12 @@ void SetUserAgentString(CefSettings& settings)
 {
 	std::stringstream ssUserAgent;
 
-	String strOSWide = OSUtil::GetOSVersion();
+	String strOSWide = Zephyros::OSUtil::GetOSVersion();
 	std::string strOS(strOSWide.begin(), strOSWide.end());
 	if (strOS[strOS.length() - 1] == '\0')
 		strOS = strOS.substr(0, strOS.length() - 1);
 
-	ssUserAgent << APP_NAME << " " << APP_VERSION << "; Windows NT/" << strOS << "; ";
+	ssUserAgent << Zephyros::GetAppName() << " " << Zephyros::GetAppVersion() << "; Windows NT/" << strOS << "; ";
 
 	bool isLangAdded = false;
 
@@ -304,10 +309,10 @@ void InstallCrashReporting()
 	memset(&info, 0, sizeof(CR_INSTALL_INFO));  
 	info.cb = sizeof(CR_INSTALL_INFO);
 	
-	info.pszAppName = TEXT(APP_NAME);
-	info.pszAppVersion = TEXT(APP_VERSION);
-	
-	info.pszUrl = TEXT("http://woeful.vanamco.com/crashreporting/windows.php");
+	info.pszAppName = Zephyros::GetAppName();
+	info.pszAppVersion = Zephyros::GetAppVersion();
+	info.pszUrl = Zephyros::GetCrashReportingURL();
+	info.pszPrivacyPolicyURL = Zephyros::GetPrivacyPolicyURL();
 
 	// send report only over HTTP
 	info.uPriorities[CR_HTTP] = 1;
@@ -317,15 +322,11 @@ void InstallCrashReporting()
 	// Install all available exception handlers and restart the app after a crash
 	info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_APP_RESTART | CR_INST_SEND_QUEUED_REPORTS;
 	
-	//info.pszRestartCmdLine = TEXT("/restart");
-	// Define the Privacy Policy URL 
-	info.pszPrivacyPolicyURL = TEXT("http://woeful.vanamco.com/crashreporting/privacypolicy.html");
-  
 	// Install crash reporting
 	int nResult = crInstall(&info);    
 	if(nResult == 0)
 	{
-		App::Log(TEXT("Crash reporting installed successfully"));
+		Zephyros::App::Log(TEXT("Crash reporting installed successfully"));
 
 		// Set crash callback function
 		crSetCrashCallback(CrashCallback, NULL);
@@ -338,8 +339,8 @@ void InstallCrashReporting()
 		// something went wrong. Get error message.
 		TCHAR szErrorMsg[512] = TEXT("");        
 		crGetLastErrorMsg(szErrorMsg, 512);
-		App::Log(TEXT("Failed to install crash reporting:"));
-		App::Log(szErrorMsg);
+		Zephyros::App::Log(TEXT("Failed to install crash reporting:"));
+		Zephyros::App::Log(szErrorMsg);
 	}
 }
 
@@ -365,7 +366,7 @@ int CreateMainWindow()
 
 	if (hWndMain == NULL)
 	{
-		App::ShowErrorMessage();
+		Zephyros::App::ShowErrorMessage();
 		return FALSE;
 	}
 
@@ -373,7 +374,7 @@ int CreateMainWindow()
 	g_handler->SetAccelTable(hAccelTable);
 
 	// initialize winsparkle
-	win_sparkle_set_appcast_url(UPDATER_URL);
+	win_sparkle_set_appcast_url(Zephyros::GetUpdaterURL());
 	win_sparkle_init();
 
 	g_isMessageLoopRunning = true;
@@ -412,7 +413,7 @@ int CreateMainWindow()
 	g_handler->ReleaseCefObjects();
 	win_sparkle_cleanup();
 	FreeResources();
-	OSUtil::CleanUp();
+	Zephyros::OSUtil::CleanUp();
 
 	return result;
 }
@@ -474,19 +475,6 @@ void InitMenuCommands()
 		g_mapMenuIDs[it->second] = it->first;
 }
 
-void InitLocalizedStrings()
-{
-	// create the map menu item ID -> command ID
-	g_mapLocalizedStrings[TEXT("Start Demo")] = IDS_STRING104;
-	g_mapLocalizedStrings[TEXT("Continue Demo")] = IDS_STRING105;
-	g_mapLocalizedStrings[TEXT("Close")] = IDS_STRING106;
-	g_mapLocalizedStrings[TEXT(" days left.")] = IDS_STRING107;
-	g_mapLocalizedStrings[TEXT("1 day left.")] = IDS_STRING108;
-	g_mapLocalizedStrings[TEXT("No days left. Please purchase a license.")] = IDS_STRING110;
-	g_mapLocalizedStrings[TEXT("This license key is not valid. Please try again.")] = IDS_STRING111;
-	g_mapLocalizedStrings[TEXT("Thank you for activating ")] = IDS_STRING112;
-}
-
 bool HandleOpenCustomURL(LPTSTR lpCommandLine, bool bOtherInstanceRunning)
 {
 	if (_tcsnccmp(lpCommandLine, TEXT("openurl"), 7) == 0)
@@ -539,12 +527,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
 		{
 			// create the single static handler class instance
-			g_handler = new ClientHandler();
+			g_handler = new Zephyros::ClientHandler();
 			g_handler->SetMainHwnd(hWnd);
 
 			// initialize the custom URL manager, and add the URL if there is one
-			CustomUrlManager* pMgr = g_handler->GetClientExtensionHandler()->GetState()->m_customUrlManager;
-			pMgr->SetLicenseManager(g_pLicenseManager);
+			Zephyros::CustomUrlManager* pMgr = g_handler->GetClientExtensionHandler()->GetState()->m_customUrlManager;
 			if (g_strCustomUrlToAdd.length() > 0)
 				pMgr->AddUrl(g_strCustomUrlToAdd);
 
@@ -560,7 +547,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			info.SetAsChild(hWnd, rect);
 
 			// create the new child browser window
-			CefBrowserHost::CreateBrowser(info, g_handler.get(), g_handler->GetStartupURL(), settings, NULL);
+			CefBrowserHost::CreateBrowser(info, g_handler.get(), Zephyros::GetAppURL(), settings, NULL);
 
 			// Todo: find a better solution for applying this e.g. with timeout in case showing of windows initially fails
 			//ShowWindow(hWnd, SW_SHOWDEFAULT);
@@ -615,19 +602,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					return 0;
 
 				case ID_TOOLS_ENABLELOOPBACKFORINTERNETEXPLORER:
-					NetworkUtil::SetIELoopbackExemption(true);
-					return 0;
-
-				case ID_TOOLS_RESETLOOPBACKEXEMPTIONS:
-					NetworkUtil::SetIELoopbackExemption(false);
+					Zephyros::NetworkUtil::SetIELoopbackExemption(true);
 					return 0;
 
 				case ID_HELP_PURCHASELICENSE:
-					g_pLicenseManager->OpenPurchaseLicenseURL();
+					if (Zephyros::GetLicenseManager())
+						Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
 					return 0;
 
 				case ID_HELP_ENTERLICENSEKEY:
-					g_pLicenseManager->ShowEnterLicenseDialog();
+					if (Zephyros::GetLicenseManager())
+						Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
 					return 0;
 
 				case IDM_EXIT:
@@ -678,7 +663,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_GETMINMAXINFO:
 		{
 			POINT ptBorder;
-			OSUtil::GetWindowBorderSize(&ptBorder);
+			Zephyros::OSUtil::GetWindowBorderSize(&ptBorder);
 
 			if (g_nMinWindowWidth > 0)
 				(reinterpret_cast<MINMAXINFO*> (lParam))->ptMinTrackSize.x = g_nMinWindowWidth + ptBorder.x;
@@ -724,14 +709,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_TIMECHANGE:
-		if (g_pLicenseManager != NULL)
-			g_pLicenseManager->CheckDemoValidity();
+		if (Zephyros::GetLicenseManager() != NULL)
+			Zephyros::GetLicenseManager()->CheckDemoValidity();
 		return 0;
 
 	case WM_COPYDATA:
 		if (g_handler.get())
 		{
-			CustomUrlManager* pMgr = g_handler->GetClientExtensionHandler()->GetState()->m_customUrlManager;
+			Zephyros::CustomUrlManager* pMgr = g_handler->GetClientExtensionHandler()->GetState()->m_customUrlManager;
 			if (pMgr)
 			{
 				pMgr->AddUrl((TCHAR*) ((COPYDATASTRUCT*) lParam)->lpData);
@@ -745,7 +730,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			WINDOWPLACEMENT wpl;
 			wpl.length = sizeof(WINDOWPLACEMENT);
-			GetWindowPlacement(App::GetMainHwnd(), &wpl);
+			GetWindowPlacement(Zephyros::App::GetMainHwnd(), &wpl);
 			Rect r;
 			r.x = wpl.rcNormalPosition.left;
 			r.y = wpl.rcNormalPosition.top;
@@ -825,7 +810,7 @@ void LoadWindowPlacement(Rect* pRectNormal, UINT* pShowCmd)
 	*pShowCmd = SW_SHOWDEFAULT;
 
 	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_CURRENT_USER, REGISTRY_KEY, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, Zephyros::GetRegistryKey(), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
 	{
 		DWORD type = 0;
 		DWORD len = 0;
@@ -858,7 +843,7 @@ void LoadWindowPlacement(Rect* pRectNormal, UINT* pShowCmd)
 void SaveWindowPlacement(Rect* pRectNormal, UINT showCmd)
 {
 	HKEY hKey;
-	if (RegCreateKeyEx(HKEY_CURRENT_USER, REGISTRY_KEY, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
+	if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetRegistryKey(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
 	{
 		StringStream ss;
 		ss << pRectNormal->x << TEXT(',') << pRectNormal->y << TEXT(',') << pRectNormal->w << TEXT(',') << pRectNormal->h << TEXT(',') << showCmd;
@@ -945,17 +930,6 @@ void EndWait()
 	SetClassLongPtr(hwnd, GCLP_HCURSOR, (LONG_PTR) hCursor);
 }
 
-void RemoveDemoMenuItems(HWND hWnd)
-{
-	HMENU hMenu = GetMenu(hWnd);
-	HMENU hMenuHelp = GetSubMenu(hMenu, 6);
-
-	// delete the separator and the two menu items
-	DeleteMenu(hMenuHelp, 2, MF_BYPOSITION);
-	DeleteMenu(hMenuHelp, ID_HELP_PURCHASELICENSE, MF_BYCOMMAND);
-	DeleteMenu(hMenuHelp, ID_HELP_ENTERLICENSEKEY, MF_BYCOMMAND);
-}
-
 void Alert(String title, String msg, AlertStyle style)
 {
 	HWND hWnd = NULL;
@@ -984,7 +958,7 @@ HANDLE OpenLogFile()
 	CreateDirectory(g_szLogFileName, NULL);
 
 	PathAppend(g_szLogFileName, TEXT("\\"));
-	PathAppend(g_szLogFileName, TEXT(APP_NAME));
+	PathAppend(g_szLogFileName, Zephyros::GetAppName());
 	CreateDirectory(g_szLogFileName, NULL);
 
 	PathAppend(g_szLogFileName, TEXT("\\debug.log"));
@@ -1054,7 +1028,7 @@ String ShowErrorMessage()
 
 	if (msg != NULL)
 	{
-		MessageBox(NULL, msg, TTEXT("Error").c_str(), MB_ICONERROR);
+		MessageBox(NULL, msg, TEXT("Error"), MB_ICONERROR);
 		String strMsg = String(msg);
 		LocalFree(msg);
 	}
@@ -1068,7 +1042,7 @@ String ShowErrorMessage()
 		sprintf(msg, "Error code %ld", errCode);
 #endif
 
-		MessageBox(NULL, msg, TTEXT("Error").c_str(), MB_ICONERROR);
+		MessageBox(NULL, msg, TEXT("Error"), MB_ICONERROR);
 		strMsg = String(msg);
 		delete[] msg;
 	}

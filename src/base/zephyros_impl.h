@@ -36,6 +36,9 @@ const TCHAR* GetAppURL();
     
 const TCHAR* GetRegistryKey();
 void SetRegistryKey(const TCHAR* registryKey);
+
+int GetIconID();
+void SetIconID(int nIconID);
     
 const TCHAR* GetUpdaterURL();
 void SetUpdaterURL(const TCHAR* url);

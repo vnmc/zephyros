@@ -6,10 +6,11 @@
 #include <windows.h>
 #include <shlobj.h> 
 
-#include "..\..\Lib\Libcef\Include\cef_browser.h"
-#include "..\..\Lib\Libcef\Include\cef_frame.h"
+#include "include\cef_browser.h"
+#include "include\cef_frame.h"
 
-#include "client_handler.h"
+#include "base/cef/client_handler.h"
+
 #include "resource.h"
 
 

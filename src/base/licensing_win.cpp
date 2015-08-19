@@ -4,30 +4,33 @@
 #include <Shlwapi.h>
 #include <ShlObj.h>
 #include <Uxtheme.h>
-//#include <WinInet.h>
 #include <winhttp.h>
 #include <vsstyle.h>
 
-#include "app.h"
-#include "client_handler.h"
-#include "resource.h"
-#include "licensing.h"
-#include "dialog_win.h"
-#include "file_util.h"
-#include "string_util.h"
+#include "base/zephyros_impl.h"
+#include "base/app.h"
+#include "base/licensing.h"
+#include "base/cef/client_handler.h"
+
+#include "util/string_util.h"
+#include "components/dialog_win.h"
+#include "native_extensions/file_util.h"
 
 
 #define BUF_SIZE 512
 
 extern HINSTANCE g_hInst;
-extern LicenseManager* g_pLicenseManager;
-extern CefRefPtr<ClientHandler> g_handler;
+extern CefRefPtr<Zephyros::ClientHandler> g_handler;
+
+
+namespace Zephyros {
 
 
 //////////////////////////////////////////////////////////////////////////
 // LicenseData Implementation
 
-LicenseData::LicenseData()
+LicenseData::LicenseData(const TCHAR* szLicenseInformationFilename)
+	: m_szLicenseInfoFilename(szLicenseInformationFilename)
 {
 	// read the license data from the file
 
@@ -38,10 +41,11 @@ LicenseData::LicenseData()
 	CreateDirectory(szFilename, NULL);
 
 	PathAppend(szFilename, TEXT("\\"));
-	PathAppend(szFilename, TEXT(APP_NAME));
+	PathAppend(szFilename, Zephyros::GetAppName());
 	CreateDirectory(szFilename, NULL);
 
-	PathAppend(szFilename, TEXT("\\data.t2"));
+	PathAppend(szFilename, TEXT("\\"));
+	PathAppend(szFilename, m_szLicenseInfoFilename);
 
 	HANDLE hFile = CreateFile(szFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -51,7 +55,8 @@ LicenseData::LicenseData()
 		Path path;
 		FileUtil::GetApplicationResourcesPath(path);
 		_tcscpy(szFilename, path.GetPath().c_str());
-		PathAppend(szFilename, TEXT("\\data.t2"));
+		PathAppend(szFilename, TEXT("\\"));
+		PathAppend(szFilename, m_szLicenseInfoFilename);
 
 		hFile = CreateFile(szFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	}
@@ -104,7 +109,7 @@ LicenseData::LicenseData()
 			{
 				buf = new TCHAR[len];
 				ReadFile(hFile, buf, len * sizeof(TCHAR), &numBytesRead, NULL);
-				m_licenseKey = LicenseData::Decrype(String(buf, (String::size_type) len));
+				m_licenseKey = LicenseData::Decrypt(String(buf, (String::size_type) len));
 				delete[] buf;
 			}
 		}
@@ -116,7 +121,7 @@ LicenseData::LicenseData()
 			{
 				buf = new TCHAR[len];
 				ReadFile(hFile, buf, len * sizeof(TCHAR), &numBytesRead, NULL);
-				m_name = LicenseData::Decrype(String(buf, (String::size_type) len));
+				m_name = LicenseData::Decrypt(String(buf, (String::size_type) len));
 				delete[] buf;
 			}
 		}
@@ -128,7 +133,7 @@ LicenseData::LicenseData()
 			{
 				buf = new TCHAR[len];
 				ReadFile(hFile, buf, len * sizeof(TCHAR), &numBytesRead, NULL);
-				m_company = LicenseData::Decrype(String(buf, (String::size_type) len));
+				m_company = LicenseData::Decrypt(String(buf, (String::size_type) len));
 				delete[] buf;
 			}
 		}
@@ -148,10 +153,11 @@ void LicenseData::Save()
 	CreateDirectory(szFilename, NULL);
 
 	PathAppend(szFilename, TEXT("\\"));
-	PathAppend(szFilename, TEXT(APP_NAME));
+	PathAppend(szFilename, Zephyros::GetAppName());
 	CreateDirectory(szFilename, NULL);
 
-	PathAppend(szFilename, TEXT("\\data.t2"));
+	PathAppend(szFilename, TEXT("\\"));
+	PathAppend(szFilename, m_szLicenseInfoFilename);
 
 	HANDLE hFile = CreateFile(szFilename, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_HIDDEN, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
@@ -183,19 +189,19 @@ void LicenseData::Save()
 		WriteFile(hFile, m_activationCookie.c_str(), (DWORD) (m_activationCookie.length() * sizeof(TCHAR)), &numBytesWritten, NULL);
 
 		// write license key
-		String licenseKey = LicenseData::Encrype(m_licenseKey);
+		String licenseKey = LicenseData::Encrypt(m_licenseKey);
 		len = (DWORD) licenseKey.length();
 		WriteFile(hFile, &len, sizeof(DWORD), &numBytesWritten, NULL);
 		WriteFile(hFile, licenseKey.c_str(), (DWORD) (licenseKey.length() * sizeof(TCHAR)), &numBytesWritten, NULL);
 
 		// write name
-		String name = LicenseData::Encrype(m_name);
+		String name = LicenseData::Encrypt(m_name);
 		len = (DWORD) name.length();
 		WriteFile(hFile, &len, sizeof(DWORD), &numBytesWritten, NULL);
 		WriteFile(hFile, name.c_str(), (DWORD) (name.length() * sizeof(TCHAR)), &numBytesWritten, NULL);
 
 		// write company
-		String company = LicenseData::Encrype(m_company);
+		String company = LicenseData::Encrypt(m_company);
 		len = (DWORD) company.length();
 		WriteFile(hFile, &len, sizeof(DWORD), &numBytesWritten, NULL);
 		WriteFile(hFile, company.c_str(), (DWORD) (company.length() * sizeof(TCHAR)), &numBytesWritten, NULL);
@@ -263,7 +269,7 @@ LicenseManager::~LicenseManager()
 	KillTimer();
 }
 
-bool LicenseManager::VerifyKey(String key, String info, bool usePrevVersionPubKey)
+bool LicenseManager::VerifyKey(String key, String info, const TCHAR* szPubkey)
 {
 	HCRYPTPROV hCryptProv;
     if (!CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_DSS, CRYPT_VERIFYCONTEXT))
@@ -276,14 +282,7 @@ bool LicenseManager::VerifyKey(String key, String info, bool usePrevVersionPubKe
     CERT_PUBLIC_KEY_INFO* publicKeyInfo = NULL;
     DWORD dwPublicKeyInfoLen = 0;
 
-    if (CryptStringToBinary(
-#ifdef PUBKEY_PREVVERSION
-    		usePrevVersionPubKey ? PUBKEY_PREVVERSION : PUBKEY,
-    		(DWORD) _tcslen(usePrevVersionPubKey ? PUBKEY_PREVVERSION : PUBKEY),
-#else
-    		PUBKEY, (DWORD) _tcslen(PUBKEY),
-#endif
-    		CRYPT_STRING_BASE64, szDERPubKey, &dwDERPubKeyLen, NULL, NULL) &&
+    if (CryptStringToBinary(szPubkey, (DWORD) _tcslen(szPubkey), CRYPT_STRING_BASE64, szDERPubKey, &dwDERPubKeyLen, NULL, NULL) &&
 		CryptDecodeObjectEx(X509_ASN_ENCODING, X509_PUBLIC_KEY_INFO, szDERPubKey, dwDERPubKeyLen, CRYPT_ENCODE_ALLOC_FLAG, NULL, &publicKeyInfo, &dwPublicKeyInfoLen))
     {
         HCRYPTKEY hPubKey;
@@ -343,9 +342,8 @@ bool LicenseManager::VerifyKey(String key, String info, bool usePrevVersionPubKe
 class UpgradeDialog : public Dialog
 {
 public:
-	UpgradeDialog(LicenseManager* pMgr, HWND hwndParent = NULL)
-	  : Dialog(IDD_UPGRADEHINT, hwndParent),
-		m_pLicenseManager(pMgr)
+	UpgradeDialog(HWND hwndParent = NULL)
+	  : Dialog(IDD_UPGRADEHINT, hwndParent)
 	{
 		ON_COMMAND(IDOK, UpgradeDialog::OnOK);
 		ON_COMMAND(IDCANCEL, UpgradeDialog::OnCancel);
@@ -363,12 +361,12 @@ protected:
 	void OnOK(WORD w, LPARAM l)
 	{
 		// open URL
-		m_pLicenseManager->OpenUpgradeLicenseURL();
+		static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->OpenUpgradeLicenseURL();
 	}
 
 	void OnCancel(WORD w, LPARAM l)
 	{
-		Dismiss(IDCANCEL);
+		EndDialog(m_hwnd, IDCANCEL);
 	}
 
 	void OnInitDialog(WPARAM wParam, LPARAM lParam)
@@ -398,23 +396,14 @@ protected:
 	}
 
 private:
-	void Dismiss(INT_PTR result)
-	{
-		m_pLicenseManager = NULL;
-		EndDialog(m_hwnd, result);
-	}
-
-private:
-	LicenseManager* m_pLicenseManager;
 	HICON m_hIcon;
 };
 
 class LicenseKeyDialog : public Dialog
 {
 public:
-	LicenseKeyDialog(LicenseManager* pMgr, HWND hwndParent = NULL)
-	  : Dialog(IDD_LICENSEKEY, hwndParent),
-		m_pLicenseManager(pMgr)
+	LicenseKeyDialog(HWND hwndParent = NULL)
+	  : Dialog(IDD_LICENSEKEY, hwndParent)
 	{
 		ON_COMMAND(IDOK, LicenseKeyDialog::OnOK);
 		ON_COMMAND(IDCANCEL, LicenseKeyDialog::OnCancel);
@@ -432,30 +421,20 @@ protected:
 		GetDlgItemText(m_hwnd, IDC_EDIT_LICENSEKEY, buf, BUF_SIZE);
 		String key = buf;
 
-		if (m_pLicenseManager->Activate(fullName, organization, key))
-			Dismiss(IDOK);
+		if (static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->Activate(fullName, organization, key))
+			EndDialog(m_hwnd, IDOK);
 		else if (m_pLicenseManager->IsObsoleteLicense(fullName, organization, key))
 		{
-			Dismiss(IDOK);
-			UpgradeDialog dlg(m_pLicenseManager, m_hwnd);
+			EndDialog(m_hwnd, IDOK);
+			UpgradeDialog dlg(m_hwnd);
 			dlg.DoModal();
 		}
 	}
 
 	void OnCancel(WORD w, LPARAM l)
 	{
-		Dismiss(IDCANCEL);
+		EndDialog(m_hwnd, IDCANCEL);
 	}
-
-private:
-	void Dismiss(INT_PTR result)
-	{
-		m_pLicenseManager = NULL;
-		EndDialog(m_hwnd, result);
-	}
-
-private:
-	LicenseManager* m_pLicenseManager;
 };
 
 
@@ -464,7 +443,7 @@ class DemoDialog : public Dialog
 public:
 	DemoDialog(LicenseManager* pMgr, int numDaysLeft)
 	  : Dialog(IDD_DEMO),
-		m_pLicenseManager(pMgr), m_numDaysLeft(numDaysLeft),
+		m_numDaysLeft(numDaysLeft),
 		m_hFontBold(NULL), m_hIcon(NULL)
 	{
 		ON_MESSAGE(WM_INITDIALOG, DemoDialog::OnInitDialog);
@@ -486,7 +465,6 @@ public:
 
 	void Dismiss(INT_PTR result)
 	{
-		m_pLicenseManager = NULL;
 		// TODO: use PostMessage() if in Worker thread
 		EndDialog(m_hwnd, result);
 	}
@@ -503,11 +481,11 @@ protected:
 		SetWindowPos(m_hwnd, NULL, (width - r.right + r.left) / 2, (height - r.bottom + r.top) / 2 - 80, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
 		// set the text of the number of days display
-		String captionNumDays = m_pLicenseManager->GetDaysCountLabelText();
+		String captionNumDays = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetDaysCountLabelText();
 		SetDlgItemText(m_hwnd, IDC_TEXT_DAYS, captionNumDays.c_str());
 
 		// set the caption of the demo button
-		String captionDemoButton = m_pLicenseManager->GetDemoButtonCaption();
+		String captionDemoButton = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetDemoButtonCaption();
 		SetDlgItemText(m_hwnd, IDOK, captionDemoButton.c_str());
 
 		// make the title bold
@@ -553,7 +531,8 @@ protected:
 		DrawThemeBackground(theme, hDC, PP_TRANSPARENTBAR, PBBS_PARTIAL, &r, NULL);
 
 		// draw the filling
-		r.right = r.left + ((r.right - r.left) * (NUMBER_OF_DEMO_DAYS - m_numDaysLeft)) / NUMBER_OF_DEMO_DAYS;
+		int nNumDemoDays = static_cast<Zephyros::LicenseManager*> (Zephyros::GetLicenseManager())->GetNumberOfDemoDays();
+		r.right = r.left + ((r.right - r.left) * (nNumDemoDays - m_numDaysLeft)) / nNumDemoDays;
 		DrawThemeBackground(theme, hDC, PP_FILL, fillstate, &r, NULL);
 
 		// clean up
@@ -565,19 +544,19 @@ protected:
 	{
 		bool canContinue = m_numDaysLeft > 0;
 		if (canContinue)
-			canContinue = m_pLicenseManager->ContinueDemo();
+			canContinue = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->ContinueDemo();
 
 		Dismiss(canContinue ? IDOK : IDCANCEL);
 	}
 
 	void OnPurchaseLicense(WORD w, LPARAM l)
 	{
-		m_pLicenseManager->OpenPurchaseLicenseURL();
+		Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
 	}
 
 	void OnEnterLicenseKey(WORD w, LPARAM l)
 	{
-		LicenseKeyDialog dlg(m_pLicenseManager, m_hwnd);
+		LicenseKeyDialog dlg(m_hwnd);
 		dlg.DoModal();
 	}
 
@@ -587,8 +566,6 @@ protected:
 	}
 
 private:
-	LicenseManager* m_pLicenseManager;
-
 	int m_numDaysLeft;
 
 	HICON m_hIcon;
@@ -598,8 +575,8 @@ private:
 
 void CALLBACK DemoTimeout(HWND hwnd, UINT msg, UINT_PTR event, DWORD time)
 {
-	if (g_pLicenseManager->CheckDemoValidity())
-		g_pLicenseManager->KillTimer();
+	if (Zephyros::GetLicenseManager()->CheckDemoValidity())
+		static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->KillTimer();
 }
 
 void LicenseManager::KillTimer()
@@ -640,12 +617,15 @@ void LicenseManager::ShowEnterLicenseDialog()
 
 void LicenseManager::OpenPurchaseLicenseURL()
 {
+	if (!m_config.shopURL)
+		return;
+
 	SHELLEXECUTEINFO execInfo = { 0 };
 
 	execInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 	execInfo.fMask = SEE_MASK_DEFAULT;
 	execInfo.lpVerb = TEXT("open");
-	execInfo.lpFile = SHOP_URL;
+	execInfo.lpFile = m_config.shopURL;
 	execInfo.nShow = SW_SHOW;
 
 	ShellExecuteEx(&execInfo);
@@ -653,12 +633,15 @@ void LicenseManager::OpenPurchaseLicenseURL()
 
 void LicenseManager::OpenUpgradeLicenseURL()
 {
+	if (!m_config.upgradeURL)
+		return;
+
 	SHELLEXECUTEINFO execInfo = { 0 };
 
 	execInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 	execInfo.fMask = SEE_MASK_DEFAULT;
 	execInfo.lpVerb = TEXT("open");
-	execInfo.lpFile = UPGRADE_URL;
+	execInfo.lpFile = m_config.upgradeURL;
 	execInfo.nShow = SW_SHOW;
 
 	ShellExecuteEx(&execInfo);
@@ -668,7 +651,7 @@ bool LicenseManager::SendRequest(String strUrlPath, std::string strPostData, std
 {
 	bool ret = false;
 
-	HINTERNET hSession = WinHttpOpen(TEXT(APP_NAME), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+	HINTERNET hSession = WinHttpOpen(Zephyros::GetAppName(), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 	if (hSession != NULL)
 	{
 		HINTERNET hHttp = WinHttpConnect(hSession, LICENSING_HOST, LICENSING_PORT, 0);
@@ -793,61 +776,6 @@ bool LicenseManager::SendRequest(String strUrlPath, std::string strPostData, std
 	return ret;
 }
 
-/*
-bool LicenseManager::SendRequest(String strUrlPath, std::string strPostData, std::stringstream& out)
-{
-	bool ret = false;
-
-	HINTERNET hSession = InternetOpen(TEXT(APP_NAME), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-	if (hSession != NULL)
-	{
-		HINTERNET hHttp = InternetConnect(hSession, LICENSING_HOST, LICENSING_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, NULL);
-		if (hHttp != NULL)
-		{
-			HINTERNET hRequest = HttpOpenRequest(hHttp, TEXT("POST"), strUrlPath.c_str(), NULL, NULL, NULL,
-				INTERNET_FLAG_NO_AUTH | INTERNET_FLAG_NO_COOKIES | INTERNET_FLAG_NO_UI | INTERNET_FLAG_RELOAD, NULL);
-
-			if (hRequest != NULL)
-			{
-				StringStream ssHeaders;
-				ssHeaders << TEXT("Content-Type: application/x-www-form-urlencoded\r\nContent-Length: ");
-				ssHeaders << strPostData.length();
-
-				String strHeaders = ssHeaders.str();
-				char* szPostData = new char[strPostData.length() + 1];
-				strcpy(szPostData, strPostData.c_str());
-
-				if (HttpSendRequest(hRequest, strHeaders.c_str(), (DWORD) strHeaders.length(), szPostData, (DWORD) strPostData.length()))
-				{
-					char szBuf[BUF_SIZE + 1]; 
-					DWORD dwBytesRead = 0;
-
-					while (InternetReadFile(hRequest, szBuf, BUF_SIZE, &dwBytesRead))
-					{
-						if (dwBytesRead == 0)
-							break;
-
-						out << std::string(szBuf, szBuf + dwBytesRead);
-						dwBytesRead = 0;
-						ret = true;
-					}
-				}
-
-				delete[] szPostData;
-
-				InternetCloseHandle(hRequest);
-			}
-
-			InternetCloseHandle(hHttp);
-		}
-
-		InternetCloseHandle(hSession);
-	}
-	
-	return ret;
-}
-*/
-
 void LicenseManager::OnActivate(bool isSuccess)
 {
 	if (m_pDemoDlg != NULL)
@@ -887,3 +815,5 @@ String LicenseManager::DecodeURI(String uri)
 
 	return result;
 }
+
+} // namespace Zephyros
