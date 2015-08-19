@@ -8,6 +8,8 @@
 #define ON_MESSAGE(msg, func) m_mapMessages[msg] = reinterpret_cast<MessageHandler>(&func);
 #define ON_COMMAND(cmd, func) m_mapCommands[cmd] = reinterpret_cast<CommandHandler>(&func);
 
+#define ADD_CONTROL(type, enforce_style) { AddControl(strCaption, type, nId, x, y, nWidth, nHeight, nStyle | enforce_style, nExStyle); }
+
 
 class Dialog;
 
@@ -19,10 +21,36 @@ class Dialog
 {
 public:
 	Dialog(WORD wDlgResId, HWND hwndParent = NULL);
+	Dialog(String strCaption, HWND hwndParent = NULL, int nWidth = 0, int nHeight = 0);
+	~Dialog();
+
+	void AddControl(const TCHAR* szCaption, int nResourceID, int nCtrlType, const TCHAR* szWindowClass, int nID, int x, int y, int nWidth, int nHeight, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0);
+	inline void AddControl(String strCaption, int nCtrlType, int nID, int x, int y, int nWidth, int nHeight, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) { AddControl(strCaption.c_str(), -1, nCtrlType, NULL, nID, x, y, nWidth, nHeight, nStyle, nExStyle); }
+	inline void AddControl(String strCaption, const TCHAR* szWindowClass, int nID, int x, int y, int nWidth, int nHeight, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) { AddControl(strCaption.c_str(), -1, 0, szWindowClass, nId, x, y, nWidth, nHeight, nStyle, nExStyle); }
+	
+	inline void AddStatic(String strCaption, int x, int y, int nWidth, int nHeight, int nID = -1, int nStyle = WS_CHILD | WS_VISIBLE | SS_LEFT, int nExStyle = 0) ADD_CONTROL(0x0082, 0)
+	inline void AddIcon(int nIconID, int x, int y, int nWidth, int nHeight, int nID = -1, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) { AddControl(NULL, nIconID, 0x0082, NULL, nID, x, y, nWidth, nHeight, nStyle, nExStyle); }
+	inline void AddGroupBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID = -1, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_GROUPBOX)
+	inline void AddButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_PUSHBUTTON)
+	inline void AddDefaultButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_DEFPUSHBUTTON)
+	inline void AddCheckBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_AUTOCHECKBOX)
+	inline void AddRadioButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_AUTORADIOBUTTON)
+	inline void AddTextBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0081, 0)
+	inline void AddComboBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x083, LBS_COMBOBOX)
+	inline void AddListBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083)
+	inline void AddVScrollBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083, SBS_VERT)
+	inline void AddHScrollBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083, SBS_HORZ)
+	inline void AddProgressBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("msctls_progress32"), 0)
+	inline void AddTrackBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("msctls_trackbar32"), 0)
+	inline void AddTab(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysTabControl32"), 0)
+	inline void AddListView(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysListView32"), 0)
+	inline void AddTreeView(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysTreeView32"), 0)
+
 	INT_PTR DoModal();
 
 private:
 	static INT_PTR CALLBACK MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	void WriteUnicodeString(TCHAR* szString);
 
 protected:
 	std::map<UINT, MessageHandler> m_mapMessages;
@@ -31,4 +59,9 @@ protected:
 	HWND m_hwnd;
 	HWND m_hwndParent;
 	WORD m_wDlgResId;
+	HGLOBAL m_hglTemplate;
+	LPDLGTEMPLATE m_pTemplate;
+	int m_nWidth;
+	int m_nHeight;
+	LPWORD m_ptr;
 };

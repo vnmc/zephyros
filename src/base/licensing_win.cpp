@@ -344,13 +344,18 @@ class UpgradeDialog : public Dialog
 {
 public:
 	UpgradeDialog(LicenseManager* pMgr, HWND hwndParent = NULL)
-	  : Dialog(IDD_UPGRADEHINT, hwndParent),
+	  : Dialog(Zephyros::GetString(ZS_PREVVERSIONDLG_WNDTITLE), hwndParent),
 		m_pLicenseManager(pMgr)
 	{
 		ON_COMMAND(IDOK, UpgradeDialog::OnOK);
 		ON_COMMAND(IDCANCEL, UpgradeDialog::OnCancel);
 		ON_MESSAGE(WM_PAINT, UpgradeDialog::OnPaint);
 		ON_MESSAGE(WM_INITDIALOG, UpgradeDialog::OnInitDialog);
+
+    	AddStatic(Zephyros::GetString(ZS_PREVVERSIONDLG_TITLE), 105, 19, 185, 8);
+    	AddStatic(Zephyros::GetString(ZS_PREVVERSIONDLG_DESCRIPTION), 105, 40, 185, 30);
+    	AddDefaultButton(Zephyros::GetString(ZS_PREVVERSIONDLG_UPGRADE), 171, 155, 131, 14, IDOK);
+    	AddButton(Zephyros::GetString(ZS_PREVVERSIONDLG_BACK), 115, 155, 50, 14, IDCANCEL);
 	}
 
 	~UpgradeDialog()
@@ -413,11 +418,21 @@ class LicenseKeyDialog : public Dialog
 {
 public:
 	LicenseKeyDialog(LicenseManager* pMgr, HWND hwndParent = NULL)
-	  : Dialog(IDD_LICENSEKEY, hwndParent),
+	  : Dialog(Zephyros::GetString(ZS_ENTERLICKEYDLG_WNDTITLE), hwndParent),
 		m_pLicenseManager(pMgr)
 	{
 		ON_COMMAND(IDOK, LicenseKeyDialog::OnOK);
 		ON_COMMAND(IDCANCEL, LicenseKeyDialog::OnCancel);
+
+    	AddGroupBox(Zephyros::GetString(ZS_ENTERLICKEYDLG_TITLE), 7, 7, 295, 117, -1, WS_CHILD | WS_VISIBLE | BS_CENTER);
+    	AddStatic(Zephyros::GetString(ZS_ENTERLICKEYDLG_FULL_NAME), 37, 33, 34, 8, -1, WS_CHILD | WS_VISIBLE | SS_RIGHT);
+    	AddTextBox(TEXT(""), 87, 30, 195, 14, IDC_EDIT_FULLNAME, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL);
+    	AddStatic(Zephyros::GetString(ZS_ENTERLICKEYDLG_ORGANIZATION), 27, 55, 44, 8, -1, WS_CHILD | WS_VISIBLE | SS_RIGHT);
+    	AddTextBox(TEXT(""), 87, 52, 195, 14, IDC_EDIT_ORGANIZATION, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL);
+    	AddStatic(Zephyros::GetString(ZS_ENTERLICKEYDLG_LICKEY), 30, 77, 41, 8, -1, WS_CHILD | WS_VISIBLE | SS_RIGHT);
+    	AddTextBox(TEXT(""), 87, 74, 195, 33, IDC_EDIT_LICENSEKEY, WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL);
+    	AddDefaultButton(Zephyros::GetString(ZS_ENTERLICKEYDLG_ACTIVATE), 198, 140, 50, 14, IDOK);
+    	AddButton(Zephyros::GetString(ZS_ENTERLICKEYDLG_CANCEL), 252, 140, 50, 14, IDCANCEL);
 	}
 
 protected:
@@ -463,7 +478,7 @@ class DemoDialog : public Dialog
 {
 public:
 	DemoDialog(LicenseManager* pMgr, int numDaysLeft)
-	  : Dialog(IDD_DEMO),
+	  : Dialog(Zephyros::GetString(ZS_DEMODLG_WNDTITLE)),
 		m_pLicenseManager(pMgr), m_numDaysLeft(numDaysLeft),
 		m_hFontBold(NULL), m_hIcon(NULL)
 	{
@@ -474,6 +489,16 @@ public:
 		ON_COMMAND(IDC_PURCHASELICENSE, DemoDialog::OnPurchaseLicense);
 		ON_COMMAND(IDC_ENTERLICENSEKEY, DemoDialog::OnEnterLicenseKey);
 		ON_COMMAND(IDCANCEL, DemoDialog::OnCancel);
+
+    	AddStatic(Zephyros::GetString(ZS_DEMODLG_TITLE), 105, 19, 185, 8, IDC_DEMOTITLE);
+    	AddStatic(Zephyros::GetString(ZS_DEMODLG_DESCRIPTION), 105, 40, 185, 30);
+    	AddGroupBox(Zephyros::GetString(ZS_DEMODLG_REMAINING_TIME), 18, 92, 272, 59, -1, WS_CHILD | WS_VISIBLE | BS_CENTER);
+    	AddStatic(Zephyros::GetString(ZS_DEMODLG_REMAINING_TIME_DESC), 33, 107, 210, 8);
+    	AddStatic(TEXT(""), 33, 132, 243, 8, IDC_TEXT_DAYS);
+
+    	AddDefaultButton(TEXT(""), 18, 172, 80, 14, IDOK);
+    	AddButton(Zephyros::GetString(ZS_DEMODLG_PURCHASE_LICENSE), 114, 172, 80, 14, IDC_PURCHASELICENSE);
+    	AddButton(Zephyros::GetString(ZS_DEMODLG_ENTER_LICKEY), 210, 172, 80, 14, IDC_ENTERLICENSEKEY);
 	}
 
 	~DemoDialog()
