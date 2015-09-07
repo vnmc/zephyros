@@ -2,8 +2,8 @@
 #include <map>
 #include <ShlObj.h>
 
-#include "base/zephyros_impl.h"
 #include "base/app.h"
+
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
 
@@ -17,7 +17,7 @@
 #define FILENAME TEXT("Kernel32.dll")
 
 extern HINSTANCE g_hInst;
-extern CefRefPtr<ClientHandler> g_handler;
+extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
 extern int g_nMinWindowWidth;
 extern int g_nMinWindowHeight;
@@ -151,7 +151,7 @@ long CreateContextMenu(JavaScript::Array menuItems)
 	{
 		JavaScript::Object item = menuItems->GetDictionary(i);
 
-		String strCaption = item->GetString("caption");
+		String strCaption = item->GetString(TEXT("caption"));
 
 		// create a separator if the caption is "-"
 		bool isSeparator = strCaption == TEXT("-");
@@ -160,12 +160,12 @@ long CreateContextMenu(JavaScript::Array menuItems)
 
 		if (!isSeparator)
 		{
-			String strCmdID = item->GetString("menuCommandId");
+			String strCmdID = item->GetString(TEXT("menuCommandId"));
 			vecCmdIDs.push_back(strCmdID);
 
 			String strImage;
-			if (item->HasKey("image"))
-				strImage = item->GetString("image");
+			if (item->HasKey(TEXT("image")))
+				strImage = item->GetString(TEXT("image"));
 			if (strImage.length() > 0)
 			{
 				// create a bitmap from the image, which is interpreted as a base64-encoded PNG
@@ -377,7 +377,7 @@ void DisplayNotification(String title, String details)
 		g_pnfiNotifyIcon = new NOTIFYICONDATA;
 		ZeroMemory(g_pnfiNotifyIcon, sizeof(NOTIFYICONDATA));
 
-		int nIconID = Zephyros::GetIconID();
+		int nIconID = Zephyros::GetWindowsInfo().nIconID;
 		g_hIconSmall = static_cast<HICON>(LoadImage(g_hInst, MAKEINTRESOURCE(nIconID), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR));
 		g_hIconLarge = static_cast<HICON>(LoadImage(g_hInst, MAKEINTRESOURCE(nIconID), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR));
 

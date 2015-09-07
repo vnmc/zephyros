@@ -14,9 +14,8 @@
 #include <winhttp.h>
 #include <regex>
 
-#include "base/zephyros_impl.h"
 #include "base/app.h"
-#include "base/licensing.h"
+#include "base/cef/client_handler.h"
 
 #include "native_extensions/network_util.h"
 

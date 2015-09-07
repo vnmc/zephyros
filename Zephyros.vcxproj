@@ -18,76 +18,8 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\base\app.h" />
-    <ClInclude Include="src\base\cef\client_app.h" />
-    <ClInclude Include="src\base\cef\client_handler.h" />
-    <ClInclude Include="src\base\cef\extension_handler.h" />
-    <ClInclude Include="src\base\cef\jsbridge_v8.h" />
-    <ClInclude Include="src\base\cef\resource_util.h" />
-    <ClInclude Include="src\base\cef\util.h" />
-    <ClInclude Include="src\base\cef\v8_util.h" />
-    <ClInclude Include="src\base\cef\zephyros_cef.h" />
-    <ClInclude Include="src\base\jsbridge.h" />
-    <ClInclude Include="src\base\licensing.h" />
-    <ClInclude Include="src\base\logging.h" />
-    <ClInclude Include="src\base\types.h" />
-    <ClInclude Include="src\base\zephyros_impl.h" />
-    <ClInclude Include="src\base\zephyros_strings.h" />
-    <ClInclude Include="src\components\dialog_win.h" />
-    <ClInclude Include="src\native_extensions\browser.h" />
-    <ClInclude Include="src\native_extensions\custom_url_manager.h" />
-    <ClInclude Include="src\native_extensions\file_util.h" />
-    <ClInclude Include="src\native_extensions\file_watcher.h" />
-    <ClInclude Include="src\native_extensions\image_util_win.h" />
-    <ClInclude Include="src\native_extensions\native_extensions.h" />
-    <ClInclude Include="src\native_extensions\network_util.h" />
-    <ClInclude Include="src\native_extensions\os_util.h" />
-    <ClInclude Include="src\native_extensions\pageimage.h" />
-    <ClInclude Include="src\native_extensions\path.h" />
-    <ClInclude Include="src\native_extensions\process_manager.h" />
-    <ClInclude Include="src\native_extensions\updater.h" />
-    <ClInclude Include="src\util\base32.h" />
-    <ClInclude Include="src\util\base64.h" />
-    <ClInclude Include="src\util\MurmurHash3.h" />
-    <ClInclude Include="src\util\picojson.h" />
-    <ClInclude Include="src\util\string_util.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\base\app_win.cpp" />
-    <ClCompile Include="src\base\cef\cef_app.cpp" />
-    <ClCompile Include="src\base\cef\client_app.cpp" />
-    <ClCompile Include="src\base\cef\client_handler.cpp" />
-    <ClCompile Include="src\base\cef\client_handler_win.cpp" />
-    <ClCompile Include="src\base\cef\extension_handler.cpp" />
-    <ClCompile Include="src\base\cef\resource_util_win.cpp" />
-    <ClCompile Include="src\base\cef\v8_util.cpp" />
-    <ClCompile Include="src\base\jsbridge.cpp" />
-    <ClCompile Include="src\base\licensing.cpp" />
-    <ClCompile Include="src\base\licensing_win.cpp" />
-    <ClCompile Include="src\base\zephyros_impl.cpp" />
-    <ClCompile Include="src\components\dialog_win.cpp" />
-    <ClCompile Include="src\native_extensions\browser.cpp" />
-    <ClCompile Include="src\native_extensions\browser_win.cpp" />
-    <ClCompile Include="src\native_extensions\custom_url_manager.cpp" />
-    <ClCompile Include="src\native_extensions\file_util_win.cpp" />
-    <ClCompile Include="src\native_extensions\file_watcher.cpp" />
-    <ClCompile Include="src\native_extensions\file_watcher_win.cpp" />
-    <ClCompile Include="src\native_extensions\image_util_win.cpp" />
-    <ClCompile Include="src\native_extensions\native_extensions.cpp" />
-    <ClCompile Include="src\native_extensions\network_util_win.cpp" />
-    <ClCompile Include="src\native_extensions\os_util_win.cpp" />
-    <ClCompile Include="src\native_extensions\pageimage_win.cpp" />
-    <ClCompile Include="src\native_extensions\path.cpp" />
-    <ClCompile Include="src\native_extensions\process_manager_win.cpp" />
-    <ClCompile Include="src\native_extensions\updater_win.cpp" />
-    <ClCompile Include="src\util\base32.cpp" />
-    <ClCompile Include="src\util\base64.cpp" />
-    <ClCompile Include="src\util\MurmurHash3.cpp" />
-    <ClCompile Include="src\util\string_util.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5D7B5EF4-060B-4524-8743-5E2CD2527A57}</ProjectGuid>
+    <ProjectGuid>{D0B888A0-55AF-42EF-A7C0-89978C590CB0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Zephyros</RootNamespace>
   </PropertyGroup>
@@ -135,92 +67,73 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\tmp\$(Platform)\$(Configuration)\</IntDir>
-    <SourcePath>$(SolutionDir)\src;$(SourcePath)</SourcePath>
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\</OutDir>
+    <IntDir>$(OutDir)..\obj\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\tmp\$(Platform)\$(Configuration)\</IntDir>
-    <SourcePath>$(SolutionDir)\src;$(SourcePath)</SourcePath>
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\</OutDir>
+    <IntDir>$(OutDir)..\obj\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\tmp\$(Platform)\$(Configuration)\</IntDir>
-    <SourcePath>$(SolutionDir)\src;$(SourcePath)</SourcePath>
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\</OutDir>
+    <IntDir>$(OutDir)..\obj\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\tmp\$(Platform)\$(Configuration)\</IntDir>
-    <SourcePath>$(SolutionDir)\src;$(SourcePath)</SourcePath>
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\</OutDir>
+    <IntDir>$(OutDir)..\obj\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>OS_WIN;USE_CEF;_LIB;_DEBUG;ANGLE_DX11;_WIN32_WINNT=0x0602;WINVER=0x0602;WIN32;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ENABLE_GPU=1;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;ENABLE_LANGUAGE_DETECTION=1;ENABLE_PRINTING=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;OS_WIN;USE_CEF;ANGLE_DX11;_WIN32_WINNT=0x0602;WINVER=0x0602;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ENABLE_GPU=1;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;ENABLE_LANGUAGE_DETECTION=1;ENABLE_PRINTING=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib\cef;src;.;..;..\..;C:\Program Files (x86)\Windows Kits\8.0\Include\shared;C:\Program Files (x86)\Windows Kits\8.0\Include\um;C:\Program Files (x86)\Windows Kits\8.0\Include\winrt;$(VSInstallDir)\VC\atlmfc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <StringPooling>true</StringPooling>
-      <ExceptionHandling>Async</ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <AdditionalIncludeDirectories>src;../..;..;$(SolutionDir);$(SolutionDir)/lib/cef;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <DisableSpecificWarnings>4351;4355;4396;4503;4819;4100;4121;4125;4127;4130;4131;4189;4201;4238;4244;4245;4310;4428;4481;4505;4510;4512;4530;4610;4611;4701;4702;4706;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <AdditionalOptions>/MP /we4389 /Oy- %(AdditionalOptions)</AdditionalOptions>
-      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib />
+    <Lib />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>OS_WIN;USE_CEF;_LIB;_DEBUG;ANGLE_DX11;_WIN32_WINNT=0x0602;WINVER=0x0602;WIN32;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ENABLE_GPU=1;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;ENABLE_LANGUAGE_DETECTION=1;ENABLE_PRINTING=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;OS_WIN;USE_CEF;ANGLE_DX11;_WIN32_WINNT=0x0602;WINVER=0x0602;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ENABLE_GPU=1;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;ENABLE_LANGUAGE_DETECTION=1;ENABLE_PRINTING=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib\cef;src;.;..;..\..;C:\Program Files (x86)\Windows Kits\8.0\Include\shared;C:\Program Files (x86)\Windows Kits\8.0\Include\um;C:\Program Files (x86)\Windows Kits\8.0\Include\winrt;$(VSInstallDir)\VC\atlmfc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <StringPooling>true</StringPooling>
-      <ExceptionHandling>Async</ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <AdditionalIncludeDirectories>src;../..;..;$(SolutionDir);$(SolutionDir)/lib/cef;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <DisableSpecificWarnings>4351;4355;4396;4503;4819;4100;4121;4125;4127;4130;4131;4189;4201;4238;4244;4245;4310;4428;4481;4505;4510;4512;4530;4610;4611;4701;4702;4706;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalOptions>/MP /we4389 /Oy- %(AdditionalOptions)</AdditionalOptions>
-      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib />
+    <Lib />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>OS_WIN;USE_CEF;_LIB;ANGLE_DX11;_WIN32_WINNT=0x0602;WINVER=0x0602;WIN32;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ENABLE_GPU=1;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;ENABLE_LANGUAGE_DETECTION=1;ENABLE_PRINTING=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;NDEBUG;NVALGRIND;DYNAMIC_ANNOTATIONS_ENABLED=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;OS_WIN;USE_CEF;ANGLE_DX11;_WIN32_WINNT=0x0602;WINVER=0x0602;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ENABLE_GPU=1;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;ENABLE_LANGUAGE_DETECTION=1;ENABLE_PRINTING=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib\cef;src;.;..;..\..;C:\Program Files (x86)\Windows Kits\8.0\Include\shared;C:\Program Files (x86)\Windows Kits\8.0\Include\um;C:\Program Files (x86)\Windows Kits\8.0\Include\winrt;$(VSInstallDir)\VC\atlmfc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <StringPooling>true</StringPooling>
-      <ExceptionHandling>Async</ExceptionHandling>
+      <AdditionalIncludeDirectories>src;../..;..;$(SolutionDir);$(SolutionDir)/lib/cef;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <DisableSpecificWarnings>4351;4355;4396;4503;4819;4100;4121;4125;4127;4130;4131;4189;4201;4238;4244;4245;4310;4428;4481;4505;4510;4512;4530;4610;4611;4701;4702;4706;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <AdditionalOptions>/MP /we4389 /Oy- %(AdditionalOptions)</AdditionalOptions>
-      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -228,26 +141,21 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib />
+    <Lib />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>OS_WIN;USE_CEF;_LIB;ANGLE_DX11;_WIN32_WINNT=0x0602;WINVER=0x0602;WIN32;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ENABLE_GPU=1;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;ENABLE_LANGUAGE_DETECTION=1;ENABLE_PRINTING=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;NDEBUG;NVALGRIND;DYNAMIC_ANNOTATIONS_ENABLED=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;OS_WIN;USE_CEF;ANGLE_DX11;_WIN32_WINNT=0x0602;WINVER=0x0602;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=0;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;ENABLE_WEBRTC=1;ENABLE_PEPPER_CDMS;ENABLE_CONFIGURATION_POLICY;ENABLE_INPUT_SPEECH;ENABLE_NOTIFICATIONS;ENABLE_GPU=1;ENABLE_EGLIMAGE=1;__STD_C;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;NTDDI_VERSION=0x06020000;ENABLE_TASK_MANAGER=1;ENABLE_EXTENSIONS=1;ENABLE_PLUGIN_INSTALLATION=1;ENABLE_PLUGINS=1;ENABLE_SESSION_SERVICE=1;ENABLE_THEMES=1;ENABLE_AUTOFILL_DIALOG=1;ENABLE_BACKGROUND=1;ENABLE_AUTOMATION=1;ENABLE_GOOGLE_NOW=1;ENABLE_LANGUAGE_DETECTION=1;ENABLE_PRINTING=1;ENABLE_CAPTIVE_PORTAL_DETECTION=1;ENABLE_APP_LIST=1;ENABLE_SETTINGS_APP=1;ENABLE_MANAGED_USERS=1;USING_CEF_SHARED;__STDC_CONSTANT_MACROS;__STDC_FORMAT_MACROS;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib\cef;src;.;..;..\..;C:\Program Files (x86)\Windows Kits\8.0\Include\shared;C:\Program Files (x86)\Windows Kits\8.0\Include\um;C:\Program Files (x86)\Windows Kits\8.0\Include\winrt;$(VSInstallDir)\VC\atlmfc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <StringPooling>true</StringPooling>
-      <ExceptionHandling>Async</ExceptionHandling>
+      <AdditionalIncludeDirectories>src;../..;..;$(SolutionDir);$(SolutionDir)/lib/cef;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <DisableSpecificWarnings>4351;4355;4396;4503;4819;4100;4121;4125;4127;4130;4131;4189;4201;4238;4244;4245;4310;4428;4481;4505;4510;4512;4530;4610;4611;4701;4702;4706;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalOptions>/MP /we4389 /Oy- %(AdditionalOptions)</AdditionalOptions>
-      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -255,7 +163,80 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib />
+    <Lib />
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\base\app_win.cpp" />
+    <ClCompile Include="src\base\cef\cef_app.cpp" />
+    <ClCompile Include="src\base\cef\client_app.cpp" />
+    <ClCompile Include="src\base\cef\client_handler.cpp" />
+    <ClCompile Include="src\base\cef\client_handler_win.cpp" />
+    <ClCompile Include="src\base\cef\extension_handler.cpp" />
+    <ClCompile Include="src\base\cef\resource_util_win.cpp" />
+    <ClCompile Include="src\base\cef\v8_util.cpp" />
+    <ClCompile Include="src\base\cef\zephyros_cef_win.cpp" />
+    <ClCompile Include="src\base\jsbridge.cpp" />
+    <ClCompile Include="src\base\licensing.cpp" />
+    <ClCompile Include="src\base\licensing_win.cpp" />
+    <ClCompile Include="src\base\zephyros_impl.cpp" />
+    <ClCompile Include="src\components\dialog_win.cpp" />
+    <ClCompile Include="src\native_extensions\browser.cpp" />
+    <ClCompile Include="src\native_extensions\browser_win.cpp" />
+    <ClCompile Include="src\native_extensions\custom_url_manager.cpp" />
+    <ClCompile Include="src\native_extensions\file_util_win.cpp" />
+    <ClCompile Include="src\native_extensions\file_watcher.cpp" />
+    <ClCompile Include="src\native_extensions\file_watcher_win.cpp" />
+    <ClCompile Include="src\native_extensions\image_util_win.cpp" />
+    <ClCompile Include="src\native_extensions\native_extensions.cpp" />
+    <ClCompile Include="src\native_extensions\network_util_win.cpp" />
+    <ClCompile Include="src\native_extensions\os_util_win.cpp" />
+    <ClCompile Include="src\native_extensions\pageimage_win.cpp" />
+    <ClCompile Include="src\native_extensions\path.cpp" />
+    <ClCompile Include="src\native_extensions\process_manager_win.cpp" />
+    <ClCompile Include="src\native_extensions\updater_win.cpp" />
+    <ClCompile Include="src\util\base32.cpp" />
+    <ClCompile Include="src\util\base64.cpp" />
+    <ClCompile Include="src\util\MurmurHash3.cpp" />
+    <ClCompile Include="src\util\string_util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\base\app.h" />
+    <ClInclude Include="src\base\cef\client_app.h" />
+    <ClInclude Include="src\base\cef\client_handler.h" />
+    <ClInclude Include="src\base\cef\extension_handler.h" />
+    <ClInclude Include="src\base\cef\jsbridge_v8.h" />
+    <ClInclude Include="src\base\cef\resource_util.h" />
+    <ClInclude Include="src\base\cef\util.h" />
+    <ClInclude Include="src\base\cef\v8_util.h" />
+    <ClInclude Include="src\base\cef\zephyros_cef.h" />
+    <ClInclude Include="src\base\jsbridge.h" />
+    <ClInclude Include="src\base\licensing.h" />
+    <ClInclude Include="src\base\types.h" />
+    <ClInclude Include="src\base\zephyros_strings.h" />
+    <ClInclude Include="src\components\dialog_win.h" />
+    <ClInclude Include="src\native_extensions.h" />
+    <ClInclude Include="src\native_extensions\browser.h" />
+    <ClInclude Include="src\native_extensions\custom_url_manager.h" />
+    <ClInclude Include="src\native_extensions\file_util.h" />
+    <ClInclude Include="src\native_extensions\file_watcher.h" />
+    <ClInclude Include="src\native_extensions\image_util_win.h" />
+    <ClInclude Include="src\native_extensions\network_util.h" />
+    <ClInclude Include="src\native_extensions\os_util.h" />
+    <ClInclude Include="src\native_extensions\pageimage.h" />
+    <ClInclude Include="src\native_extensions\path.h" />
+    <ClInclude Include="src\native_extensions\process_manager.h" />
+    <ClInclude Include="src\native_extensions\updater.h" />
+    <ClInclude Include="src\util\base32.h" />
+    <ClInclude Include="src\util\base64.h" />
+    <ClInclude Include="src\util\MurmurHash3.h" />
+    <ClInclude Include="src\util\picojson.h" />
+    <ClInclude Include="src\util\string_util.h" />
+    <ClInclude Include="src\zephyros.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

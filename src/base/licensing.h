@@ -19,6 +19,7 @@
 #include <tchar.h>
 #endif
 
+#include "zephyros.h"
 #include "base/types.h"
 
 #include "util/base32.h"
@@ -42,7 +43,7 @@
 namespace Zephyros {
 
 class AbstractLicenseManager;
-class LicenseManager;
+class LicenseManagerImpl;
 class ReceiptChecker;
 
 
@@ -81,33 +82,9 @@ typedef struct
 
 namespace Zephyros {
     
-class AbstractLicenseManager
-{
-public:
-    virtual ~AbstractLicenseManager() {}
-    
-    virtual void Start() {}
-    virtual bool CanStartApp() = 0;
-	virtual bool CheckDemoValidity() {}
-    
-    virtual JavaScript::Object GetLicenseInformation() = 0;
-
-    virtual int ActivateFromURL(String url) { return ACTIVATION_FAILED; }
-    virtual bool Deactivate() { return false; }
-
-    inline bool IsLicensingLink(String url) { return IsLicensingLink(url.c_str()); }
-    virtual bool IsLicensingLink(const TCHAR* url) { return false; }
-    
-    virtual void ShowEnterLicenseDialog() {}
-    virtual void OpenPurchaseLicenseURL() {}
-
-    virtual ReceiptChecker* GetReceiptChecker() { return NULL; }
-};
-
-    
 class LicenseData
 {
-	friend class LicenseManager;
+	friend class LicenseManagerImpl;
 
 public:
 	LicenseData(const TCHAR* szLicenseInfoFilename);
@@ -145,17 +122,6 @@ private:
     String m_company;
     
     static char gheim[129];
-};
-    
-    
-class ReceiptChecker
-{
-public:
-    virtual void CopyAppStoreReceipt();
-    String GetReceiptFilename();
-    virtual String GetAppStoreBundleName() = 0;
-
-    virtual bool CheckReceipt() = 0;
 };
 
 } // namespace Zephyros
@@ -196,55 +162,49 @@ namespace Zephyros {
     class DemoDialog;
 #endif
 
-class LicenseManager : public AbstractLicenseManager
+class LicenseManagerImpl : public AbstractLicenseManager
 {
 public:
-	LicenseManager();
-	virtual ~LicenseManager();
+	LicenseManagerImpl();
+	virtual ~LicenseManagerImpl();
     
     inline void SetLicenseInfo(int productId, const TCHAR* szPublicKey)
-    {
-        m_config.currentLicenseInfo.productId = productId;
-        m_config.currentLicenseInfo.pubkey = szPublicKey;
-    }
-    
+	{
+		m_config.currentLicenseInfo.productId = productId;
+		m_config.currentLicenseInfo.pubkey = szPublicKey;
+	}
+
     inline void AddObsoleteLicenseInfo(int productId, const TCHAR* szPublicKey)
-    {
-        LicenseInfo info;
-        info.productId = productId;
-        info.pubkey = szPublicKey;
+	{
+		 LicenseInfo info;
+		info.productId = productId;
+		info.pubkey = szPublicKey;
         
-        m_config.prevLicenseInfo.push_back(info);
-    }
+		m_config.prevLicenseInfo.push_back(info);
+	}
     
-    inline int GetNumberOfDemoDays() { return m_config.numDemoDays; }
-    inline void SetNumberOfDemoDays(int numDemoDays) { m_config.numDemoDays = numDemoDays; }
+	inline int GetNumberOfDemoDays() { return m_config.numDemoDays; }
+	inline void SetNumberOfDemoDays(int numDemoDays) { m_config.numDemoDays = numDemoDays; }
     
     inline void SetAPIURLs(const TCHAR* demoTokensURL, const TCHAR* activationURL, const TCHAR* deactivationURL)
-    {
-        m_config.demoTokensURL = demoTokensURL;
-        m_config.activationURL = activationURL;
-        m_config.deactivationURL = deactivationURL;
-    }
+	{
+		m_config.demoTokensURL = demoTokensURL;
+		m_config.activationURL = activationURL;
+		m_config.deactivationURL = deactivationURL;
+	}
     
-    inline const TCHAR* GetShopURL() { return m_config.shopURL; }
-    inline void SetShopURL(const TCHAR* shopURL) { m_config.shopURL = shopURL; }
+	inline const TCHAR* GetShopURL() { return m_config.shopURL; }
+	inline void SetShopURL(const TCHAR* shopURL) { m_config.shopURL = shopURL; }
     
-    inline const TCHAR* GetUpgradeURL() { return m_config.upgradeURL; }
-    inline void SetUpgradeURL(const TCHAR* upgradeURL) { m_config.upgradeURL = upgradeURL; }
+	inline const TCHAR* GetUpgradeURL() { return m_config.upgradeURL; }
+	inline void SetUpgradeURL(const TCHAR* upgradeURL) { m_config.upgradeURL = upgradeURL; }
     
-    inline void SetActivationLinkPrefix(const TCHAR* activationLinkPrefix)
-    {
-        m_config.activationLinkPrefix = activationLinkPrefix;
-    }
+	inline void SetActivationLinkPrefix(const TCHAR* activationLinkPrefix) { m_config.activationLinkPrefix = activationLinkPrefix; }
     
-    inline void SetLicenseInfoFilename(const TCHAR* licenseInfoFilename)
-    {
-        m_config.licenseInfoFilename = licenseInfoFilename;
-    }
+	inline void SetLicenseInfoFilename(const TCHAR* licenseInfoFilename) { m_config.licenseInfoFilename = licenseInfoFilename; }
     
-    inline void SetReceiptChecker(ReceiptChecker* pReceiptChecker) { m_config.pReceiptChecker = pReceiptChecker; }
-    virtual inline ReceiptChecker* GetReceiptChecker() final { return m_config.pReceiptChecker; }
+	inline ReceiptChecker* GetReceiptChecker() { return m_config.pReceiptChecker; }
+	inline void SetReceiptChecker(ReceiptChecker* pReceiptChecker) { m_config.pReceiptChecker = pReceiptChecker; }
 
     /**
      * Starts the license manager.

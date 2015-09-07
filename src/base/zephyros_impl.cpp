@@ -8,14 +8,21 @@
 
 #include <map>
 
-#include "base/zephyros_impl.h"
+#include <tchar.h>
+
+#include "base/types.h"
 #include "base/zephyros_strings.h"
+
+#include "native_extensions/path.h"
 
 #include "util/string_util.h"
 
 #ifdef USE_CEF
-#include "base/cef/zephyros_cef.h"
+#include "base/cef/client_handler.h"
+#include "base/cef/extension_handler.h"
 #endif
+
+#include "zephyros.h"
 
 
 #define SET_DEFAULT(stringId, str) if (g_mapStrings.find(stringId) == g_mapStrings.end()) Zephyros::SetString(stringId, str)
@@ -23,16 +30,21 @@
 
 namespace Zephyros {
 
+TCHAR* g_szCompanyName = NULL;
 TCHAR* g_szAppName = NULL;
 TCHAR* g_szAppVersion = NULL;
 TCHAR* g_szAppURL = NULL;
-TCHAR* g_szRegistryKey = NULL;
 TCHAR* g_szUpdaterURL = NULL;
-int g_nIconID = 0;
+TCHAR* g_szCrashReportingURL = NULL;
+TCHAR* g_szCrashReportingPrivacyPolicyURL = NULL;
+WindowsInfo g_windowsInfo = { 0 };
 
 AbstractLicenseManager* g_pLicenseManager = NULL;
 NativeExtensions* g_pNativeExtensions = NULL;
     
+std::map<String, int> g_mapResourceIDs;
+std::map<int, const TCHAR*> g_mapMenuCommands;
+std::map<String, int> g_mapMenuIDs;
 std::map<int, String> g_mapStrings;
 
     
@@ -82,55 +94,50 @@ void InitDefaultStrings()
 
     SET_DEFAULT(ZS_LIC_DEMO_ERROR, TEXT("Unfortunately, an error while retrieving a demo license from the licensing server:\n"));
 }
-    
-int Init(int argc, const char* argv[], const TCHAR* appName, const TCHAR* appVersion, const TCHAR* appURL)
+
+int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
 {
-    size_t lenAppName = _tcslen(appName);
+    size_t lenAppName = _tcslen(szAppName);
     g_szAppName = new TCHAR[lenAppName + 1];
-    g_szAppVersion = new TCHAR[_tcslen(appVersion) + 1];
-    g_szAppURL = new TCHAR[_tcslen(appURL) + 8];
+    g_szAppVersion = new TCHAR[_tcslen(szAppVersion) + 1];
+    g_szAppURL = new TCHAR[_tcslen(szAppURL) + 8];
     
-    _tcscpy(g_szAppName, appName);
-    _tcscpy(g_szAppVersion, appVersion);
+    _tcscpy(g_szAppName, szAppName);
+    _tcscpy(g_szAppVersion, szAppVersion);
 
 #ifdef USE_WEBVIEW
     _tcscpy(g_szAppURL, appURL);
 #endif
 #ifdef USE_CEF
     _tcscpy(g_szAppURL, TEXT("http://"));
-    _tcscat(g_szAppURL, appURL);
+    _tcscat(g_szAppURL, szAppURL);
 #endif
     
-    
     // initialize with default values
-    
     InitDefaultStrings();
     
+#ifdef OS_WIN
     // - set the registry key to "Software\<AppName>"
-    if (g_szRegistryKey == NULL)
+	if (g_windowsInfo.szRegistryKey == NULL)
     {
-        g_szRegistryKey = new TCHAR[9 + lenAppName + 1];
-        _tcscpy(g_szRegistryKey, TEXT("Software\\"));
-        _tcscat(g_szRegistryKey, g_szAppName);
+        g_windowsInfo.szRegistryKey = new TCHAR[9 + lenAppName + 1];
+        _tcscpy(g_windowsInfo.szRegistryKey, TEXT("Software\\"));
+        _tcscat(g_windowsInfo.szRegistryKey, g_szAppName);
     }
-    
-    // - set the updater URL to the empty string
-    if (g_szUpdaterURL == NULL)
-    {
-        g_szUpdaterURL = new TCHAR[1];
-        g_szUpdaterURL[0] = TEXT('\0');
-    }
+#endif
     
     if (g_pNativeExtensions == NULL)
         g_pNativeExtensions = new DefaultNativeExtensions();
-    
-    
+
     // initialize and start the application
-    return InitApplication(argc, argv);
+    return RunApplication(INIT_APPLICATION_ARGS);
 }
     
 void Shutdown()
 {
+	if (g_szCompanyName != NULL)
+		delete[] g_szCompanyName;
+
     if (g_szAppName != NULL)
         delete[] g_szAppName;
     
@@ -140,17 +147,34 @@ void Shutdown()
     if (g_szAppURL != NULL)
         delete[] g_szAppURL;
     
-    if (g_szRegistryKey != NULL)
-        delete[] g_szRegistryKey;
+    if (g_windowsInfo.szRegistryKey != NULL)
+        delete[] g_windowsInfo.szRegistryKey;
     
     if (g_szUpdaterURL != NULL)
         delete[] g_szUpdaterURL;
+
+	if (g_szCrashReportingURL != NULL)
+		delete[] g_szCrashReportingURL;
+
+	if (g_szCrashReportingPrivacyPolicyURL != NULL)
+		delete[] g_szCrashReportingPrivacyPolicyURL;
     
     if (g_pLicenseManager != NULL)
         delete g_pLicenseManager;
-    
-    if (g_pNativeExtensions != NULL)
+
+	if (g_pNativeExtensions != NULL)
         delete g_pNativeExtensions;
+
+	g_szCompanyName = NULL;
+	g_szAppName = NULL;
+	g_szAppVersion = NULL;
+	g_szAppURL = NULL;
+	g_windowsInfo.szRegistryKey = NULL;
+	g_szUpdaterURL = NULL;
+	g_szCrashReportingURL = NULL;
+	g_szCrashReportingPrivacyPolicyURL = NULL;
+	g_pLicenseManager = NULL;
+	g_pNativeExtensions = NULL;
 }
     
 const TCHAR* GetAppName()
@@ -168,27 +192,92 @@ const TCHAR* GetAppURL()
     return g_szAppURL;
 }
 
-const TCHAR* GetRegistryKey()
+const TCHAR* GetCompanyName()
 {
-    return g_szRegistryKey;
+	return g_szCompanyName;
+}
+
+void SetCompanyName(const TCHAR* szCompanyName)
+{
+	if (g_szCompanyName)
+		delete[] g_szCompanyName;
+	g_szCompanyName = new TCHAR[_tcslen(szCompanyName) + 1];
+	_tcscpy(g_szCompanyName, szCompanyName);
+}
+
+int GetResourceID(const TCHAR* szResourceName)
+{
+	std::map<String, int>::iterator it = g_mapResourceIDs.find(szResourceName);
+    return it == g_mapResourceIDs.end() ? -1 : it->second;
+}
+
+void SetResourceID(const TCHAR* szResourceName, int nID)
+{
+	g_mapResourceIDs[szResourceName] = nID;
+}
+
+int GetMenuIDForCommand(const TCHAR* szCommand)
+{
+	std::map<String, int>::iterator it = g_mapMenuIDs.find(szCommand);
+	return it == g_mapMenuIDs.end() ? 0 : it->second;
+}
+
+const TCHAR* GetMenuCommandForID(int nMenuID)
+{
+	std::map<int, const TCHAR*>::iterator it = g_mapMenuCommands.find(nMenuID);
+	return it == g_mapMenuCommands.end() ? NULL : it->second;
+}
+
+void SetMenuIDForCommand(const TCHAR* szCommand, int nMenuID)
+{
+	g_mapMenuCommands[nMenuID] = szCommand;
+	g_mapMenuIDs[szCommand] = nMenuID;
+}
+
+WindowsInfo GetWindowsInfo()
+{
+    return g_windowsInfo;
 }
     
-void SetRegistryKey(const TCHAR* registryKey)
+void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nAccelID)
 {
-    if (g_szRegistryKey)
-        delete g_szRegistryKey;
-    g_szRegistryKey = new TCHAR[_tcslen(registryKey) + 1];
-    _tcscpy(g_szRegistryKey, registryKey);
+    if (g_windowsInfo.szRegistryKey)
+        delete g_windowsInfo.szRegistryKey;
+    g_windowsInfo.szRegistryKey = new TCHAR[_tcslen(szRegistryKey) + 1];
+    _tcscpy(g_windowsInfo.szRegistryKey, szRegistryKey);
+
+	g_windowsInfo.nIconID = nIconID;
+	g_windowsInfo.nMenuID = nMenuID;
+	g_windowsInfo.nAccelID = nAccelID;
 }
 
-int GetIconID()
+const TCHAR* GetCrashReportingURL()
 {
-	return g_nIconID;
+	return g_szCrashReportingURL;
 }
 
-void SetIconID(int nIconID)
+const TCHAR* GetCrashReportingPrivacyPolicyURL()
 {
-	g_nIconID = nIconID;
+	return g_szCrashReportingPrivacyPolicyURL;
+}
+
+void SetCrashReportingURL(const TCHAR* szReportingURL, const TCHAR* szPrivacyPolicyURL)
+{
+	if (g_szCrashReportingURL)
+		delete[] g_szCrashReportingURL;
+	if (g_szCrashReportingPrivacyPolicyURL)
+		delete[] g_szCrashReportingPrivacyPolicyURL;
+
+	g_szCrashReportingURL = new TCHAR[_tcslen(szReportingURL) + 1];
+	_tcscpy(g_szCrashReportingURL, szReportingURL);
+
+	if (szPrivacyPolicyURL)
+	{
+		g_szCrashReportingPrivacyPolicyURL = new TCHAR[_tcslen(szPrivacyPolicyURL) + 1];
+		_tcscpy(g_szCrashReportingPrivacyPolicyURL, szPrivacyPolicyURL);
+	}
+	else
+		g_szCrashReportingPrivacyPolicyURL = NULL;
 }
     
 const TCHAR* GetUpdaterURL()
@@ -196,12 +285,12 @@ const TCHAR* GetUpdaterURL()
     return g_szUpdaterURL;
 }
     
-void SetUpdaterURL(const TCHAR* url)
+void SetUpdaterURL(const TCHAR* szURL)
 {
     if (g_szUpdaterURL)
         delete[] g_szUpdaterURL;
-    g_szUpdaterURL = new TCHAR[_tcslen(url) + 1];
-    _tcscpy(g_szUpdaterURL, url);
+    g_szUpdaterURL = new TCHAR[_tcslen(szURL) + 1];
+    _tcscpy(g_szUpdaterURL, szURL);
 }
     
 AbstractLicenseManager* GetLicenseManager()

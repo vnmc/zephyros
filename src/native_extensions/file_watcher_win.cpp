@@ -4,7 +4,11 @@
 #include "lib/CrashRpt/CrashRpt.h"
 
 #include "base/app.h"
+
+#ifdef USE_CEF
+#include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
+#endif
 
 #include "util/string_util.h"
 
@@ -151,7 +155,9 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
 DWORD WINAPI WatchDirectory(LPVOID param)
 {
 	// install exception handlers for this thread
-	crInstallToCurrentThread2(0);
+	const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
+	if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
+		crInstallToCurrentThread2(0);
 
 	Zephyros::FileWatcher* pWatcher = (Zephyros::FileWatcher*) param;
 

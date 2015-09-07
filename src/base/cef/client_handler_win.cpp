@@ -6,24 +6,24 @@
 #include <windows.h>
 #include <shlobj.h> 
 
-#include "include\cef_browser.h"
-#include "include\cef_frame.h"
+#include "lib/cef/include/cef_browser.h"
+#include "lib/cef/include/cef_frame.h"
 
 #include "base/cef/client_handler.h"
-
-#include "resource.h"
 
 
 extern UINT g_nCmdShow;
 
 
+namespace Zephyros {
+
 void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode)
 {
     CEF_REQUIRE_UI_THREAD();
     
-    if (m_browserId == browser->GetIdentifier() && frame->IsMain())
+    if (m_nBrowserId == browser->GetIdentifier() && frame->IsMain())
     {
-        // We've just finished loading a page
+        // we've just finished loading a page
 		if (!IsWindowVisible(m_mainHwnd))
 		{
 			ShowWindow(m_mainHwnd, g_nCmdShow);
@@ -38,3 +38,5 @@ bool ClientHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent&
 		return false;
 	return TranslateAccelerator(m_mainHwnd, m_hAccelTable, os_event) ? true : false;
 }
+
+} // namespace Zephyros

@@ -7,7 +7,19 @@
 #endif
 
 
-#ifdef OS_MACOSX
+#ifdef OS_WIN
+
+#ifdef _UNICODE
+typedef std::wstring String;
+typedef std::wstringstream StringStream;
+#define TO_STRING std::to_wstring
+#else
+typedef std::string String;
+typedef std::stringstream StringStream;
+#define TO_STRING std::to_string
+#endif
+
+#else
 
 #define TCHAR        char
 #define TEXT(string) string
@@ -22,43 +34,33 @@
 typedef std::string String;
 typedef std::stringstream StringStream;
 
-#endif  // OS_MACOSX
-
-
-#ifdef OS_WIN
-
-#ifdef _UNICODE
-typedef std::wstring String;
-typedef std::wstringstream StringStream;
-#define TO_STRING std::to_wstring
-#else
-typedef std::string String;
-typedef std::stringstream StringStream;
-#define TO_STRING std::to_string
-#endif
-
 #endif  // OS_WIN
 
-
-namespace Zephyros {
-
-class ClientExtensionHandler;
-
-} // namespace Zephyros
 
 
 #ifdef USE_CEF
 
 #include "base/cef/jsbridge_v8.h"
 
+namespace Zephyros {
 class ClientHandler;
+}
+
 class CefBrowser;
 
-typedef CefRefPtr<ClientHandler> ClientHandlerPtr;
+typedef CefRefPtr<Zephyros::ClientHandler> ClientHandlerPtr;
 typedef CefRefPtr<CefBrowser> BrowserPtr;
-typedef CefRefPtr<Zephyros::ClientExtensionHandler> ClientExtensionHandlerPtr;
+
+#if defined(OS_LINUX)
+// The Linux client uses GTK instead of the underlying platform type (X11).
+#include <gtk/gtk.h>
+#define ClientWindowHandle GtkWidget*
+#else
+#define ClientWindowHandle CefWindowHandle
+#endif
 
 typedef CefWindowHandle WindowHandle;
+
 typedef int CallbackId;
 
 #endif  // USE_CEF

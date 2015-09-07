@@ -120,6 +120,8 @@ int InitApplication(int argc, const char* argv[])
     // release the handler
     g_handler = NULL;
 
+	Zephyros::Shutdown();
+
     return 0;
 }
     

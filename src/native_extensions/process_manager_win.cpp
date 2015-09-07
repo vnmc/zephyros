@@ -28,7 +28,9 @@ extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 DWORD WINAPI ReadOutput(LPVOID param)
 {
 	// install exception handlers for this thread
-	crInstallToCurrentThread2(0);
+	const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
+	if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
+		crInstallToCurrentThread2(0);
 
 	Zephyros::PipeData* p = (Zephyros::PipeData*) param;
 

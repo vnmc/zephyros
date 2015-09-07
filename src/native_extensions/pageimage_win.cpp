@@ -4,9 +4,9 @@
 #include <minmax.h>
 #include <gdiplus.h>
 
-#include "include/cef_browser.h"
-#include "include/cef_client.h"
-#include "include/cef_render_handler.h"
+#include "lib/cef/include/cef_browser.h"
+#include "lib/cef/include/cef_client.h"
+#include "lib/cef/include/cef_render_handler.h"
 
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"

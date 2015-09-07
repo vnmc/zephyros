@@ -19,7 +19,7 @@
 #include "lib/cef/include/wrapper/cef_closure_task.h"
 #include "lib/cef/include/wrapper/cef_stream_resource_handler.h"
 
-#include "base/zephyros_impl.h"
+#include "zephyros.h"
 #include "base/app.h"
 
 #include "base/cef/client_handler.h"
@@ -29,27 +29,36 @@
 #include "native_extensions/file_util.h"
 #include "native_extensions/path.h"
 
+#include "util/string_util.h"
+
+
+bool ProcessMessageDelegate::OnProcessMessageReceived(
+        CefRefPtr<Zephyros::ClientHandler> handler, CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
+{
+	return false;
+}
+
 
 namespace Zephyros {
 
-int ClientHandler::m_browserCount = 0;
+int ClientHandler::m_nBrowserCount = 0;
 
 
 ClientHandler::ClientHandler()
-  : m_mainHwnd(NULL),
-    m_browserId(0),
-    m_isClosing(false),
-    m_clientExtensionHandler(new ClientExtensionHandler)
+  : m_nBrowserId(0),
+    m_bIsClosing(false),
+    m_mainHwnd(NULL),
+	m_clientExtensionHandler(new ClientExtensionHandler())
 {
     m_processMessageDelegates.insert(static_cast< CefRefPtr<ProcessMessageDelegate> >(m_clientExtensionHandler));
     Zephyros::GetNativeExtensions()->AddNativeExtensions(m_clientExtensionHandler.get());
-    InitializeMIMETypes();
+	InitializeMIMETypes();
 }
 
 ClientHandler::~ClientHandler()
 {
 }
-    
+
 void ClientHandler::InitializeMIMETypes()
 {
     m_mimeTypes[TEXT(".html")] = TEXT("text/html");
@@ -166,24 +175,12 @@ void ClientHandler::InitializeMIMETypes()
     m_mimeTypes[TEXT(".movie")] = TEXT("video/x-sgi-movie");
     m_mimeTypes[TEXT(".smv")] = TEXT("video/x-smv");
 }
-    
-
-CefRefPtr<ClientExtensionHandler> ClientHandler::GetClientExtensionHandler()
-{
-    return m_clientExtensionHandler;
-}
-
-void ClientHandler::ReleaseCefObjects()
-{
-    for (CefRefPtr<ProcessMessageDelegate> delegate : m_processMessageDelegates)
-        delegate->ReleaseCefObjects();
-}
 
 bool ClientHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
 {
 	CEF_REQUIRE_UI_THREAD();
 
-    // execute delegate callbacks
+	// execute delegate callbacks
     for (CefRefPtr<ProcessMessageDelegate> delegate : m_processMessageDelegates)
         if (delegate->OnProcessMessageReceived(this, browser, source_process, message))
             return true;
@@ -191,17 +188,10 @@ bool ClientHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefP
     return false;
 }
 
-void ClientHandler::OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward)
+void ClientHandler::ReleaseCefObjects()
 {
-    CEF_REQUIRE_UI_THREAD();
-}
-
-bool ClientHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString& message, const CefString& source, int line)
-{
-    CEF_REQUIRE_UI_THREAD();
-    App::Log(String(message));
-    
-    return false;
+    for (CefRefPtr<ProcessMessageDelegate> delegate : m_processMessageDelegates)
+        delegate->ReleaseCefObjects();
 }
 
 void ClientHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
@@ -219,11 +209,19 @@ bool ClientHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPt
     return true;
 }
 
-bool ClientHandler::OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDragData> dragData, DragOperationsMask mask)
+bool ClientHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString& message, const CefString& source, int line)
 {
-    CEF_REQUIRE_UI_THREAD();
+	CEF_REQUIRE_UI_THREAD();
+	App::Log(String(message));
 
-    Zephyros::GetNativeExtensions()->GetDroppedURLs().clear();
+	return false;
+}
+
+bool ClientHandler::OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDragData> dragData, CefDragHandler::DragOperationsMask mask)
+{
+	CEF_REQUIRE_UI_THREAD();
+
+	Zephyros::GetNativeExtensions()->GetDroppedURLs().clear();
     
     std::vector<CefString> names;
     dragData->GetFileNames(names);
@@ -237,134 +235,123 @@ bool ClientHandler::OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDrag
     String linkUrl = dragData->GetLinkURL();
     if (!linkUrl.empty())
         Zephyros::GetNativeExtensions()->GetDroppedURLs().push_back(Path(linkUrl));
-    
-    return false;
+
+	return false;
+}
+
+bool ClientHandler::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
+                                  const CefKeyEvent& event,
+                                  CefEventHandle os_event,
+                                  bool* is_keyboard_shortcut)
+{
+	CEF_REQUIRE_UI_THREAD();
+	return false;
 }
 
 bool ClientHandler::OnBeforePopup(
-    CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
-    const CefString& target_url, const CefString& target_frame_name,
-    const CefPopupFeatures& popupFeatures, CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client,
-    CefBrowserSettings& settings, bool* no_javascript_access)
+	CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
+	const CefString& target_url, const CefString& target_frame_name,
+	const CefPopupFeatures& popupFeatures, CefWindowInfo& windowInfo, CefRefPtr<CefClient>& client,
+	CefBrowserSettings& settings, bool* no_javascript_access)
 {
-    // EXAMPLE
-    // Cancel popups in off-screen rendering mode.
-    
-    if (browser->GetHost()->IsWindowRenderingDisabled())
-        return true;
-    return false;
+	CEF_REQUIRE_IO_THREAD();
+	return false;
 }
 
 void ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 {
-    CEF_REQUIRE_UI_THREAD();
+	CEF_REQUIRE_UI_THREAD();
 
-    base::AutoLock lock_scope(m_lock);
-    if (!m_browser.get())
-    {
-        // We need to keep the main child window, but not popup windows
-        m_browser = browser;
-        m_browserId = browser->GetIdentifier();
-    }
-    else if (browser->IsPopup())
-    {
-        // Add to the list of popup browsers.
-        m_popupBrowsers.push_back(browser);
-    }
+	if (!GetBrowser())
+	{
+		base::AutoLock lock_scope(m_lock);
+		// we need to keep the main child window, but not popup windows
+		m_browser = browser;
+		m_nBrowserId = browser->GetIdentifier();
+	}
+	else if (browser->IsPopup())
+	{
+		// add to the list of popup browsers.
+		m_popupBrowsers.push_back(browser);
 
-    m_browserCount++;
+		// give focus to the popup browser. Perform asynchronously because the
+		// parent window may attempt to keep focus after launching the popup.
+		CefPostTask(TID_UI, base::Bind(&CefBrowserHost::SetFocus, browser->GetHost().get(), true));
+	}
+
+	m_nBrowserCount++;
 }
 
 bool ClientHandler::DoClose(CefRefPtr<CefBrowser> browser)
 {
 	CEF_REQUIRE_UI_THREAD();
 
-	// Closing the main window requires special handling. See the DoClose()
+	// closing the main window requires special handling. See the DoClose()
 	// documentation in the CEF header for a detailed destription of this process.
 	if (GetBrowserId() == browser->GetIdentifier())
 	{
+		// set a flag to indicate that the window close should be allowed
 		base::AutoLock lock_scope(m_lock);
-
-		// Set a flag to indicate that the window close should be allowed.
-		m_isClosing = true;
+		m_bIsClosing = true;
 	}
 
-	// Allow the close. For windowed browsers this will result in the OS close event being sent.
+	// allow the close. For windowed browsers this will result in the OS close event being sent
 	return false;
 }
 
 void ClientHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {
-    CEF_REQUIRE_UI_THREAD();
+	CEF_REQUIRE_UI_THREAD();
 
 	if (GetBrowserId() == browser->GetIdentifier())
 	{
-		base::AutoLock lock_scope(m_lock);
-
-		// Free the browser pointer so that the browser can be destroyed
-		m_browser = NULL;
+		{
+			// free the browser pointer so that the browser can be destroyed
+			base::AutoLock lock_scope(m_lock);			
+			m_browser = NULL;
+		}
 	}
 	else if (browser->IsPopup())
 	{
-        // Remove from the browser popup list.
-        for (std::list< CefRefPtr<CefBrowser> >::iterator bit = m_popupBrowsers.begin(); bit != m_popupBrowsers.end(); ++bit)
-        {
-            if ((*bit)->IsSame(browser))
-            {
-                m_popupBrowsers.erase(bit);
-                break;
-            }
-        }
+		// remove from the browser popup list
+		for (std::list<CefRefPtr<CefBrowser> >::iterator bit = m_popupBrowsers.begin(); bit != m_popupBrowsers.end(); ++bit)
+		{
+			if ((*bit)->IsSame(browser))
+			{
+				m_popupBrowsers.erase(bit);
+				break;
+			}
+		}
 	}
 
-	m_browserCount--;
+	m_nBrowserCount--;
 
 #ifdef OS_WIN
     // if all browser windows have been closed, quit the application message loop
-	if (m_browserCount == 0)
+	if (m_nBrowserCount == 0)
 		App::QuitMessageLoop();
 #endif
 }
 
-void ClientHandler::OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame)
-{
-    CEF_REQUIRE_UI_THREAD();
-
-    if (m_browserId == browser->GetIdentifier() && frame->IsMain())
-    {
-        // We've just started loading a page
-    }
-}
-
 void ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
 {
-    CEF_REQUIRE_UI_THREAD();
+	CEF_REQUIRE_UI_THREAD();
 
-    // Don't display an error for downloaded files.
-    if (errorCode == ERR_ABORTED)
-        return;
- 
-	StringStream ssMsg;
+	// don't display an error for downloaded files
+	if (errorCode == ERR_ABORTED)
+		return;
+
+  	StringStream ssMsg;
 	ssMsg << TEXT("Failed to load URL ") << String(failedUrl) << TEXT(" with error ") << String(errorText) << TEXT(" (") << errorCode << TEXT(")");
 	App::Log(ssMsg.str());
 }
 
-void ClientHandler::OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, TerminationStatus status)
-{
-    // Load the startup URL if that's not the website that we terminated on.
-    CefRefPtr<CefFrame> frame = browser->GetMainFrame();
-    String url = frame->GetURL();
-    std::transform(url.begin(), url.end(), url.begin(), tolower);
-
-    String startupURL = Zephyros::GetAppURL();
-    if (url.find(startupURL) != 0)
-        frame->LoadURL(startupURL);
-}
-
 CefRefPtr<CefResourceHandler> ClientHandler::GetResourceHandler(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request)
 {
-    String url = request->GetURL();
-    
+	CEF_REQUIRE_IO_THREAD();
+
+	String url = request->GetURL();
+
     // construct the path to the resource
     String appURL(Zephyros::GetAppURL());
     size_t startPos = url.find(appURL);
@@ -386,41 +373,101 @@ CefRefPtr<CefResourceHandler> ClientHandler::GetResourceHandler(CefRefPtr<CefBro
     CefRefPtr<CefStreamReader> stream = GetBinaryResourceReader(url.c_str());
     if (stream.get())
         return new CefStreamResourceHandler(mimeType, stream);
-        
-    return NULL;
-}	
 
-void ClientHandler::SetMainHwnd(CefWindowHandle hwnd)
-{
-	if (!CefCurrentlyOn(TID_UI))
-	{
-		// execute on the UI thread.
-		CefPostTask(TID_UI, base::Bind(&ClientHandler::SetMainHwnd, this, hwnd));
-		return;
-	}
-
-	m_mainHwnd = hwnd;
+	return NULL;
 }
 
-void ClientHandler::CloseAllBrowsers(bool forceClose)
+void ClientHandler::OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, TerminationStatus status)
+{
+	CEF_REQUIRE_UI_THREAD();
+
+	// load the startup URL if that's not the website that we terminated on
+	CefRefPtr<CefFrame> frame = browser->GetMainFrame();
+	String url = frame->GetURL();
+	std::transform(url.begin(), url.end(), url.begin(), tolower);
+
+	String startupURL(Zephyros::GetAppURL());
+	if (startupURL != TEXT("chrome://crash") && !url.empty() && url.find(startupURL) != 0)
+		frame->LoadURL(startupURL);
+}
+
+void ClientHandler::SetMainHwnd(ClientWindowHandle handle)
+{
+	if (!CefCurrentlyOn(TID_UI))
+	{
+		// execute on the UI thread
+		CefPostTask(TID_UI, base::Bind(&ClientHandler::SetMainHwnd, this, handle));
+		return;
+	}
+
+	m_mainHwnd = handle;
+}
+
+ClientWindowHandle ClientHandler::GetMainHwnd() const
+{
+	CEF_REQUIRE_UI_THREAD();
+	return m_mainHwnd;
+}
+
+CefRefPtr<ClientExtensionHandler> ClientHandler::GetClientExtensionHandler()
+{
+    return m_clientExtensionHandler;
+}
+
+CefRefPtr<CefBrowser> ClientHandler::GetBrowser() const
+{
+	base::AutoLock lock_scope(m_lock);
+	return m_browser;
+}
+
+int ClientHandler::GetBrowserId() const
+{
+	base::AutoLock lock_scope(m_lock);
+	return m_nBrowserId;
+}
+
+void ClientHandler::CloseAllBrowsers(bool force_close)
 {
 	if (!CefCurrentlyOn(TID_UI))
 	{
 		// execute on the UI thread.
-		CefPostTask(TID_UI, base::Bind(&ClientHandler::CloseAllBrowsers, this, forceClose));
+		CefPostTask(TID_UI, base::Bind(&ClientHandler::CloseAllBrowsers, this, force_close));
 		return;
 	}
 
-    // Request that any popup browsers close.
-    if (!m_popupBrowsers.empty())
-    {
-        for (CefRefPtr<CefBrowser> browser : m_popupBrowsers)
-            browser->GetHost()->CloseBrowser(forceClose);
-    }
+	// request that any popup browsers close
+	if (!m_popupBrowsers.empty())
+	{
+		for (CefRefPtr<CefBrowser> popup : m_popupBrowsers)
+			popup->GetHost()->CloseBrowser(force_close);
+	}
 
-    // Request that the main browser close.
-    if (m_browser.get())
-        m_browser->GetHost()->CloseBrowser(forceClose);
+	// request that the main browser close
+	if (m_browser.get())    
+		m_browser->GetHost()->CloseBrowser(force_close);
+}
+
+bool ClientHandler::IsClosing() const
+{
+	base::AutoLock lock_scope(m_lock);
+	return m_bIsClosing;
+}
+
+void ClientHandler::ShowDevTools(CefRefPtr<CefBrowser> browser, const CefPoint& inspect_element_at)
+{
+	CefWindowInfo windowInfo;
+	CefBrowserSettings settings;
+
+#if defined(OS_WIN)
+	windowInfo.SetAsPopup(browser->GetHost()->GetWindowHandle(), "DevTools");
+#endif
+
+	browser->GetHost()->ShowDevTools(windowInfo, this, settings, inspect_element_at);
+}
+
+void ClientHandler::CloseDevTools(CefRefPtr<CefBrowser> browser)
+{
+	browser->GetHost()->CloseDevTools();
 }
 
 } // namespace Zephyros

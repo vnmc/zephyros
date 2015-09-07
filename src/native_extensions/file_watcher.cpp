@@ -1,5 +1,5 @@
 #ifdef USE_CEF
-//#include "base/cef/client_handler.h"
+#include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
 #endif
 

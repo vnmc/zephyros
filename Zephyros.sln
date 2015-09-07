@@ -1,13 +1,12 @@
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Zephyros", "Zephyros.vcxproj", "{5D7B5EF4-060B-4524-8743-5E2CD2527A57}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Zephyros", "Zephyros.vcxproj", "{D0B888A0-55AF-42EF-A7C0-89978C590CB0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Zephyros_SampleApp", "sample\Zephyros_SampleApp.vcxproj", "{7B55F527-B34E-478E-8FC2-5D065462C601}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A9D6DC71-C0DC-4549-AEA0-3B15B44E86A9} = {A9D6DC71-C0DC-4549-AEA0-3B15B44E86A9}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Zephyros_Sample_App", "Zephyros_Sample_App\Zephyros_Sample_App.vcxproj", "{789A6C00-D766-4900-8275-35629946978D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5D7B5EF4-060B-4524-8743-5E2CD2527A57} = {5D7B5EF4-060B-4524-8743-5E2CD2527A57}
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0} = {D0B888A0-55AF-42EF-A7C0-89978C590CB0}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcef_dll_wrapper", "lib\cef\libcef_dll_wrapper.vcxproj", "{A9D6DC71-C0DC-4549-AEA0-3B15B44E86A9}"
@@ -20,20 +19,22 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5D7B5EF4-060B-4524-8743-5E2CD2527A57}.Debug|Win32.ActiveCfg = Debug|Win32
-		{5D7B5EF4-060B-4524-8743-5E2CD2527A57}.Debug|Win32.Build.0 = Debug|Win32
-		{5D7B5EF4-060B-4524-8743-5E2CD2527A57}.Debug|x64.ActiveCfg = Debug|x64
-		{5D7B5EF4-060B-4524-8743-5E2CD2527A57}.Debug|x64.Build.0 = Debug|x64
-		{5D7B5EF4-060B-4524-8743-5E2CD2527A57}.Release|Win32.ActiveCfg = Release|Win32
-		{5D7B5EF4-060B-4524-8743-5E2CD2527A57}.Release|Win32.Build.0 = Release|Win32
-		{5D7B5EF4-060B-4524-8743-5E2CD2527A57}.Release|x64.ActiveCfg = Release|Win32
-		{789A6C00-D766-4900-8275-35629946978D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{789A6C00-D766-4900-8275-35629946978D}.Debug|Win32.Build.0 = Debug|Win32
-		{789A6C00-D766-4900-8275-35629946978D}.Debug|x64.ActiveCfg = Debug|x64
-		{789A6C00-D766-4900-8275-35629946978D}.Debug|x64.Build.0 = Debug|x64
-		{789A6C00-D766-4900-8275-35629946978D}.Release|Win32.ActiveCfg = Release|Win32
-		{789A6C00-D766-4900-8275-35629946978D}.Release|Win32.Build.0 = Release|Win32
-		{789A6C00-D766-4900-8275-35629946978D}.Release|x64.ActiveCfg = Release|Win32
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0}.Debug|Win32.Build.0 = Debug|Win32
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0}.Debug|x64.ActiveCfg = Debug|x64
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0}.Debug|x64.Build.0 = Debug|x64
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0}.Release|Win32.ActiveCfg = Release|Win32
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0}.Release|Win32.Build.0 = Release|Win32
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0}.Release|x64.ActiveCfg = Release|x64
+		{D0B888A0-55AF-42EF-A7C0-89978C590CB0}.Release|x64.Build.0 = Release|x64
+		{7B55F527-B34E-478E-8FC2-5D065462C601}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7B55F527-B34E-478E-8FC2-5D065462C601}.Debug|Win32.Build.0 = Debug|Win32
+		{7B55F527-B34E-478E-8FC2-5D065462C601}.Debug|x64.ActiveCfg = Debug|x64
+		{7B55F527-B34E-478E-8FC2-5D065462C601}.Debug|x64.Build.0 = Debug|x64
+		{7B55F527-B34E-478E-8FC2-5D065462C601}.Release|Win32.ActiveCfg = Release|Win32
+		{7B55F527-B34E-478E-8FC2-5D065462C601}.Release|Win32.Build.0 = Release|Win32
+		{7B55F527-B34E-478E-8FC2-5D065462C601}.Release|x64.ActiveCfg = Release|x64
+		{7B55F527-B34E-478E-8FC2-5D065462C601}.Release|x64.Build.0 = Release|x64
 		{A9D6DC71-C0DC-4549-AEA0-3B15B44E86A9}.Debug|Win32.ActiveCfg = Debug|Win32
 		{A9D6DC71-C0DC-4549-AEA0-3B15B44E86A9}.Debug|Win32.Build.0 = Debug|Win32
 		{A9D6DC71-C0DC-4549-AEA0-3B15B44E86A9}.Debug|x64.ActiveCfg = Debug|x64
