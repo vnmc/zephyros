@@ -72,6 +72,31 @@ void ShowOpenDialog(JSObjectRef callback, BOOL canChooseFiles, BOOL useParentDir
     }];
 }
     
+void ShowSaveFileDialog(JSObjectRef callback)
+{
+    // create and configure a save panel
+    NSSavePanel* savePanel = [NSSavePanel savePanel];
+    savePanel.canCreateDirectories = YES;
+        
+    // show the save panel
+    [savePanel beginSheetModalForWindow: [NSApp mainWindow] completionHandler: ^(NSInteger result)
+    {
+        JSValueRef arg;
+             
+        if (result == NSFileHandlingPanelOKButton)
+        {
+            Path path;
+            GetPathFromNSURL(savePanel.URL, path, NO);
+            arg = path.CreateJSRepresentation()->AsJS();
+        }
+        else
+            arg = JSValueMakeNull(g_ctx);
+             
+        JSObjectCallAsFunction(g_ctx, callback, NULL, 1, &arg, NULL);
+        JSValueUnprotect(g_ctx, callback);
+    }];
+}
+
 void ShowOpenFileDialog(JSObjectRef callback)
 {
     ShowOpenDialog(callback, YES, NO);
@@ -108,6 +133,26 @@ bool ShowOpenDialog(Path& path, BOOL canChooseFiles, BOOL useParentDirForSecurit
     }
     
     [NSApp endSheet: browsePanel];
+    return ret;
+}
+    
+bool ShowSaveFileDialog(Path& path)
+{
+    bool ret = false;
+    
+    // create and configure a save panel
+    NSSavePanel* savePanel = [NSSavePanel savePanel];
+    savePanel.canCreateDirectories = YES;
+        
+    // show the save panel
+    [savePanel beginSheetModalForWindow: [NSApp mainWindow] completionHandler: nil];
+    if ([savePanel runModal] == NSOKButton)
+    {
+        GetPathFromNSURL(savePanel.URL, path, NO);
+        ret = true;
+    }
+        
+    [NSApp endSheet: savePanel];
     return ret;
 }
     
@@ -236,6 +281,47 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
     return ret;
 }
 
+bool WriteFile(String filename, String contents)
+{
+    return [[NSString stringWithUTF8String: contents.c_str()] writeToFile: [NSString stringWithUTF8String: filename.c_str()]
+                                                               atomically: NO
+                                                                 encoding: NSUTF8StringEncoding
+                                                                    error: NULL] == YES;
+}
+    
+bool DeleteFiles(String filenames)
+{
+    NSFileManager *mgr = [NSFileManager defaultManager];
+        
+    if (filenames.find_first_of(TEXT("*?")) == String::npos)
+        return [mgr removeItemAtPath: [NSString stringWithUTF8String: filenames.c_str()] error: nil] == YES;
+        
+    NSString *strFilenames = [NSString stringWithUTF8String: filenames.c_str()];
+    NSString *path = [strFilenames stringByDeletingLastPathComponent];
+        
+    // list all the files in the directory
+    NSError *err;
+    NSArray *files = [mgr contentsOfDirectoryAtPath: path error: &err];
+        
+    if (files && !err)
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat: @"SELF LIKE %@", [strFilenames lastPathComponent]];
+        for (NSString *filename in files)
+        {
+            if ([predicate evaluateWithObject: filename])
+            {
+                // the filename matches the predicate; try to delete the file
+                if ([mgr removeItemAtPath: [path stringByAppendingPathComponent: filename] error: nil] == NO)
+                    return false;
+            }
+        }
+            
+        return true;
+    }
+        
+    return false;
+}
+    
 bool GetDirectory(String& path)
 {
     NSString *filename = [NSString stringWithUTF8String: path.c_str()];

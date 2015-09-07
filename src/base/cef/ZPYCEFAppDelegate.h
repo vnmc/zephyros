@@ -11,9 +11,12 @@
 
 #import <Cocoa/Cocoa.h>
 #import "base/ZPYAppDelegate.h"
+#import "base/cef/ZPYWindowDelegate.h"
 
 
 @interface ZPYCEFAppDelegate : ZPYAppDelegate
+
+@property ZPYWindowDelegate* windowDelegate;
 
 - (void) createApp: (id) object;
 - (void) createMainWindow;

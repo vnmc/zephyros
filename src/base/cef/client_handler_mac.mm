@@ -4,15 +4,17 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "lib/cef/include/cef_browser.h"
-#include "lib/cef/include/cef_frame.h"
+#import "lib/cef/include/cef_browser.h"
+#import "lib/cef/include/cef_frame.h"
 
-#include "base/app.h"
-#include "base/cef/client_handler.h"
+#import "base/app.h"
+#import "base/cef/client_handler.h"
+//#import "base/cef/ZPYCEFAppDelegate.h"
 
 
 extern bool g_isWindowLoaded;
 extern bool g_isWindowBeingLoaded;
+//extern ZPYCEFAppDelegate* g_appDelegate;
 
 
 namespace Zephyros {
@@ -27,7 +29,12 @@ void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 
         // show the window if it isn't visible yet
         if (![m_mainHwnd.window isVisible])
-            [m_mainHwnd.window makeKeyAndOrderFront: nil];
+        {
+            //[m_mainHwnd.window makeKeyAndOrderFront: nil];
+            [m_mainHwnd.window orderFront: m_mainHwnd.window];
+            //[g_appDelegate performSelectorOnMainThread: @selector(showWindow) withObject: nil waitUntilDone: YES];
+
+        }
         
         g_isWindowLoaded = true;
         g_isWindowBeingLoaded = false;

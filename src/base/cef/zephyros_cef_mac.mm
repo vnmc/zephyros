@@ -62,6 +62,7 @@ bool g_isWindowBeingLoaded = true;
     [delegate tryToTerminateApplication: self];
     
     // return, don't exit; the application is responsible for exiting on its own
+    //Zephyros::App::Quit();
 }
 
 @end

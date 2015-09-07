@@ -3911,6 +3911,7 @@
 				CCBDB4001B7A358A00D168AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CCF48A411B4D771200E4F261 /* Build configuration list for PBXNativeTarget "Zephyros_CEF" */ = {
 			isa = XCConfigurationList;

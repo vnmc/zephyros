@@ -11,18 +11,15 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-//#include "include/cef_app.h"
-#include "lib/cef/include/cef_application_mac.h"
-#include "lib/cef/include/cef_browser.h"
-#include "lib/cef/include/cef_frame.h"
-//#include "include/cef_runnable.h"
+#import "lib/cef/include/cef_application_mac.h"
+#import "lib/cef/include/cef_browser.h"
+#import "lib/cef/include/cef_frame.h"
 
 #import "base/zephyros_impl.h"
 #import "base/types.h"
 
 #import "base/cef/client_handler.h"
 #import "base/cef/ZPYCEFAppDelegate.h"
-#import "base/cef/ZPYWindowDelegate.h"
 
 #import "components/ZPYMenuItem.h"
 
@@ -46,6 +43,8 @@ extern bool g_isWindowBeingLoaded;
 {
     self = [super init];
     
+    self.windowDelegate = nil;
+    
     if (_tcslen(Zephyros::GetUpdaterURL()) > 0)
     {
         self.updater = [[SUUpdater alloc] init];
@@ -66,10 +65,10 @@ extern bool g_isWindowBeingLoaded;
     [[NSBundle mainBundle] loadNibNamed: @"MainMenu" owner: app topLevelObjects: &tl];
 
     // set the delegate for application events
-    [app setDelegate: self];
+    app.delegate = self;
     
     [self createMenuItems];
-    [self applicationWillFinishLaunching: nil];
+    //[self applicationWillFinishLaunching: nil];
 
     Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
     if (pMgr == NULL || pMgr->CanStartApp())
@@ -85,9 +84,6 @@ extern bool g_isWindowBeingLoaded;
         g_handler = NULL;
     }
     g_handler = new Zephyros::ClientHandler();
-    
-    // Create the delegate for control and browser window events.
-    ZPYWindowDelegate* delegate = [[ZPYWindowDelegate alloc] init];
     
     // Create the main application window.
     NSRect rectScreen = [[NSScreen mainScreen] visibleFrame];
@@ -118,18 +114,21 @@ extern bool g_isWindowBeingLoaded;
         rectWindow = NSMakeRect(0, rectScreen.size.height - kDefaultWindowHeight, kDefaultWindowWidth, kDefaultWindowHeight);
     
     self.window = [[UnderlayOpenGLHostingWindow alloc] initWithContentRect: rectWindow
-                                                                 styleMask: (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask )
+                                                                 styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
                                                                    backing: NSBackingStoreBuffered
                                                                      defer: NO];
     
+    // create the delegate for control and browser window events
+    if (self.windowDelegate == nil)
+        self.windowDelegate = [[ZPYWindowDelegate alloc] initWithWindow: self.window];
+    self.window.delegate = self.windowDelegate;
     self.window.title = [NSString stringWithUTF8String: Zephyros::GetAppName()];
-    self.window.delegate = delegate;
     self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     
-    // Rely on the window delegate to clean us up rather than immediately
+    // rely on the window delegate to clean us up rather than immediately
     // releasing when the window gets closed. We use the delegate to do
     // everything from the autorelease pool so the window isn't on the stack
-    // during cleanup (ie, a window close from javascript).
+    // during cleanup (ie, a window close from javascript)
     [self.window setReleasedWhenClosed: NO];
     
     NSView* contentView = self.window.contentView;

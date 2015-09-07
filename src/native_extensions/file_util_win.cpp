@@ -41,6 +41,31 @@ bool ShowOpenFileDialog(Path& path)
 	return false;
 }
 
+bool ShowSaveFileDialog(Path& path)
+{
+	OPENFILENAME ofn;
+	TCHAR szFile[MAX_PATH];
+	szFile[0] = 0;
+
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.hwndOwner = GetActiveWindow();
+    ofn.lStructSize = sizeof(ofn);
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.lpstrTitle = NULL;
+	ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_EXPLORER;
+
+	if (GetSaveFileName(&ofn))
+	{
+		path = Path();
+		return true;
+	}
+
+	return false;
+}
+
 bool ShowOpenDirectoryDialog(Path& path)
 {
 	bool pathSelected = false;
@@ -258,6 +283,60 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
 	return false;
 }
 
+bool WriteFile(String filename, String contents)
+{
+	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)
+		return false;
+
+	int mbLen = WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), NULL, 0, NULL, NULL);
+	BYTE* buf = new BYTE[mbLen + 1];
+	WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), (LPSTR) buf, mbLen, NULL, NULL);
+	buf[mbLen] = 0;
+	
+	DWORD dwBytesWritten = 0;
+	::WriteFile(hFile, buf, mbLen, &dwBytesWritten, NULL);
+	FlushFileBuffers(hFile);
+	
+	delete[] buf;
+	CloseHandle(hFile);
+
+	return true;
+}
+
+bool DeleteFiles(String filenames)
+{
+	// no wildcards in the filename; simply delete the file
+	if (filenames.find_first_of(TEXT("*?")) == String::npos)
+		return DeleteFile(filenames.c_str()) != 0;
+
+	WIN32_FIND_DATA fd;
+    HANDLE hFind = FindFirstFile(filenames.c_str(), &fd);
+    if (hFind == INVALID_HANDLE_VALUE)
+        return false;
+
+	TCHAR* pDir = new TCHAR[filenames.length() + 1];
+	_tcscpy(pDir, filenames.c_str());
+	PathRemoveFileSpec(pDir);
+	size_t idx = _tcslen(pDir);
+	pDir[idx] = PATH_SEPARATOR;
+	pDir[idx + 1] = TEXT('\0');
+    
+	do
+    {
+		String filename(pDir);
+		filename.append(fd.cFileName);
+        if (!DeleteFile(filename.c_str()))
+		{
+			FindClose(hFind);
+			return false;
+		}
+	} while (FindNextFile(hFind, &fd));
+
+	FindClose(hFind);
+	return true;
+}
+
 void LoadPreferences(String key, String& data)
 {
 	data = TEXT("");
@@ -302,6 +381,15 @@ bool StartAccessingPath(Path& path)
 void StopAccessingPath(Path& path)
 {
 	// not supported on Windows
+}
+
+void GetTempDir(Path& path)
+{
+	TCHAR* pTempPath = new TCHAR[MAX_PATH + 1];
+	GetTempPath(MAX_PATH, pTempPath);
+
+	path = Path(pTempPath);
+	delete[] pTempPath;
 }
 
 void GetApplicationResourcesPath(Path& path)

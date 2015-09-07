@@ -59,10 +59,12 @@
     self.prevVersionLicenseHintUpgrade.title =[NSString stringWithUTF8String: Zephyros::GetString(ZS_PREVVERSIONDLG_UPGRADE).c_str()];
     self.prevVersionLicenseHintImage.image = [NSApp applicationIconImage];
     
-    if (static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetShopURL() == NULL)
+    const TCHAR* szShopURL = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetShopURL();
+    if (szShopURL == NULL || szShopURL[0] == TCHAR('\0'))
         self.purchaseLicense.hidden = YES;
     
-    if (static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetUpgradeURL() == NULL)
+    const TCHAR* szUpgradeURL = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetUpgradeURL();
+    if (szUpgradeURL == NULL || szUpgradeURL[0] == TCHAR('\0'))
         self.prevVersionLicenseHintUpgrade.hidden = YES;
 }
 

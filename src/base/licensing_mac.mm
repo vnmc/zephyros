@@ -324,9 +324,9 @@ void LicenseManager::OpenUpgradeLicenseURL()
         [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: [NSString stringWithUTF8String: m_config.upgradeURL]]];
 }
 
-bool LicenseManager::SendRequest(String urlPath, String postData, StringStream& out)
+bool LicenseManager::SendRequest(String url, String postData, StringStream& out)
 {
-    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: [NSString stringWithUTF8String: urlPath.c_str()]]];
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: [NSString stringWithUTF8String: url.c_str()]]];
     urlRequest.HTTPMethod = @"POST";
     urlRequest.HTTPBody = [[NSString stringWithUTF8String: postData.c_str()] dataUsingEncoding: NSUTF8StringEncoding];
     [urlRequest setValue: @"application/x-www-form-urlencoded" forHTTPHeaderField: @"Content-Type"];

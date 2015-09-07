@@ -11,6 +11,12 @@
 
 #include "base/types.h"
 
+#ifdef OS_WIN
+#define PATH_SEPARATOR TEXT('\\')
+#else
+#define PATH_SEPARATOR TEXT('/')
+#endif
+
 
 namespace Zephyros {
 

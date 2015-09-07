@@ -19,6 +19,7 @@
     NSWindow* m_window;
 }
 
+- (id) initWithWindow: (NSWindow*) window;
 - (void) alert: (NSString*) title withMessage: (NSString*) message;
 
 @end

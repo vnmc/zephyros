@@ -15,12 +15,14 @@ namespace FileUtil {
     
 #ifdef USE_CEF
 bool ShowOpenFileDialog(Path& path);
+bool ShowSaveFileDialog(Path& path);
 bool ShowOpenDirectoryDialog(Path& path);
 bool ShowOpenFileOrDirectoryDialog(Path& path);
 #endif
 
 #ifdef USE_WEBVIEW
 void ShowOpenFileDialog(JSObjectRef callback);
+void ShowSaveFileDialog(JSObjectRef callback);
 void ShowOpenDirectoryDialog(JSObjectRef callback);
 void ShowOpenFileOrDirectoryDialog(JSObjectRef callback);
 #endif
@@ -40,13 +42,16 @@ bool MakeDirectory(String path, bool recursive);
 bool GetDirectory(String& path);
 
 bool ReadFile(String filename, JavaScript::Object options, String& result);
-
+bool WriteFile(String filename, String contents);
+bool DeleteFiles(String filenames);
+    
 void LoadPreferences(String key, String& data);
 void StorePreferences(String key, String data);
 
 bool StartAccessingPath(Path& path);
 void StopAccessingPath(Path& path);
     
+void GetTempDir(Path& path);
 void GetApplicationResourcesPath(Path& path);
 
 } // namespace FileUtil

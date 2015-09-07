@@ -25,10 +25,8 @@ extern bool g_isWindowLoaded;
     if (self = [super init])
     {
         m_window = window;
-        [m_window setDelegate:self];
         
-        // Register for application hide/unhide notifications.
-        
+        // register for application hide/unhide notifications
         [[NSNotificationCenter defaultCenter] addObserver: self
                                                  selector: @selector(applicationDidHide:)
                                                      name: NSApplicationDidHideNotification
@@ -183,6 +181,7 @@ extern bool g_isWindowLoaded;
     
     // try to make the window go away
 //    [window autorelease];
+    m_window = nil;
     g_isWindowLoaded = false;
 
     /*
