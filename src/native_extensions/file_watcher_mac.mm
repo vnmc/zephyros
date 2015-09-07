@@ -1,15 +1,17 @@
 #import <sys/stat.h>
 
-#include "native_extensions/file_watcher.h"
+#import "native_extensions/file_watcher.h"
 
 #ifdef USE_CEF
-//#include "base/cef/client_handler.h"
-#include "base/cef/extension_handler.h"
+#import "base/cef/client_handler.h"
+#import "base/cef/extension_handler.h"
 #endif
 
 #ifdef USE_WEBVIEW
-#include "base/webview/webview_extension.h"
+#import "base/webview/webview_extension.h"
 #endif
+
+#import "native_extensions.h"
 
 
 bool isFileEmpty(NSString* fileName)

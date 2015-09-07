@@ -13,108 +13,13 @@
 #include <map>
 
 #include "base/types.h"
-#include "native_extensions/native_extensions.h"
+#include "native_extensions.h"
 
-
-static const int NO_ERROR                   = 0;
-static const int ERR_UNKNOWN                = 1;
-static const int ERR_INVALID_PARAM_NUM      = 2;
-static const int ERR_INVALID_PARAM_TYPES    = 3;
-static const int RET_DELAYED_CALLBACK       = -1;
-
-
-#define END_MARKER -999
-
-
-typedef int (*Function)(Zephyros::JavaScript::Array args, Zephyros::JavaScript::Array ret, JSObjectRef callback);
-typedef void (*CallbacksCompleteHandler)();
 
 
 namespace Zephyros {
 
-class NativeFunction
-{
-public:
-    NativeFunction(Function fnx, ...);
-    ~NativeFunction();
-    
-    int Call(JavaScript::Array args);
-    void AddCallback(JSObjectRef objCallback);
-    
-    int GetNumArgs()
-    {
-        return (int) m_argNames.size();
-    }
-    
-    String GetArgName(int index)
-    {
-        return m_argNames.at(index);
-    }
-    
-    void SetAllCallbacksCompletedHandler(CallbacksCompleteHandler fnxAllCallbacksCompleted)
-    {
-        m_fnxAllCallbacksCompleted = fnxAllCallbacksCompleted;
-    }
-    
-    void SetParamTransform(JSObjectRef paramTransform)
-    {
-        m_paramTransform = paramTransform;
-        JSValueProtect(g_ctx, m_paramTransform);
-    }
-    
-private:
-    // A function pointer to the native implementation
-    Function m_fnx;
-    
-    // The argument transformation function (based on the custom JS implementation)
-    JSObjectRef m_paramTransform;
-    
-    std::vector<int> m_argTypes;
-    std::vector<String> m_argNames;
-    
-public:
-    String m_name;
-    bool m_hasPersistentCallback;
-    std::vector<JSObjectRef> m_callbacks;
-    
-    // Function to invoke when all JavaScript callbacks have completed
-    CallbacksCompleteHandler m_fnxAllCallbacksCompleted;
-};
 
-
-class NativeJavaScriptFunctionAdder
-{
-public:
-    inline void AddNativeJavaScriptProcedure(String name, NativeFunction* fnx, String customJavaScriptImplementation = TEXT(""))
-    {
-        AddNativeJavaScriptFunction(name, fnx, false, false, customJavaScriptImplementation);
-    }
-    
-    inline void AddNativeJavaScriptCallback(String name, NativeFunction* fnx, String customJavaScriptImplementation = TEXT(""))
-    {
-        AddNativeJavaScriptFunction(name, fnx, false, true, customJavaScriptImplementation);
-    }
-    
-    virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) = 0;    
-};
-
-
-class ClientExtensionHandler : public NativeJavaScriptFunctionAdder
-{
-public:
-    ClientExtensionHandler();
-    ~ClientExtensionHandler();
-    
-	virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT(""));
-    
-    bool InvokeFunction(String functionName, Zephyros::JavaScript::Array args);
-    bool InvokeCallbacks(String functionName, Zephyros::JavaScript::Array args);
-    void ThrowJavaScriptException(String functionName, int retval);
-
-private:
-    std::map<String, NativeFunction*> m_mapFunctions;
-};
-    
 } // namespace Zephyros
 
 

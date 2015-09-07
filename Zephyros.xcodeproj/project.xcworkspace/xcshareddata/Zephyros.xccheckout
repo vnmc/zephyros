@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>1F10EB3A-9321-4320-A216-BC9E9CA42014</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>Zephyros</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>E5257773EF4E7C35CF551EB4CF5036A6BF1ECC44</key>
 		<string>github.com:vnmc/zephyros.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Zephyros.xcodeproj/project.xcworkspace</string>
+	<string>Zephyros.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>E5257773EF4E7C35CF551EB4CF5036A6BF1ECC44</key>

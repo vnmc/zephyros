@@ -12,6 +12,7 @@
 #endif
 
 #include "native_extensions/custom_url_manager.h"
+#include "native_extensions/path.h"
 
 
 namespace Zephyros {

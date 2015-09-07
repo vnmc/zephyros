@@ -6,7 +6,8 @@
 
 #import <iomanip>
 
-#import "base/zephyros_impl.h"
+#import "native_extensions.h"
+
 #import "base/app.h"
 #import "base/licensing.h"
 
@@ -140,7 +141,7 @@ String LicenseData::Now()
 //////////////////////////////////////////////////////////////////////////
 // LicenseManager Implementation
 
-LicenseManager::LicenseManager()
+LicenseManagerImpl::LicenseManagerImpl()
     : m_windowController(nil)
 {
     InitConfig();
@@ -154,7 +155,7 @@ LicenseManager::LicenseManager()
                                                object: nil];
 }
 
-LicenseManager::~LicenseManager()
+LicenseManagerImpl::~LicenseManagerImpl()
 {
     if (m_pLicenseData != NULL)
         delete m_pLicenseData;
@@ -172,7 +173,7 @@ LicenseManager::~LicenseManager()
 //
 // Cf. https://gist.github.com/mattstevens/3493552
 //
-bool LicenseManager::VerifyKey(String key, String info, const TCHAR* pubkey)
+bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* pubkey)
 {
     bool result = false;
 
@@ -236,12 +237,12 @@ bool LicenseManager::VerifyKey(String key, String info, const TCHAR* pubkey)
     return result;
 }
 
-String LicenseManager::DecodeURI(String uri)
+String LicenseManagerImpl::DecodeURI(String uri)
 {
     return String([[[[NSString stringWithUTF8String: uri.c_str()] stringByReplacingOccurrencesOfString: @"+" withString: @" "] stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding] UTF8String]);
 }
 
-bool LicenseManager::CheckReceipt()
+bool LicenseManagerImpl::CheckReceipt()
 {
     if (!m_config.pReceiptChecker)
         return false;
@@ -312,19 +313,19 @@ bool LicenseManager::CheckReceipt()
     return false;
 }
 
-void LicenseManager::OpenPurchaseLicenseURL()
+void LicenseManagerImpl::OpenPurchaseLicenseURL()
 {
     if (m_config.shopURL)
         [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: [NSString stringWithUTF8String: m_config.shopURL]]];
 }
 
-void LicenseManager::OpenUpgradeLicenseURL()
+void LicenseManagerImpl::OpenUpgradeLicenseURL()
 {
     if (m_config.upgradeURL)
         [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: [NSString stringWithUTF8String: m_config.upgradeURL]]];
 }
 
-bool LicenseManager::SendRequest(String url, String postData, StringStream& out)
+bool LicenseManagerImpl::SendRequest(String url, String postData, StringStream& out)
 {
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: [NSString stringWithUTF8String: url.c_str()]]];
     urlRequest.HTTPMethod = @"POST";
@@ -350,7 +351,7 @@ bool LicenseManager::SendRequest(String url, String postData, StringStream& out)
 	return error == nil;
 }
 
-void LicenseManager::ShowDemoDialog()
+void LicenseManagerImpl::ShowDemoDialog()
 {
     if (m_windowController == nil)
         m_windowController = [[LicenseCheckWindowController alloc] init];
@@ -374,7 +375,7 @@ void LicenseManager::ShowDemoDialog()
         Zephyros::App::QuitMessageLoop();
 }
 
-void LicenseManager::ShowEnterLicenseDialog()
+void LicenseManagerImpl::ShowEnterLicenseDialog()
 {
     if (m_windowController == nil)
         m_windowController = [[LicenseCheckWindowController alloc] init];
@@ -383,13 +384,13 @@ void LicenseManager::ShowEnterLicenseDialog()
 }
 
 
-void LicenseManager::OnActivate(bool isSuccess)
+void LicenseManagerImpl::OnActivate(bool isSuccess)
 {
     if (m_windowController != nil)
         [m_windowController close: isSuccess ? NSModalResponseContinue : NSModalResponseAbort];
 }
 
-void LicenseManager::OnReceiveDemoTokens(bool isSuccess)
+void LicenseManagerImpl::OnReceiveDemoTokens(bool isSuccess)
 {
     if (m_windowController != nil)
         [m_windowController close: isSuccess ? NSModalResponseContinue : NSModalResponseAbort];

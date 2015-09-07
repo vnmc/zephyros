@@ -6,6 +6,7 @@
 
 #import "lib/cef/include/cef_browser.h"
 #import "lib/cef/include/cef_frame.h"
+#import "lib/cef/include/cef_helpers.h"
 
 #import "base/app.h"
 #import "base/cef/client_handler.h"
@@ -23,7 +24,7 @@ void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 {
     REQUIRE_UI_THREAD();
     
-    if (m_browserId == browser->GetIdentifier() && frame->IsMain())
+    if (m_nBrowserId == browser->GetIdentifier() && frame->IsMain())
     {
         // We've just finished loading a page
 

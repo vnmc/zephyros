@@ -30,6 +30,10 @@
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 #endif
 
+#ifdef USE_WEBVIEW
+extern JSContextRef g_ctx;
+#endif
+
 
 @interface MenuDummyView : NSView
 

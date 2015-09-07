@@ -20,7 +20,7 @@
 
 namespace Zephyros {
 
-int InitApplication(int argc, const char* argv[])
+int RunApplication(int argc, const char* argv[])
 {
     CefMainArgs main_args(argc, (char**) argv);
     CefRefPtr<Zephyros::ClientApp> app(new Zephyros::ClientApp);

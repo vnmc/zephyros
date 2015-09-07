@@ -9,10 +9,11 @@
 #include <Foundation/Foundation.h>
 #include <stdint.h>
 
-#include "base/zephyros_impl.h"
 #include "base/app.h"
 #include "base/jsbridge.h"
 #include "base/webview/webview_extension.h"
+
+#include "native_extensions/path.h"
 
 
 extern JSContextRef g_ctx;
@@ -151,6 +152,12 @@ void NativeFunction::AddCallback(JSObjectRef objCallback)
 {
     JSValueProtect(g_ctx, objCallback);
     m_callbacks.push_back(objCallback);
+}
+    
+void NativeFunction::SetParamTransform(JSObjectRef paramTransform)
+{
+    m_paramTransform = paramTransform;
+    JSValueProtect(g_ctx, m_paramTransform);
 }
 
 

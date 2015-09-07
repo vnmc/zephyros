@@ -19,6 +19,8 @@
 
 
 #ifdef USE_WEBVIEW
+extern JSContextRef g_ctx;
+
 @interface ConnectionDelegate : NSObject <NSURLConnectionDelegate>
 
 @property NSMutableData *data;

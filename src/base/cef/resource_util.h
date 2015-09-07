@@ -8,7 +8,7 @@
 
 #include <string>
 #include "lib/cef/include/cef_stream.h"
-#include "base/types.h"
+#include "zephyros.h"
 
 
 #if defined(OS_POSIX)

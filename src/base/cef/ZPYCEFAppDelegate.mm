@@ -15,7 +15,6 @@
 #import "lib/cef/include/cef_browser.h"
 #import "lib/cef/include/cef_frame.h"
 
-#import "base/zephyros_impl.h"
 #import "base/types.h"
 
 #import "base/cef/client_handler.h"
@@ -26,7 +25,8 @@
 #import "native_extensions/custom_url_manager.h"
 #import "native_extensions/path.h"
 
-#import "native_extensions/native_extensions.h"
+#import "zephyros.h"
+#import "native_extensions.h"
 
 
 // default content area size for newly created windows
@@ -45,7 +45,7 @@ extern bool g_isWindowBeingLoaded;
     
     self.windowDelegate = nil;
     
-    if (_tcslen(Zephyros::GetUpdaterURL()) > 0)
+    if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
     {
         self.updater = [[SUUpdater alloc] init];
         self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];

@@ -3,6 +3,7 @@
 // can be found in the LICENSE file.
 
 #include "util/string_util.h"
+#include "zephyros.h"
 
 #ifdef USE_CEF
 #include "lib/cef/include/cef_request.h"

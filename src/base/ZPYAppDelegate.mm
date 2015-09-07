@@ -11,7 +11,6 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-#import "base/zephyros_impl.h"
 #import "base/ZPYAppDelegate.h"
 
 #import "components/ZPYMenuItem.h"
@@ -19,14 +18,15 @@
 #import "native_extensions/custom_url_manager.h"
 #import "native_extensions/path.h"
 
-#import "native_extensions/native_extensions.h"
-
 //#ifdef USE_CEF
 //
 //#endif
 #ifdef USE_WEBVIEW
 #import "webview_extension.h"
 #endif
+
+#import "zephyros.h"
+#import "native_extensions.h"
 
 
 @implementation ZPYAppDelegate
@@ -204,7 +204,7 @@
 - (void) createMenuItems
 {
 #ifndef APPSTORE
-    if (_tcslen(Zephyros::GetUpdaterURL()) > 0)
+    if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
     {
         NSMenu *appMenu = [[[NSApp mainMenu] itemAtIndex: 0] submenu];
     

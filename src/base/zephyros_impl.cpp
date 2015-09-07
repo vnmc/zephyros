@@ -8,7 +8,9 @@
 
 #include <map>
 
+#ifdef OS_WIN
 #include <tchar.h>
+#endif
 
 #include "base/types.h"
 #include "base/zephyros_strings.h"
@@ -23,6 +25,7 @@
 #endif
 
 #include "zephyros.h"
+#include "native_extensions.h"
 
 
 #define SET_DEFAULT(stringId, str) if (g_mapStrings.find(stringId) == g_mapStrings.end()) Zephyros::SetString(stringId, str)
@@ -106,7 +109,7 @@ int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHA
     _tcscpy(g_szAppVersion, szAppVersion);
 
 #ifdef USE_WEBVIEW
-    _tcscpy(g_szAppURL, appURL);
+    _tcscpy(g_szAppURL, szAppURL);
 #endif
 #ifdef USE_CEF
     _tcscpy(g_szAppURL, TEXT("http://"));

@@ -1,5 +1,10 @@
+#ifdef OS_WIN
 #include "stdafx.h"
 #include "Resource.h"
+#else
+#include "zephyros.h"
+#include "native_extensions.h"
+#endif
 
 
 #ifdef OS_MACOSX

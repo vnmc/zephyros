@@ -16,7 +16,29 @@
 #include <JavaScriptCore/JavaScriptCore.h>
 
 
-extern JSContextRef g_ctx;
+// common methods of ObjectWrapper and ArrayWrapper
+// (like a template but without templates so we don't need to provide
+// the implementation of the methods to the user of the framework)
+#define DECLARE_METHODS(K)                                                   \
+    Type GetType(const K key) { return JavaScript::GetType(GetValue(key)); } \
+                                                                             \
+    bool GetBool(const K key);                                               \
+    int GetInt(const K key);                                                 \
+    double GetDouble(const K key);                                           \
+    String GetString(const K key);                                           \
+    Object GetDictionary(const K key);                                       \
+    Array GetList(const K key);                                              \
+    JSObjectRef GetFunction(const K key);                                    \
+                                                                             \
+    bool SetNull(const K key);                                               \
+    bool SetBool(const K key, bool value);                                   \
+    bool SetInt(const K key, int value);                                     \
+    bool SetDouble(const K key, double value);                               \
+    bool SetString(const K key, const String& value);                        \
+    bool SetDictionary(const K key, Object value);                           \
+    bool SetList(const K key, Array value);                                  \
+    bool SetFunction(const K key, JSObjectRef value);
+
 
 enum Type {
     VTYPE_INVALID = 0,
@@ -58,142 +80,9 @@ static JSObjectRef g_fnxIsArray = NULL;
 Type GetType(JSValueRef value);
 bool IsArray(JSObjectRef obj);
 String JSStringToString(JSStringRef str);
-    
-    
-template<class K> class WrapperBase
-{
-public:
-    Type GetType(const K key)
-    {
-        return JavaScript::GetType(GetValue(key));
-    }
-    
-    bool GetBool(const K key)
-    {
-        JSValueRef value = GetValue(key);
-        if (JSValueIsBoolean(g_ctx, value))
-            return JSValueToBoolean(g_ctx, value);
-        return false;
-    }
-    
-    int GetInt(const K key)
-    {
-        JSValueRef value = GetValue(key);
-        if (JSValueIsNumber(g_ctx, value))
-            return (int) JSValueToNumber(g_ctx, value, NULL);
-        return 0;
-    }
-    
-    double GetDouble(const K key)
-    {
-        JSValueRef value = GetValue(key);
-        if (JSValueIsNumber(g_ctx, value))
-            return JSValueToNumber(g_ctx, value, NULL);
-        return 0;
-    }
-    
-    String GetString(const K key)
-    {
-        JSValueRef value = GetValue(key);
-        if (JSValueIsString(g_ctx, value))
-        {
-            JSStringRef str = JSValueToStringCopy(g_ctx, value, NULL);
-            String result = JSStringToString(str);
-            JSStringRelease(str);
-            
-            return result;
-        }
-        
-        return "";
-    }
-    
-    Object GetDictionary(const K key)
-    {
-        JSValueRef value = GetValue(key);
-        if (JSValueIsObject(g_ctx, value))
-            return CreateObject(JSValueToObject(g_ctx, value, NULL));
-        return CreateObject();
-    }
-    
-    Array GetList(const K key)
-    {
-        JSValueRef value = GetValue(key);
-        if (JSValueIsObject(g_ctx, value))
-        {
-            JSObjectRef obj = JSValueToObject(g_ctx, value, NULL);
-            if (IsArray(obj))
-                return CreateArray(obj);
-        }
-        
-        return CreateArray();
-    }
-    
-    JSObjectRef GetFunction(const K key)
-    {
-        JSValueRef value = GetValue(key);
-        if (JSValueIsObject(g_ctx, value))
-        {
-            JSObjectRef obj = JSValueToObject(g_ctx, value, NULL);
-            if (JSObjectIsFunction(g_ctx, obj))
-                return obj;
-        }
-        
-        return NULL;
-    }
-    
-    bool SetNull(const K key)
-    {
-        return SetValue(key, JSValueMakeNull(g_ctx));
-    }
-    
-    bool SetBool(const K key, bool value)
-    {
-        return SetValue(key, JSValueMakeBoolean(g_ctx, value));
-    }
-    
-    bool SetInt(const K key, int value)
-    {
-        return SetValue(key, JSValueMakeNumber(g_ctx, value));
-    }
-    
-    bool SetDouble(const K key, double value)
-    {
-        return SetValue(key, JSValueMakeNumber(g_ctx, value));
-    }
-    
-    bool SetString(const K key, const String& value)
-    {
-        JSStringRef strValue = JSStringCreateWithUTF8CString(value.c_str());
-        bool result = SetValue(key, JSValueMakeString(g_ctx, strValue));
-        JSStringRelease(strValue);
-        
-        return result;
-    }
-    
-    bool SetDictionary(const K key, std::shared_ptr< WrapperBase<KeyType> > value)
-    {
-        return SetValue(key, value->AsJS());
-    }
-    
-    bool SetList(const K key, std::shared_ptr< WrapperBase<int> > value)
-    {
-        return SetValue(key, value->AsJS());
-    }
-    
-    bool SetFunction(const K key, JSObjectRef value)
-    {
-        return SetValue(key, (JSValueRef) value);
-    }
-    
-    virtual JSObjectRef AsJS() = 0;
-    
-protected:
-    virtual JSValueRef GetValue(const K key) = 0;
-    virtual bool SetValue(const K key, JSValueRef value) = 0;
-};
 
     
-class ObjectWrapper : public WrapperBase<KeyType>
+class ObjectWrapper
 {
 public:
     ObjectWrapper();
@@ -204,6 +93,8 @@ public:
     bool GetKeys(KeyList& keys);
     
     bool Remove(const String& key);
+    
+    DECLARE_METHODS(KeyType)
     
     virtual JSObjectRef AsJS() { return m_obj; }
     
@@ -216,7 +107,7 @@ private:
 };
     
     
-class ArrayWrapper : public WrapperBase<int>
+class ArrayWrapper
 {
 public:
     ArrayWrapper();
@@ -229,6 +120,8 @@ public:
     bool Remove(int index);
     
     bool Splice(size_t index, size_t howMany);
+    
+    DECLARE_METHODS(int)
     
     virtual JSObjectRef AsJS() { return m_arr; }
     JSValueRef* AsArray();

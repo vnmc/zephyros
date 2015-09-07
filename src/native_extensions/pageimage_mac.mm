@@ -9,17 +9,24 @@
 #import <WebKit/WebKit.h>
 
 #ifdef USE_CEF
-#include "base/cef/client_handler.h"
-#include "base/cef/extension_handler.h"
+#import "base/cef/client_handler.h"
+#import "base/cef/extension_handler.h"
 #endif
 
-#include "native_extensions/pageimage.h"
-#include "native_extensions/image_util_mac.h"
-#include "native_extensions/path.h"
+#import "zephyros.h"
+#import "native_extensions.h"
+
+#import "native_extensions/pageimage.h"
+#import "native_extensions/image_util_mac.h"
+#import "native_extensions/path.h"
 
 
 #ifdef USE_CEF
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
+#endif
+
+#ifdef USE_WEBVIEW
+extern JSContextRef g_ctx;
 #endif
 
 

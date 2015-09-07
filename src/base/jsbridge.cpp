@@ -7,6 +7,7 @@
 //
 
 #include "base/jsbridge.h"
+#include "zephyros.h"
 
 
 namespace Zephyros {

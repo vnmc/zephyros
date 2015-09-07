@@ -9,13 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 
-#import "base/zephyros_impl.h"
 #import "base/webview/ZPYWebViewAppDelegate.h"
 
 
 namespace Zephyros {
     
-int InitApplication(int argc, const char** argv)
+int RunApplication(int argc, const char** argv)
 {
     // create the application and load the main menu
     NSApplication *application = [NSApplication sharedApplication];

@@ -21,9 +21,6 @@ typedef std::stringstream StringStream;
 
 #else
 
-#define TCHAR        char
-#define TEXT(string) string
-
 #define _tprintf     printf
 #define _tcscpy      strcpy
 #define _tcscat      strcat
@@ -78,9 +75,6 @@ typedef id WindowHandle;
 #endif
 
 #include "jsbridge_webview.h"
-
-typedef Zephyros::ClientExtensionHandler* ClientExtensionHandlerPtr;
-typedef JSObjectRef CallbackId;
 
 #endif  // USE_WEBVIEW
 

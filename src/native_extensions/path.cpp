@@ -23,4 +23,16 @@ Path::Path(JavaScript::Object jsonObj)
     m_hasSecurityAccessData = jsonObj->GetBool("hasSecurityAccessData");
 }
 
+JavaScript::Object Path::CreateJSRepresentation()
+{
+    JavaScript::Object obj = JavaScript::CreateObject();
+        
+    obj->SetString("path", m_path);
+    obj->SetBool("isDirectory", m_isDirectory);
+    obj->SetString("url", m_urlWithSecurityAccessData);
+    obj->SetBool("hasSecurityAccessData", m_hasSecurityAccessData);
+        
+    return obj;
+}
+
 } // namespace Zephyros

@@ -15,8 +15,10 @@
 #import <Sparkle/Sparkle.h>
 #endif
 
-#import "base/types.h"
 #import "native_extensions/path.h"
+
+#import "zephyros.h"
+#import "native_extensions.h"
 
 
 @interface ZPYAppDelegate : NSObject <NSApplicationDelegate, NSUserNotificationCenterDelegate>

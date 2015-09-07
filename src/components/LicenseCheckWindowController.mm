@@ -8,7 +8,8 @@
 
 #ifndef APPSTORE
 
-#import "base/zephyros_impl.h"
+#import "native_extensions.h"
+
 #import "base/zephyros_strings.h"
 #import "base/licensing.h"
 
@@ -93,9 +94,9 @@
     int numDaysUsed = [_numDaysUsed intValue];
     bool canContinue = numDaysUsed < static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetNumberOfDemoDays();
     if (canContinue)
-        canContinue = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->ContinueDemo();
+        canContinue = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetLicenseManagerImpl()->ContinueDemo();
     
-    if (!canContinue || static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->HasDemoTokens())
+    if (!canContinue || static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetLicenseManagerImpl()->HasDemoTokens())
         [self close: canContinue ? NSModalResponseContinue : NSModalResponseAbort];
 }
 
@@ -125,7 +126,7 @@
 
 - (IBAction) onEnterLicenseActivateClicked: (id) sender
 {
-    int ret = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->Activate(
+    int ret = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetLicenseManagerImpl()->Activate(
         _name == nil ? "" : [_name UTF8String],
         _organization == nil ? "" : [_organization UTF8String],
         _licenseKey == nil ? "" : [_licenseKey UTF8String]
@@ -155,7 +156,7 @@
 
 - (IBAction) onPrevVersionLicenseHintUpgradeClicked: (id) sender
 {
-    static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->OpenUpgradeLicenseURL();
+    static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetLicenseManagerImpl()->OpenUpgradeLicenseURL();
 }
 
 /**

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "native_extensions/browser.h"
+#include "zephyros.h"
 
 
 namespace Zephyros {

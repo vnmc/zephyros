@@ -30,14 +30,6 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-// Defines
-
-#define ACTIVATION_SUCCEEDED 1
-#define ACTIVATION_FAILED 0
-#define ACTIVATION_OBSOLETELICENSE -1
-
-
-//////////////////////////////////////////////////////////////////////////
 // Type Definitions
 
 namespace Zephyros {
@@ -136,7 +128,7 @@ private:
 @interface LicenseManagerTimerDelegate : NSObject
 {
 @public
-    Zephyros::LicenseManager* m_pLicenseManager;
+    Zephyros::LicenseManagerImpl* m_pLicenseManager;
 }
 
 - (void) onTimeout: (NSTimer*) timer;

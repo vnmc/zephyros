@@ -11,8 +11,13 @@ namespace BrowserUtil {
 //
 // Returns an array of all browsers available on the system.
 //
-void FindBrowsers(std::vector<Browser*>& browsers)
+void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 {
+    if (*ppBrowsers != NULL)
+        return;
+    
+    *ppBrowsers = new std::vector<Browser*>();
+    
     CFStringRef defaultBrowser = LSCopyDefaultHandlerForURLScheme(CFSTR("https"));
     NSString *ownBundleId = [[NSBundle mainBundle] bundleIdentifier];
     
@@ -61,9 +66,9 @@ void FindBrowsers(std::vector<Browser*>& browsers)
         
         NSImage *image = [[NSWorkspace sharedWorkspace] iconForFile: bundlePath] ;
         
-        browsers.push_back(new Browser(
+        (*ppBrowsers)->push_back(new Browser(
             [appName UTF8String],
-            appVersion != nil ? [appVersion UTF8String] : TEXT(""),
+            appVersion != nil ? [appVersion UTF8String] : "",
             [bundleID UTF8String],
             ImageUtil::NSImageToBase64EncodedPNG(image),
             [bundleID isEqualToString: strDefaultBrowser]
@@ -109,7 +114,7 @@ bool OpenURLInBrowser(std::string strUrl, Browser* browser)
                                  launchIdentifiers: NULL];
 }
 
-void CleanUp(std::vector<Browser*>& browsers)
+void CleanUp(std::vector<Browser*>* pBrowsers)
 {
     // nothing to do...
 }

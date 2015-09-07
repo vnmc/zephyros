@@ -33,7 +33,7 @@
 
 
 namespace Zephyros {
-    
+
 void NativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
 {
     m_e = e;

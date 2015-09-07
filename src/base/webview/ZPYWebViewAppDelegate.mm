@@ -11,7 +11,6 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-#import "base/zephyros_impl.h"
 #import "base/types.h"
 #import "base/webview/ZPYWebViewAppDelegate.h"
 
@@ -20,7 +19,8 @@
 #import "native_extensions/custom_url_manager.h"
 #import "native_extensions/path.h"
 
-#import "native_extensions/native_extensions.h"
+#import "zephyros.h"
+#import "native_extensions.h"
 
 
 #ifndef APPSTORE
@@ -86,7 +86,7 @@ JSContextRef g_ctx = NULL;
     }
     
     // create and initialize the updater
-    if (_tcslen(Zephyros::GetUpdaterURL()) > 0)
+    if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
     {
         self.updater = [[SUUpdater alloc] init];
         self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];

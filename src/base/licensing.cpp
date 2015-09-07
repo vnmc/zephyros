@@ -2,6 +2,8 @@
 #include <tchar.h>
 #endif
 
+#include "native_extensions.h"
+
 #include "base/zephyros_strings.h"
 #include "base/app.h"
 #include "base/licensing.h"
@@ -15,6 +17,7 @@
 #include "native_extensions/os_util.h"
 
 #include "zephyros.h"
+
 
 
 #define DIE(msg) { Zephyros::App::Log(msg); Zephyros::App::Quit(); }

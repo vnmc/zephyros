@@ -12,9 +12,13 @@
 #include "native_extensions/image_util_mac.h"
 
 
+#ifdef USE_WEBVIEW
+extern JSContextRef g_ctx;
+#endif
+
+
 namespace Zephyros {
 namespace FileUtil {
-    
 
 void GetPathFromNSURL(NSURL* url, Path& path, BOOL useParentDirForSecurityBookmark)
 {

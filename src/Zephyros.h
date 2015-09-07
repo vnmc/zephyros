@@ -39,6 +39,9 @@ typedef std::string String;
 
 typedef std::string String;
 
+#define TCHAR        char
+#define TEXT(string) string
+
 #define MAIN main
 #define MAIN_ARGS int argc, const char* argv[]
 #define INIT_APPLICATION_ARGS argc, argv
@@ -55,6 +58,11 @@ class CefDictionaryValue;
 #endif
 
 
+#ifdef USE_WEBVIEW
+#include "jsbridge_webview.h"
+#endif
+
+
 namespace Zephyros {
 
 class NativeExtensions;
@@ -67,9 +75,6 @@ namespace JavaScript {
 typedef CefRefPtr<CefDictionaryValue> Object;
 typedef CefRefPtr<CefListValue> Array;
 
-#endif
-
-#ifdef USE_WEBVIEW
 #endif
 
 } // namespace JavaScript

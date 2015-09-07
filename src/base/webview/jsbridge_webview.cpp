@@ -10,12 +10,113 @@
 #include "base/types.h"
 
 
+#define IMPLEMENT_METHODS(ClassName, K)                                  \
+bool ClassName::GetBool(const K key)                                     \
+{                                                                        \
+    JSValueRef value = GetValue(key);                                    \
+    if (JSValueIsBoolean(g_ctx, value))                                  \
+        return JSValueToBoolean(g_ctx, value);                           \
+    return false;                                                        \
+}                                                                        \
+int ClassName::GetInt(const K key)                                       \
+{                                                                        \
+    JSValueRef value = GetValue(key);                                    \
+    if (JSValueIsNumber(g_ctx, value))                                   \
+        return (int) JSValueToNumber(g_ctx, value, NULL);                \
+    return 0;                                                            \
+}                                                                        \
+double ClassName::GetDouble(const K key)                                 \
+{                                                                        \
+    JSValueRef value = GetValue(key);                                    \
+    if (JSValueIsNumber(g_ctx, value))                                   \
+        return JSValueToNumber(g_ctx, value, NULL);                      \
+    return 0;                                                            \
+}                                                                        \
+String ClassName::GetString(const K key)                                 \
+{                                                                        \
+    JSValueRef value = GetValue(key);                                    \
+    if (JSValueIsString(g_ctx, value))                                   \
+    {                                                                    \
+        JSStringRef str = JSValueToStringCopy(g_ctx, value, NULL);       \
+        String result = JSStringToString(str);                           \
+        JSStringRelease(str);                                            \
+        return result;                                                   \
+    }                                                                    \
+    return "";                                                           \
+}                                                                        \
+Object ClassName::GetDictionary(const K key)                             \
+{                                                                        \
+    JSValueRef value = GetValue(key);                                    \
+    if (JSValueIsObject(g_ctx, value))                                   \
+        return CreateObject(JSValueToObject(g_ctx, value, NULL));        \
+    return CreateObject();                                               \
+}                                                                        \
+Array ClassName::GetList(const K key)                                    \
+{                                                                        \
+    JSValueRef value = GetValue(key);                                    \
+    if (JSValueIsObject(g_ctx, value))                                   \
+    {                                                                    \
+        JSObjectRef obj = JSValueToObject(g_ctx, value, NULL);           \
+        if (IsArray(obj))                                                \
+            return CreateArray(obj);                                     \
+    }                                                                    \
+    return CreateArray();                                                \
+}                                                                        \
+JSObjectRef ClassName::GetFunction(const K key)                          \
+{                                                                        \
+    JSValueRef value = GetValue(key);                                    \
+    if (JSValueIsObject(g_ctx, value))                                   \
+    {                                                                    \
+        JSObjectRef obj = JSValueToObject(g_ctx, value, NULL);           \
+        if (JSObjectIsFunction(g_ctx, obj))                              \
+            return obj;                                                  \
+    }                                                                    \
+    return NULL;                                                         \
+}                                                                        \
+                                                                         \
+bool ClassName::SetNull(const K key)                                     \
+{                                                                        \
+    return SetValue(key, JSValueMakeNull(g_ctx));                        \
+}                                                                        \
+bool ClassName::SetBool(const K key, bool value)                         \
+{                                                                        \
+    return SetValue(key, JSValueMakeBoolean(g_ctx, value));              \
+}                                                                        \
+bool ClassName::SetInt(const K key, int value)                           \
+{                                                                        \
+    return SetValue(key, JSValueMakeNumber(g_ctx, value));               \
+}                                                                        \
+bool ClassName::SetDouble(const K key, double value)                     \
+{                                                                        \
+    return SetValue(key, JSValueMakeNumber(g_ctx, value));               \
+}                                                                        \
+bool ClassName::SetString(const K key, const String& value)              \
+{                                                                        \
+    JSStringRef strValue = JSStringCreateWithUTF8CString(value.c_str()); \
+    bool result = SetValue(key, JSValueMakeString(g_ctx, strValue));     \
+    JSStringRelease(strValue);                                           \
+    return result;                                                       \
+}                                                                        \
+bool ClassName::SetDictionary(const K key, Object value)                 \
+{                                                                        \
+    return SetValue(key, value->AsJS());                                 \
+}                                                                        \
+bool ClassName::SetList(const K key, Array value)                        \
+{                                                                        \
+    return SetValue(key, value->AsJS());                                 \
+}                                                                        \
+bool ClassName::SetFunction(const K key, JSObjectRef value)              \
+{                                                                        \
+    return SetValue(key, (JSValueRef) value);                            \
+}
+
+
 extern JSContextRef g_ctx;
 
 
 namespace Zephyros {
 namespace JavaScript {
-
+    
     
 Object CreateObject(JSObjectRef obj)
 {
@@ -81,6 +182,8 @@ bool ObjectWrapper::Remove(const KeyType& key)
     
     return true;
 }
+    
+IMPLEMENT_METHODS(ObjectWrapper, KeyType)
 
 JSValueRef ObjectWrapper::GetValue(const KeyType key)
 {
@@ -163,6 +266,8 @@ bool ArrayWrapper::Splice(size_t index, size_t howMany)
     return true;
 }
 
+IMPLEMENT_METHODS(ArrayWrapper, int)
+    
 JSValueRef ArrayWrapper::GetValue(int index)
 {
     return JSObjectGetPropertyAtIndex(g_ctx, m_arr, index, NULL);
