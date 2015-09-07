@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Base">
+      <UniqueIdentifier>{297e2417-bed7-4e5a-9453-329beeea1bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Base">
+      <UniqueIdentifier>{62922c99-aeb4-4fe4-a020-3b50d10aed44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{9f3c755f-617a-44bc-b427-5159cb3cbea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{23e1c672-9cf6-4234-b061-917141967654}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Native Extensions">
+      <UniqueIdentifier>{55284e7f-d67d-4fba-b7d7-3cb6b237595e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Native Extensions">
+      <UniqueIdentifier>{a049a5ee-1ba8-41e2-8481-e932a18010da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{7e85d1c0-e0a1-4519-93aa-012cab417b6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{34108b17-373c-476a-a375-e587747ae9ff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\base\cef\client_app.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\cef\client_handler.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\cef\resource_util_win.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\cef\zephyros_cef_win.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\base32.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\base64.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\MurmurHash3.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\string_util.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\cef\client_handler_win.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\cef\cef_app.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\zephyros_impl.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\app_win.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\cef\v8_util.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\cef\extension_handler.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\jsbridge.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\browser.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\browser_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\custom_url_manager.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\file_util_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\file_watcher.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\file_watcher_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\image_util_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\native_extensions.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\network_util_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\os_util_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\pageimage_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\path.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\process_manager_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\native_extensions\updater_win.cpp">
+      <Filter>Source Files\Native Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\dialog_win.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\licensing_win.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\licensing.cpp">
+      <Filter>Source Files\Base</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\base\cef\client_app.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\cef\client_handler.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\cef\resource_util.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\types.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\base32.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\base64.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\MurmurHash3.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\picojson.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\string_util.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\cef\util.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\app.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\zephyros_strings.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\cef\v8_util.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\cef\zephyros_cef.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\cef\extension_handler.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\cef\jsbridge_v8.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\jsbridge.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\browser.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\custom_url_manager.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\file_util.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\file_watcher.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\image_util_win.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\network_util.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\os_util.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\pageimage.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\path.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\process_manager.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions\updater.h">
+      <Filter>Header Files\Native Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\dialog_win.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\licensing.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zephyros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\native_extensions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

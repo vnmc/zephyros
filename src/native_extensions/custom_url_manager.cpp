@@ -2,8 +2,6 @@
 #include <tchar.h>
 #endif
 
-#include "base/zephyros_impl.h"
-
 #ifdef USE_CEF
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"

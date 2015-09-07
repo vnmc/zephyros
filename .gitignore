@@ -10,3 +10,5 @@ debug.log
 /Zephyros.xcodeproj/xcuserdata/*.xcuserdatad/
 /lib
 /old
+/bin
+/ipch

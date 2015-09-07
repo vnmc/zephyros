@@ -2,6 +2,9 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+// This file is shared by cefclient and cef_unittests so don't include using
+// a qualified path.
+
 #include <string>
 
 #include "lib/cef/include/cef_cookie.h"
@@ -9,14 +12,9 @@
 #include "lib/cef/include/cef_task.h"
 #include "lib/cef/include/cef_v8.h"
 
-#include "base/zephyros_impl.h"
-#include "base/app.h"
-
 #include "base/cef/client_app.h"
+#include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
-#include "base/cef/util.h"
-
-#include "native_extensions/native_extensions.h"
 
 
 namespace Zephyros {
@@ -122,11 +120,11 @@ void ClientApp::OnContextReleased(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFr
 }
 
 void ClientApp::OnUncaughtException(
-    CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context,
-    CefRefPtr<CefV8Exception> exception, CefRefPtr<CefV8StackTrace> stackTrace)
+	CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context,
+	CefRefPtr<CefV8Exception> exception, CefRefPtr<CefV8StackTrace> stackTrace)
 {
-    for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
-        delegate->OnUncaughtException(this, browser, frame, context, exception, stackTrace);
+	for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
+		delegate->OnUncaughtException(this, browser, frame, context, exception, stackTrace);
 }
 
 void ClientApp::OnFocusedNodeChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefDOMNode> node)
@@ -137,7 +135,7 @@ void ClientApp::OnFocusedNodeChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<Ce
 
 bool ClientApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
 {
-    ASSERT(source_process == PID_BROWSER);
+	DCHECK_EQ(source_process, PID_BROWSER);
 
     for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
         if (delegate->OnProcessMessageReceived(this, browser, source_process, message))

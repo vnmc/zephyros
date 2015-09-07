@@ -14,6 +14,7 @@
 #include "base/app.h"
 #include "base/jsbridge.h"
 
+#include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
 #include "base/cef/util.h"
 #include "base/cef/v8_util.h"

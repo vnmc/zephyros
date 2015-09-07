@@ -80,18 +80,18 @@ private:
 
 namespace BrowserUtil {
 
-void FindBrowsers(std::vector<Browser*>& browsers);
+void FindBrowsers(std::vector<Browser*>** ppBrowsers);
 
-Browser* GetDefaultBrowser(std::vector<Browser*> browsers);
-Browser* GetBrowserForIdentifier(std::vector<Browser*> browsers, String identifier);
-Browser* GetBrowserForUserAgent(std::vector<Browser*> browsers, JavaScript::Object userAgent);
-Browser* GetBrowserFromJSRepresentation(std::vector<Browser*> browsers, JavaScript::Object obj);
+Browser* GetDefaultBrowser(std::vector<Browser*>* pBrowsers);
+Browser* GetBrowserForIdentifier(std::vector<Browser*>* pBrowsers, String identifier);
+Browser* GetBrowserForUserAgent(std::vector<Browser*>* pBrowsers, JavaScript::Object userAgent);
+Browser* GetBrowserFromJSRepresentation(std::vector<Browser*>* pBrowsers, JavaScript::Object obj);
 
 bool OpenURLInBrowser(String url, Browser* browser);
 
 bool IsKnownBrowser(String browserName);
 
-void CleanUp(std::vector<Browser*>& browsers);
+void CleanUp(std::vector<Browser*>* pBrowsers);
 
 } // namespace BrowserUtil
 } // namespace Zephyros

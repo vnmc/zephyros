@@ -12,24 +12,12 @@
 #include "lib/cef/include/cef_process_message.h"
 #include "lib/cef/include/cef_v8.h"
 
+#include "zephyros.h"
+#include "native_extensions.h"
+
 #include "base/types.h"
 #include "base/cef/client_app.h"
 #include "base/cef/client_handler.h"
-
-#include "native_extensions/native_extensions.h"
-
-
-#if !defined(OS_WIN) // NO_ERROR is defined on windows
-static const int NO_ERROR                   = 0;
-#endif
-
-static const int ERR_UNKNOWN                = 1;
-static const int ERR_INVALID_PARAM_NUM      = 2;
-static const int ERR_INVALID_PARAM_TYPES    = 3;
-static const int RET_DELAYED_CALLBACK       = -1;
-
-
-#define END_MARKER -999
 
 
 #define INVOKE_CALLBACK TEXT("@invokeCallback")
@@ -38,20 +26,6 @@ static const int RET_DELAYED_CALLBACK       = -1;
 
 
 namespace Zephyros {
-
-typedef int (*Function)(
-    CefRefPtr<ClientHandler> handler,
-    CefRefPtr<CefBrowser> browser,
-    CefRefPtr<CefListValue> args,
-    CefRefPtr<CefListValue> ret,
-	CallbackId callbackId
-);
-
-typedef void (*CallbacksCompleteHandler)(
-    CefRefPtr<ClientHandler> handler,
-    CefRefPtr<CefBrowser> browser
-);
-
 
 class ClientCallback
 {
@@ -84,103 +58,6 @@ private:
     int32 m_messageId;
     CefRefPtr<CefBrowser> m_browser;
     int m_invokeJavaScriptCallbackCount;
-};
-
-
-class NativeFunction
-{
-public:
-    NativeFunction(Function fnx, ...);
-    ~NativeFunction();
-    
-    int Call(
-        CefRefPtr<ClientHandler> handler, CefRefPtr<CefBrowser> browser,
-        CefRefPtr<CefListValue> args, CefRefPtr<CefListValue> ret, int messageId);
-    void AddCallback(int messageId, CefBrowser* browser);
-    String GetArgList();
-    
-    int GetNumArgs()
-    {
-        return (int) m_argNames.size();
-    }
-    
-    void SetAllCallbacksCompletedHandler(CallbacksCompleteHandler fnxAllCallbacksCompleted)
-    {
-        m_fnxAllCallbacksCompleted = fnxAllCallbacksCompleted;
-    }
-
-private:
-    // A function pointer to the native implementation
-    Function m_fnx;
-    
-    std::vector<int> m_argTypes;
-    std::vector<String> m_argNames;
-    
-public:
-    String m_name;
-    bool m_hasPersistentCallback;
-    std::vector<ClientCallback*> m_callbacks;
-
-    // Function to invoke when all JavaScript callbacks have completed
-    CallbacksCompleteHandler m_fnxAllCallbacksCompleted;
-};
-
-
-class NativeJavaScriptFunctionAdder
-{
-public:
-    inline void AddNativeJavaScriptProcedure(String name, NativeFunction* fnx, String customJavaScriptImplementation = TEXT(""))
-    {
-        AddNativeJavaScriptFunction(name, fnx, false, false, customJavaScriptImplementation);
-    }
-    
-    inline void AddNativeJavaScriptCallback(String name, NativeFunction* fnx, String customJavaScriptImplementation = TEXT(""))
-    {
-        AddNativeJavaScriptFunction(name, fnx, false, true, customJavaScriptImplementation);
-    }
-    
-    virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) = 0;
-
-protected:
-	String CreateArgList(NativeFunction* fnx, bool hasReturnValue, bool hasPersistentCallback)
-	{
-		String argList = fnx->GetArgList();
-		if (hasReturnValue || hasPersistentCallback)
-		{
-			if (fnx->GetNumArgs() > 0)
-				argList.append(TEXT(","));
-			argList.append(TEXT("callback"));
-		}
-
-		return argList;
-	}
-};
-
-
-class ClientExtensionHandler : public NativeJavaScriptFunctionAdder, public ClientHandler::ProcessMessageDelegate
-{
-public:
-    ClientExtensionHandler();
-    ~ClientExtensionHandler();
-    
-    virtual void ReleaseCefObjects();
-    
-	virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT(""));
-
-	bool InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args);
-	bool InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args);
-    
-    
-    // ProcessMessageDelegate Implementation
-    
-    virtual bool OnProcessMessageReceived(CefRefPtr<ClientHandler> handler, CefRefPtr<CefBrowser> browser,
-        CefProcessId source_process, CefRefPtr<CefProcessMessage> message);
-    
-private:
-    std::map<String, NativeFunction*> m_mapFunctions;
-	std::map<CallbackId, ClientCallback*> m_mapDelayedCallbacks;
-    
-    IMPLEMENT_REFCOUNTING(ClientExtensionHandler);
 };
 
 

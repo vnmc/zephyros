@@ -2,14 +2,16 @@
 #include <Shlwapi.h>
 #include <algorithm>
 
-#include "../CrashRpt/CrashRpt.h"
+#include "lib/CrashRpt/CrashRpt.h"
 
-#include "app.h"
-#include "client_handler.h"
-#include "extension_handler.h"
-#include "string_util.h"
-#include "os_util.h"
-#include "process_manager.h"
+#include "base/app.h"
+#include "base/cef/client_handler.h"
+#include "base/cef/extension_handler.h"
+
+#include "util/string_util.h"
+
+#include "native_extensions/os_util.h"
+#include "native_extensions/process_manager.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -21,14 +23,16 @@
 //////////////////////////////////////////////////////////////////////////
 // Worker Thread Functions
 
-extern CefRefPtr<ClientHandler> g_handler;
+extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
 DWORD WINAPI ReadOutput(LPVOID param)
 {
 	// install exception handlers for this thread
-	crInstallToCurrentThread2(0);
+	const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
+	if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
+		crInstallToCurrentThread2(0);
 
-	PipeData* p = (PipeData*) param;
+	Zephyros::PipeData* p = (Zephyros::PipeData*) param;
 
 	DWORD numBytesRead;
 	DWORD numBytesAvail;
@@ -45,7 +49,7 @@ DWORD WINAPI ReadOutput(LPVOID param)
 
 		if (numBytesRead > 0)
 		{
-			StreamDataEntry entry;
+			Zephyros::StreamDataEntry entry;
 			entry.type = p->type;
 			entry.text = String(buf, buf + numBytesRead);
 
@@ -66,7 +70,7 @@ DWORD WINAPI ReadOutput(LPVOID param)
 
 DWORD WINAPI WaitForProcessProc(LPVOID param)
 {
-	ProcessManager* pMgr = (ProcessManager*) param;
+	Zephyros::ProcessManager* pMgr = (Zephyros::ProcessManager*) param;
 	DWORD dwExitCode = 0;
 
 	// wait until the process has terminated
@@ -93,6 +97,8 @@ DWORD WINAPI WaitForProcessProc(LPVOID param)
 
 //////////////////////////////////////////////////////////////////////////
 // ProcessManager Implementation
+
+namespace Zephyros {
 
 ProcessManager::ProcessManager(CallbackId callbackId, String strExePath, std::vector<String> vecArgs, String strCWD)
   : m_callbackId(callbackId),
@@ -349,3 +355,5 @@ String ProcessManager::GetEnvVar(LPCTSTR strVarName)
 
 	return str;
 }
+
+} // namespace Zephyros

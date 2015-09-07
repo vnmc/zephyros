@@ -64,6 +64,8 @@ void GetSettings(CefSettings& settings)
     ASSERT(g_command_line.get());
     if (!g_command_line.get())
         return;
+
+	settings.no_sandbox = true;
     
 #if defined(OS_WIN)
     settings.multi_threaded_message_loop = false;// g_command_line->HasSwitch(cefclient::kMultiThreadedMessageLoop);

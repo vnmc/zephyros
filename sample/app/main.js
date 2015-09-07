@@ -19,4 +19,13 @@ $(document).ready(function()
 			$eltBrowsers.append($elt);
 		});
 	});
+
+	$('.compute-fib').click(function ()
+	{
+	    var n = parseInt($('.fib-number').val(), 10);
+	    app.fibonacci(n, function(result)
+	    {
+	        $('.fib-result').html(result);
+	    });        
+	});
 });

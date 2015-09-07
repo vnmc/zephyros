@@ -1,12 +1,19 @@
 #include <vector>
 #include <set>
 
-#include "../../../Lib/CrashRpt/CrashRpt.h"
+#include "lib/CrashRpt/CrashRpt.h"
 
-#include "app.h"
-#include "file_watcher.h"
-#include "extension_handler.h"
-#include "string_util.h"
+#include "base/app.h"
+
+#ifdef USE_CEF
+#include "base/cef/client_handler.h"
+#include "base/cef/extension_handler.h"
+#endif
+
+#include "util/string_util.h"
+
+#include "native_extensions/file_watcher.h"
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,7 +56,7 @@ bool isFileEmpty(String directory, String filename)
 // (WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS) if no change event has been fired yet during
 // this wait time.
 //
-void ProcessChangedFiles(FileWatcher* pWatcher, BYTE* buf, std::set<String>& allChangedFilenames, HANDLE hTimerEmptyFile, HANDLE hTimerNonemptyFile)
+void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<String>& allChangedFilenames, HANDLE hTimerEmptyFile, HANDLE hTimerNonemptyFile)
 {
 	DWORD numBytesReturned;
 	std::vector<String> changedFilenames;
@@ -148,9 +155,11 @@ void ProcessChangedFiles(FileWatcher* pWatcher, BYTE* buf, std::set<String>& all
 DWORD WINAPI WatchDirectory(LPVOID param)
 {
 	// install exception handlers for this thread
-	crInstallToCurrentThread2(0);
+	const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
+	if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
+		crInstallToCurrentThread2(0);
 
-	FileWatcher* pWatcher = (FileWatcher*) param;
+	Zephyros::FileWatcher* pWatcher = (Zephyros::FileWatcher*) param;
 
 	// create timers to schedule firing file changes
 	HANDLE hTimerEmptyFile = CreateWaitableTimer(NULL, FALSE, NULL);
@@ -251,7 +260,7 @@ DWORD WINAPI WatchDirectory(LPVOID param)
 			return 0;
 
 		case WAIT_FAILED:
-			App::ShowErrorMessage();
+			Zephyros::App::ShowErrorMessage();
 			break;
 		}
 	}
@@ -265,6 +274,8 @@ DWORD WINAPI WatchDirectory(LPVOID param)
 
 //////////////////////////////////////////////////////////////////////////
 // FileWatcher Implementation
+
+namespace Zephyros {
 
 FileWatcher::FileWatcher()
   : m_hDirectory(INVALID_HANDLE_VALUE),
@@ -366,3 +377,5 @@ bool FileWatcher::ReadFile(String filePath, char** pBuf, size_t* pLen)
 	CloseHandle(hFile);
 	return true;
 }
+
+} // namespace Zephyros

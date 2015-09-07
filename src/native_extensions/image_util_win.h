@@ -14,8 +14,8 @@
 #include <minmax.h>
 #include <gdiplus.h>
 
-#include "..\..\..\Lib\Libcef\Include\cef_base.h"
-#include "types.h"
+#include "include/cef_base.h"
+#include "base/types.h"
 
 
 namespace ImageUtil {

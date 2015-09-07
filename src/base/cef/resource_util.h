@@ -22,7 +22,4 @@ bool LoadBinaryResource(const TCHAR* resource_name, String& resource_data);
 // Retrieve a resource as a steam reader.
 CefRefPtr<CefStreamReader> GetBinaryResourceReader(const TCHAR* resource_name);
 
-void FreeResources();
-
-
 #endif  // CEF_TESTS_CEFCLIENT_RESOURCE_UTIL_H_

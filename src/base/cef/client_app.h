@@ -6,7 +6,6 @@
 #define CEF_TESTS_CEFCLIENT_CLIENT_APP_H_
 #pragma once
 
-
 #include <map>
 #include <set>
 #include <string>
@@ -20,28 +19,31 @@ namespace Zephyros {
 
 class AppExtensionHandler;
 
-
-class ClientApp : public CefApp, public CefBrowserProcessHandler, public CefRenderProcessHandler
+class ClientApp : public CefApp,
+                  public CefBrowserProcessHandler,
+                  public CefRenderProcessHandler
 {
 public:
 
-    // Interface for browser delegates. Do not perform work in the BrowserDelegate
-    // constructor. See CefBrowserProcessHandler for documentation.
-    class BrowserDelegate : public virtual CefBase
-    {
-    public:
-        virtual void OnContextInitialized(CefRefPtr<ClientApp> app) {}
+	// Interface for browser delegates. All BrowserDelegates must be returned via
+	// CreateBrowserDelegates. Do not perform work in the BrowserDelegate
+	// constructor. See CefBrowserProcessHandler for documentation.
+	class BrowserDelegate : public virtual CefBase
+	{
+	public:
+		virtual void OnContextInitialized(CefRefPtr<ClientApp> app) {}
         virtual void OnBeforeChildProcessLaunch(CefRefPtr<ClientApp> app, CefRefPtr<CefCommandLine> command_line) {}
         virtual void OnRenderProcessThreadCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefListValue> extra_info) {}
     };
 
-    typedef std::set<CefRefPtr<BrowserDelegate> > BrowserDelegateSet;
+	typedef std::set<CefRefPtr<BrowserDelegate> > BrowserDelegateSet;
 
-    // Interface for renderer delegates. Do not perform work in the RenderDelegate
-    // constructor. See CefRenderProcessHandler for documentation.
-    class RenderDelegate : public virtual CefBase
-    {
-    public:
+	// Interface for renderer delegates. All RenderDelegates must be returned via
+	// CreateRenderDelegates. Do not perform work in the RenderDelegate
+	// constructor. See CefRenderProcessHandler for documentation.
+	class RenderDelegate : public virtual CefBase
+	{
+	public:
         virtual void OnRenderThreadCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefListValue> extra_info) {}
         virtual void OnWebKitInitialized(CefRefPtr<ClientApp> app) {}
         virtual void OnBrowserCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser) {}
@@ -77,12 +79,12 @@ public:
         {
             return false;
         }
-    };
+	};
 
-    typedef std::set<CefRefPtr<RenderDelegate> > RenderDelegateSet;
+	typedef std::set<CefRefPtr<RenderDelegate> > RenderDelegateSet;
 
-    
-    ClientApp();
+  
+	ClientApp();
 	~ClientApp();
 
 private:
@@ -98,12 +100,12 @@ private:
 
 	virtual void OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line) OVERRIDE;
 
-    // CefBrowserProcessHandler methods.
+    // CefBrowserProcessHandler methods
     virtual void OnContextInitialized() OVERRIDE;
     virtual void OnBeforeChildProcessLaunch(CefRefPtr<CefCommandLine> command_line) OVERRIDE;
     virtual void OnRenderProcessThreadCreated(CefRefPtr<CefListValue> extra_info) OVERRIDE;
 
-    // CefRenderProcessHandler methods.
+    // CefRenderProcessHandler methods
     virtual void OnRenderThreadCreated(CefRefPtr<CefListValue> extra_info) OVERRIDE;
     virtual void OnWebKitInitialized() OVERRIDE;
     virtual void OnBrowserCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
@@ -120,10 +122,10 @@ private:
     virtual bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message) OVERRIDE;
 
 
-    // Set of supported BrowserDelegates.
+    // set of supported BrowserDelegates
     BrowserDelegateSet m_browserDelegates;
 
-    // Set of supported RenderDelegates.
+    // set of supported RenderDelegates
     RenderDelegateSet m_renderDelegates;
 
 	CefRefPtr<AppExtensionHandler> m_pAppExtensionHandler;

@@ -1,0 +1,8 @@
+LANGUAGE 0, 0
+#pragma code_page(1252)
+
+// App Resources
+10000 256 "C:\\Users\\ghost\\Projects\\zephyros2\\Zephyros\\sample\\app\\index.html"
+10001 256 "C:\\Users\\ghost\\Projects\\zephyros2\\Zephyros\\sample\\app\\main.js"
+10002 256 "C:\\Users\\ghost\\Projects\\zephyros2\\Zephyros\\sample\\app\\style.css"
+10003 256 "C:\\Users\\ghost\\Projects\\zephyros2\\Zephyros\\sample\\app\\zepto.js"

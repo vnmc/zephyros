@@ -1,4 +1,8 @@
-#include "dialog_win.h"
+#include <tchar.h>
+
+#include "base/types.h"
+#include "components/dialog_win.h"
+
 
 #define BUF_SIZE 1024
 
@@ -6,15 +10,13 @@
 extern HINSTANCE g_hInst;
 
 
-LPWORD align(LPWORD lpIn, ULONG dw2Power = 4)
+BYTE* align(BYTE* lpIn, INT_PTR dw2Power = 4)
 {
-    ULONG ul;
-
-    ul = (ULONG) lpIn;
+    INT_PTR ul = (INT_PTR) lpIn;
     ul += dw2Power - 1;
     ul &= ~(dw2Power - 1);
 
-    return (LPWORD) ul;
+    return (BYTE*) ul;
 }
 
 
@@ -22,8 +24,7 @@ Dialog::Dialog(WORD wDlgResId, HWND hwndParent)
   : m_hwnd(NULL),
 	m_hwndParent(hwndParent),
 	m_wDlgResId(wDlgResId),
-	m_hglTemplate(NULL),
-	m_pTemplate(NULL)
+	m_pBuf(NULL)
 {
 }
 
@@ -31,95 +32,111 @@ Dialog::Dialog(String strCaption, HWND hwndParent, int nWidth, int nHeight)
   : m_hwnd(NULL),
 	m_hwndParent(hwndParent),
 	m_wDlgResId(0),
-	m_hglTemplate(NULL),
-	m_pTemplate(NULL),
+	m_pBuf(NULL),
 	m_nWidth(nWidth),
 	m_nHeight(nHeight)
 {
-	m_hglTemplate = GlobalAlloc(GMEM_ZEROINIT, BUF_SIZE);
-	if (m_hglTemplate)
-		m_pTemplate = (LPDLGTEMPLATE) GlobalLock(m_hglTemplate);
+	m_pBuf = new BYTE[BUF_SIZE];
+	ZeroMemory(m_pBuf, BUF_SIZE);
 
-	m_pTemplate->style = DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU;
+	m_ptr = align(m_pBuf, 2);
 
-	// number of controls
-	m_pTemplate->cdit = 0;
+	DWORD dwExStyle = 0;
+	DWORD dwStyle = DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU;
 
-	// dialog geometry
-    m_pTemplate->x = 0;
-    m_pTemplate->y  = 0;
-    m_pTemplate->cx = m_nWidth;
-    m_pTemplate->cy = m_nHeight;
+	WriteData<WORD>(1);			// dlgVer
+	WriteData<WORD>(0xffff);	// signature
+	WriteData<DWORD>(0);		// help ID
+	WriteData<DWORD>(dwExStyle);// exstyle
+	WriteData<DWORD>(dwStyle);	// style
 
-    m_ptr = (LPWORD) (lpdt + 1);
-    *m_ptr++ = 0; // no menu
-    *m_ptr++ = 0; // predefined dialog box class (by default)
+	m_pDlgItemsCount = (WORD*) m_ptr;
+	WriteData<WORD>(0);			// cDlgItems
+	
+	WriteData<short>(0);		// x
+	WriteData<short>(0);		// y
+	
+	m_pWidth = (short*) m_ptr;
+	WriteData<short>(0);		// cx
+	m_pHeight = (short*) m_ptr;
+	WriteData<short>(0);		// cy
+	
+	WriteData<WORD>(0x0000);	// menu
+	WriteData<WORD>(0x0000);	// windowClass
+	WriteUnicodeString(strCaption.c_str());
 
-    WriteUnicodeString(strCaption.c_str());
+	if (dwStyle & (DS_SETFONT | DS_SHELLFONT))
+	{
+		WriteData<WORD>(8);			// point size
+		WriteData<WORD>(FW_NORMAL);	// weight
+		WriteData<BYTE>(FALSE);		// italic
+		WriteData<BYTE>(DEFAULT_CHARSET);
+		WriteUnicodeString(TEXT("MS Shell Dlg"));
+	}
 }
 
 Dialog::~Dialog()
 {
-	if (m_pTemplate)
-		GlobalUnlock(m_hglTemplate);
-	if (m_hglTemplate != NULL)
-		GlobalFree(m_hglTemplate);
+	if (m_pBuf)
+		delete[] m_pBuf;
 }
 
-void Dialog::AddControl(const TCHAR* szCaption, int nResourceID, int nCtrlClass, const TCHAR* szWindowClass, int nID, int x, int y, int nWidth, int nHeight, int nStyle)
+void Dialog::AddControl(const TCHAR* szCaption, int nResourceID, int nCtrlClass, const TCHAR* szWindowClass, int nID, int x, int y, int nWidth, int nHeight, int nStyle, int nExStyle)
 {
 	// align DLGITEMTEMPLATE on DWORD boundary
 	m_ptr = align(m_ptr);
 
-    LPDLGITEMTEMPLATE pItemTpl = (LPDLGITEMTEMPLATE) m_ptr;
+	WriteData<DWORD>(0);	// help ID
+	WriteData<DWORD>(nExStyle);
+	WriteData<DWORD>(nStyle);
+	WriteData<short>(x);
+	WriteData<short>(y);
+	WriteData<short>(nWidth);
+	WriteData<short>(nHeight);
+	WriteData<DWORD>(nID);
 
-    pItemTpl->x = x;
-    pItemTpl->y = y;
-    pItemTpl->cx = nWidth;
-    pItemTpl->cy = nHeight;
+	// window class
+	if (szWindowClass)
+		WriteUnicodeString(szWindowClass);
+	else
+	{
+		WriteData<WORD>(0xffff);
+		WriteData<WORD>(nCtrlClass);
+	}
 
-    lpdit->id = nID;
-    lpdit->style = nStyle;
-
-    m_ptr = (LPWORD) (pItemTpl + 1);
-
-    // window class
-    if (szWindowClass)
-    	WriteUnicodeString(szWindowClass);
-    else
-    {
-    	*m_ptr++ = 0xffff;
-    	*m_ptr++ = nCtrlClass;
-    }    	
-
-    // caption
+	// caption
     if (szCaption)
 	    WriteUnicodeString(szCaption);
 	else
     {
-    	*m_ptr++ = 0xffff;
-    	*m_ptr++ = nResourceID;
+    	WriteData<WORD>(0xffff);
+    	WriteData<WORD>(nResourceID);
     }
 
-    // no creation data
-    *m_ptr++ = 0;
+	WriteData<WORD>(0);	// extra count (creation data)
 
     // modify the dialog template (update the number of controls and the geometry)
-    m_pTemplate->cdit++;
+    (*m_pDlgItemsCount)++;
     if (m_nWidth == 0)
-    	m_pTemplate->cx = std::max(m_pTemplate->cx, x + nWidth + 16);
+    	*m_pWidth = std::max(*m_pWidth, (short) (x + nWidth + 16));
     if (m_nHeight == 0)
-    	m_pTemplate->cy = std::max(m_pTemplate->cy, y + nHeight + 16);
+    	*m_pHeight = std::max(*m_pHeight, (short) (y + nHeight + 16));
 }
 
-void Dialog::WriteUnicodeString(TCHAR* szString)
+void Dialog::WriteUnicodeString(const TCHAR* szString)
 {
 #ifdef _UNICODE
 	_tcscpy((TCHAR*) m_ptr, szString);
 	m_ptr += (_tcslen(szString) + 1) * sizeof(TCHAR);
 #else
-    m_ptr += MultiByteToWideChar(CP_ACP, 0, szString, -1, (LPWSTR) m_ptr, BUF_SIZE - ((PTR) m_ptr - (PTR) m_pTemplate));
+    m_ptr += MultiByteToWideChar(CP_ACP, 0, szString, -1, (LPWSTR) m_ptr, BUF_SIZE - ((INT_PTR) m_ptr - (INT_PTR) m_pTemplate)) * sizeof(TCHAR);
 #endif
+}
+
+template<typename T> void Dialog::WriteData(T datum)
+{
+	*(reinterpret_cast<T*>(m_ptr)) = datum;
+	m_ptr += sizeof(T);
 }
 
 INT_PTR Dialog::DoModal()
@@ -138,7 +155,7 @@ INT_PTR Dialog::DoModal()
 
 	return DialogBoxIndirectParam(
 		g_hInst, 
-        (LPDLGTEMPLATE) m_hglTemplate,
+		(LPDLGTEMPLATE) align(m_pBuf, 2),
         m_hwndParent,
         Dialog::MsgProc,
         reinterpret_cast<LPARAM>(this)

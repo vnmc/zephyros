@@ -1,14 +1,16 @@
 #include <iomanip>
 #include <tchar.h>
 
-#include "browser.h"
-#include "app.h"
-#include "image_util_win.h"
+#include "base/app.h"
+
+#include "native_extensions/browser.h"
+#include "native_extensions/image_util_win.h"
 
 
 #define MAX_LEN 2048
 
 
+namespace Zephyros {
 namespace BrowserUtil {
 
 //
@@ -163,8 +165,13 @@ String GetExeVersion(String strCommand)
 //
 // Returns an array of all browsers available on the system.
 //
-void FindBrowsers(std::vector<Browser*>& browsers)
+void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 {
+	if (*ppBrowsers != NULL)
+		return;
+
+	*ppBrowsers = new std::vector<Browser*>();
+
 	String strDefaultBrowserKey = GetDefaultBrowserKey();
 
 	HKEY hKey;
@@ -303,7 +310,7 @@ void FindBrowsers(std::vector<Browser*>& browsers)
 						idx == 0;
 
 					DEBUG_LOG(TEXT("Adding browser ") + strBrowserName);
-					browsers.push_back(new Browser(strBrowserName, GetExeVersion(strBrowserCommand), strBrowserCommand, strIcon, isDefaultBrowser));
+					(*ppBrowsers)->push_back(new Browser(strBrowserName, GetExeVersion(strBrowserCommand), strBrowserCommand, strIcon, isDefaultBrowser));
 					DEBUG_LOG(TEXT("Added browser"));
 				}
 			}
@@ -334,10 +341,11 @@ bool OpenURLInBrowser(String url, Browser* browser)
 	return ShellExecuteEx(&execInfo) == TRUE;
 }
 
-void CleanUp(std::vector<Browser*>& browsers)
+void CleanUp(std::vector<Browser*>* pBrowsers)
 {
-	for (Browser* pBrowser : browsers)
+	for (Browser* pBrowser : *pBrowsers)
 		delete pBrowser;
 }
 
 } // namespace BrowserUtil
+} // namespace Zephyros

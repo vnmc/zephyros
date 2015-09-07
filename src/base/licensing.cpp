@@ -2,13 +2,19 @@
 #include <tchar.h>
 #endif
 
-#include "base/zephyros_impl.h"
 #include "base/zephyros_strings.h"
 #include "base/app.h"
 #include "base/licensing.h"
 
+#ifdef USE_CEF
+#include "base/cef/client_handler.h"
+#include "base/cef/extension_handler.h"
+#endif
+
 #include "native_extensions/network_util.h"
 #include "native_extensions/os_util.h"
+
+#include "zephyros.h"
 
 
 #define DIE(msg) { Zephyros::App::Log(msg); Zephyros::App::Quit(); }
@@ -60,7 +66,128 @@ String LicenseData::Decrypt(String s)
 //////////////////////////////////////////////////////////////////////////
 // LicenseManager Implementation
     
-String LicenseManager::GetDemoButtonCaption()
+LicenseManager::LicenseManager()
+{
+	m_pMgr = new LicenseManagerImpl();
+}
+
+LicenseManager::~LicenseManager()
+{
+	delete m_pMgr;
+}
+
+void LicenseManager::SetLicenseInfo(int productId, const TCHAR* szPublicKey)
+{
+	m_pMgr->SetLicenseInfo(productId, szPublicKey);
+}
+
+void LicenseManager::AddObsoleteLicenseInfo(int productId, const TCHAR* szPublicKey)
+{
+	m_pMgr->AddObsoleteLicenseInfo(productId, szPublicKey);
+}
+    
+int LicenseManager::GetNumberOfDemoDays()
+{
+	return m_pMgr->GetNumberOfDemoDays();
+}
+
+void LicenseManager::SetNumberOfDemoDays(int numDemoDays)
+{
+	m_pMgr->SetNumberOfDemoDays(numDemoDays);
+}
+    
+void LicenseManager::SetAPIURLs(const TCHAR* demoTokensURL, const TCHAR* activationURL, const TCHAR* deactivationURL)
+{
+	m_pMgr->SetAPIURLs(demoTokensURL, activationURL, deactivationURL);
+}
+    
+const TCHAR* LicenseManager::GetShopURL()
+{
+	return m_pMgr->GetShopURL();
+}
+
+void LicenseManager::SetShopURL(const TCHAR* shopURL)
+{
+	m_pMgr->SetShopURL(shopURL);
+}
+    
+const TCHAR* LicenseManager::GetUpgradeURL()
+{
+	return m_pMgr->GetUpgradeURL();
+}
+
+void LicenseManager::SetUpgradeURL(const TCHAR* upgradeURL)
+{
+	m_pMgr->SetUpgradeURL(upgradeURL);
+}
+    
+void LicenseManager::SetActivationLinkPrefix(const TCHAR* activationLinkPrefix)
+{
+	m_pMgr->SetActivationLinkPrefix(activationLinkPrefix);
+}
+    
+void LicenseManager::SetLicenseInfoFilename(const TCHAR* licenseInfoFilename)
+{
+	m_pMgr->SetLicenseInfoFilename(licenseInfoFilename);
+}
+    
+void LicenseManager::SetReceiptChecker(ReceiptChecker* pReceiptChecker)
+{
+	m_pMgr->SetReceiptChecker(pReceiptChecker);
+}
+
+ReceiptChecker* LicenseManager::GetReceiptChecker()
+{
+	return m_pMgr->GetReceiptChecker();
+}
+
+void LicenseManager::Start()
+{
+	m_pMgr->Start();
+}
+
+bool LicenseManager::CanStartApp()
+{
+	return m_pMgr->CanStartApp();
+}
+
+bool LicenseManager::CheckDemoValidity()
+{
+	return m_pMgr->CheckDemoValidity();
+}
+
+JavaScript::Object LicenseManager::GetLicenseInformation()
+{
+	return m_pMgr->GetLicenseInformation();
+}
+
+int LicenseManager::ActivateFromURL(String url)
+{
+	return m_pMgr->ActivateFromURL(url);
+}
+
+bool LicenseManager::Deactivate()
+{
+	return m_pMgr->Deactivate();
+}
+
+bool LicenseManager::IsLicensingLink(const TCHAR* url)
+{
+	return m_pMgr->IsLicensingLink(url);
+}
+    
+void LicenseManager::ShowEnterLicenseDialog()
+{
+	m_pMgr->ShowEnterLicenseDialog();
+}
+
+void LicenseManager::OpenPurchaseLicenseURL()
+{
+	m_pMgr->OpenPurchaseLicenseURL();
+}
+
+
+String LicenseManagerImpl::GetDemoButtonCaption()
 {
 	bool isDemoStarted = m_pLicenseData->m_timestampLastDemoTokenUsed != TEXT("");
 	if (!isDemoStarted)
@@ -68,7 +195,7 @@ String LicenseManager::GetDemoButtonCaption()
 	return GetNumDaysLeft() > 0 ? Zephyros::GetString(ZS_DEMODLG_CONTINUE_DEMO) : Zephyros::GetString(ZS_DEMODLG_CLOSE);
 }
 
-String LicenseManager::GetDaysCountLabelText()
+String LicenseManagerImpl::GetDaysCountLabelText()
 {
 	int numDaysLeft = GetNumDaysLeft();
 	
@@ -85,7 +212,7 @@ String LicenseManager::GetDaysCountLabelText()
 	return Zephyros::GetString(ZS_DEMODLG_NO_DAYS_LEFT);
 }
 
-bool LicenseManager::ParseResponse(String url, std::string data, String errorMsg, picojson::object& result)
+bool LicenseManagerImpl::ParseResponse(String url, std::string data, String errorMsg, picojson::object& result)
 {
 	String title = Zephyros::GetString(ZS_LIC_LICERROR);
     String msg = errorMsg;
@@ -138,7 +265,7 @@ bool LicenseManager::ParseResponse(String url, std::string data, String errorMsg
  * server is made, the method returns ACTIVATION_SUCCEEDED.
  * If an obsolete license was entered, the method returns ACTIVATION_OBSOLETELICENSE.
  */
-int LicenseManager::Activate(String name, String company, String licenseKey)
+int LicenseManagerImpl::Activate(String name, String company, String licenseKey)
 {
     String title = Zephyros::GetString(ZS_LIC_ACTIVATION);
 
@@ -162,8 +289,8 @@ int LicenseManager::Activate(String name, String company, String licenseKey)
                 break;
             }
         }
-        
-        if (!isObsoleteLicense)
+
+		if (!isObsoleteLicense)
         {
             App::Alert(title, Zephyros::GetString(ZS_LIC_LICINVALID), App::AlertStyle::AlertError);
             return ACTIVATION_FAILED;
@@ -208,7 +335,7 @@ int LicenseManager::Activate(String name, String company, String licenseKey)
 	return ACTIVATION_SUCCEEDED;
 }
 
-int LicenseManager::ActivateFromURL(String url)
+int LicenseManagerImpl::ActivateFromURL(String url)
 {
     if (!AbstractLicenseManager::IsLicensingLink(url))
 		return ACTIVATION_FAILED;
@@ -230,7 +357,7 @@ int LicenseManager::ActivateFromURL(String url)
 }
 
 
-bool LicenseManager::Deactivate()
+bool LicenseManagerImpl::Deactivate()
 {
     if (!m_config.deactivationURL || m_pLicenseData->m_activationCookie.length() == 0 || m_pLicenseData->m_licenseKey.length() == 0)
         return false;
@@ -266,7 +393,7 @@ bool LicenseManager::Deactivate()
 /**
  * Starts the license manager.
  */
-void LicenseManager::Start()
+void LicenseManagerImpl::Start()
 {
     // check the configuration
     if (m_config.demoTokensURL == NULL || m_config.activationURL == NULL)
@@ -297,7 +424,7 @@ void LicenseManager::Start()
  * If requesting demo tokens cannot proceed, false is returned.
  * The method returns true if the request to the server is made.
  */
-bool LicenseManager::RequestDemoTokens(String strMACAddr)
+bool LicenseManagerImpl::RequestDemoTokens(String strMACAddr)
 {
 	// add the POST data
 	std::stringstream ssData;

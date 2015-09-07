@@ -4,20 +4,21 @@
 #include <minmax.h>
 #include <gdiplus.h>
 
-#include "..\..\..\Lib\Libcef\Include\cef_browser.h"
-#include "..\..\..\Lib\Libcef\Include\cef_client.h"
-#include "..\..\..\Lib\Libcef\Include\cef_render_handler.h"
+#include "lib/cef/include/cef_browser.h"
+#include "lib/cef/include/cef_client.h"
+#include "lib/cef/include/cef_render_handler.h"
 
-#include "client_handler.h"
-#include "extension_handler.h"
-#include "image_util_win.h"
+#include "base/cef/client_handler.h"
+#include "base/cef/extension_handler.h"
+
+#include "native_extensions/image_util_win.h"
 
 
 void CALLBACK PaintComplete(HWND, UINT, UINT_PTR, DWORD);
 class OffscreenClientHandler;
 
 
-extern CefRefPtr<ClientHandler> g_handler;
+extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 CefRefPtr<OffscreenClientHandler> g_offscreenHandler = NULL;
 
 
@@ -42,7 +43,7 @@ public:
 	OffscreenClientHandler()
 		: m_timerId(0), m_numPainted(0), m_browser(NULL)
 	{
-		m_image = new Gdiplus::Bitmap(PageImage::ImageWidth, PageImage::ImageHeight, PixelFormat32bppARGB);
+		m_image = new Gdiplus::Bitmap(Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight, PixelFormat32bppARGB);
 	}
 
 	~OffscreenClientHandler()
@@ -55,7 +56,7 @@ public:
 
 		item->callbackId = callbackId;
 		item->url = url;
-		item->width = min(width, PageImage::ImageWidth);
+		item->width = min(width, Zephyros::PageImage::ImageWidth);
 
 		m_queue.push(item);
 
@@ -82,9 +83,9 @@ public:
 
 		// resize the image if needed
 		Gdiplus::Bitmap* pImage = m_image;
-		if (item->width < PageImage::ImageWidth)
+		if (item->width < Zephyros::PageImage::ImageWidth)
 		{
-			int imageHeight = (int) (((long) item->width * PageImage::ImageHeight) / PageImage::ImageWidth);
+			int imageHeight = (int) (((long) item->width * Zephyros::PageImage::ImageHeight) / Zephyros::PageImage::ImageWidth);
 			pImage = new Gdiplus::Bitmap(item->width, imageHeight, PixelFormat32bppARGB);
 
 			Gdiplus::Graphics g(pImage);
@@ -104,7 +105,7 @@ public:
 		BYTE* pData = NULL;
 		DWORD length = 0;
 		ImageUtil::BitmapToPNGData(pImage, &pData, &length);
-		JavaScript::Array args = JavaScript::CreateArray();
+		Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
 		args->SetString(0, TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length));
 		
 		g_handler->GetClientExtensionHandler()->InvokeCallback(item->callbackId, args);
@@ -160,10 +161,10 @@ public:
 
 		// copy the buffer into the bitmap
 		Gdiplus::BitmapData data;
-		Gdiplus::Rect rect(0, 0, PageImage::ImageWidth, PageImage::ImageHeight);
+		Gdiplus::Rect rect(0, 0, Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight);
 		m_image->LockBits(&rect, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &data);
-		int w = min(PageImage::ImageWidth, width);
-		int h = min(PageImage::ImageHeight, height);
+		int w = min(Zephyros::PageImage::ImageWidth, width);
+		int h = min(Zephyros::PageImage::ImageHeight, height);
 		for (int y = 0; y < h; ++y)
 			memcpy((BYTE*) data.Scan0 + y * data.Stride, (BYTE*) buffer + y * 4 * w, 4 * w);
 		m_image->UnlockBits(&data);
@@ -187,6 +188,7 @@ void CALLBACK PaintComplete(HWND hWnd, UINT uMsg, UINT_PTR timerId, DWORD dwTime
 }
 
 
+namespace Zephyros {
 namespace PageImage {
 
 void GetPageImageForURL(CallbackId callback, String url, int width)
@@ -207,3 +209,4 @@ void GetPageImageForURL(CallbackId callback, String url, int width)
 }
 
 } // namespace PageImage
+} // namespace Zephyros

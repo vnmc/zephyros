@@ -1,12 +1,7 @@
-#ifdef OS_WIN
-#include <minmax.h>
-#include <gdiplus.h>
-#endif
-
-#include "base/zephyros_impl.h"
 #include "base/app.h"
 
 #ifdef USE_CEF
+#include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
 #endif
 
@@ -31,7 +26,10 @@
 #include "native_extensions/updater.h"
 #endif
 
-#include "native_extensions/native_extensions.h"
+#ifdef OS_WIN
+#include <minmax.h>
+#include <gdiplus.h>
+#endif
 
 
 namespace Zephyros {
@@ -43,11 +41,10 @@ void NativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
     
     
 DefaultNativeExtensions::DefaultNativeExtensions()
+	: m_pBrowsers(NULL)
 {
     m_fileWatcher = new FileWatcher();
-    m_customURLManager = new CustomURLManager();
-    
-    BrowserUtil::FindBrowsers(m_browsers);
+    m_customURLManager = new CustomURLManager();    
 }
     
 DefaultNativeExtensions::~DefaultNativeExtensions()
@@ -55,7 +52,8 @@ DefaultNativeExtensions::~DefaultNativeExtensions()
     delete m_fileWatcher;
     delete m_customURLManager;
     
-    BrowserUtil::CleanUp(m_browsers);
+	if (m_pBrowsers)
+		BrowserUtil::CleanUp(m_pBrowsers);
 }
     
 void DefaultNativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
@@ -169,7 +167,8 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         FUNC({
             JavaScript::Array browsers = JavaScript::CreateArray();
             int i = 0;
-            for (Browser* pBrowser : ((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_browsers)
+			Zephyros::BrowserUtil::FindBrowsers(&((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers);
+            for (Browser* pBrowser : *(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers))
                 browsers->SetDictionary(i++, pBrowser->CreateJSRepresentation());
             ret->SetList(0, browsers);
             return NO_ERROR;
@@ -180,7 +179,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptFunction(
         TEXT("getDefaultBrowser"),
         FUNC({
-            Browser* defaultBrowser = Zephyros::BrowserUtil::GetDefaultBrowser(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_browsers);
+            Browser* defaultBrowser = Zephyros::BrowserUtil::GetDefaultBrowser(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers);
             if (defaultBrowser != NULL)
                 ret->SetDictionary(0, defaultBrowser->CreateJSRepresentation());
             else
@@ -193,7 +192,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptFunction(
         TEXT("getBrowserForUserAgent"),
         FUNC({
-            Browser* b = Zephyros::BrowserUtil::GetBrowserForUserAgent(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_browsers, args->GetDictionary(0));
+            Browser* b = Zephyros::BrowserUtil::GetBrowserForUserAgent(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers, args->GetDictionary(0));
             if (b != NULL)
                 ret->SetDictionary(0, b->CreateJSRepresentation());
             else
@@ -207,7 +206,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptFunction(
         TEXT("openUrl"),
         FUNC({
-            Browser* b = Zephyros::BrowserUtil::GetBrowserFromJSRepresentation(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_browsers, args->GetDictionary(1));
+            Browser* b = Zephyros::BrowserUtil::GetBrowserFromJSRepresentation(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers, args->GetDictionary(1));
             if (b != NULL)
                 ret->SetBool(0, Zephyros::BrowserUtil::OpenURLInBrowser(args->GetString(0), b));
             else

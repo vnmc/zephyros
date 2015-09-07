@@ -9,11 +9,14 @@
 #include <sys/stat.h>
 #include <tchar.h>
 
-#include "file_util.h"
-#include "image_util_win.h"
-#include "licensing.h"
+#include "base/cef/client_handler.h"
+#include "base/cef/extension_handler.h"
+
+#include "native_extensions/file_util.h"
+#include "native_extensions/image_util_win.h"
 
 
+namespace Zephyros {
 namespace FileUtil {
 
 bool ShowOpenFileDialog(Path& path)
@@ -342,7 +345,7 @@ void LoadPreferences(String key, String& data)
 	data = TEXT("");
 
 	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_CURRENT_USER, REGISTRY_KEY, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
 	{
 		DWORD type = 0;
 		DWORD len = 0;
@@ -365,7 +368,7 @@ void LoadPreferences(String key, String& data)
 void StorePreferences(String key, String data)
 {
 	HKEY hKey;
-	if (RegCreateKeyEx(HKEY_CURRENT_USER, REGISTRY_KEY, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
+	if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
 	{
 		RegSetValueEx(hKey, key.c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(data.c_str()), (DWORD) ((data.length() + 1) * sizeof(TCHAR)));
 		RegCloseKey(hKey);
@@ -404,3 +407,4 @@ void GetApplicationResourcesPath(Path& path)
 }
 
 } // namespace FileUtil
+} // namespace Zephyros
