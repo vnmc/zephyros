@@ -30,6 +30,8 @@
 #import <ifaddrs.h>
 #import <net/if.h>
 
+#import "base/logging.h"
+
 #import "native_extensions/network_util.h"
 
 #import "util/GetPrimaryMACAddress.h"

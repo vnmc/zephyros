@@ -1,19 +1,17 @@
-//#define DEBUG_LOGGING_ON
+#include "zephyros.h"
 
-#if defined(OS_MACOSX)
 
-#ifdef DEBUG_LOGGING_ON
-#define DEBUG_LOG(...) NSLog(__VA_ARGS__)
+#ifdef OS_MACOSX
+
+#ifdef __OBJC__
+#define DEBUG_LOG(...) if (Zephyros::UseLogging()) { NSLog(__VA_ARGS__); }
 #else
-#define DEBUG_LOG(...)
+#define DEBUG_LOG(s) if (Zephyros::UseLogging()) { App::Log(s); }
 #endif
 
-#elif defined(OS_WIN)
-
-#ifdef DEBUG_LOGGING_ON
-#define DEBUG_LOG(s) App::Log(s)
-#else
-#define DEBUG_LOG(...)
 #endif
 
+
+#ifdef OS_WIN
+#define DEBUG_LOG(s) if (Zephyros::UseLogging()) { App::Log(s); }
 #endif

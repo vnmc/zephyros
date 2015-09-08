@@ -110,8 +110,4 @@ typedef id WindowHandle;
 
 #endif  // USE_WEBVIEW
 
-
-#include "logging.h"
-
-
 #endif // Zephyros_Types_h

@@ -264,6 +264,9 @@ void SetNativeExtensions(NativeExtensions* pNativeExtensions);
     
 String GetString(int stringId);
 void SetString(int stringId, String str);
+    
+bool UseLogging();
+void UseLogging(bool bUseLogging);
 
 } // namespace Zephyros
 

@@ -38,6 +38,7 @@
 #import "native_extensions/path.h"
 
 #import "zephyros.h"
+#import "zephyros_strings.h"
 #import "native_extensions.h"
 
 
@@ -221,7 +222,7 @@
         NSMenu *appMenu = [[[NSApp mainMenu] itemAtIndex: 0] submenu];
     
         // create the "check for updates" menu item
-        NSMenuItem *checkUpdatesMenuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"Check for Updates", @"Check for Updates")
+        NSMenuItem *checkUpdatesMenuItem = [[NSMenuItem alloc] initWithTitle: [NSString stringWithUTF8String: Zephyros::GetString(ZS_UPDATES_CHECK).c_str()]
                                                                       action: @selector(checkForUpdates:)
                                                                keyEquivalent: @"u"];
         checkUpdatesMenuItem.keyEquivalentModifierMask = NSShiftKeyMask | NSCommandKeyMask;

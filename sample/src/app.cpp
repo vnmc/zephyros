@@ -103,6 +103,8 @@ int MAIN(MAIN_ARGS)
 	Zephyros::SetNativeExtensions(new MyNativeExtensions());
 
 	//Zephyros::SetUpdaterURL(UPDATER_URL);
+    
+    Zephyros::UseLogging(true);
 
 #ifdef OS_WIN
 	Zephyros::SetWindowsInfo(TEXT("Software\\Vanamco\\ZephyrosSampleApp"), IDI_ZEPHYROS_SAMPLEAPP, IDC_ZEPHYROS_SAMPLEAPP, IDC_ZEPHYROS_SAMPLEAPP);

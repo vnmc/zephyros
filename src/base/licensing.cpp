@@ -30,7 +30,6 @@
 #include <tchar.h>
 #endif
 
-#include "base/zephyros_strings.h"
 #include "base/app.h"
 #include "base/licensing.h"
 
@@ -40,6 +39,7 @@
 #endif
 
 #include "zephyros.h"
+#include "zephyros_strings.h"
 #include "native_extensions.h"
 
 #include "native_extensions/network_util.h"

@@ -32,10 +32,7 @@
 #endif
 
 #include "base/types.h"
-#include "base/zephyros_strings.h"
-
 #include "native_extensions/path.h"
-
 #include "util/string_util.h"
 
 #ifdef USE_CEF
@@ -44,6 +41,7 @@
 #endif
 
 #include "zephyros.h"
+#include "zephyros_strings.h"
 #include "native_extensions.h"
 
 
@@ -69,6 +67,8 @@ std::map<String, int> g_mapResourceIDs;
 std::map<int, const TCHAR*> g_mapMenuCommands;
 std::map<String, int> g_mapMenuIDs;
 std::map<int, String> g_mapStrings;
+    
+bool g_bUseLogging = false;
 
     
 void InitDefaultStrings()
@@ -116,6 +116,13 @@ void InitDefaultStrings()
     SET_DEFAULT(ZS_LIC_DEACTIVATION_SUCCESS, TEXT("You have successfully deactivated {{appName}}.\nThe application will quit now."));
 
     SET_DEFAULT(ZS_LIC_DEMO_ERROR, TEXT("Unfortunately, an error while retrieving a demo license from the licensing server:\n"));
+    
+    SET_DEFAULT(ZS_UPDATES_CHECK, TEXT("Check for Updates"));
+    
+    SET_DEFAULT(ZS_OPEN_FINDER, TEXT("Open in Finder"));
+    SET_DEFAULT(ZS_OPEN_EXPLORER, TEXT("Open in Explorer"));
+    SET_DEFAULT(ZS_OPEN_FILEMANAGER, TEXT("Open in file manager"));
+    SET_DEFAULT(ZS_OPEN_PATH_DOESNT_EXIST, TEXT("The path %s does not exist."));
 }
 
 int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
@@ -360,4 +367,14 @@ void SetString(int stringId, String str)
         TEXT("{{appVersion}}"), g_szAppVersion);
 }
 
+bool UseLogging()
+{
+    return g_bUseLogging;
+}
+    
+void UseLogging(bool bUseLogging)
+{
+    g_bUseLogging = bUseLogging;
+}
+    
 } // namespace Zephyros

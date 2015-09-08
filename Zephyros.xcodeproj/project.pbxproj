@@ -376,10 +376,10 @@
 		CCBDB4761B7E0A6800D168AB /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC608F491B5CF0CE003D185F /* app */; };
 		CCBDB4771B7E0A6800D168AB /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC608F491B5CF0CE003D185F /* app */; };
 		CCBDB4781B7E217D00D168AB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCC019D11B4FDC360015B0FA /* MainMenu.xib */; };
-		CCBDB47A1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; };
-		CCBDB47B1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; };
-		CCBDB47C1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; };
-		CCBDB47D1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; };
+		CCBDB47A1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CCBDB47B1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CCBDB47C1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CCBDB47D1B7E306A00D168AB /* zephyros_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBDB4791B7E306A00D168AB /* zephyros_strings.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCBDB4801B7E4FC700D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB47E1B7E4FC700D168AB /* string_util.cpp */; };
 		CCBDB4811B7E4FC700D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB47E1B7E4FC700D168AB /* string_util.cpp */; };
 		CCBDB4821B7E4FC700D168AB /* string_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB47E1B7E4FC700D168AB /* string_util.cpp */; };
@@ -1118,7 +1118,7 @@
 		CCBDB4651B7A525100D168AB /* os_util_mac_stub.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = os_util_mac_stub.mm; path = src/native_extensions/os_util_mac_stub.mm; sourceTree = "<group>"; };
 		CCBDB4671B7DC07E00D168AB /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainWindow.xib; path = src/res/mac/MainWindow.xib; sourceTree = SOURCE_ROOT; };
 		CCBDB46A1B7DE59600D168AB /* zephyros_webview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = zephyros_webview.mm; path = src/base/webview/zephyros_webview.mm; sourceTree = SOURCE_ROOT; };
-		CCBDB4791B7E306A00D168AB /* zephyros_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zephyros_strings.h; path = src/base/zephyros_strings.h; sourceTree = "<group>"; };
+		CCBDB4791B7E306A00D168AB /* zephyros_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zephyros_strings.h; path = src/zephyros_strings.h; sourceTree = "<group>"; };
 		CCBDB47E1B7E4FC700D168AB /* string_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = string_util.cpp; path = src/util/string_util.cpp; sourceTree = "<group>"; };
 		CCBDB47F1B7E4FC700D168AB /* string_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = string_util.h; path = src/util/string_util.h; sourceTree = "<group>"; };
 		CCBDB48A1B81D67100D168AB /* LicenseCheckWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LicenseCheckWindowController.h; path = src/components/LicenseCheckWindowController.h; sourceTree = "<group>"; };
@@ -2011,6 +2011,7 @@
 			children = (
 				CC5BEBC11B9DD0EA0015062C /* native_extensions.h */,
 				CC5BEBC21B9DD0EA0015062C /* zephyros.h */,
+				CCBDB4791B7E306A00D168AB /* zephyros_strings.h */,
 				CCF48B621B4D83A200E4F261 /* Base */,
 				CCF48B631B4D83B300E4F261 /* Native Extensions */,
 				CCF48B641B4D844700E4F261 /* Components */,
@@ -2083,7 +2084,6 @@
 				CC608F641B5CF88E003D185F /* ZPYAppDelegate.h */,
 				CC608F651B5CF88E003D185F /* ZPYAppDelegate.mm */,
 				CC0FA3071B52B5B900C5AC33 /* LicenseCheckWindowController.xib */,
-				CCBDB4791B7E306A00D168AB /* zephyros_strings.h */,
 			);
 			name = Base;
 			sourceTree = "<group>";

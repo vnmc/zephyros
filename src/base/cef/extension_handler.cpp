@@ -33,6 +33,7 @@
 
 #include "base/app.h"
 #include "base/jsbridge.h"
+#include "base/logging.h"
 
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
@@ -101,9 +102,7 @@ NativeFunction::~NativeFunction()
 //
 int NativeFunction::Call(CefRefPtr<ClientHandler> handler, CefRefPtr<CefBrowser> browser, CefRefPtr<CefListValue> args, CefRefPtr<CefListValue> ret, int messageId)
 {
-#ifndef NDEBUG
-    Zephyros::App::Log(m_name);
-#endif
+    DEBUG_LOG(m_name);
 
     // check the number of arguments (first argument is the messageId)
     if (args->GetSize() != m_argTypes.size() + 1)
@@ -506,9 +505,7 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
         int32 messageId = args->GetInt(0);
         CefString functionName = args->GetString(1);
         
-#ifndef NDEBUG
-        App::Log(TEXT("Invoking callback ") + String(functionName));
-#endif
+        DEBUG_LOG(TEXT("Invoking callback ") + String(functionName));
         
         std::map<int32, AppCallback*>::iterator it = m_mapCallbacks.find(messageId);
         

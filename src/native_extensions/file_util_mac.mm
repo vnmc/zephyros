@@ -28,6 +28,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "zephyros_strings.h"
+
 #import "native_extensions/file_util.h"
 #import "native_extensions/image_util_mac.h"
 
@@ -217,8 +219,8 @@ void ShowInFileManager(String path)
     else
     {
         NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText = NSLocalizedString(@"Open in Finder", @"Open in Finder");
-        alert.informativeText = [NSString stringWithFormat: NSLocalizedString(@"The path %@ does not exist.", "PathDoesNotExist"), url.path];
+        alert.messageText = [NSString stringWithUTF8String: Zephyros::GetString(ZS_OPEN_FINDER).c_str()];
+        alert.informativeText = [NSString stringWithFormat: [NSString stringWithUTF8String: Zephyros::GetString(ZS_OPEN_PATH_DOESNT_EXIST).c_str()], [url.path UTF8String]];
         
         [alert beginSheetModalForWindow: [NSApp mainWindow] completionHandler: nil];
     }

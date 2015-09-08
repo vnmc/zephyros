@@ -76,10 +76,6 @@ NativeFunction::~NativeFunction()
  */
 int NativeFunction::Call(JavaScript::Array args)
 {
-//#ifndef NDEBUG
-//    App::Log("NativeFunction::Call " + m_name);
-//#endif
-   
     // prepare the arguments for the native implementation
     // (call the paramTransform function if there is one)
     JavaScript::Array nativeArgs = NULL;

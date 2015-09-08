@@ -31,6 +31,7 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 
 #import "base/types.h"
+#import "base/logging.h"
 #import "base/webview/ZPYWebViewAppDelegate.h"
 
 #import "components/ZPYMenuItem.h"
@@ -231,18 +232,19 @@ JSContextRef g_ctx = NULL;
             }
             else
             {
-#ifdef DEBUG_LOGGING_ON
-                NSLog(@"<object>");
-                JavaScript::Object o =JavaScript::CreateObject(argObj);
-                JavaScript::KeyList keys;
-                o->GetKeys(keys);
-                for (String k : keys)
-                    NSLog(@"* %s", k.c_str());
+                if (Zephyros::UseLogging())
+                {
+                    NSLog(@"<object>");
+                    Zephyros::JavaScript::Object o = Zephyros::JavaScript::CreateObject(argObj);
+                    Zephyros::JavaScript::KeyList keys;
+                    o->GetKeys(keys);
+                    for (String k : keys)
+                        NSLog(@"* %s", k.c_str());
                 
-                params->SetDictionary(i, o);
-#else
-                params->SetDictionary(i, Zephyros::JavaScript::CreateObject(argObj));
-#endif
+                    params->SetDictionary(i, o);
+                }
+                else
+                    params->SetDictionary(i, Zephyros::JavaScript::CreateObject(argObj));
             }
         }
     }

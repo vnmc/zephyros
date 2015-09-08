@@ -27,9 +27,8 @@
 
 #ifndef APPSTORE
 
-#import "base/zephyros_strings.h"
+#import "zephyros_strings.h"
 #import "base/licensing.h"
-
 #import "components/LicenseCheckWindowController.h"
 
 

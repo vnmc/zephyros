@@ -58,20 +58,27 @@
 #define ZS_PREVVERSIONDLG_BACK           1203
 #define ZS_PREVVERSIONDLG_UPGRADE        1204
 
-#define ZS_LIC_LICERROR                  2020
-#define ZS_LIC_CONNECTION_FAILED         2021
-#define ZS_LIC_PARSE_ERROR               2022
-#define ZS_LIC_UNEXPECTED_RESPONSE       2023
+#define ZS_LIC_LICERROR                  1300
+#define ZS_LIC_CONNECTION_FAILED         1301
+#define ZS_LIC_PARSE_ERROR               1302
+#define ZS_LIC_UNEXPECTED_RESPONSE       1303
 
-#define ZS_LIC_ACTIVATION                2030
-#define ZS_LIC_LICINVALID                2031
-#define ZS_LIC_ACTIVATION_ERROR          2032
-#define ZS_LIC_ACTIVATION_SUCCESS        2033
+#define ZS_LIC_ACTIVATION                1400
+#define ZS_LIC_LICINVALID                1401
+#define ZS_LIC_ACTIVATION_ERROR          1402
+#define ZS_LIC_ACTIVATION_SUCCESS        1403
 
-#define ZS_LIC_DEACTIVATION              2040
-#define ZS_LIC_DEACTIVATION_ERROR        2041
-#define ZS_LIC_DEACTIVATION_SUCCESS      2042
+#define ZS_LIC_DEACTIVATION              1500
+#define ZS_LIC_DEACTIVATION_ERROR        1501
+#define ZS_LIC_DEACTIVATION_SUCCESS      1502
 
-#define ZS_LIC_DEMO_ERROR                2050
+#define ZS_LIC_DEMO_ERROR                1600
+
+#define ZS_UPDATES_CHECK                 1700
+
+#define ZS_OPEN_FINDER                   1800
+#define ZS_OPEN_EXPLORER                 1801
+#define ZS_OPEN_FILEMANAGER              1802
+#define ZS_OPEN_PATH_DOESNT_EXIST        1803
 
 #endif // Zephyros_ZephyrosStrings_h
