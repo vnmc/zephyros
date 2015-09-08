@@ -1,19 +1,39 @@
-//
-//  v8_util.cpp
-//
-//  Created by Matthias Christen on 03.09.13.
-//
-//
+/*******************************************************************************
+ * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ *
+ * The MIT License (MIT)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Contributors:
+ * Matthias Christen, Vanamco AG
+ *******************************************************************************/
+
 
 #include <sstream>
 
 #include "base/app.h"
 #include "base/cef/v8_util.h"
-#include "base/cef/util.h"
 
-//
-// Transfer a V8 value to a List index.
-//
+
+/**
+ * Transfer a V8 value to a List index.
+ */
 void SetListValue(CefRefPtr<CefListValue> list, int index, CefRefPtr<CefV8Value> value)
 {
     if (value->IsArray())
@@ -40,12 +60,12 @@ void SetListValue(CefRefPtr<CefListValue> list, int index, CefRefPtr<CefV8Value>
         list->SetDouble(index, value->GetDoubleValue());
 }
 
-//
-// Transfer a V8 array to a List.
-//
+/**
+ * Transfer a V8 array to a List.
+ */
 void SetList(CefRefPtr<CefV8Value> source, CefRefPtr<CefListValue> target)
 {
-    ASSERT(source->IsArray());
+    DCHECK(source->IsArray());
     
     int arg_length = source->GetArrayLength();
     if (arg_length == 0)
@@ -86,12 +106,12 @@ void SetDictionaryValue(CefRefPtr<CefDictionaryValue> dict, CefString key, CefRe
         dict->SetNull(key);
 }
 
-//
-// Transfer a V8 object (only JSON) to a dictionary.
-//
+/**
+ * Transfer a V8 object (only JSON) to a dictionary.
+ */
 void SetDictionary(CefRefPtr<CefV8Value> source, CefRefPtr<CefDictionaryValue> target)
 {
-    ASSERT(source->IsObject());
+    DCHECK(source->IsObject());
     
     std::vector<CefString> keys;
     source->GetKeys(keys);
@@ -100,9 +120,9 @@ void SetDictionary(CefRefPtr<CefV8Value> source, CefRefPtr<CefDictionaryValue> t
         SetDictionaryValue(target, key, source->GetValue(key));
 }
 
-//
-// Transfer a List value to a V8 array index.
-//
+/**
+ * Transfer a List value to a V8 array index.
+ */
 void SetListValue(CefRefPtr<CefV8Value> list, int index, CefRefPtr<CefListValue> value)
 {
     CefRefPtr<CefV8Value> new_value = ListValueToV8Value(value, index);
@@ -112,12 +132,12 @@ void SetListValue(CefRefPtr<CefV8Value> list, int index, CefRefPtr<CefListValue>
         list->SetValue(index, CefV8Value::CreateNull());
 }
 
-//
-// Transfer a List to a V8 array.
-//
+/**
+ * Transfer a List to a V8 array.
+ */
 void SetList(CefRefPtr<CefListValue> source, CefRefPtr<CefV8Value> target)
 {
-    ASSERT(target->IsArray());
+    DCHECK(target->IsArray());
     
     int arg_length = static_cast<int>(source->GetSize());
     if (arg_length == 0)
@@ -136,12 +156,12 @@ void SetDictionaryValue(CefRefPtr<CefV8Value> obj, CefString key, CefRefPtr<CefD
         obj->SetValue(key, CefV8Value::CreateNull(), CefV8Value::PropertyAttribute::V8_PROPERTY_ATTRIBUTE_NONE);
 }
 
-//
-// Transfer a dictionary to a V8 object.
-//
+/**
+ * Transfer a dictionary to a V8 object.
+ */
 void SetDictionary(CefRefPtr<CefDictionaryValue> source, CefRefPtr<CefV8Value> target)
 {
-    ASSERT(target->IsObject());
+    DCHECK(target->IsObject());
     
     CefDictionaryValue::KeyList keys;
     source->GetKeys(keys);

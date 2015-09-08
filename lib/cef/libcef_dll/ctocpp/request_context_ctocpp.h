@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2015 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -20,6 +20,8 @@
 
 #include "include/cef_request_context.h"
 #include "include/capi/cef_request_context_capi.h"
+#include "include/cef_scheme.h"
+#include "include/capi/cef_scheme_capi.h"
 #include "libcef_dll/ctocpp/ctocpp.h"
 
 // Wrap a C structure with a C++ class.
@@ -28,17 +30,21 @@ class CefRequestContextCToCpp
     : public CefCToCpp<CefRequestContextCToCpp, CefRequestContext,
         cef_request_context_t> {
  public:
-  explicit CefRequestContextCToCpp(cef_request_context_t* str)
-      : CefCToCpp<CefRequestContextCToCpp, CefRequestContext,
-          cef_request_context_t>(str) {}
-  virtual ~CefRequestContextCToCpp() {}
+  CefRequestContextCToCpp();
 
-  // CefRequestContext methods
-  virtual bool IsSame(CefRefPtr<CefRequestContext> other) OVERRIDE;
-  virtual bool IsGlobal() OVERRIDE;
-  virtual CefRefPtr<CefRequestContextHandler> GetHandler() OVERRIDE;
+  // CefRequestContext methods.
+  bool IsSame(CefRefPtr<CefRequestContext> other) OVERRIDE;
+  bool IsSharingWith(CefRefPtr<CefRequestContext> other) OVERRIDE;
+  bool IsGlobal() OVERRIDE;
+  CefRefPtr<CefRequestContextHandler> GetHandler() OVERRIDE;
+  CefString GetCachePath() OVERRIDE;
+  CefRefPtr<CefCookieManager> GetDefaultCookieManager(
+      CefRefPtr<CefCompletionCallback> callback) OVERRIDE;
+  bool RegisterSchemeHandlerFactory(const CefString& scheme_name,
+      const CefString& domain_name,
+      CefRefPtr<CefSchemeHandlerFactory> factory) OVERRIDE;
+  bool ClearSchemeHandlerFactories() OVERRIDE;
 };
 
 #endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_REQUEST_CONTEXT_CTOCPP_H_
-

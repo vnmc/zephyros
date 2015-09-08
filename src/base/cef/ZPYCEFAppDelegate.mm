@@ -1,10 +1,29 @@
-//
-//  ZephyrosAppDelegate.m
-//  Zephyros
-//
-//  Created by Matthias Christen on 08.07.15.
-//  Copyright (c) 2015 Vanamco AG. All rights reserved.
-//
+/*******************************************************************************
+ * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ *
+ * The MIT License (MIT)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Contributors:
+ * Matthias Christen, Vanamco AG
+ *******************************************************************************/
+
 
 #import <objc/runtime.h>
 
@@ -28,10 +47,6 @@
 #import "zephyros.h"
 #import "native_extensions.h"
 
-
-// default content area size for newly created windows
-const int kDefaultWindowWidth = 800;
-const int kDefaultWindowHeight = 600;
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 extern bool g_isWindowBeingLoaded;
@@ -68,7 +83,7 @@ extern bool g_isWindowBeingLoaded;
     app.delegate = self;
     
     [self createMenuItems];
-    //[self applicationWillFinishLaunching: nil];
+    [self applicationWillFinishLaunching: nil];
 
     Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
     if (pMgr == NULL || pMgr->CanStartApp())
@@ -85,11 +100,12 @@ extern bool g_isWindowBeingLoaded;
     }
     g_handler = new Zephyros::ClientHandler();
     
-    // Create the main application window.
+    // create the main application window
     NSRect rectScreen = [[NSScreen mainScreen] visibleFrame];
     NSRect rectWindow;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSData *dataDefaults = [defaults objectForKey: @"wnd2"];
+    
     if (dataDefaults != nil)
     {
         NSDictionary *dictWndRect = [NSKeyedUnarchiver unarchiveObjectWithData: dataDefaults];
@@ -111,7 +127,14 @@ extern bool g_isWindowBeingLoaded;
             rectWindow.origin.y = 0;
     }
     else
-        rectWindow = NSMakeRect(0, rectScreen.size.height - kDefaultWindowHeight, kDefaultWindowWidth, kDefaultWindowHeight);
+    {
+        rectWindow = NSMakeRect(
+            0,
+            rectScreen.size.height - Zephyros::GetDefaultWindowSize().nHeight,
+            Zephyros::GetDefaultWindowSize().nWidth,
+            Zephyros::GetDefaultWindowSize().nHeight
+        );
+    }
     
     self.window = [[UnderlayOpenGLHostingWindow alloc] initWithContentRect: rectWindow
                                                                  styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
@@ -121,6 +144,7 @@ extern bool g_isWindowBeingLoaded;
     // create the delegate for control and browser window events
     if (self.windowDelegate == nil)
         self.windowDelegate = [[ZPYWindowDelegate alloc] initWithWindow: self.window];
+    
     self.window.delegate = self.windowDelegate;
     self.window.title = [NSString stringWithUTF8String: Zephyros::GetAppName()];
     self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;

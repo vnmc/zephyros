@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2015 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -16,6 +16,8 @@
 #include "include/capi/cef_geolocation_capi.h"
 #include "include/cef_origin_whitelist.h"
 #include "include/capi/cef_origin_whitelist_capi.h"
+#include "include/cef_parser.h"
+#include "include/capi/cef_parser_capi.h"
 #include "include/cef_path_util.h"
 #include "include/capi/cef_path_util_capi.h"
 #include "include/cef_process_util.h"
@@ -26,8 +28,6 @@
 #include "include/capi/cef_task_capi.h"
 #include "include/cef_trace.h"
 #include "include/capi/cef_trace_capi.h"
-#include "include/cef_url.h"
-#include "include/capi/cef_url_capi.h"
 #include "include/cef_v8.h"
 #include "include/capi/cef_v8_capi.h"
 #include "include/cef_web_plugin.h"
@@ -39,11 +39,13 @@
 #include "libcef_dll/cpptoc/context_menu_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/cookie_visitor_cpptoc.h"
 #include "libcef_dll/cpptoc/domvisitor_cpptoc.h"
+#include "libcef_dll/cpptoc/delete_cookies_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/dialog_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/display_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/download_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/drag_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/end_tracing_callback_cpptoc.h"
+#include "libcef_dll/cpptoc/find_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/focus_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/geolocation_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/get_geolocation_callback_cpptoc.h"
@@ -52,6 +54,7 @@
 #include "libcef_dll/cpptoc/life_span_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/load_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/navigation_entry_visitor_cpptoc.h"
+#include "libcef_dll/cpptoc/pdf_print_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/print_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/read_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/render_handler_cpptoc.h"
@@ -61,6 +64,7 @@
 #include "libcef_dll/cpptoc/resource_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/run_file_dialog_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/scheme_handler_factory_cpptoc.h"
+#include "libcef_dll/cpptoc/set_cookie_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/string_visitor_cpptoc.h"
 #include "libcef_dll/cpptoc/task_cpptoc.h"
 #include "libcef_dll/cpptoc/urlrequest_client_cpptoc.h"
@@ -69,7 +73,6 @@
 #include "libcef_dll/cpptoc/web_plugin_info_visitor_cpptoc.h"
 #include "libcef_dll/cpptoc/web_plugin_unstable_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/write_handler_cpptoc.h"
-#include "libcef_dll/ctocpp/allow_certificate_error_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/auth_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/before_download_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/binary_value_ctocpp.h"
@@ -95,7 +98,9 @@
 #include "libcef_dll/ctocpp/print_job_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/print_settings_ctocpp.h"
 #include "libcef_dll/ctocpp/process_message_ctocpp.h"
-#include "libcef_dll/ctocpp/quota_callback_ctocpp.h"
+#include "libcef_dll/ctocpp/request_callback_ctocpp.h"
+#include "libcef_dll/ctocpp/sslcert_principal_ctocpp.h"
+#include "libcef_dll/ctocpp/sslinfo_ctocpp.h"
 #include "libcef_dll/ctocpp/scheme_registrar_ctocpp.h"
 #include "libcef_dll/ctocpp/stream_reader_ctocpp.h"
 #include "libcef_dll/ctocpp/stream_writer_ctocpp.h"
@@ -106,6 +111,7 @@
 #include "libcef_dll/ctocpp/v8stack_frame_ctocpp.h"
 #include "libcef_dll/ctocpp/v8stack_trace_ctocpp.h"
 #include "libcef_dll/ctocpp/v8value_ctocpp.h"
+#include "libcef_dll/ctocpp/value_ctocpp.h"
 #include "libcef_dll/ctocpp/web_plugin_info_ctocpp.h"
 #include "libcef_dll/ctocpp/xml_reader_ctocpp.h"
 #include "libcef_dll/ctocpp/zip_reader_ctocpp.h"
@@ -173,8 +179,6 @@ CEF_GLOBAL void CefShutdown() {
 
 #ifndef NDEBUG
   // Check that all wrapper objects have been destroyed
-  DCHECK(base::AtomicRefCountIsZero(
-      &CefAllowCertificateErrorCallbackCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefAuthCallbackCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(
       &CefBeforeDownloadCallbackCToCpp::DebugObjCt));
@@ -191,6 +195,8 @@ CEF_GLOBAL void CefShutdown() {
   DCHECK(base::AtomicRefCountIsZero(&CefDOMDocumentCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefDOMNodeCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefDOMVisitorCppToC::DebugObjCt));
+  DCHECK(base::AtomicRefCountIsZero(
+      &CefDeleteCookiesCallbackCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefDialogHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefDictionaryValueCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefDisplayHandlerCppToC::DebugObjCt));
@@ -202,6 +208,7 @@ CEF_GLOBAL void CefShutdown() {
   DCHECK(base::AtomicRefCountIsZero(&CefDragHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefEndTracingCallbackCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefFileDialogCallbackCToCpp::DebugObjCt));
+  DCHECK(base::AtomicRefCountIsZero(&CefFindHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefFocusHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefFrameCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefGeolocationCallbackCToCpp::DebugObjCt));
@@ -218,25 +225,29 @@ CEF_GLOBAL void CefShutdown() {
   DCHECK(base::AtomicRefCountIsZero(&CefNavigationEntryCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(
       &CefNavigationEntryVisitorCppToC::DebugObjCt));
+  DCHECK(base::AtomicRefCountIsZero(&CefPdfPrintCallbackCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefPrintDialogCallbackCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefPrintHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefPrintJobCallbackCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefPrintSettingsCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefProcessMessageCToCpp::DebugObjCt));
-  DCHECK(base::AtomicRefCountIsZero(&CefQuotaCallbackCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefReadHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefRenderHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(
       &CefRenderProcessHandlerCppToC::DebugObjCt));
+  DCHECK(base::AtomicRefCountIsZero(&CefRequestCallbackCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefRequestHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(
       &CefResourceBundleHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefResourceHandlerCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(
       &CefRunFileDialogCallbackCppToC::DebugObjCt));
+  DCHECK(base::AtomicRefCountIsZero(&CefSSLCertPrincipalCToCpp::DebugObjCt));
+  DCHECK(base::AtomicRefCountIsZero(&CefSSLInfoCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(
       &CefSchemeHandlerFactoryCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefSchemeRegistrarCToCpp::DebugObjCt));
+  DCHECK(base::AtomicRefCountIsZero(&CefSetCookieCallbackCppToC::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefStreamReaderCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefStreamWriterCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefStringVisitorCppToC::DebugObjCt));
@@ -251,6 +262,7 @@ CEF_GLOBAL void CefShutdown() {
   DCHECK(base::AtomicRefCountIsZero(&CefV8StackFrameCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefV8StackTraceCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefV8ValueCToCpp::DebugObjCt));
+  DCHECK(base::AtomicRefCountIsZero(&CefValueCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(&CefWebPluginInfoCToCpp::DebugObjCt));
   DCHECK(base::AtomicRefCountIsZero(
       &CefWebPluginInfoVisitorCppToC::DebugObjCt));
@@ -289,6 +301,13 @@ CEF_GLOBAL void CefSetOSModalLoop(bool osModalLoop) {
   // Execute
   cef_set_osmodal_loop(
       osModalLoop);
+}
+
+CEF_GLOBAL void CefEnableHighDPISupport() {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  cef_enable_highdpi_support();
 }
 
 CEF_GLOBAL bool CefGetGeolocation(
@@ -368,6 +387,234 @@ CEF_GLOBAL bool CefClearCrossOriginWhitelist() {
 
   // Return type: bool
   return _retval?true:false;
+}
+
+CEF_GLOBAL bool CefParseURL(const CefString& url, CefURLParts& parts) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: url; type: string_byref_const
+  DCHECK(!url.empty());
+  if (url.empty())
+    return false;
+
+  // Execute
+  int _retval = cef_parse_url(
+      url.GetStruct(),
+      &parts);
+
+  // Return type: bool
+  return _retval?true:false;
+}
+
+CEF_GLOBAL bool CefCreateURL(const CefURLParts& parts, CefString& url) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  int _retval = cef_create_url(
+      &parts,
+      url.GetWritableStruct());
+
+  // Return type: bool
+  return _retval?true:false;
+}
+
+CEF_GLOBAL CefString CefGetMimeType(const CefString& extension) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: extension; type: string_byref_const
+  DCHECK(!extension.empty());
+  if (extension.empty())
+    return CefString();
+
+  // Execute
+  cef_string_userfree_t _retval = cef_get_mime_type(
+      extension.GetStruct());
+
+  // Return type: string
+  CefString _retvalStr;
+  _retvalStr.AttachToUserFree(_retval);
+  return _retvalStr;
+}
+
+CEF_GLOBAL void CefGetExtensionsForMimeType(const CefString& mime_type,
+    std::vector<CefString>& extensions) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: mime_type; type: string_byref_const
+  DCHECK(!mime_type.empty());
+  if (mime_type.empty())
+    return;
+
+  // Translate param: extensions; type: string_vec_byref
+  cef_string_list_t extensionsList = cef_string_list_alloc();
+  DCHECK(extensionsList);
+  if (extensionsList)
+    transfer_string_list_contents(extensions, extensionsList);
+
+  // Execute
+  cef_get_extensions_for_mime_type(
+      mime_type.GetStruct(),
+      extensionsList);
+
+  // Restore param:extensions; type: string_vec_byref
+  if (extensionsList) {
+    extensions.clear();
+    transfer_string_list_contents(extensionsList, extensions);
+    cef_string_list_free(extensionsList);
+  }
+}
+
+CEF_GLOBAL CefString CefBase64Encode(const void* data, size_t data_size) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: data; type: simple_byaddr
+  DCHECK(data);
+  if (!data)
+    return CefString();
+
+  // Execute
+  cef_string_userfree_t _retval = cef_base64encode(
+      data,
+      data_size);
+
+  // Return type: string
+  CefString _retvalStr;
+  _retvalStr.AttachToUserFree(_retval);
+  return _retvalStr;
+}
+
+CEF_GLOBAL CefRefPtr<CefBinaryValue> CefBase64Decode(const CefString& data) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: data; type: string_byref_const
+  DCHECK(!data.empty());
+  if (data.empty())
+    return NULL;
+
+  // Execute
+  cef_binary_value_t* _retval = cef_base64decode(
+      data.GetStruct());
+
+  // Return type: refptr_same
+  return CefBinaryValueCToCpp::Wrap(_retval);
+}
+
+CEF_GLOBAL CefString CefURIEncode(const CefString& text, bool use_plus) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: text; type: string_byref_const
+  DCHECK(!text.empty());
+  if (text.empty())
+    return CefString();
+
+  // Execute
+  cef_string_userfree_t _retval = cef_uriencode(
+      text.GetStruct(),
+      use_plus);
+
+  // Return type: string
+  CefString _retvalStr;
+  _retvalStr.AttachToUserFree(_retval);
+  return _retvalStr;
+}
+
+CEF_GLOBAL CefString CefURIDecode(const CefString& text, bool convert_to_utf8,
+    cef_uri_unescape_rule_t unescape_rule) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: text; type: string_byref_const
+  DCHECK(!text.empty());
+  if (text.empty())
+    return CefString();
+
+  // Execute
+  cef_string_userfree_t _retval = cef_uridecode(
+      text.GetStruct(),
+      convert_to_utf8,
+      unescape_rule);
+
+  // Return type: string
+  CefString _retvalStr;
+  _retvalStr.AttachToUserFree(_retval);
+  return _retvalStr;
+}
+
+CEF_GLOBAL bool CefParseCSSColor(const CefString& string, bool strict,
+    cef_color_t& color) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: string; type: string_byref_const
+  DCHECK(!string.empty());
+  if (string.empty())
+    return false;
+
+  // Execute
+  int _retval = cef_parse_csscolor(
+      string.GetStruct(),
+      strict,
+      &color);
+
+  // Return type: bool
+  return _retval?true:false;
+}
+
+CEF_GLOBAL CefRefPtr<CefValue> CefParseJSON(const CefString& json_string,
+    cef_json_parser_options_t options) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: json_string; type: string_byref_const
+  DCHECK(!json_string.empty());
+  if (json_string.empty())
+    return NULL;
+
+  // Execute
+  cef_value_t* _retval = cef_parse_json(
+      json_string.GetStruct(),
+      options);
+
+  // Return type: refptr_same
+  return CefValueCToCpp::Wrap(_retval);
+}
+
+CEF_GLOBAL CefRefPtr<CefValue> CefParseJSONAndReturnError(
+    const CefString& json_string, cef_json_parser_options_t options,
+    cef_json_parser_error_t& error_code_out, CefString& error_msg_out) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: json_string; type: string_byref_const
+  DCHECK(!json_string.empty());
+  if (json_string.empty())
+    return NULL;
+
+  // Execute
+  cef_value_t* _retval = cef_parse_jsonand_return_error(
+      json_string.GetStruct(),
+      options,
+      &error_code_out,
+      error_msg_out.GetWritableStruct());
+
+  // Return type: refptr_same
+  return CefValueCToCpp::Wrap(_retval);
+}
+
+CEF_GLOBAL CefString CefWriteJSON(CefRefPtr<CefValue> node,
+    cef_json_writer_options_t options) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: node; type: refptr_same
+  DCHECK(node.get());
+  if (!node.get())
+    return CefString();
+
+  // Execute
+  cef_string_userfree_t _retval = cef_write_json(
+      CefValueCToCpp::Unwrap(node),
+      options);
+
+  // Return type: string
+  CefString _retvalStr;
+  _retvalStr.AttachToUserFree(_retval);
+  return _retvalStr;
 }
 
 CEF_GLOBAL bool CefGetPath(PathKey key, CefString& path) {
@@ -514,81 +761,6 @@ CEF_GLOBAL int64 CefNowFromSystemTraceTime() {
 
   // Return type: simple
   return _retval;
-}
-
-CEF_GLOBAL bool CefParseURL(const CefString& url, CefURLParts& parts) {
-  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
-
-  // Verify param: url; type: string_byref_const
-  DCHECK(!url.empty());
-  if (url.empty())
-    return false;
-
-  // Execute
-  int _retval = cef_parse_url(
-      url.GetStruct(),
-      &parts);
-
-  // Return type: bool
-  return _retval?true:false;
-}
-
-CEF_GLOBAL bool CefCreateURL(const CefURLParts& parts, CefString& url) {
-  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
-
-  // Execute
-  int _retval = cef_create_url(
-      &parts,
-      url.GetWritableStruct());
-
-  // Return type: bool
-  return _retval?true:false;
-}
-
-CEF_GLOBAL CefString CefGetMimeType(const CefString& extension) {
-  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
-
-  // Verify param: extension; type: string_byref_const
-  DCHECK(!extension.empty());
-  if (extension.empty())
-    return CefString();
-
-  // Execute
-  cef_string_userfree_t _retval = cef_get_mime_type(
-      extension.GetStruct());
-
-  // Return type: string
-  CefString _retvalStr;
-  _retvalStr.AttachToUserFree(_retval);
-  return _retvalStr;
-}
-
-CEF_GLOBAL void CefGetExtensionsForMimeType(const CefString& mime_type,
-    std::vector<CefString>& extensions) {
-  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
-
-  // Verify param: mime_type; type: string_byref_const
-  DCHECK(!mime_type.empty());
-  if (mime_type.empty())
-    return;
-
-  // Translate param: extensions; type: string_vec_byref
-  cef_string_list_t extensionsList = cef_string_list_alloc();
-  DCHECK(extensionsList);
-  if (extensionsList)
-    transfer_string_list_contents(extensions, extensionsList);
-
-  // Execute
-  cef_get_extensions_for_mime_type(
-      mime_type.GetStruct(),
-      extensionsList);
-
-  // Restore param:extensions; type: string_vec_byref
-  if (extensionsList) {
-    extensions.clear();
-    transfer_string_list_contents(extensionsList, extensions);
-    cef_string_list_free(extensionsList);
-  }
 }
 
 CEF_GLOBAL bool CefRegisterExtension(const CefString& extension_name,

@@ -1,9 +1,47 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ *
+ * The MIT License (MIT)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Contributors:
+ * Matthias Christen, Vanamco AG
+ *******************************************************************************/
+
+
 #ifdef OS_WIN
+
 #include "stdafx.h"
 #include "Resource.h"
+
 #else
+
+#ifdef USE_CEF
+#include "lib/cef/include/cef_base.h"
+#include "lib/cef/include/base/cef_lock.h"
+#include "lib/cef/include/cef_client.h"
+#include "lib/cef/include/wrapper/cef_helpers.h"
+#endif
+
 #include "zephyros.h"
 #include "native_extensions.h"
+
 #endif
 
 
@@ -73,70 +111,3 @@ int MAIN(MAIN_ARGS)
 
 	return Zephyros::Run(INIT_APPLICATION_ARGS, TEXT("Zephyros Sample App"), TEXT("1.0.0"), TEXT("app/index.html"));
 }
-
-
-
-
-/*
-#ifdef OS_WIN
-#include "targetver.h"
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
-#include "Resource.h"
-#endif
-
-#include "base/zephyros_impl.h"
-#include "base/licensing.h"
-
-#include "app.h"
-
-//#include "path.h"
-
-// TODO remove this somehow...
-#if USE_CEF
-#include "base/cef/client_handler.h"
-#include "base/cef/extension_handler.h"
-#endif
-
-
-FILE* _THE_FILE_;
-
-
-int MAIN(MAIN_ARGS)
-{
-	char fn[100];
-	sprintf_s(fn, "c:\\users\\ghost\\Temp\\%d.txt", GetCurrentProcessId());
-	fopen_s(&_THE_FILE_, fn, "w+");
-	fprintf(_THE_FILE_, "started...\n");fflush(_THE_FILE_);
-
-
-#ifdef OS_WIN
-	Zephyros::SetWindowsInfo(TEXT("Software\\Vanamco\\ZephyrosSampleApp"), IDI_ZEPHYROS_SAMPLE_APP, IDC_ZEPHYROS_SAMPLE_APP, IDC_ZEPHYROS_SAMPLE_APP);
-#endif
-
-	fprintf(_THE_FILE_, "creating license manager\n");fflush(_THE_FILE_);
-    Zephyros::LicenseManager* pLicenseManager = new Zephyros::LicenseManager();
-    pLicenseManager->SetLicenseInfo(1002, TEXT(""));
-    pLicenseManager->AddObsoleteLicenseInfo(1001, TEXT(""));
-    pLicenseManager->SetNumberOfDemoDays(7);
-	fprintf(_THE_FILE_, "end config license manager\n");fflush(_THE_FILE_);
-    
-    //Zephyros::SetLicenseManager(pLicenseManager);
-    
-#ifdef OS_MACOSX
-    Zephyros::SetUpdaterURL("http://awesome.vanamco.com/Ghostlab2/update/ghostlab2-cast.xml");
-#endif
-#ifdef OS_WIN
-#ifdef _WIN64
-    Zephyros::SetUpdaterURL(TEXT("http://awesome.vanamco.com/Ghostlab2/update/ghostlab2-cast-win64.xml"));
-#else
-    Zephyros::SetUpdaterURL(TEXT("http://awesome.vanamco.com/Ghostlab2/update/ghostlab2-cast-win32.xml"));
-#endif
-#endif
-    
-    //    Zephyros::SetNativeExtension();
-
-}
-*/

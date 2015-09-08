@@ -1,10 +1,14 @@
-// Copyright (c) 2010 The Chromium Embedded Framework Authors. All rights
-// reserved. Use of this source code is governed by a BSD-style license that
-// can be found in the LICENSE file.
+/*******************************************************************************
+ * Copyright (c) 2010 The Chromium Embedded Framework Authors. All rights
+ * reserved. Use of this source code is governed by a BSD-style license that
+ * can be found in the LICENSE file.
+ *******************************************************************************/
 
-#ifndef CEF_TESTS_CEFCLIENT_STRING_UTIL_H_
-#define CEF_TESTS_CEFCLIENT_STRING_UTIL_H_
+
+#ifndef Zephyros_StringUtil_h
+#define Zephyros_StringUtil_h
 #pragma once
+
 
 #include <string>
 #include "base/types.h"
@@ -24,4 +28,4 @@ String StringReplace(const String& str, const String& from, const String& to);
 bool StringEndsWith(const String& str, const String& suffix);
 
 
-#endif  // CEF_TESTS_CEFCLIENT_STRING_UTIL_H_
+#endif // Zephyros_StringUtil_h

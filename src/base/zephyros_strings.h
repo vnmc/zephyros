@@ -1,13 +1,34 @@
-//
-//  zephyros_strings.h
-//  Zephyros
-//
-//  Created by Matthias Christen on 14.08.15.
-//  Copyright (c) 2015 Vanamco AG. All rights reserved.
-//
+/*******************************************************************************
+ * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ *
+ * The MIT License (MIT)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Contributors:
+ * Matthias Christen, Vanamco AG
+ *******************************************************************************/
 
-#ifndef Zephyros_zephyros_strings_h
-#define Zephyros_zephyros_strings_h
+
+#ifndef Zephyros_ZephyrosStrings_h
+#define Zephyros_ZephyrosStrings_h
+#pragma once
+
 
 #define ZS_DEMODLG_WNDTITLE              1000
 #define ZS_DEMODLG_TITLE                 1001
@@ -53,4 +74,4 @@
 
 #define ZS_LIC_DEMO_ERROR                2050
 
-#endif
+#endif // Zephyros_ZephyrosStrings_h

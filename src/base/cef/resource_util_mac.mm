@@ -1,69 +1,52 @@
-// Copyright (c) 2013 The Chromium Embedded Framework Authors.
-// Portions copyright (c) 2011 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/*******************************************************************************
+ * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ *
+ * The MIT License (MIT)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Contributors:
+ * Matthias Christen, Vanamco AG
+ *******************************************************************************/
+
 
 #import <Foundation/Foundation.h>
-#include <mach-o/dyld.h>
-#include <stdio.h>
+#import <mach-o/dyld.h>
+#import <stdio.h>
 
-#include "base/cef/resource_util.h"
-#include "base/cef/util.h"
-
-
-namespace {
-
-bool AmIBundled()
-{
-    // Implementation adapted from Chromium's base/mac/foundation_util.mm
-    ProcessSerialNumber psn = {0, kCurrentProcess};
-
-    FSRef fsref;
-    OSStatus pbErr;
-    if ((pbErr = GetProcessBundleLocation(&psn, &fsref)) != noErr)
-    {
-        ASSERT(false);
-        return false;
-    }
-
-    FSCatalogInfo info;
-    OSErr fsErr;
-    if ((fsErr = FSGetCatalogInfo(&fsref, kFSCatInfoNodeFlags, &info, NULL, NULL, NULL)) != noErr)
-    {
-        ASSERT(false);
-        return false;
-    }
-
-    return (info.nodeFlags & kFSNodeIsDirectoryMask);
-}
-
-}  // namespace
+#import "base/cef/resource_util.h"
 
 
 bool GetResourceDir(std::string& dir)
 {
-    // Implementation adapted from Chromium's base/base_path_mac.mm
-    if (AmIBundled())
+    // retrieve the executable directory
+    uint32_t pathSize = 0;
+    _NSGetExecutablePath(NULL, &pathSize);
+    if (pathSize > 0)
     {
-        // Retrieve the executable directory.
-        uint32_t pathSize = 0;
-        _NSGetExecutablePath(NULL, &pathSize);
-        if (pathSize > 0)
-        {
-            dir.resize(pathSize);
-            _NSGetExecutablePath(const_cast<char*>(dir.c_str()), &pathSize);
-        }
+        dir.resize(pathSize);
+        _NSGetExecutablePath(const_cast<char*>(dir.c_str()), &pathSize);
+    }
 
-        // Trim executable name up to the last separator
-        std::string::size_type last_separator = dir.find_last_of("/");
-        dir.resize(last_separator);
-        dir.append("/../Resources");
-        return true;
-    }
-    else
-    {
-        // TODO: Provide unbundled path
-        ASSERT(false);
-        return false;
-    }
+    // trim executable name up to the last separator
+    std::string::size_type last_separator = dir.find_last_of("/");
+    dir.resize(last_separator);
+    dir.append("/../Resources");
+
+    return true;
 }

@@ -19,6 +19,7 @@
  * THE SOFTWARE.
  */
 
+
 #include "util/base32.h"
 
 static inline uint8_t

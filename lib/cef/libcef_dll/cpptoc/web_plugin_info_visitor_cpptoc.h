@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2015 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -28,10 +28,8 @@ class CefWebPluginInfoVisitorCppToC
     : public CefCppToC<CefWebPluginInfoVisitorCppToC, CefWebPluginInfoVisitor,
         cef_web_plugin_info_visitor_t> {
  public:
-  explicit CefWebPluginInfoVisitorCppToC(CefWebPluginInfoVisitor* cls);
-  virtual ~CefWebPluginInfoVisitorCppToC() {}
+  CefWebPluginInfoVisitorCppToC();
 };
 
 #endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CPPTOC_WEB_PLUGIN_INFO_VISITOR_CPPTOC_H_
-

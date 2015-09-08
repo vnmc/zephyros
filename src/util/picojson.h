@@ -25,10 +25,11 @@
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of Cybozu Labs, Inc.
- *
  */
-#ifndef picojson_h
-#define picojson_h
+
+
+#ifndef Zephyros_Picojson_h
+#define Zephyros_Picojson_h
 
 #include <algorithm>
 #include <cassert>
@@ -1034,4 +1035,4 @@ int main(void)
   return success ? 0 : 1;
 }
 
-#endif
+#endif // Zephyros_Picojson_h

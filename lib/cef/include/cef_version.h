@@ -35,14 +35,16 @@
 #ifndef CEF_INCLUDE_CEF_VERSION_H_
 #define CEF_INCLUDE_CEF_VERSION_H_
 
+#define CEF_VERSION "3.2454.1320.g807de3c"
 #define CEF_VERSION_MAJOR 3
-#define CEF_REVISION 1979
+#define CEF_COMMIT_NUMBER 1320
+#define CEF_COMMIT_HASH "807de3c161f5598597e40f5a42e8541d9e3eb905"
 #define COPYRIGHT_YEAR 2015
 
-#define CHROME_VERSION_MAJOR 39
+#define CHROME_VERSION_MAJOR 45
 #define CHROME_VERSION_MINOR 0
-#define CHROME_VERSION_BUILD 2171
-#define CHROME_VERSION_PATCH 95
+#define CHROME_VERSION_BUILD 2454
+#define CHROME_VERSION_PATCH 85
 
 #define DO_MAKE_STRING(p) #p
 #define MAKE_STRING(p) DO_MAKE_STRING(p)
@@ -61,25 +63,19 @@ extern "C" {
 // universal hash value will change if any platform is affected whereas the
 // platform hash values will change only if that particular platform is
 // affected.
-#define CEF_API_HASH_UNIVERSAL "45820f043326b9ef42f6cb68dc257c0f91442428"
+#define CEF_API_HASH_UNIVERSAL "2c9a767c027f6380191ab95185ef148baf7ca191"
 #if defined(OS_WIN)
-#define CEF_API_HASH_PLATFORM "1051c471f09e2ad841a331540a5ccd583e4b4704"
+#define CEF_API_HASH_PLATFORM "c47aabf0f73fca45e1d73c9372cb52b1cbede469"
 #elif defined(OS_MACOSX)
-#define CEF_API_HASH_PLATFORM "c2d2321d0bd2f7cf0023a407e13df0c42c478d34"
+#define CEF_API_HASH_PLATFORM "8f78e01cbb250a0b8a7d0b3106535aea66baface"
 #elif defined(OS_LINUX)
-#define CEF_API_HASH_PLATFORM "e3e43a5d2801816451413dbe70dc361a615867c7"
+#define CEF_API_HASH_PLATFORM "7a2c00c9da8ad33d101a3462389865beb3cf0b25"
 #endif
 
-///
-// Returns the CEF build revision for the libcef library.
-///
-CEF_EXPORT int cef_build_revision();
-
-///
 // Returns CEF version information for the libcef library. The |entry|
 // parameter describes which version component will be returned:
 // 0 - CEF_VERSION_MAJOR
-// 1 - CEF_REVISION
+// 1 - CEF_COMMIT_NUMBER
 // 2 - CHROME_VERSION_MAJOR
 // 3 - CHROME_VERSION_MINOR
 // 4 - CHROME_VERSION_BUILD
@@ -93,6 +89,7 @@ CEF_EXPORT int cef_version_info(int entry);
 // hash value will be returned:
 // 0 - CEF_API_HASH_PLATFORM
 // 1 - CEF_API_HASH_UNIVERSAL
+// 2 - CEF_COMMIT_HASH
 ///
 CEF_EXPORT const char* cef_api_hash(int entry);
 

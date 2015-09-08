@@ -256,9 +256,13 @@ static BOOL _logsErrors;
 	if (returnStatus != noErr || !item)
 	{
 		if (_logsErrors)
-			NSLog(@"Error (%@) - %s", NSStringFromSelector(_cmd), GetMacOSStatusErrorString(returnStatus));
+        {
+            NSError *err = [NSError errorWithDomain: NSOSStatusErrorDomain code: returnStatus userInfo: nil];
+            NSLog(@"Error (%@) - %@", NSStringFromSelector(_cmd), err.description);
+        }
 		return nil;
 	}
+    
 	NSString *passwordString = [[NSString alloc] initWithData:[NSData dataWithBytes:password length:passwordLength] encoding:NSUTF8StringEncoding];
 	SecKeychainItemFreeContent(NULL, password);
 	
@@ -282,7 +286,11 @@ static BOOL _logsErrors;
 	if (returnStatus != noErr || !item)
 	{
 		if (_logsErrors)
-			NSLog(@"Error (%@) - %s", NSStringFromSelector(_cmd), GetMacOSStatusErrorString(returnStatus));
+        {
+            NSError *err = [NSError errorWithDomain: NSOSStatusErrorDomain code: returnStatus userInfo: nil];
+            NSLog(@"Error (%@) - %@", NSStringFromSelector(_cmd), err.description);
+        }
+        
 		return nil;
 	}
 	return [EMGenericKeychainItem _genericKeychainItemWithCoreKeychainItem:item forServiceName:serviceName username:username password:password];
@@ -422,8 +430,12 @@ static BOOL _logsErrors;
 	if (returnStatus != noErr || !item)
 	{
 		if (_logsErrors)
-			NSLog(@"Error (%@) - %s", NSStringFromSelector(_cmd), GetMacOSStatusErrorString(returnStatus));
-		return nil;
+        {
+            NSError *err = [NSError errorWithDomain: NSOSStatusErrorDomain code: returnStatus userInfo: nil];
+            NSLog(@"Error (%@) - %@", NSStringFromSelector(_cmd), err.description);
+        }
+
+        return nil;
 	}
     
     // [MCH] get the account name -->
@@ -440,7 +452,11 @@ static BOOL _logsErrors;
     if (attributeStatus != noErr || !item)
     {
         if (_logsErrors)
-            NSLog(@"Error (%@) - %s", NSStringFromSelector(_cmd), GetMacOSStatusErrorString(returnStatus));
+        {
+            NSError *err = [NSError errorWithDomain: NSOSStatusErrorDomain code: returnStatus userInfo: nil];
+            NSLog(@"Error (%@) - %@", NSStringFromSelector(_cmd), err.description);
+        }
+
         return nil;
     }
     
@@ -495,9 +511,14 @@ static BOOL _logsErrors;
 	if (returnStatus != noErr || !item)
 	{
 		if (_logsErrors)
-			NSLog(@"Error (%@) - %s", NSStringFromSelector(_cmd), GetMacOSStatusErrorString(returnStatus));
-		return nil;
+        {
+            NSError *err = [NSError errorWithDomain: NSOSStatusErrorDomain code: returnStatus userInfo: nil];
+            NSLog(@"Error (%@) - %@", NSStringFromSelector(_cmd), err.description);
+        }
+
+        return nil;
 	}
+    
 	return [EMInternetKeychainItem _internetKeychainItemWithCoreKeychainItem:item forServer:server username:username password:password path:path port:port protocol:protocol];
 }
 

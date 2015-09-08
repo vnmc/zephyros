@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2015 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -12,6 +12,8 @@
 
 #include "libcef_dll/cpptoc/resource_bundle_handler_cpptoc.h"
 
+
+namespace {
 
 // MEMBER FUNCTIONS - Body may be edited by hand.
 
@@ -79,16 +81,22 @@ int CEF_CALLBACK resource_bundle_handler_get_data_resource(
   return _retval;
 }
 
+}  // namespace
+
 
 // CONSTRUCTOR - Do not edit by hand.
 
-CefResourceBundleHandlerCppToC::CefResourceBundleHandlerCppToC(
-    CefResourceBundleHandler* cls)
-    : CefCppToC<CefResourceBundleHandlerCppToC, CefResourceBundleHandler,
-        cef_resource_bundle_handler_t>(cls) {
-  struct_.struct_.get_localized_string =
+CefResourceBundleHandlerCppToC::CefResourceBundleHandlerCppToC() {
+  GetStruct()->get_localized_string =
       resource_bundle_handler_get_localized_string;
-  struct_.struct_.get_data_resource = resource_bundle_handler_get_data_resource;
+  GetStruct()->get_data_resource = resource_bundle_handler_get_data_resource;
+}
+
+template<> CefRefPtr<CefResourceBundleHandler> CefCppToC<CefResourceBundleHandlerCppToC,
+    CefResourceBundleHandler, cef_resource_bundle_handler_t>::UnwrapDerived(
+    CefWrapperType type, cef_resource_bundle_handler_t* s) {
+  NOTREACHED() << "Unexpected class type: " << type;
+  return NULL;
 }
 
 #ifndef NDEBUG
@@ -96,3 +104,6 @@ template<> base::AtomicRefCount CefCppToC<CefResourceBundleHandlerCppToC,
     CefResourceBundleHandler, cef_resource_bundle_handler_t>::DebugObjCt = 0;
 #endif
 
+template<> CefWrapperType CefCppToC<CefResourceBundleHandlerCppToC,
+    CefResourceBundleHandler, cef_resource_bundle_handler_t>::kWrapperType =
+    WT_RESOURCE_BUNDLE_HANDLER;

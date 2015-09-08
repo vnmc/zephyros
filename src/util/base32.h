@@ -19,8 +19,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef DECODER_H
-#define DECODER_H
+
+#ifndef Zephyros_Base32_h
+#define Zephyros_Base32_h
+#pragma once
+
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -32,4 +35,5 @@ size_t base32_decode(
     const uint8_t *input, const size_t inputLength
 );
 
-#endif
+
+#endif // Zephyros_Base32_h

@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2015 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -28,11 +28,8 @@ class CefWebPluginUnstableCallbackCppToC
     : public CefCppToC<CefWebPluginUnstableCallbackCppToC,
         CefWebPluginUnstableCallback, cef_web_plugin_unstable_callback_t> {
  public:
-  explicit CefWebPluginUnstableCallbackCppToC(
-      CefWebPluginUnstableCallback* cls);
-  virtual ~CefWebPluginUnstableCallbackCppToC() {}
+  CefWebPluginUnstableCallbackCppToC();
 };
 
 #endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CPPTOC_WEB_PLUGIN_UNSTABLE_CALLBACK_CPPTOC_H_
-

@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2015 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -28,18 +28,14 @@ class CefWebPluginInfoCToCpp
     : public CefCToCpp<CefWebPluginInfoCToCpp, CefWebPluginInfo,
         cef_web_plugin_info_t> {
  public:
-  explicit CefWebPluginInfoCToCpp(cef_web_plugin_info_t* str)
-      : CefCToCpp<CefWebPluginInfoCToCpp, CefWebPluginInfo,
-          cef_web_plugin_info_t>(str) {}
-  virtual ~CefWebPluginInfoCToCpp() {}
+  CefWebPluginInfoCToCpp();
 
-  // CefWebPluginInfo methods
-  virtual CefString GetName() OVERRIDE;
-  virtual CefString GetPath() OVERRIDE;
-  virtual CefString GetVersion() OVERRIDE;
-  virtual CefString GetDescription() OVERRIDE;
+  // CefWebPluginInfo methods.
+  CefString GetName() OVERRIDE;
+  CefString GetPath() OVERRIDE;
+  CefString GetVersion() OVERRIDE;
+  CefString GetDescription() OVERRIDE;
 };
 
 #endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_WEB_PLUGIN_INFO_CTOCPP_H_
-
