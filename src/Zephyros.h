@@ -127,13 +127,17 @@ void SetDefaultWindowSize(int nWidth, int nHeight);
 WindowsInfo GetWindowsInfo();
 void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nAccelID);
 
+#ifndef NO_CRASHRPT
 const TCHAR* GetCrashReportingURL();
 const TCHAR* GetCrashReportingPrivacyPolicyURL();
 void SetCrashReportingURL(const TCHAR* szReportingURL, const TCHAR* szPrivacyPolicyURL);
+#endif
     
+#ifndef NO_SPARKLE
 const TCHAR* GetUpdaterURL();
 void SetUpdaterURL(const TCHAR* szURL);
-    
+#endif
+
 AbstractLicenseManager* GetLicenseManager();
 void SetLicenseManager(AbstractLicenseManager* pLicenseManager);
 

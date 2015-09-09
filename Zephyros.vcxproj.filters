@@ -884,5 +884,8 @@
     <ClInclude Include="lib\cef\libcef_dll\wrapper\cef_browser_info_map.h">
       <Filter>LibCef DLL Wrapper\wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="src\licensing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
