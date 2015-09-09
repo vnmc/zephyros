@@ -8,9 +8,13 @@ Thumbs.db
 debug.log
 /Zephyros.xcodeproj/project.xcworkspace/xcuserdata/
 /Zephyros.xcodeproj/xcuserdata/*.xcuserdatad/
-/lib
 /old
 /bin
 /ipch
+/lib/cef/DLL/libcef/Win32/Debug
+/lib/cef/DLL/libcef/Win32/Release
+/lib/cef/DLL/libcef/Win32/Resources
+/lib/cef/DLL/libcef/x64/Debug
+/lib/cef/DLL/libcef/x64/Release
+/lib/cef/DLL/libcef/x64/Resources
 /.vs
-* - Kopie*

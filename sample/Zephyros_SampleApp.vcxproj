@@ -93,13 +93,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_CEF;OS_WIN;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)/lib/cef;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/lib/cef;$(SolutionDir)/src;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winhttp.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;comctl32.lib;rpcrt4.lib;opengl32.lib;glu32.lib;gdiplus.lib;iphlpapi.lib;crypt32.lib;uxtheme.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\Zephyros.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\libcef_dll_wrapper.lib;$(SolutionDir)\lib\cef\DLL\libcef\$(Platform)\$(Configuration)\libcef.lib;$(SolutionDir)\lib\CrashRpt\$(Platform)\CrashRpt1402.lib;$(SolutionDir)\lib\winsparkle\$(Platform)\WinSparkle.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winhttp.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;comctl32.lib;rpcrt4.lib;opengl32.lib;glu32.lib;gdiplus.lib;iphlpapi.lib;crypt32.lib;uxtheme.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\Zephyros.lib;$(SolutionDir)\lib\cef\DLL\libcef\$(Platform)\$(Configuration)\libcef.lib;$(SolutionDir)\lib\CrashRpt\$(Platform)\CrashRpt1402.lib;$(SolutionDir)\lib\winsparkle\$(Platform)\WinSparkle.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -109,13 +109,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>USE_CEF;OS_WIN;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)/lib/cef;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/lib/cef;$(SolutionDir)/src;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winhttp.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;comctl32.lib;rpcrt4.lib;opengl32.lib;glu32.lib;gdiplus.lib;iphlpapi.lib;crypt32.lib;uxtheme.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\Zephyros.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\libcef_dll_wrapper.lib;$(SolutionDir)\lib\cef\DLL\libcef\$(Platform)\$(Configuration)\libcef.lib;$(SolutionDir)\lib\CrashRpt\$(Platform)\CrashRpt1402.lib;$(SolutionDir)\lib\winsparkle\$(Platform)\WinSparkle.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winhttp.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;comctl32.lib;rpcrt4.lib;opengl32.lib;glu32.lib;gdiplus.lib;iphlpapi.lib;crypt32.lib;uxtheme.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\Zephyros.lib;$(SolutionDir)\lib\cef\DLL\libcef\$(Platform)\$(Configuration)\libcef.lib;$(SolutionDir)\lib\CrashRpt\$(Platform)\CrashRpt1402.lib;$(SolutionDir)\lib\winsparkle\$(Platform)\WinSparkle.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +127,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_CEF;OS_WIN;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)/lib/cef;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/lib/cef;$(SolutionDir)/src;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -135,7 +135,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>winhttp.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;comctl32.lib;rpcrt4.lib;opengl32.lib;glu32.lib;gdiplus.lib;iphlpapi.lib;crypt32.lib;uxtheme.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\Zephyros.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\libcef_dll_wrapper.lib;$(SolutionDir)\lib\cef\DLL\libcef\$(Platform)\$(Configuration)\libcef.lib;$(SolutionDir)\lib\CrashRpt\$(Platform)\CrashRpt1402.lib;$(SolutionDir)\lib\winsparkle\$(Platform)\WinSparkle.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winhttp.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;comctl32.lib;rpcrt4.lib;opengl32.lib;glu32.lib;gdiplus.lib;iphlpapi.lib;crypt32.lib;uxtheme.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\Zephyros.lib;$(SolutionDir)\lib\cef\DLL\libcef\$(Platform)\$(Configuration)\libcef.lib;$(SolutionDir)\lib\CrashRpt\$(Platform)\CrashRpt1402.lib;$(SolutionDir)\lib\winsparkle\$(Platform)\WinSparkle.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,7 +147,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>USE_CEF;OS_WIN;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)/lib/cef;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/lib/cef;$(SolutionDir)/src;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -155,7 +155,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>winhttp.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;comctl32.lib;rpcrt4.lib;opengl32.lib;glu32.lib;gdiplus.lib;iphlpapi.lib;crypt32.lib;uxtheme.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\Zephyros.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\libcef_dll_wrapper.lib;$(SolutionDir)\lib\cef\DLL\libcef\$(Platform)\$(Configuration)\libcef.lib;$(SolutionDir)\lib\CrashRpt\$(Platform)\CrashRpt1402.lib;$(SolutionDir)\lib\winsparkle\$(Platform)\WinSparkle.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winhttp.lib;dnsapi.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;winmm.lib;shlwapi.lib;kernel32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;user32.lib;uuid.lib;odbc32.lib;odbccp32.lib;delayimp.lib;comctl32.lib;rpcrt4.lib;opengl32.lib;glu32.lib;gdiplus.lib;iphlpapi.lib;crypt32.lib;uxtheme.lib;$(SolutionDir)\bin\$(Platform)\$(Configuration)\lib\Zephyros.lib;$(SolutionDir)\lib\cef\DLL\libcef\$(Platform)\$(Configuration)\libcef.lib;$(SolutionDir)\lib\CrashRpt\$(Platform)\CrashRpt1402.lib;$(SolutionDir)\lib\winsparkle\$(Platform)\WinSparkle.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

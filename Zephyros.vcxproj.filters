@@ -37,6 +37,21 @@
     <Filter Include="Source Files\Components">
       <UniqueIdentifier>{34108b17-373c-476a-a375-e587747ae9ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LibCef DLL Wrapper">
+      <UniqueIdentifier>{7ff62aca-280f-46f3-806b-7a4b541435c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibCef DLL Wrapper\base">
+      <UniqueIdentifier>{31c8f332-cbef-4d6a-95c3-8fb997310573}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibCef DLL Wrapper\cpptoc">
+      <UniqueIdentifier>{2cf2dd69-42e2-4a6d-8b95-b2d790671a61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibCef DLL Wrapper\ctocpp">
+      <UniqueIdentifier>{e0befe4b-c6c6-4772-a044-0b156284fd71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LibCef DLL Wrapper\wrapper">
+      <UniqueIdentifier>{5ecb3dc8-6877-41a2-aa50-fb7792220ac6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\cef\client_app.cpp">
@@ -134,6 +149,345 @@
     </ClCompile>
     <ClCompile Include="src\base\licensing.cpp">
       <Filter>Source Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\transfer_util.cc">
+      <Filter>LibCef DLL Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_atomicops_x86_gcc.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_bind_helpers.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_callback_helpers.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_callback_internal.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_lock.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_lock_impl.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_logging.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_ref_counted.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_string16.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_thread_checker_impl.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_thread_collision_warner.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\base\cef_weak_ptr.cc">
+      <Filter>LibCef DLL Wrapper\base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\base_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\delete_cookies_callback_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\find_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\pdf_print_callback_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\set_cookie_callback_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\app_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\browser_process_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\client_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\completion_callback_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\context_menu_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\cookie_visitor_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\domvisitor_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\dialog_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\display_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\download_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\drag_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\end_tracing_callback_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\focus_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\geolocation_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\get_geolocation_callback_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\jsdialog_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\keyboard_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\life_span_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\load_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\navigation_entry_visitor_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\print_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\read_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\render_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\render_process_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\request_context_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\request_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\resource_bundle_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\resource_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\run_file_dialog_callback_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\scheme_handler_factory_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\string_visitor_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\task_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\urlrequest_client_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\v8accessor_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\v8handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\web_plugin_info_visitor_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\web_plugin_unstable_callback_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\cpptoc\write_handler_cpptoc.cc">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\request_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\sslcert_principal_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\sslinfo_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\value_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\auth_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\before_download_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\binary_value_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\browser_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\browser_host_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\command_line_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\context_menu_params_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\cookie_manager_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\domdocument_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\domnode_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\dictionary_value_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\download_item_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\download_item_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\drag_data_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\file_dialog_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\frame_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\geolocation_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\jsdialog_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\list_value_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\menu_model_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\navigation_entry_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\post_data_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\post_data_element_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\print_dialog_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\print_job_callback_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\print_settings_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\process_message_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\request_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\request_context_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\response_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\scheme_registrar_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\stream_reader_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\stream_writer_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\task_runner_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\urlrequest_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\v8context_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\v8exception_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\v8stack_frame_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\v8stack_trace_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\v8value_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\web_plugin_info_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\xml_reader_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\ctocpp\zip_reader_ctocpp.cc">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\cef_byte_read_handler.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\cef_closure_task.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\cef_message_router.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\cef_resource_manager.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\cef_stream_resource_handler.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\cef_xml_object.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\cef_zip_archive.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\libcef_dll_wrapper.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\cef\libcef_dll\wrapper\libcef_dll_wrapper2.cc">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +592,297 @@
     </ClInclude>
     <ClInclude Include="src\base\logging.h">
       <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\transfer_util.h">
+      <Filter>LibCef DLL Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\wrapper_types.h">
+      <Filter>LibCef DLL Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\base_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\delete_cookies_callback_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\find_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\pdf_print_callback_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\set_cookie_callback_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\app_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\browser_process_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\client_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\completion_callback_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\context_menu_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\cookie_visitor_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\domvisitor_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\dialog_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\display_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\download_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\drag_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\end_tracing_callback_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\focus_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\geolocation_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\get_geolocation_callback_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\jsdialog_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\keyboard_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\life_span_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\load_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\navigation_entry_visitor_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\print_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\read_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\render_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\render_process_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\request_context_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\request_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\resource_bundle_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\resource_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\run_file_dialog_callback_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\scheme_handler_factory_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\string_visitor_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\task_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\urlrequest_client_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\v8accessor_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\v8handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\web_plugin_info_visitor_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\web_plugin_unstable_callback_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\cpptoc\write_handler_cpptoc.h">
+      <Filter>LibCef DLL Wrapper\cpptoc</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\base_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\request_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\sslcert_principal_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\sslinfo_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\value_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\auth_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\before_download_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\binary_value_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\browser_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\browser_host_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\command_line_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\context_menu_params_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\cookie_manager_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\domdocument_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\domnode_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\dictionary_value_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\download_item_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\download_item_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\drag_data_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\file_dialog_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\frame_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\geolocation_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\jsdialog_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\list_value_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\menu_model_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\navigation_entry_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\post_data_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\post_data_element_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\print_dialog_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\print_job_callback_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\print_settings_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\process_message_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\request_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\request_context_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\response_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\scheme_registrar_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\stream_reader_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\stream_writer_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\task_runner_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\urlrequest_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\v8context_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\v8exception_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\v8stack_frame_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\v8stack_trace_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\v8value_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\web_plugin_info_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\xml_reader_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\ctocpp\zip_reader_ctocpp.h">
+      <Filter>LibCef DLL Wrapper\ctocpp</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\cef\libcef_dll\wrapper\cef_browser_info_map.h">
+      <Filter>LibCef DLL Wrapper\wrapper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

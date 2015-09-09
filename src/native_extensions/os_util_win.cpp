@@ -161,7 +161,7 @@ static std::vector<HMENU> g_vecCreatedMenus;
 static std::vector<HBITMAP> g_vecCreatedBitmaps;
 static std::map<HMENU, std::vector<String> > g_mapCommandIDs;
 
-ULONG_PTR CreateContextMenu(JavaScript::Array menuItems)
+MenuHandle CreateContextMenu(JavaScript::Array menuItems)
 {
 	// create the popup menu
 	HMENU hMenu = CreatePopupMenu();
@@ -208,10 +208,10 @@ ULONG_PTR CreateContextMenu(JavaScript::Array menuItems)
 	}
 
 	g_mapCommandIDs[hMenu] = vecCmdIDs;
-	return (ULONG_PTR) hMenu;
+	return (MenuHandle) hMenu;
 }
 
-String ShowContextMenu(ULONG_PTR nMenuHandle, int x, int y)
+String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
 {
 	HWND hWnd = App::GetMainHwnd();
 
