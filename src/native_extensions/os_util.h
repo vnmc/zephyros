@@ -33,6 +33,13 @@
 #include "base/types.h"
 
 
+#ifdef OS_WIN
+typedef ULONG_PTR MenuHandle;
+#else
+typedef int MenuHandle;
+#endif
+
+
 #define CONTEXT_MENU_STARTID 90000
 
 
@@ -46,8 +53,8 @@ String GetHomeDirectory();
     
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd);
 
-ULONG_PTR CreateContextMenu(JavaScript::Array menuItems);
-String ShowContextMenu(ULONG_PTR nMenuHandle, int x, int y);
+MenuHandle CreateContextMenu(JavaScript::Array menuItems);
+String ShowContextMenu(MenuHandle nMenuHandle, int x, int y);
     
 #ifdef OS_WIN
 void GetWindowBorderSize(POINT* pPtBorder);

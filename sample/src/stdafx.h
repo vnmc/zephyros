@@ -9,7 +9,7 @@
 #include "targetver.h"
 #endif
 
-#include "src/zephyros.h"
+#include "zephyros.h"
 
 
 // include this headers only if you want to add more native extensions
@@ -21,4 +21,4 @@
 #include "lib/cef/include/wrapper/cef_helpers.h"
 #endif
 
-#include "src/native_extensions.h"
+#include "native_extensions.h"

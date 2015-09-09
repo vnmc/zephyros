@@ -59,6 +59,7 @@ typedef std::stringstream StringStream;
 #define _tcslen      strlen
 #define _ttoi		 atoi
 #define _tcsnccmp    strncmp
+#define _wtoi64      atoi
 
 typedef std::string String;
 typedef std::stringstream StringStream;

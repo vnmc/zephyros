@@ -26,6 +26,7 @@
 
 
 #import "base/types.h"
+#import "native_extensions/os_util.h"
 
 
 namespace Zephyros {
@@ -73,12 +74,12 @@ void RequestUserAttention()
 {
 }
     
-long CreateContextMenu(JavaScript::Array menuItems)
+MenuHandle CreateContextMenu(JavaScript::Array menuItems)
 {
     return 0;
 }
     
-String ShowContextMenu(long nMenuHandle, int x, int y)
+String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
 {
     return "";
 }

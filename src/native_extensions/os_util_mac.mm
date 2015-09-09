@@ -540,12 +540,12 @@ void RequestUserAttention()
     
 static NSMutableArray* g_arrContextMenus = [[NSMutableArray alloc] init];
  
-long CreateContextMenu(JavaScript::Array menuItems)
+MenuHandle CreateContextMenu(JavaScript::Array menuItems)
 {
     NSMenu* menu = [[NSMenu alloc] init];
     menu.autoenablesItems = NO;
     
-    long menuHandle = (long) g_arrContextMenus.count;
+    MenuHandle menuHandle = (MenuHandle) g_arrContextMenus.count;
     [g_arrContextMenus addObject: menu];
     
     int numItems = (int) menuItems->GetSize();
@@ -578,7 +578,7 @@ long CreateContextMenu(JavaScript::Array menuItems)
     return menuHandle;
 }
     
-String ShowContextMenu(long nMenuHandle, int x, int y)
+String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
 {
     if (nMenuHandle < 0 || nMenuHandle >= g_arrContextMenus.count)
         return "";

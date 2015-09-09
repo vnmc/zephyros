@@ -27,6 +27,7 @@
 
 
 #include "base/app.h"
+#include "base/types.h"
 
 #ifdef USE_CEF
 #include "base/cef/client_handler.h"
