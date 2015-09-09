@@ -86,15 +86,10 @@ JSContextRef g_ctx = NULL;
         [[NSLocale preferredLanguages] objectAtIndex: 0]];
     
     // set the GUI URL
-    BOOL useLocalhost = NO;
-    if (useLocalhost)
-        _view.mainFrameURL = @"http://localhost:8005/";
-    else
-    {
-        NSMutableString *url = [NSMutableString stringWithString: [bundle resourcePath]];
-        [url appendString: @"/app/index.html"];
-        _view.mainFrameURL = url;
-    }
+    NSMutableString *url = [NSMutableString stringWithString: [bundle resourcePath]];
+    [url appendString: @"/"];
+    [url appendString: [NSString stringWithUTF8String: Zephyros::GetAppURL()]];
+    _view.mainFrameURL = url;
     
 #ifndef APPSTORE
     if (Zephyros::GetLicenseManager())

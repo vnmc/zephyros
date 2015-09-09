@@ -136,11 +136,6 @@ void LicenseData::Save()
     [root setValue: [NSString stringWithUTF8String: LicenseData::Encrypt(m_company).c_str()] forKey: @"c"];
     
     [NSKeyedArchiver archiveRootObject: root toFile: dataFilePath];
-    
-#if !(__has_feature(objc_arc))
-    [arrDemoTokens release];
-    [root release];
-#endif
 }
 
 String LicenseData::Now()
@@ -185,13 +180,6 @@ LicenseManagerImpl::~LicenseManagerImpl()
     if (m_pLicenseData != NULL)
         delete m_pLicenseData;
     
-#if !(__has_feature(objc_arc))
-    if (m_windowController != nil)
-        [m_windowController release];
-
-    [m_timerDelegate release];
-#endif
-    
     [[NSNotificationCenter defaultCenter] removeObserver: m_timerDelegate name: NSSystemClockDidChangeNotification object: nil];
 }
 
@@ -212,14 +200,7 @@ bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* pubkey)
     SecExternalFormat keyFormat = kSecFormatPEMSequence;
     CFArrayRef importArray = NULL;
     
-    SecItemImport(
-#if !(__has_feature(objc_arc))
-        (CFDataRef) publicKeyData,
-#else
-        (__bridge CFDataRef) publicKeyData,
-#endif
-        NULL, &keyFormat, &keyType, 0, &params, NULL, &importArray
-    );
+    SecItemImport((__bridge CFDataRef) publicKeyData, NULL, &keyFormat, &keyType, 0, &params, NULL, &importArray);
     SecKeyRef publicKey = (SecKeyRef) CFArrayGetValueAtIndex(importArray, 0);
     
     unsigned char* buf = NULL;
@@ -230,18 +211,7 @@ bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* pubkey)
         NSData *digest = [NSData dataWithBytes: info.c_str() length: info.length()];
     
         SecTransformRef verifier = SecVerifyTransformCreate(publicKey, signature, NULL);
-        
-        SecTransformSetAttribute(
-            verifier,
-            kSecTransformInputAttributeName,
-#if __has_feature(objc_arc)
-            (__bridge CFTypeRef) digest,
-#else
-            (CFTypeRef) digest,
-#endif
-            NULL
-        );
-        
+        SecTransformSetAttribute(verifier, kSecTransformInputAttributeName, (__bridge CFTypeRef) digest, NULL);
         SecTransformSetAttribute(verifier, kSecDigestTypeAttribute, kSecDigestSHA1, NULL);
     
         CFErrorRef error;
@@ -367,10 +337,6 @@ bool LicenseManagerImpl::SendRequest(String url, String postData, StringStream& 
     {
         NSString *ret = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 		out << [ret UTF8String];
-
-#if !(__has_feature(objc_arc))
-        [ret release];
-#endif
     }
 
 	return error == nil;
@@ -421,7 +387,7 @@ void LicenseManagerImpl::OnReceiveDemoTokens(bool isSuccess)
         [m_windowController close: isSuccess ? NSModalResponseContinue : NSModalResponseAbort];
 }
 
-//#else   // APPSTORE != 0
+#endif // !APPSTORE
 
 
 String ReceiptChecker::GetReceiptFilename()
@@ -478,7 +444,5 @@ void ReceiptChecker::CopyAppStoreReceipt()
     }
 }
 
-
-#endif  // if !APPSTORE
 
 } // namespace Zephyros

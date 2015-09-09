@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		CC0FA3081B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC0FA3071B52B5B900C5AC33 /* LicenseCheckWindowController.xib */; };
 		CC0FA3091B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC0FA3071B52B5B900C5AC33 /* LicenseCheckWindowController.xib */; };
-		CC0FA30A1B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC0FA3071B52B5B900C5AC33 /* LicenseCheckWindowController.xib */; };
 		CC0FA30C1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
 		CC0FA30D1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
 		CC0FA30E1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
@@ -46,6 +45,10 @@
 		CC5BEC1A1B9EE8250015062C /* cef_closure_task.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC6090741B5D4B03003D185F /* cef_closure_task.cc */; };
 		CC5BEC1B1B9EE8250015062C /* cef_message_router.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC6090751B5D4B03003D185F /* cef_message_router.cc */; };
 		CC5BEC251B9F0D750015062C /* Zephyros_CEF_Helper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCBDB3EB1B7A358A00D168AB /* Zephyros_CEF_Helper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CC5BEC281BA0291B0015062C /* licensing.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5BEC271BA0291B0015062C /* licensing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC5BEC291BA0291B0015062C /* licensing.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5BEC271BA0291B0015062C /* licensing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC5BEC2A1BA0291B0015062C /* licensing.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5BEC271BA0291B0015062C /* licensing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC5BEC2B1BA032F80015062C /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCBDB4671B7DC07E00D168AB /* MainWindow.xib */; };
 		CC608F4A1B5CF0CE003D185F /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC608F491B5CF0CE003D185F /* app */; };
 		CC608F4C1B5CF15A003D185F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCC019D11B4FDC360015B0FA /* MainMenu.xib */; };
 		CC608F4D1B5CF160003D185F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */; };
@@ -370,7 +373,6 @@
 		CCBDB4641B7A518200D168AB /* pageimage_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4631B7A518200D168AB /* pageimage_mac_stub.mm */; };
 		CCBDB4661B7A525100D168AB /* os_util_mac_stub.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB4651B7A525100D168AB /* os_util_mac_stub.mm */; };
 		CCBDB4681B7DC07E00D168AB /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCBDB4671B7DC07E00D168AB /* MainWindow.xib */; };
-		CCBDB4691B7DC07E00D168AB /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCBDB4671B7DC07E00D168AB /* MainWindow.xib */; };
 		CCBDB46B1B7DE59600D168AB /* zephyros_webview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB46A1B7DE59600D168AB /* zephyros_webview.mm */; };
 		CCBDB46C1B7DE59600D168AB /* zephyros_webview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCBDB46A1B7DE59600D168AB /* zephyros_webview.mm */; };
 		CCBDB4761B7E0A6800D168AB /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC608F491B5CF0CE003D185F /* app */; };
@@ -715,6 +717,7 @@
 		CC5BEBFE1B9EE7AE0015062C /* cef_resource_manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cef_resource_manager.cc; sourceTree = "<group>"; };
 		CC5BEC011B9EE7D00015062C /* transfer_util.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = transfer_util.cc; path = lib/cef/libcef_dll/transfer_util.cc; sourceTree = "<group>"; };
 		CC5BEC021B9EE7D00015062C /* wrapper_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wrapper_types.h; path = lib/cef/libcef_dll/wrapper_types.h; sourceTree = "<group>"; };
+		CC5BEC271BA0291B0015062C /* licensing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = licensing.h; path = src/licensing.h; sourceTree = "<group>"; };
 		CC608EE11B5CEFA7003D185F /* Zephyros_SampleApp_WebView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zephyros_SampleApp_WebView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC608F051B5CEFD6003D185F /* Zephyros_SampleApp_AppStore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zephyros_SampleApp_AppStore.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC608F291B5CEFF1003D185F /* Zephyros_SampleApp_CEF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zephyros_SampleApp_CEF.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2012,6 +2015,7 @@
 				CC5BEBC11B9DD0EA0015062C /* native_extensions.h */,
 				CC5BEBC21B9DD0EA0015062C /* zephyros.h */,
 				CCBDB4791B7E306A00D168AB /* zephyros_strings.h */,
+				CC5BEC271BA0291B0015062C /* licensing.h */,
 				CCF48B621B4D83A200E4F261 /* Base */,
 				CCF48B631B4D83B300E4F261 /* Native Extensions */,
 				CCF48B641B4D844700E4F261 /* Components */,
@@ -2284,6 +2288,7 @@
 				CCC019421B4FD9D20015B0FA /* pageimage.h in Headers */,
 				CCC019AE1B4FDA980015B0FA /* jsbridge_webview.h in Headers */,
 				CCC018C31B4FD9B70015B0FA /* jsbridge.h in Headers */,
+				CC5BEC2A1BA0291B0015062C /* licensing.h in Headers */,
 				CCC019B71B4FDA980015B0FA /* ZPYWebViewAppDelegate.h in Headers */,
 				CCC018C61B4FD9B70015B0FA /* logging.h in Headers */,
 				CCC019481B4FD9D20015B0FA /* path.h in Headers */,
@@ -2317,6 +2322,7 @@
 				CCBDB4491B7A4B8400D168AB /* client_handler.h in Headers */,
 				CC5BEBC41B9DD0EA0015062C /* native_extensions.h in Headers */,
 				CCBDB41D1B7A36F500D168AB /* image_util_mac.h in Headers */,
+				CC5BEC291BA0291B0015062C /* licensing.h in Headers */,
 				CCBDB45A1B7A4EC300D168AB /* ZPYMenu.h in Headers */,
 				CCBDB40D1B7A36B300D168AB /* MurmurHash3.h in Headers */,
 				CCBDB44C1B7A4B8D00D168AB /* jsbridge_v8.h in Headers */,
@@ -2387,6 +2393,7 @@
 				CCBDB47A1B7E306A00D168AB /* zephyros_strings.h in Headers */,
 				CCC0198F1B4FDA420015B0FA /* GetPrimaryMACAddress.h in Headers */,
 				CCC018FF1B4FD9D20015B0FA /* custom_url_manager.h in Headers */,
+				CC5BEC281BA0291B0015062C /* licensing.h in Headers */,
 				CCBDB4841B7E4FC700D168AB /* string_util.h in Headers */,
 				CC5BEBC31B9DD0EA0015062C /* native_extensions.h in Headers */,
 			);
@@ -2741,8 +2748,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCBDB4691B7DC07E00D168AB /* MainWindow.xib in Resources */,
-				CC0FA30A1B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */,
+				CC5BEC2B1BA032F80015062C /* MainWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

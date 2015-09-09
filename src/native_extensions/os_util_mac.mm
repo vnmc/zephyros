@@ -337,14 +337,7 @@ String GetHomeDirectory()
 String GetComputerName()
 {
     CFStringRef computerName = SCDynamicStoreCopyComputerName(NULL, NULL);
-    
-#if __has_feature(objc_arc)
-    NSString *strComputerName = (__bridge NSString*) computerName;
-#else
-    NSString *strComputerName = (NSString*) computerName;
-#endif
-    
-    String ret([strComputerName UTF8String]);
+    String ret([((__bridge NSString*) computerName) UTF8String]);
     CFRelease(computerName);
     return ret;
 }
