@@ -39,9 +39,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\base\cef\client_app.cpp">
       <Filter>Source Files\Base</Filter>
     </ClCompile>
@@ -235,6 +232,12 @@
     </ClInclude>
     <ClInclude Include="src\native_extensions.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zephyros_strings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\logging.h">
+      <Filter>Header Files\Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

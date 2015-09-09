@@ -106,71 +106,37 @@ bool ShowOpenDirectoryDialog(Path& path)
 	memset(&osvi, 0, sizeof(OSVERSIONINFO));
 	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	
-	if (GetVersionEx(&osvi) && (osvi.dwMajorVersion >= 6))
+	IFileDialog *pfd;
+	if (SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd))))
 	{
-		// for Vista or later, use the MSDN-preferred implementation of the Open File dialog in pick folders mode
-		IFileDialog *pfd;
-		if (SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd))))
+		// configure the dialog to Select Folders only
+		DWORD dwOptions;
+		if (SUCCEEDED(pfd->GetOptions(&dwOptions)))
 		{
-			// configure the dialog to Select Folders only
-			DWORD dwOptions;
-			if (SUCCEEDED(pfd->GetOptions(&dwOptions)))
+			pfd->SetOptions(dwOptions | FOS_PICKFOLDERS | FOS_DONTADDTORECENT);
+
+			if (SUCCEEDED(pfd->Show(GetActiveWindow())))
 			{
-				pfd->SetOptions(dwOptions | FOS_PICKFOLDERS | FOS_DONTADDTORECENT);
-
-				if (SUCCEEDED(pfd->Show(GetActiveWindow())))
+				IShellItem *psi;
+				if (SUCCEEDED(pfd->GetResult(&psi)))
 				{
-					IShellItem *psi;
-					if (SUCCEEDED(pfd->GetResult(&psi)))
+					LPWSTR lpwszName = NULL;
+					if (SUCCEEDED(psi->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, (LPWSTR*) &lpwszName)))
 					{
-						LPWSTR lpwszName = NULL;
-						if (SUCCEEDED(psi->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, (LPWSTR*) &lpwszName)))
-						{
-							// Add directory path to the result
-							//ConvertToUnixPath(pathName);
-							path = Path(lpwszName);
-							pathSelected = true;
+						// Add directory path to the result
+						//ConvertToUnixPath(pathName);
+						path = Path(lpwszName);
+						pathSelected = true;
 
-							::CoTaskMemFree(lpwszName);
-						}
-
-						psi->Release();
+						::CoTaskMemFree(lpwszName);
 					}
+
+					psi->Release();
 				}
 			}
-
-			pfd->Release();
 		}
-	}
-	else
-	{
-		// for XP, use the old-styled SHBrowseForFolder() implementation
-		BROWSEINFO bi = {0};
-		bi.hwndOwner = GetActiveWindow();
-		bi.ulFlags = BIF_NEWDIALOGSTYLE | BIF_EDITBOX;
 
-		LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
-		if (pidl != 0)
-		{
-			TCHAR szFile[MAX_PATH];
-			szFile[0] = 0;
-
-			if (SHGetPathFromIDList(pidl, szFile))
-			{
-				// Add directory path to the result
-				//ConvertToUnixPath(pathName);
-				path = Path(szFile);
-				pathSelected = true;
-			}
-
-			IMalloc* pMalloc = NULL;
-			SHGetMalloc(&pMalloc);
-			if (pMalloc)
-			{
-				pMalloc->Free(pidl);
-				pMalloc->Release();
-			}
-		}
+		pfd->Release();
 	}
 
 	return pathSelected;

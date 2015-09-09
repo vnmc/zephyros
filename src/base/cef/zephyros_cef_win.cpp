@@ -208,12 +208,6 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	// initialize CEF
 	CefInitialize(main_args, settings, app.get(), NULL);
 
-	// register cookieable schemes with the global cookie manager
-	std::vector<CefString> schemes;
-	schemes.push_back("http");
-	schemes.push_back("https");
-	CefCookieManager::GetGlobalManager()->SetSupportedSchemes(schemes);
-
 	ULONG_PTR gdiplusToken;
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);

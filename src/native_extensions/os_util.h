@@ -46,8 +46,8 @@ String GetHomeDirectory();
     
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd);
 
-long CreateContextMenu(JavaScript::Array menuItems);
-String ShowContextMenu(long nMenuHandle, int x, int y);
+ULONG_PTR CreateContextMenu(JavaScript::Array menuItems);
+String ShowContextMenu(ULONG_PTR nMenuHandle, int x, int y);
     
 #ifdef OS_WIN
 void GetWindowBorderSize(POINT* pPtBorder);

@@ -27,6 +27,8 @@
 
 #include <sstream>
 
+#include "lib/cef/include/base/cef_logging.h"
+
 #include "base/app.h"
 #include "base/cef/v8_util.h"
 

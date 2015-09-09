@@ -29,6 +29,7 @@
 #include <tchar.h>
 
 #include "base/app.h"
+#include "base/logging.h"
 
 #include "native_extensions/browser.h"
 #include "native_extensions/image_util_win.h"

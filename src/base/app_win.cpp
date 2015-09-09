@@ -37,7 +37,6 @@
 #include "zephyros.h"
 #include "base/app.h"
 #include "base/cef/client_handler.h"
-#include "base/cef/util.h"
 
 #include "res/windows/resource.h"
 
@@ -70,7 +69,7 @@ void QuitMessageLoop()
 	{
 		// running in multi-threaded message loop mode
 		// need to execute PostQuitMessage on the main application thread
-		ASSERT(g_hMessageWnd);
+		DCHECK(g_hMessageWnd);
 		PostMessage(g_hMessageWnd, WM_COMMAND, ID_QUIT, 0);
 	}
 	else

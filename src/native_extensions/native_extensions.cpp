@@ -159,24 +159,24 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "items")
     ));
 
-	// createContextMenu: (menuItems: IMenuItem[], callback: (menuHandle: number) => void) => void
+	// createContextMenu: (menuItems: IMenuItem[], callback: (menuHandle: string) => void) => void
 	e->AddNativeJavaScriptFunction(
 		TEXT("createContextMenu"),
 		FUNC({
-			ret->SetInt(0, (int) OSUtil::CreateContextMenu(args->GetList(0)));
+			ret->SetString(0, std::to_string(OSUtil::CreateContextMenu(args->GetList(0))));
 			return NO_ERROR;
 		},
 		ARG(VTYPE_LIST, "menuItems")
 	));
 
-	// showContextMenu: (menuHandle: number, x: number, y: number, callback: (menuCommandId: string) => void) => void
+	// showContextMenu: (menuHandle: string, x: number, y: number, callback: (menuCommandId: string) => void) => void
 	e->AddNativeJavaScriptFunction(
 		TEXT("showContextMenu"),
 		FUNC({
-			ret->SetString(0, OSUtil::ShowContextMenu(args->GetInt(0), args->GetInt(1), args->GetInt(2)));
+			ret->SetString(0, OSUtil::ShowContextMenu(_wtoi64(String(args->GetString(0)).c_str()), args->GetInt(1), args->GetInt(2)));
 			return NO_ERROR;
 		},
-		ARG(VTYPE_INT, "menuHandle")
+		ARG(VTYPE_STRING, "menuHandle")
 		ARG(VTYPE_INT, "x")
 		ARG(VTYPE_INT, "y")
 	));

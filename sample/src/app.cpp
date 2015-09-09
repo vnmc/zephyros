@@ -25,23 +25,10 @@
  *******************************************************************************/
 
 
-#ifdef OS_WIN
-
 #include "stdafx.h"
+
+#ifdef OS_WIN
 #include "Resource.h"
-
-#else
-
-#ifdef USE_CEF
-#include "lib/cef/include/cef_base.h"
-#include "lib/cef/include/base/cef_lock.h"
-#include "lib/cef/include/cef_client.h"
-#include "lib/cef/include/wrapper/cef_helpers.h"
-#endif
-
-#include "zephyros.h"
-#include "native_extensions.h"
-
 #endif
 
 

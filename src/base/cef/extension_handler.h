@@ -30,6 +30,7 @@
 #pragma once
 
 
+#include "lib/cef/include/cef_base.h"
 #include "lib/cef/include/cef_process_message.h"
 #include "lib/cef/include/cef_v8.h"
 

@@ -34,7 +34,8 @@
 #include <winhttp.h>
 #include <vsstyle.h>
 
-#include "base/zephyros_strings.h"
+#include "zephyros_strings.h"
+
 #include "base/app.h"
 #include "base/licensing.h"
 #include "base/cef/client_handler.h"

@@ -5,13 +5,20 @@
 
 #pragma once
 
+#ifdef OS_WIN
 #include "targetver.h"
+#endif
 
 #include "src/zephyros.h"
 
+
 // include this headers only if you want to add more native extensions
+
+#ifdef USE_CEF
 #include "lib/cef/include/cef_base.h"
 #include "lib/cef/include/base/cef_lock.h"
 #include "lib/cef/include/cef_client.h"
 #include "lib/cef/include/wrapper/cef_helpers.h"
+#endif
+
 #include "src/native_extensions.h"
