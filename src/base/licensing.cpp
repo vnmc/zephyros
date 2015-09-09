@@ -500,6 +500,6 @@ bool LicenseManagerImpl::RequestDemoTokens(String strMACAddr)
 	return ret;
 }
 
-#endif
+#endif // !APPSTORE
     
 } // namespace Zephyros

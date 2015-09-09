@@ -47,12 +47,7 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
     
     CFStringRef defaultBrowser = LSCopyDefaultHandlerForURLScheme(CFSTR("https"));
     NSString *ownBundleId = [[NSBundle mainBundle] bundleIdentifier];
-    
-#if __has_feature(objc_arc)
     NSString *strDefaultBrowser = (__bridge NSString*) defaultBrowser;
-#else
-    NSString *strDefaultBrowser = (NSString*) defaultBrowser;
-#endif
     
     CFArrayRef handlerApps = LSCopyAllHandlersForURLScheme(CFSTR("https"));
     CFIndex numBrowsers = CFArrayGetCount(handlerApps);

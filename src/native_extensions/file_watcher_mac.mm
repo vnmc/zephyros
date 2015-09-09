@@ -27,6 +27,8 @@
 
 #import <sys/stat.h>
 
+#import "base/logging.h"
+
 #import "native_extensions/file_watcher.h"
 
 #ifdef USE_CEF
@@ -48,7 +50,7 @@ bool isFileEmpty(NSString* fileName)
 void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t numEvents, void *eventPaths,
                        const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[])
 {
-    //NSLog(@"-- File changed --");
+    //DEBUG_LOG(@"-- File changed --");
     Zephyros::FileWatcher *me = (Zephyros::FileWatcher*) userData;
     
     // process the events
@@ -78,12 +80,12 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
                     if (isFileEmpty(fileName))
                     {
                         checkAgainLaterFilenames.push_back(strFileName);
-                        //NSLog(@"-- CheckAgainLater: %@", fileName);
+                        //DEBUG_LOG(@"-- CheckAgainLater: %@", fileName);
                     }
                     else
                     {
                         changedFilenames.push_back(strFileName);
-                        //NSLog(@"-- Changed: %@", fileName);
+                        //DEBUG_LOG(@"-- Changed: %@", fileName);
                     }
                     
                     break;
@@ -116,7 +118,7 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
 - (void) onNonemptyFileTimeout: (NSTimer*) timer
 {
     // invalidate the "empty" timeout if there was one and it hasn't fired yet
-    //NSLog(@"Non-empty timeout fired");
+    //DEBUG_LOG(@"Non-empty timeout fired");
     
     m_fileWatcher->m_emptyFileTimeoutCanceled = YES;
     
@@ -139,10 +141,6 @@ void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t n
             filenames.push_back(strFilename);
     }
     
-#if !(__has_feature(objc_arc))
-    [arrFilenames release];
-#endif
-    
     if (filenames.size() > 0)
         m_fileWatcher->FireFileChanged(filenames);
 }
@@ -163,9 +161,6 @@ FileWatcher::FileWatcher()
 
 FileWatcher::~FileWatcher()
 {
-#if !(__has_feature(objc_arc))
-    [m_timerDelegate release];
-#endif
 }
 
 void FileWatcher::Start(Path& path, std::vector<std::string>& fileExtensions)
@@ -192,18 +187,18 @@ void FileWatcher::Start(Path& path, std::vector<std::string>& fileExtensions)
         [[NSURL URLWithString: [NSString stringWithUTF8String: m_path.GetURLWithSecurityAccessData().c_str()]] startAccessingSecurityScopedResource];
     
     NSArray *pathsToWatch = @[dir];
-    FSEventStreamContext context = {0, (void*) this, NULL, NULL, NULL};
+    FSEventStreamContext context = { 0, (void*) this, NULL, NULL, NULL };
     
-    m_stream = FSEventStreamCreate(NULL, &fsevents_callback, &context,
-#if __has_feature(objc_arc)
+    m_stream = FSEventStreamCreate(
+        NULL,
+        &fsevents_callback,
+        &context,
         (__bridge CFArrayRef) (pathsToWatch),
-#else
-        (CFArrayRef) (pathsToWatch),
-#endif
-                                   
-        kFSEventStreamEventIdSinceNow, (CFAbsoluteTime) FILE_WATCH_LATENCY,
+        kFSEventStreamEventIdSinceNow,
+        (CFAbsoluteTime) FILE_WATCH_LATENCY,
         kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagFileEvents
     );
+
     if (m_stream == nil)
         return;
     
@@ -232,7 +227,7 @@ void FileWatcher::ScheduleNonEmptyFileCheck(std::vector<std::string>& filenames)
     if (m_nonemptyFileTimeout == nil || !m_nonemptyFileTimeout.isValid)
     {
         // create a new timer
-        //NSLog(@"Creating new timer for non-empty file");
+        //DEBUG_LOG(@"Creating new timer for non-empty file");
         
         NSMutableArray *arrFilenames = [[NSMutableArray alloc] init];
         for (String filename : filenames)
@@ -250,7 +245,7 @@ void FileWatcher::ScheduleNonEmptyFileCheck(std::vector<std::string>& filenames)
     }
     else
     {
-        //NSLog(@"Postponing firing");
+        //DEBUG_LOG(@"Postponing firing");
         
         // add additional filenames
         NSMutableArray *arrFilenames = (NSMutableArray*) m_nonemptyFileTimeout.userInfo;
@@ -264,7 +259,7 @@ void FileWatcher::ScheduleNonEmptyFileCheck(std::vector<std::string>& filenames)
 
 void FileWatcher::ScheduleEmptyFileCheck(std::vector<std::string>& filenames)
 {
-    //NSLog(@"Creating new timer for empty file");
+    //DEBUG_LOG(@"Creating new timer for empty file");
     
     m_emptyFileTimeoutCanceled = NO;
     FileWatcher *me = this;
@@ -286,7 +281,7 @@ void FileWatcher::ScheduleEmptyFileCheck(std::vector<std::string>& filenames)
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS * NSEC_PER_SEC), dispatch_get_main_queue(),
     ^{
-        //NSLog(@"Empty file timout, canceled=%d", _emptyFileTimeoutCanceled);
+        //DEBUG_LOG(@"Empty file timout, canceled=%d", _emptyFileTimeoutCanceled);
         
         if (!me->m_emptyFileTimeoutCanceled)
         {

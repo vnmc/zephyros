@@ -104,7 +104,7 @@ int MAIN(MAIN_ARGS)
 
 	//Zephyros::SetUpdaterURL(UPDATER_URL);
     
-    Zephyros::UseLogging(true);
+    //Zephyros::UseLogging(true);
 
 #ifdef OS_WIN
 	Zephyros::SetWindowsInfo(TEXT("Software\\Vanamco\\ZephyrosSampleApp"), IDI_ZEPHYROS_SAMPLEAPP, IDC_ZEPHYROS_SAMPLEAPP, IDC_ZEPHYROS_SAMPLEAPP);

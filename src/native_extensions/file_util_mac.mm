@@ -273,11 +273,6 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
             if (text != nil)
             {
                 result = [text UTF8String];
-                
-#if !(__has_feature(objc_arc))
-                [text release];
-#endif
-                
                 ret = true;
             }
         }
@@ -288,18 +283,9 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
             if (image)
             {
                 result = ImageUtil::NSImageToBase64EncodedPNG(image);
-
-#if !(__has_feature(objc_arc))
-                [image release];
-#endif
-                
                 ret = true;
             }
         }
-        
-#if !(__has_feature(objc_arc))
-        [data release];
-#endif
     }
 
     return ret;

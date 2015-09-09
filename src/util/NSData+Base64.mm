@@ -65,11 +65,7 @@
 	size_t outputLength;
 	char *outputBuffer = NewBase64Encode([self bytes], [self length], false, &outputLength);
 	
-#if __has_feature(objc_arc)
 	NSString *result = [[NSString alloc] initWithBytes: outputBuffer length: outputLength encoding: NSASCIIStringEncoding];
-#else
-	NSString *result = [[[NSString alloc] initWithBytes: outputBuffer length: outputLength encoding: NSASCIIStringEncoding] autorelease];
-#endif
     
 	free(outputBuffer);
 	return result;
