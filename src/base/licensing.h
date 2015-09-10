@@ -361,6 +361,8 @@ private:
         m_config.activationLinkPrefix = NULL;
         
         m_config.licenseInfoFilename = TEXT("lic.dat");
+        
+        m_config.pReceiptChecker = NULL;
     }
     
 	inline int GetNumDaysLeft()

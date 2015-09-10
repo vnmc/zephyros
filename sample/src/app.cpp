@@ -83,6 +83,7 @@ int MAIN(MAIN_ARGS)
     pLicenseManager->SetLicenseInfo(102, TEXT(""));
     pLicenseManager->AddObsoleteLicenseInfo(101, TEXT(""));
     pLicenseManager->SetNumberOfDemoDays(7);
+    pLicenseManager->SetAPIURLs(TEXT("demo"), TEXT("activation"), TEXT("deactivation"));
 
 	Zephyros::SetLicenseManager(pLicenseManager);
 	//*/

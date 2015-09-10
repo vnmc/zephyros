@@ -50,7 +50,7 @@ void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 
         // show the window if it isn't visible yet
         if (![m_mainHwnd.window isVisible])
-            [m_mainHwnd.window orderFront: m_mainHwnd.window];
+            [m_mainHwnd.window makeKeyAndOrderFront: m_mainHwnd.window];
         
         g_isWindowLoaded = true;
         g_isWindowBeingLoaded = false;

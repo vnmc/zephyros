@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CC0FA3081B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC0FA3071B52B5B900C5AC33 /* LicenseCheckWindowController.xib */; };
 		CC0FA3091B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC0FA3071B52B5B900C5AC33 /* LicenseCheckWindowController.xib */; };
 		CC0FA30C1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
 		CC0FA30D1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
@@ -49,6 +48,7 @@
 		CC5BEC291BA0291B0015062C /* licensing.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5BEC271BA0291B0015062C /* licensing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC5BEC2A1BA0291B0015062C /* licensing.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5BEC271BA0291B0015062C /* licensing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC5BEC2B1BA032F80015062C /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCBDB4671B7DC07E00D168AB /* MainWindow.xib */; };
+		CC5BEC2C1BA180770015062C /* LicenseCheckWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC0FA3071B52B5B900C5AC33 /* LicenseCheckWindowController.xib */; };
 		CC608F4A1B5CF0CE003D185F /* app in Resources */ = {isa = PBXBuildFile; fileRef = CC608F491B5CF0CE003D185F /* app */; };
 		CC608F4C1B5CF15A003D185F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCC019D11B4FDC360015B0FA /* MainMenu.xib */; };
 		CC608F4D1B5CF160003D185F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */; };
@@ -2740,7 +2740,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC0FA3081B52B5B900C5AC33 /* LicenseCheckWindowController.xib in Resources */,
+				CC5BEC2C1BA180770015062C /* LicenseCheckWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

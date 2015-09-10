@@ -197,27 +197,11 @@ extern bool g_isWindowLoaded;
     }
     
     // try to make the window go away
-//    [window autorelease];
     m_window = nil;
     g_isWindowLoaded = false;
-
-    /*
-    // clean ourselves up after clearing the stack of anything that might have the window on it
-    [self performSelectorOnMainThread: @selector(cleanup:)
-                           withObject: window
-                        waitUntilDone: NO];
-    */
     
     // allow closing
     return YES;
-}
-
-//
-// Deletes itself.
-//
-- (void) cleanup: (id) window
-{
-//    [self release];
 }
 
 @end

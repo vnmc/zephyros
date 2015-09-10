@@ -50,6 +50,7 @@
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 extern bool g_isWindowBeingLoaded;
+extern bool g_isWindowLoaded;
 
 
 @implementation ZPYCEFAppDelegate
@@ -189,12 +190,16 @@ extern bool g_isWindowBeingLoaded;
 //
 - (BOOL) applicationShouldHandleReopen: (NSApplication*) sender hasVisibleWindows: (BOOL) flag
 {
-    if ([super applicationShouldHandleReopen: sender hasVisibleWindows: flag] == NO)
+    if ((g_isWindowBeingLoaded && !g_isWindowLoaded) || [super applicationShouldHandleReopen: sender hasVisibleWindows: flag] == NO)
         return NO;
     
     // TODO: check if super class implementation works with this
     if (!flag)
     {
+        // get rid of the old window
+        [self.window orderOut: self];
+        
+        // create a new window
         g_isWindowBeingLoaded = true;
         [self createMainWindow];
     }

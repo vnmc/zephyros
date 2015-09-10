@@ -77,7 +77,7 @@
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication*) sender
 {
 #ifndef APPSTORE
-    return Zephyros::GetLicenseManager() == nil || !Zephyros::GetLicenseManager()->CanStartApp();
+    return Zephyros::GetLicenseManager() != nil && !Zephyros::GetLicenseManager()->CanStartApp() ? YES : NO;
 #else
     return NO;
 #endif
