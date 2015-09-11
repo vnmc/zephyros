@@ -59,6 +59,7 @@ TCHAR* g_szCrashReportingURL = NULL;
 TCHAR* g_szCrashReportingPrivacyPolicyURL = NULL;
 Size g_defaultWindowSize = { 800, 600 };
 WindowsInfo g_windowsInfo = { 0 };
+OSXInfo g_osxInfo = { 0 };
 
 AbstractLicenseManager* g_pLicenseManager = NULL;
 NativeExtensions* g_pNativeExtensions = NULL;
@@ -180,6 +181,9 @@ void Shutdown()
     if (g_windowsInfo.szRegistryKey != NULL)
         delete[] g_windowsInfo.szRegistryKey;
     
+    if (g_osxInfo.szStringTableName != NULL)
+        delete[] g_osxInfo.szStringTableName;
+    
     if (g_szUpdaterURL != NULL)
         delete[] g_szUpdaterURL;
 
@@ -200,6 +204,7 @@ void Shutdown()
 	g_szAppVersion = NULL;
 	g_szAppURL = NULL;
 	g_windowsInfo.szRegistryKey = NULL;
+    g_osxInfo.szStringTableName = NULL;
 	g_szUpdaterURL = NULL;
 	g_szCrashReportingURL = NULL;
 	g_szCrashReportingPrivacyPolicyURL = NULL;
@@ -290,6 +295,19 @@ void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nA
 	g_windowsInfo.nIconID = nIconID;
 	g_windowsInfo.nMenuID = nMenuID;
 	g_windowsInfo.nAccelID = nAccelID;
+}
+    
+OSXInfo GetOSXInfo()
+{
+    return g_osxInfo;
+}
+    
+void SetOSXInfo(const TCHAR* szStringTableName)
+{
+    if (g_osxInfo.szStringTableName)
+        delete g_osxInfo.szStringTableName;
+    g_osxInfo.szStringTableName = new TCHAR[_tcslen(szStringTableName) + 1];
+    _tcscpy(g_osxInfo.szStringTableName, szStringTableName);
 }
 
 const TCHAR* GetCrashReportingURL()

@@ -14,8 +14,11 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Zephyros Sample App" systemMenu="apple" id="uQy-DD-JDr">
                         <items>
-                            <menuItem title="About ZephyrosSampleApp" id="5kV-Vb-QxS">
+                            <menuItem title="About Zephyros Sample App" id="5kV-Vb-QxS" customClass="ZPYMenuItem">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="commandId" value="about"/>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="orderFrontStandardAboutPanel:" target="-1" id="Exp-CZ-Vem"/>
                                 </connections>

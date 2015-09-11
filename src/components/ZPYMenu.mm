@@ -26,17 +26,19 @@
 
 
 #import "components/ZPYMenu.h"
+#import "zephyros.h"
+
 
 @implementation ZPYMenu
 
 - (void) awakeFromNib
 {
-    self.title = NSLocalizedString(self.title, nil);
+    [self setTitle: self.title];
 }
 
 - (void) setTitle: (NSString*) title
 {
-    [super setTitle: NSLocalizedString(title, nil)];
+    [super setTitle: NSLocalizedStringFromTable(title, [NSString stringWithUTF8String: Zephyros::GetOSXInfo().szStringTableName], nil)];
 }
 
 @end

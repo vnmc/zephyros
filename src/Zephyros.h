@@ -91,6 +91,11 @@ typedef struct
 	int nMenuID;
 	int nAccelID;
 } WindowsInfo;
+    
+typedef struct
+{
+    TCHAR* szStringTableName;
+} OSXInfo;
 
 } // namespace Zephyros
 
@@ -126,6 +131,8 @@ void SetDefaultWindowSize(int nWidth, int nHeight);
 
 WindowsInfo GetWindowsInfo();
 void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nAccelID);
+OSXInfo GetOSXInfo();
+void SetOSXInfo(const TCHAR* szStringTableName);
 
 #ifndef NO_CRASHRPT
 const TCHAR* GetCrashReportingURL();
