@@ -98,6 +98,10 @@ int MAIN(MAIN_ARGS)
 	Zephyros::SetWindowsInfo(TEXT("Software\\Vanamco\\ZephyrosSampleApp"), IDI_ZEPHYROS_SAMPLEAPP, IDC_ZEPHYROS_SAMPLEAPP, IDC_ZEPHYROS_SAMPLEAPP);
 	#include "..\res\windows\content.cpp"
 #endif
+    
+#ifdef OS_MACOSX
+    Zephyros::SetOSXInfo(TEXT("Localizable"));
+#endif
 
 	return Zephyros::Run(INIT_APPLICATION_ARGS, TEXT("Zephyros Sample App"), TEXT("1.0.0"), TEXT("app/index.html"));
 }

@@ -193,7 +193,6 @@ extern bool g_isWindowLoaded;
     if ((g_isWindowBeingLoaded && !g_isWindowLoaded) || [super applicationShouldHandleReopen: sender hasVisibleWindows: flag] == NO)
         return NO;
     
-    // TODO: check if super class implementation works with this
     if (!flag)
     {
         // get rid of the old window
