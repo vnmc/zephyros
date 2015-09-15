@@ -164,7 +164,7 @@
     <ClInclude Include="src\targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\stubs_win.cpp" />
+    <ClCompile Include="..\..\src\stubs_win.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

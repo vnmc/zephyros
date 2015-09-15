@@ -726,11 +726,11 @@
 		CC608EE11B5CEFA7003D185F /* Zephyros_SampleApp_WebView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zephyros_SampleApp_WebView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC608F051B5CEFD6003D185F /* Zephyros_SampleApp_AppStore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zephyros_SampleApp_AppStore.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC608F291B5CEFF1003D185F /* Zephyros_SampleApp_CEF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zephyros_SampleApp_CEF.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC608F491B5CF0CE003D185F /* app */ = {isa = PBXFileReference; lastKnownFileType = folder; name = app; path = sample/app; sourceTree = SOURCE_ROOT; };
-		CC608F501B5CF251003D185F /* Info-WebView.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-WebView.plist"; path = "sample/res/mac/Info-WebView.plist"; sourceTree = SOURCE_ROOT; };
-		CC608F521B5CF27C003D185F /* Info-AppStore.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-AppStore.plist"; path = "sample/res/mac/Info-AppStore.plist"; sourceTree = SOURCE_ROOT; };
-		CC608F541B5CF292003D185F /* Info-CEF.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-CEF.plist"; path = "sample/res/mac/Info-CEF.plist"; sourceTree = SOURCE_ROOT; };
-		CC608F5F1B5CF4CD003D185F /* app.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = app.cpp; path = sample/src/app.cpp; sourceTree = SOURCE_ROOT; };
+		CC608F491B5CF0CE003D185F /* app */ = {isa = PBXFileReference; lastKnownFileType = folder; name = app; path = sample/application/app; sourceTree = SOURCE_ROOT; };
+		CC608F501B5CF251003D185F /* Info-WebView.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-WebView.plist"; path = "sample/application/res/mac/Info-WebView.plist"; sourceTree = SOURCE_ROOT; };
+		CC608F521B5CF27C003D185F /* Info-AppStore.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-AppStore.plist"; path = "sample/application/res/mac/Info-AppStore.plist"; sourceTree = SOURCE_ROOT; };
+		CC608F541B5CF292003D185F /* Info-CEF.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-CEF.plist"; path = "sample/application/res/mac/Info-CEF.plist"; sourceTree = SOURCE_ROOT; };
+		CC608F5F1B5CF4CD003D185F /* app.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = app.cpp; path = sample/application/src/app.cpp; sourceTree = SOURCE_ROOT; };
 		CC608F641B5CF88E003D185F /* ZPYAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZPYAppDelegate.h; path = src/base/ZPYAppDelegate.h; sourceTree = "<group>"; };
 		CC608F651B5CF88E003D185F /* ZPYAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ZPYAppDelegate.mm; path = src/base/ZPYAppDelegate.mm; sourceTree = "<group>"; };
 		CC608F691B5CFC00003D185F /* ZPYCEFAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZPYCEFAppDelegate.h; path = src/base/cef/ZPYCEFAppDelegate.h; sourceTree = SOURCE_ROOT; };
@@ -1113,7 +1113,7 @@
 		CC60921D1B5D515B003D185F /* cef_stream_resource_handler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cef_stream_resource_handler.h; sourceTree = "<group>"; };
 		CC60921E1B5D515B003D185F /* cef_xml_object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cef_xml_object.h; sourceTree = "<group>"; };
 		CC60921F1B5D515B003D185F /* cef_zip_archive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cef_zip_archive.h; sourceTree = "<group>"; };
-		CC6092201B5D522C003D185F /* Info-CEF-Helper.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-CEF-Helper.plist"; path = "sample/res/mac/Info-CEF-Helper.plist"; sourceTree = SOURCE_ROOT; };
+		CC6092201B5D522C003D185F /* Info-CEF-Helper.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Info-CEF-Helper.plist"; path = "sample/application/res/mac/Info-CEF-Helper.plist"; sourceTree = SOURCE_ROOT; };
 		CC6092441B5E86FA003D185F /* resource_util_posix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resource_util_posix.cpp; path = src/base/cef/resource_util_posix.cpp; sourceTree = SOURCE_ROOT; };
 		CC8BA4531B4D568A006C8CAE /* Zephyros_WebView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Zephyros_WebView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCBDB3EB1B7A358A00D168AB /* Zephyros_CEF_Helper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Zephyros_CEF_Helper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1185,8 +1185,8 @@
 		CCC019C21B4FDB190015B0FA /* Info_ZephyrosCEF.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_ZephyrosCEF.plist; path = src/res/mac/Info_ZephyrosCEF.plist; sourceTree = SOURCE_ROOT; };
 		CCC019C51B4FDB280015B0FA /* Info_ZephyrosWebView.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_ZephyrosWebView.plist; path = src/res/mac/Info_ZephyrosWebView.plist; sourceTree = SOURCE_ROOT; };
 		CCC019C81B4FDB360015B0FA /* Info_ZephyrosAppStore.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info_ZephyrosAppStore.plist; path = src/res/mac/Info_ZephyrosAppStore.plist; sourceTree = SOURCE_ROOT; };
-		CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = sample/res/mac/Images.xcassets; sourceTree = SOURCE_ROOT; };
-		CCC019D21B4FDC360015B0FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = sample/res/mac/Base.lproj/MainMenu.xib; sourceTree = SOURCE_ROOT; };
+		CCC019CF1B4FDC2D0015B0FA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = sample/application/res/mac/Images.xcassets; sourceTree = SOURCE_ROOT; };
+		CCC019D21B4FDC360015B0FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = sample/application/res/mac/Base.lproj/MainMenu.xib; sourceTree = SOURCE_ROOT; };
 		CCC019D41B4FEE0F0015B0FA /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = app.h; path = src/base/app.h; sourceTree = "<group>"; };
 		CCC019D81B4FEFF00015B0FA /* picojson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = picojson.h; path = src/util/picojson.h; sourceTree = "<group>"; };
 		CCC019DC1B4FF1470015B0FA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -3251,7 +3251,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					src,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/sample/res/mac/Info-WebView.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/sample/application/res/mac/Info-WebView.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3276,7 +3276,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					src,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/sample/res/mac/Info-WebView.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/sample/application/res/mac/Info-WebView.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3298,7 +3298,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					src,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/sample/res/mac/Info-AppStore.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/sample/application/res/mac/Info-AppStore.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3320,7 +3320,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					src,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/sample/res/mac/Info-AppStore.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/sample/application/res/mac/Info-AppStore.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3347,7 +3347,7 @@
 					src,
 					lib/cef,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/sample/res/mac/Info-CEF.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/sample/application/res/mac/Info-CEF.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3374,7 +3374,7 @@
 					src,
 					lib/cef,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/sample/res/mac/Info-CEF.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/sample/application/res/mac/Info-CEF.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3515,7 +3515,7 @@
 					src,
 					lib/cef,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/sample/res/mac/Info-CEF-Helper.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/sample/application/res/mac/Info-CEF-Helper.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3542,7 +3542,7 @@
 					src,
 					lib/cef,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/sample/res/mac/Info-CEF-Helper.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/sample/application/res/mac/Info-CEF-Helper.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
