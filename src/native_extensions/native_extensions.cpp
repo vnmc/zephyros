@@ -227,9 +227,9 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "userAgent")
     ));
 
-    // openUrl: (url: string, browser: IBrowser) => void
+    // openURL: (url: string, browser: IBrowser) => void
     e->AddNativeJavaScriptFunction(
-        TEXT("openUrl"),
+        TEXT("openURL"),
         FUNC({
             Browser* b = Zephyros::BrowserUtil::GetBrowserFromJSRepresentation(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers, args->GetDictionary(1));
             if (b != NULL)
@@ -255,11 +255,23 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
-	// getHomeDirectory: (callback: (directory: string) => void) => void
+	// getHomeDirectory: (callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("getHomeDirectory"),
         FUNC({
-			ret->SetString(0, OSUtil::GetHomeDirectory());
+            Path path(OSUtil::GetHomeDirectory());
+			ret->SetDictionary(0, path.CreateJSRepresentation());
+            return NO_ERROR;
+        }
+    ));
+
+    // getTemporaryDirectory: (callback: (path: IPath) => void) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("getTemporaryDirectory"),
+        FUNC({
+            Path path;
+            FileUtil::GetTempDir(path);
+            ret->SetDictionary(0, path.CreateJSRepresentation());
             return NO_ERROR;
         }
     ));
@@ -443,7 +455,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "path")
     ));
     
-    // makeDirectory: (path: IPath, recursive: boolean, callback(success: boolean) => void) => void
+    // makeDirectory: (path: IPath, callback(success: boolean) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("makeDirectory"),
         FUNC({
@@ -487,9 +499,9 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
     
-    // getApplicationResourcesPath: (callback: (path: IPath) => void) => void
+    // getApplicationResourcesDirectory: (callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
-        TEXT("getApplicationResourcesPath"),
+        TEXT("getApplicationResourcesDirectory"),
         FUNC({
             Path path;
             FileUtil::GetApplicationResourcesPath(path);
@@ -656,7 +668,9 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         true, false,
         TEXT("return ajax(options, function(data, contentType, status) { if (status) { if (options.success) options.success(options.dataType === 'json' ? JSON.parse(data) : data, contentType); } else if (options.error) options.error(); });")
     );
-    
+#endif
+
+#ifdef OS_MACOSX
 	// convertImage: (base64ImageData: string, callback: (base64PNG: string) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("convertImage"),

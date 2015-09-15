@@ -13,7 +13,7 @@ $(document).ready(function()
 			// open a webpage in that browser when the list entry is clicked
 			$elt.click(function()
 			{
-				app.openUrl('http://www.vanamco.com', browser);
+				app.openURL('http://www.vanamco.com', browser);
 			});
 
 			$eltBrowsers.append($elt);
