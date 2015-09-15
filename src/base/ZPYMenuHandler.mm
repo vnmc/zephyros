@@ -25,47 +25,37 @@
  *******************************************************************************/
 
 
-#ifndef Zephyros_ZPYAppDelegate_h
-#define Zephyros_ZPYAppDelegate_h
-#pragma once
-
-
 #import <Cocoa/Cocoa.h>
 
-#ifndef APPSTORE
-#import <Sparkle/Sparkle.h>
-#endif
-
-#import "native_extensions/path.h"
-
-#import "zephyros.h"
-#import "native_extensions.h"
+#import "ZPYMenuHandler.h"
+#import "ZPYAppDelegate.h"
 
 
-@interface ZPYAppDelegate : NSObject <NSApplicationDelegate, NSUserNotificationCenterDelegate>
+@implementation ZPYMenuHandler
+
+
+/**
+ * Invoked when a menu has been clicked.
+ */
+- (IBAction) performClick: (id) sender
 {
-@protected
-    std::vector<Zephyros::Path*> m_launchPaths;
+    NSString *commandId = [sender valueForKey: @"commandId"];
+    if (commandId == nil || [commandId isEqualToString: @""])
+        return;
     
-    bool m_nativeExtensionsAdded;
-    ClientExtensionHandlerPtr m_extension;
+#ifndef APPSTORE
+    if ([commandId isEqualToString: @"enter_license"])
+        Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
+    else if ([commandId isEqualToString: @"purchase_license"])
+        Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
+    else
+#endif
+    {
+        Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
+        args->SetString(0, String([commandId UTF8String]));
+        [(ZPYAppDelegate*) [NSApp delegate] extensionHandler]->InvokeCallbacks("onMenuCommand", args);
+    }
 }
 
 
-@property (retain) IBOutlet NSWindow *window;
-
-#ifndef APPSTORE
-@property (retain) SUUpdater *updater;
-#endif
-
-
-- (void) addLaunchPaths;
-
-- (void) createMenuItems;
-- (void) setMenuItemStatuses: (NSDictionary*) statuses;
-
-- (ClientExtensionHandlerPtr) extensionHandler;
-
 @end
-
-#endif // Zephyros_ZPYAggDelegate_h

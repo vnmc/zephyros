@@ -262,32 +262,14 @@
     }
 }
 
-/**
- * Invoked when a menu has been clicked.
- */
-- (IBAction) performClick: (id) sender
-{
-    NSString *commandId = [sender valueForKey: @"commandId"];
-    if (commandId == nil || [commandId isEqualToString: @""])
-        return;
-    
-#ifndef APPSTORE
-    if ([commandId isEqualToString: @"enter_license"])
-        Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
-    else if ([commandId isEqualToString: @"purchase_license"])
-        Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
-    else
-#endif
-    {
-        Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-        args->SetString(0, String([commandId UTF8String]));
-        m_extension->InvokeCallbacks("onMenuCommand", args);
-    }
-}
-
 - (BOOL) userNotificationCenter: (NSUserNotificationCenter*) center shouldPresentNotification: (NSUserNotification*) notification
 {
     return YES;
+}
+
+- (ClientExtensionHandlerPtr) extensionHandler
+{
+    return m_extension;
 }
 
 @end

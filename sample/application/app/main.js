@@ -20,6 +20,11 @@ $(document).ready(function()
 		});
 	});
 
+	app.onMenuCommand(function(commandId)
+	{
+		$('body').append('<div>Menu "' + commandId + '" selected.</div>');
+	});
+
 	$('.compute-fib').click(function ()
 	{
 	    var n = parseInt($('.fib-number').val(), 10);

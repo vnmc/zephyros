@@ -7,6 +7,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customObject id="2fu-PT-J5V" customClass="ZPYMenuHandler"/>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
@@ -20,11 +21,18 @@
                                     <userDefinedRuntimeAttribute type="string" keyPath="commandId" value="about"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="orderFrontStandardAboutPanel:" target="-1" id="Exp-CZ-Vem"/>
+                                    <action selector="performClick:" target="2fu-PT-J5V" id="Pdi-95-Ilh"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
-                            <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW"/>
+                            <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW" customClass="ZPYMenuItem">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="commandId" value="preferences"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="performClick:" target="2fu-PT-J5V" id="zRe-5v-yoI"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
                             <menuItem title="Services" id="NMo-om-nkz">
                                 <modifierMask key="keyEquivalentModifierMask"/>

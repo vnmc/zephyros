@@ -380,6 +380,15 @@ void StopAccessingPath(Path& path)
     if (path.HasSecurityAccessData())
         [[NSURL URLWithString: [NSString stringWithUTF8String: path.GetURLWithSecurityAccessData().c_str()]] stopAccessingSecurityScopedResource];
 }
+ 
+void GetTempDir(Path& path)
+{
+    NSString *tempDir = NSTemporaryDirectory();
+    if (tempDir == nil)
+        tempDir = @"/tmp";
+        
+    path = Path(String([tempDir UTF8String]), TEXT(""), false);
+}
     
 void GetApplicationResourcesPath(Path& path)
 {
