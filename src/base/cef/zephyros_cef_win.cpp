@@ -284,12 +284,12 @@ int CreateMainWindow()
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = g_hInst;
-	wcex.hIcon = LoadIcon(g_hInst, MAKEINTRESOURCE(pInfo->nIconID));
+	wcex.hIcon = pInfo->nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(pInfo->nIconID)) : NULL;
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = MAKEINTRESOURCE(pInfo->nMenuID);
 	wcex.lpszClassName = szWindowClass;
-	wcex.hIconSm = LoadIcon(g_hInst, MAKEINTRESOURCE(pInfo->nIconID));
+	wcex.hIconSm = pInfo->nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(pInfo->nIconID)) : NULL;
 	::RegisterClassEx(&wcex);
 
 	// create the main window
