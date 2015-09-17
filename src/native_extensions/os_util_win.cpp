@@ -53,14 +53,14 @@ extern int g_nMinWindowHeight;
 namespace Zephyros {
 namespace OSUtil {
 
-//
-// Get the Windows version.
-//
-// According to the MSDN:
-// To obtain the full version number for the operating system, call the GetFileVersionInfo
-// function on one of the system DLLs, such as Kernel32.dll, then call VerQueryValue to obtain
-// the \\StringFileInfo\\<lang><codepage>\\ProductVersion subblock of the file version information.
-//
+/**
+ * Get the Windows version.
+ *
+ * According to the MSDN:
+ * To obtain the full version number for the operating system, call the GetFileVersionInfo
+ * function on one of the system DLLs, such as Kernel32.dll, then call VerQueryValue to obtain
+ * the \\StringFileInfo\\<lang><codepage>\\ProductVersion subblock of the file version information.
+ */
 String GetOSVersion()
 {
 	StringStream ssVersion;
@@ -98,7 +98,9 @@ String GetOSVersion()
 	return ssVersion.str();
 }
 
-// Cf. http://msdn.microsoft.com/en-us/library/windows/desktop/bb773352(v=vs.85).aspx
+/**
+ * Cf. http://msdn.microsoft.com/en-us/library/windows/desktop/bb773352(v=vs.85).aspx
+ */
 BOOL IsWin7OrLater()
 {
 	return IsWinVersionOrLater(6, 1);
@@ -169,9 +171,9 @@ MenuHandle CreateContextMenu(JavaScript::Array menuItems)
 	std::vector<String> vecCmdIDs;
 
 	// get the size for the menu icons
-    SIZE sizeIcon;
-    sizeIcon.cx = GetSystemMetrics(SM_CXSMICON);
-    sizeIcon.cy = GetSystemMetrics(SM_CYSMICON);
+	SIZE sizeIcon;
+	sizeIcon.cx = GetSystemMetrics(SM_CXSMICON);
+	sizeIcon.cy = GetSystemMetrics(SM_CYSMICON);
 
 	// create the menu items
 	int nNumItems = (int) menuItems->GetSize();

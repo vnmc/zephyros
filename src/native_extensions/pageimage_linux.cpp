@@ -26,8 +26,6 @@
 
 
 #include <queue>
-#include <minmax.h>
-#include <gdiplus.h>
 
 #include "lib/cef/include/cef_browser.h"
 #include "lib/cef/include/cef_client.h"
@@ -107,6 +105,7 @@ public:
 		QueueItem* item = m_queue.front();
 		m_queue.pop();
 
+/*
 		// resize the image if needed
 		Gdiplus::Bitmap* pImage = m_image;
 		if (item->width < Zephyros::PageImage::ImageWidth)
@@ -119,13 +118,7 @@ public:
 			g.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQualityBicubic);
 			g.DrawImage(m_image, 0, 0, item->width, imageHeight);
 		}
-
-		/*
-		// for debugging
-		CLSID clsidEncoder;
-		ImageUtil::GetEncoderClsid(L"image/png", &clsidEncoder);
-		pImage->Save(TEXT("C:\\Users\\ghost\\Documents\\tmp.png"), &clsidEncoder);
-		//*/
+*/
 
 		// create a PNG and base64-encode it
 		BYTE* pData = NULL;
@@ -133,7 +126,7 @@ public:
 		ImageUtil::BitmapToPNGData(pImage, &pData, &length);
 		Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
 		args->SetString(0, TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length));
-		
+
 		g_handler->GetClientExtensionHandler()->InvokeCallback(item->callbackId, args);
 
 		delete[] pData;
@@ -185,6 +178,7 @@ public:
 		if (m_image == NULL || m_queue.size() == 0)
 			return;
 
+/*
 		// copy the buffer into the bitmap
 		Gdiplus::BitmapData data;
 		Gdiplus::Rect rect(0, 0, Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight);
@@ -194,7 +188,7 @@ public:
 		for (int y = 0; y < h; ++y)
 			memcpy((BYTE*) data.Scan0 + y * data.Stride, (BYTE*) buffer + y * 4 * w, 4 * w);
 		m_image->UnlockBits(&data);
-
+*/
 		m_numPainted++;
 		if (m_numPainted >= 100)
 			ReturnResult();
@@ -226,7 +220,7 @@ void GetPageImageForURL(CallbackId callback, String url, int width)
 		CefWindowInfo info;
 		info.SetAsWindowless(NULL, false);
 
-		CefBrowserSettings settings;		
+		CefBrowserSettings settings;
 
 		CefBrowserHost::CreateBrowser(info, g_offscreenHandler.get(), url, settings, NULL);
 	}

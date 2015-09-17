@@ -33,11 +33,11 @@
 
 namespace ImageUtil {
 
-//
-// Creates a GDI+ bitmap from a HICON.
-// From http://majkel.wordpress.com/2008/02/29/getting-a-gdi-bitmap-from-an-hicon-with-proper-transparency/
-// with some bug fixes.
-//
+/**
+ * Creates a GDI+ bitmap from a HICON.
+ * From http://majkel.wordpress.com/2008/02/29/getting-a-gdi-bitmap-from-an-hicon-with-proper-transparency/
+ * with some bug fixes.
+ */
 Gdiplus::Bitmap* GetIconPixelData(HICON hIcon)
 {
 	ICONINFO iconInfo;
@@ -104,9 +104,9 @@ Gdiplus::Bitmap* GetIconPixelData(HICON hIcon)
 	return pBitmap;
 }
 
-//
-// Converts an icon to PNG data.
-//
+/**
+ * Converts an icon to PNG data.
+ */
 bool IconToPNG(HICON hIcon, BYTE** pData, DWORD* pLength)
 {
 	Gdiplus::Bitmap* pBitmap = GetIconPixelData(hIcon);
@@ -116,9 +116,9 @@ bool IconToPNG(HICON hIcon, BYTE** pData, DWORD* pLength)
 	return *pData != NULL;
 }
 
-//
-// Converts an icon to a grayscale image and returns the PNG data.
-//
+/**
+ * Converts an icon to a grayscale image and returns the PNG data.
+ */
 bool IconToGrayscalePNG(HICON hIcon, BYTE** pData, DWORD* pLength)
 {
 	Gdiplus::Bitmap* pBitmap = GetIconPixelData(hIcon);
@@ -156,9 +156,9 @@ bool ImageFileToPNG(String filename, BYTE** pData, DWORD* pLength)
 	return *pData != NULL;
 }
 
-//
-// Gets the encoder CLSID for a particular image mime type.
-//
+/**
+ * Gets the encoder CLSID for a particular image mime type.
+ */
 bool GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 {
 	// number of image encoders
@@ -190,9 +190,9 @@ bool GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 	return false;
 }
 
-//
-// Returns PNG data from a GDI+ Bitmap.
-//
+/**
+ * Returns PNG data from a GDI+ Bitmap.
+ */
 bool BitmapToPNGData(Gdiplus::Bitmap* pBitmap, BYTE** pData, DWORD* pLength)
 {
 	*pData = NULL;
@@ -264,20 +264,20 @@ HBITMAP Base64PNGDataToBitmap(String strData, SIZE size)
 	// prepare a BITMAPINFO structure to create the DIB
 	HBITMAP hBmp = NULL;
 	BITMAPINFO bmi;
-    ZeroMemory(&bmi, sizeof(BITMAPINFO));
-    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biCompression = BI_RGB;
-    bmi.bmiHeader.biWidth = size.cx;
-    bmi.bmiHeader.biHeight = size.cy;
-    bmi.bmiHeader.biBitCount = 32;
+	ZeroMemory(&bmi, sizeof(BITMAPINFO));
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	bmi.bmiHeader.biWidth = size.cx;
+	bmi.bmiHeader.biHeight = size.cy;
+	bmi.bmiHeader.biBitCount = 32;
 
-    HDC hdc = GetDC(NULL);
-    if (hdc)
-    {
+	HDC hdc = GetDC(NULL);
+	if (hdc)
+	{
 		// create the DIB
 		BYTE* pBits = NULL;
-        hBmp = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBits), NULL, 0);
+		hBmp = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBits), NULL, 0);
 		ReleaseDC(NULL, hdc);
 
 		// copy the image data into the DIB bits
@@ -292,7 +292,7 @@ HBITMAP Base64PNGDataToBitmap(String strData, SIZE size)
 				*((DWORD*) &(pBits[ptr])) = *pPixels;
 		}
 		pBitmap->UnlockBits(&bmpData);
-    }
+	}
 
 	// clean up
 	delete[] pData;
@@ -302,9 +302,9 @@ HBITMAP Base64PNGDataToBitmap(String strData, SIZE size)
 	return hBmp;
 }
 
-//
-// Base64-encodes data.
-//
+/**
+ * Base64-encodes data.
+ */
 String Base64Encode(BYTE* data, DWORD length)
 {
 	if (data == NULL)

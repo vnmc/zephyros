@@ -190,9 +190,9 @@ String GetExeVersion(String strCommand)
     return strResult;
 }
 
-//
-// Returns an array of all browsers available on the system.
-//
+/**
+ * Returns an array of all browsers available on the system.
+ */
 void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 {
 	if (*ppBrowsers != NULL)
