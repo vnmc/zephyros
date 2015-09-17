@@ -383,7 +383,7 @@ void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bo
     
     // get the total size of all screens
     NSArray *screens = [NSScreen screens];
-    for (int i = 0; i < screens.count; ++i)
+    for (unsigned int i = 0; i < screens.count; ++i)
     {
         NSRect screenFrame = [screens[i] visibleFrame];
 
@@ -580,7 +580,7 @@ MenuHandle CreateContextMenu(JavaScript::Array menuItems)
     
 String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
 {
-    if (nMenuHandle < 0 || nMenuHandle >= g_arrContextMenus.count)
+    if (nMenuHandle >= g_arrContextMenus.count)
         return "";
     
     NSPoint pt = NSMakePoint(x - 1, [[[NSApp mainWindow] contentView] frame].size.height - y - 4);

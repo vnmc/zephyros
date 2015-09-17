@@ -107,7 +107,7 @@ typedef NSView* WindowHandle;
 typedef id WindowHandle;
 #endif
 
-#include "jsbridge_webview.h"
+#include "base/webview/jsbridge_webview.h"
 
 #endif  // USE_WEBVIEW
 

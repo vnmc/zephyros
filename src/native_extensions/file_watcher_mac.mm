@@ -286,7 +286,7 @@ void FileWatcher::ScheduleEmptyFileCheck(std::vector<std::string>& filenames)
         if (!me->m_emptyFileTimeoutCanceled)
         {
             std::vector<String> f;
-            for (int i = 0; i < len; ++i)
+            for (unsigned int i = 0; i < len; ++i)
                 if (HasFileChanged(pFilenames[i]))
                     f.push_back(pFilenames[i]);
             
@@ -295,7 +295,7 @@ void FileWatcher::ScheduleEmptyFileCheck(std::vector<std::string>& filenames)
         }
         
         // delete the filenames from the heap
-        for (int i = 0; i < len; ++i)
+        for (unsigned int i = 0; i < len; ++i)
             delete[] pFilenames[i];
         delete[] pFilenames;
         

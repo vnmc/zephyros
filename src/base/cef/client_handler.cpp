@@ -67,10 +67,10 @@ int ClientHandler::m_nBrowserCount = 0;
 
 
 ClientHandler::ClientHandler()
-  : m_nBrowserId(0),
+  : m_clientExtensionHandler(new ClientExtensionHandler()),
+    m_nBrowserId(0),
     m_bIsClosing(false),
-    m_mainHwnd(NULL),
-	m_clientExtensionHandler(new ClientExtensionHandler())
+    m_mainHwnd(NULL)
 {
     m_processMessageDelegates.insert(static_cast< CefRefPtr<ProcessMessageDelegate> >(m_clientExtensionHandler));
     Zephyros::GetNativeExtensions()->AddNativeExtensions(m_clientExtensionHandler.get());

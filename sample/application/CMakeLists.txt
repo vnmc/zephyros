@@ -1,0 +1,105 @@
+###############################################################################
+# Source files
+###############################################################################
+
+set(APP_SRCS
+  src/app.cpp
+  src/stdafx.h
+)
+set(APP_SRCS_MACOSX
+  res/mac/Base.lproj/MainMenu.xib
+)
+APPEND_PLATFORM_SOURCES(APP_SRCS)
+
+
+###############################################################################
+# Configuration
+###############################################################################
+
+if(OS_WINDOWS)
+  set(PLATFORM -DOS_WIN)
+elseif(OS_MACOSX)
+  set(PLATFORM -DOS_MACOSX)
+elseif(OS_LINUX)
+  set(PLATFORM -DOS_LINUX)
+endif()
+
+#message(STATUS "---- ${DIR_ZEPHYROS_BIN}")
+
+
+if(OS_MACOSX)
+  find_library(LIB_APPKIT AppKit)
+
+#  find_library(LIB_ZEPHYROS_CEF Zephyros_CEF PATHS ${DIR_ZEPHYROS_BIN})
+#  find_library(LIB_ZEPHYROS_CEFHELPER Zephyros_CEF_Helper PATHS ${DIR_ZEPHYROS_BIN})
+  
+#  find_library(LIB_ZEPHYROS_WEBVIEW Zephyros_WebView PATHS ${DIR_ZEPHYROS_BIN})
+  find_library(LIB_ZEPHYROS_WEBVIEW Zephyros_WebView PATHS /Users/christen/Projects/zephyros/build/src/Debug)
+#  find_library(LIB_ZEPHYROS_WEBVIEW Zephyros_WebView PATHS "/Users/christen/Library/Developer/Xcode/DerivedData/Zephyros-cphdxfikckfikiesmgfffoplkisk/Build/Products/Debug")
+
+#  find_library(LIB_ZEPHYROS_APPSTORE Zephyros_AppStore PATHS ${DIR_ZEPHYROS_BIN})
+
+  find_library(LIB_CEF "Chromium Embedded Framework" PATHS ${DIR_ZEPHYROS_LIB})
+endif()
+
+set(LIB_ZEPHYROS_CEF Zephyros_CEF)
+set(LIB_ZEPHYROS_CEFHELPER "Zephyros_CEF_Helper")
+
+SET_CEF_TARGET_OUT_DIR()
+
+
+if(OS_MACOSX)
+  # CEF Helper App
+  add_executable(App_CEF_Helper MACOSX_BUNDLE ${APP_SRCS} ../../src/base/cef/process_helper_mac.mm)
+  add_dependencies(App_CEF_Helper Zephyros_CEF_Helper)
+  target_include_directories(App_CEF_Helper PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+  target_compile_definitions(App_CEF_Helper PRIVATE -DUSE_CEF ${PLATFORM})
+  target_link_libraries(App_CEF_Helper PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEFHELPER} ${LIB_CEF})
+  set_target_properties(App_CEF_Helper PROPERTIES
+    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-CEF-Helper.plist
+  )
+  EMBED_FRAMEWORK(App_CEF_Helper ${DIR_ZEPHYROS_BIN}/Zephyros_CEF_Helper.framework)
+  FIX_MACOSX_HELPER_FRAMEWORK_LINK(App_CEF_Helper ${CEF_TARGET_OUT_DIR})
+
+  # CEF App
+  add_executable(App_CEF MACOSX_BUNDLE ${APP_SRCS})
+  #target_include_directories(App_CEF PRIVATE ${DIR_ZEPHYROS})
+  add_dependencies(App_CEF App_CEF_Helper Zephyros_CEF)
+  target_include_directories(App_CEF PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+  target_compile_definitions(App_CEF PRIVATE -DUSE_CEF ${PLATFORM})
+  target_link_libraries(App_CEF PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEF} ${LIB_CEF})
+  set_target_properties(App_CEF PROPERTIES
+    RESOURCE "res/mac/Base.lproj/MainMenu.xib"
+    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-CEF.plist
+  )
+  EMBED_FRAMEWORK(App_CEF ${DIR_ZEPHYROS_BIN}/Zephyros_CEF.framework)
+  EMBED_FRAMEWORK(App_CEF ${LIB_CEF})
+  EMBED_HELPERS(App_CEF App_CEF_Helper)
+  FIX_MACOSX_MAIN_FRAMEWORK_LINK(App_CEF ${CEF_TARGET_OUT_DIR})
+
+  # WebView App
+  add_executable(App_WebView MACOSX_BUNDLE ${APP_SRCS})
+  add_dependencies(App_WebView Zephyros_WebView)
+  target_include_directories(App_WebView PUBLIC ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/base/webview)
+  target_compile_definitions(App_WebView PUBLIC -DUSE_WEBVIEW ${PLATFORM})
+  target_link_libraries(App_WebView PUBLIC ${LIB_APPKIT} Zephyros_WebView)
+  set_target_properties(App_WebView PROPERTIES
+    RESOURCE "res/mac/Base.lproj/MainMenu.xib"
+    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-WebView.plist
+  )
+  EMBED_FRAMEWORK(App_WebView ${DIR_ZEPHYROS_BIN}/Zephyros_WebView.framework)
+
+  # AppStore App
+  add_executable(App_AppStore MACOSX_BUNDLE ${APP_SRCS})
+  add_dependencies(App_AppStore Zephyros_AppStore)
+  target_include_directories(App_AppStore PUBLIC ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/base/webview)
+  target_compile_definitions(App_AppStore PUBLIC -DUSE_WEBVIEW -DAPPSTORE ${PLATFORM})
+  target_link_libraries(App_AppStore PUBLIC ${LIB_APPKIT} Zephyros_AppStore)
+  set_target_properties(App_AppStore PROPERTIES
+    RESOURCE "res/mac/Base.lproj/MainMenu.xib"
+    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-AppStore.plist
+  )
+  EMBED_FRAMEWORK(App_AppStore ${DIR_ZEPHYROS_BIN}/Zephyros_AppStore.framework)
+elseif(OS_WINDOWS)
+elseif(OS_LINUX)
+endif()

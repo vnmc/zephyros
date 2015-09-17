@@ -33,6 +33,7 @@
 #include <vector>
 
 #include "base/types.h"
+#include "native_extensions.h"
 
 
 namespace Zephyros {

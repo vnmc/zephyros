@@ -36,7 +36,7 @@
 #ifdef OS_WIN
 typedef ULONG_PTR MenuHandle;
 #else
-typedef int MenuHandle;
+typedef unsigned long MenuHandle;
 #endif
 
 

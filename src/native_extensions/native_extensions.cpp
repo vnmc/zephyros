@@ -34,14 +34,14 @@
 #include "base/cef/extension_handler.h"
 #endif
 
-#include "native_extensions/file_watcher.h"
 #include "native_extensions/browser.h"
-#include "native_extensions/network_util.h"
-#include "native_extensions/path.h"
+#include "native_extensions/custom_url_manager.h"
 #include "native_extensions/file_util.h"
+#include "native_extensions/file_watcher.h"
+#include "native_extensions/network_util.h"
 #include "native_extensions/os_util.h"
 #include "native_extensions/pageimage.h"
-#include "native_extensions/custom_url_manager.h"
+#include "native_extensions/path.h"
 
 #ifdef USE_WEBVIEW
 #include "native_extensions/image_util_mac.h"
@@ -670,7 +670,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     );
 #endif
 
-#ifdef OS_MACOSX
+#ifdef USE_WEBVIEW
 	// convertImage: (base64ImageData: string, callback: (base64PNG: string) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("convertImage"),

@@ -12,7 +12,6 @@
 		CC0FA30D1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
 		CC0FA30E1B53CDD900C5AC33 /* zephyros_impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC0FA30B1B53CDD900C5AC33 /* zephyros_impl.cpp */; };
 		CC5371711BA84978001957D7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC53716F1BA84978001957D7 /* Localizable.strings */; };
-		CC5371721BA84978001957D7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC53716F1BA84978001957D7 /* Localizable.strings */; };
 		CC5371731BA84978001957D7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC53716F1BA84978001957D7 /* Localizable.strings */; };
 		CC5371741BA84978001957D7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CC53716F1BA84978001957D7 /* Localizable.strings */; };
 		CC5371771BA85214001957D7 /* ZPYMenuHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5371751BA85214001957D7 /* ZPYMenuHandler.h */; };
@@ -22,9 +21,10 @@
 		CC53717B1BA85214001957D7 /* ZPYMenuHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC5371761BA85214001957D7 /* ZPYMenuHandler.mm */; };
 		CC53717C1BA85214001957D7 /* ZPYMenuHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC5371761BA85214001957D7 /* ZPYMenuHandler.mm */; };
 		CC53717D1BA85214001957D7 /* ZPYMenuHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC5371761BA85214001957D7 /* ZPYMenuHandler.mm */; };
-		CC53717E1BA85214001957D7 /* ZPYMenuHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC5371761BA85214001957D7 /* ZPYMenuHandler.mm */; };
 		CC53717F1BA85214001957D7 /* ZPYMenuHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC5371761BA85214001957D7 /* ZPYMenuHandler.mm */; };
 		CC5371801BA85214001957D7 /* ZPYMenuHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC5371761BA85214001957D7 /* ZPYMenuHandler.mm */; };
+		CC5371851BA9CEE6001957D7 /* jsbridge_webview.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5371841BA9CEE6001957D7 /* jsbridge_webview.h */; };
+		CC5371861BA9CEE6001957D7 /* jsbridge_webview.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5371841BA9CEE6001957D7 /* jsbridge_webview.h */; };
 		CC5BEBC31B9DD0EA0015062C /* native_extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5BEBC11B9DD0EA0015062C /* native_extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC5BEBC41B9DD0EA0015062C /* native_extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5BEBC11B9DD0EA0015062C /* native_extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC5BEBC51B9DD0EA0015062C /* native_extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = CC5BEBC11B9DD0EA0015062C /* native_extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -545,8 +545,6 @@
 		CCC0199D1B4FDA420015B0FA /* NSData+Base64.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC019771B4FDA420015B0FA /* NSData+Base64.mm */; };
 		CCC019AB1B4FDA980015B0FA /* jsbridge_webview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC019A41B4FDA980015B0FA /* jsbridge_webview.cpp */; };
 		CCC019AC1B4FDA980015B0FA /* jsbridge_webview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC019A41B4FDA980015B0FA /* jsbridge_webview.cpp */; };
-		CCC019AE1B4FDA980015B0FA /* jsbridge_webview.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019A51B4FDA980015B0FA /* jsbridge_webview.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CCC019AF1B4FDA980015B0FA /* jsbridge_webview.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019A51B4FDA980015B0FA /* jsbridge_webview.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CCC019B41B4FDA980015B0FA /* webview_extension.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC019A71B4FDA980015B0FA /* webview_extension.mm */; };
 		CCC019B51B4FDA980015B0FA /* webview_extension.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCC019A71B4FDA980015B0FA /* webview_extension.mm */; };
 		CCC019B71B4FDA980015B0FA /* ZPYWebViewAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC019A81B4FDA980015B0FA /* ZPYWebViewAppDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -712,6 +710,7 @@
 		CC5371701BA84978001957D7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = sample/application/res/mac/en.lproj/Localizable.strings; sourceTree = SOURCE_ROOT; };
 		CC5371751BA85214001957D7 /* ZPYMenuHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZPYMenuHandler.h; path = src/base/ZPYMenuHandler.h; sourceTree = "<group>"; };
 		CC5371761BA85214001957D7 /* ZPYMenuHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ZPYMenuHandler.mm; path = src/base/ZPYMenuHandler.mm; sourceTree = "<group>"; };
+		CC5371841BA9CEE6001957D7 /* jsbridge_webview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jsbridge_webview.h; path = src/base/webview/jsbridge_webview.h; sourceTree = SOURCE_ROOT; };
 		CC5BEBC11B9DD0EA0015062C /* native_extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = native_extensions.h; path = src/native_extensions.h; sourceTree = "<group>"; };
 		CC5BEBC21B9DD0EA0015062C /* zephyros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zephyros.h; path = src/zephyros.h; sourceTree = "<group>"; };
 		CC5BEBCB1B9EE75F0015062C /* base_cpptoc.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base_cpptoc.cc; sourceTree = "<group>"; };
@@ -1188,7 +1187,6 @@
 		CCC019761B4FDA420015B0FA /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "src/util/NSData+Base64.h"; sourceTree = "<group>"; };
 		CCC019771B4FDA420015B0FA /* NSData+Base64.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSData+Base64.mm"; path = "src/util/NSData+Base64.mm"; sourceTree = "<group>"; };
 		CCC019A41B4FDA980015B0FA /* jsbridge_webview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jsbridge_webview.cpp; path = src/base/webview/jsbridge_webview.cpp; sourceTree = SOURCE_ROOT; };
-		CCC019A51B4FDA980015B0FA /* jsbridge_webview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jsbridge_webview.h; path = src/base/webview/jsbridge_webview.h; sourceTree = SOURCE_ROOT; };
 		CCC019A71B4FDA980015B0FA /* webview_extension.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = webview_extension.mm; path = src/base/webview/webview_extension.mm; sourceTree = SOURCE_ROOT; };
 		CCC019A81B4FDA980015B0FA /* ZPYWebViewAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZPYWebViewAppDelegate.h; path = src/base/webview/ZPYWebViewAppDelegate.h; sourceTree = SOURCE_ROOT; };
 		CCC019A91B4FDA980015B0FA /* ZPYWebViewAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ZPYWebViewAppDelegate.mm; path = src/base/webview/ZPYWebViewAppDelegate.mm; sourceTree = SOURCE_ROOT; };
@@ -2171,8 +2169,8 @@
 		CCF48B661B4D846D00E4F261 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				CC5371841BA9CEE6001957D7 /* jsbridge_webview.h */,
 				CCC019A41B4FDA980015B0FA /* jsbridge_webview.cpp */,
-				CCC019A51B4FDA980015B0FA /* jsbridge_webview.h */,
 				CCC019A71B4FDA980015B0FA /* webview_extension.mm */,
 				CCC019A81B4FDA980015B0FA /* ZPYWebViewAppDelegate.h */,
 				CCC019A91B4FDA980015B0FA /* ZPYWebViewAppDelegate.mm */,
@@ -2301,12 +2299,12 @@
 				CCBDB47C1B7E306A00D168AB /* zephyros_strings.h in Headers */,
 				CCC019DA1B4FEFF00015B0FA /* picojson.h in Headers */,
 				CCBDB4861B7E4FC700D168AB /* string_util.h in Headers */,
+				CC5371851BA9CEE6001957D7 /* jsbridge_webview.h in Headers */,
 				CCC019F01B4FF43C0015B0FA /* licensing.h in Headers */,
 				CCC018FA1B4FD9D20015B0FA /* browser.h in Headers */,
 				CCC019991B4FDA420015B0FA /* NSData+Base64.h in Headers */,
 				CCC019511B4FD9D20015B0FA /* process_manager.h in Headers */,
 				CCC019421B4FD9D20015B0FA /* pageimage.h in Headers */,
-				CCC019AE1B4FDA980015B0FA /* jsbridge_webview.h in Headers */,
 				CC5371781BA85214001957D7 /* ZPYMenuHandler.h in Headers */,
 				CCC018C31B4FD9B70015B0FA /* jsbridge.h in Headers */,
 				CC5BEC2A1BA0291B0015062C /* licensing.h in Headers */,
@@ -2428,7 +2426,6 @@
 				CCC019B81B4FDA980015B0FA /* ZPYWebViewAppDelegate.h in Headers */,
 				CCC0195B1B4FD9D20015B0FA /* updater.h in Headers */,
 				CC5BEBCA1B9DD0EA0015062C /* zephyros.h in Headers */,
-				CCC019AF1B4FDA980015B0FA /* jsbridge_webview.h in Headers */,
 				CCC018CA1B4FD9B70015B0FA /* types.h in Headers */,
 				CCC019971B4FDA420015B0FA /* MurmurHash3.h in Headers */,
 				CC608F721B5D1CD2003D185F /* ZPYAppDelegate.h in Headers */,
@@ -2451,6 +2448,7 @@
 				CCC0199A1B4FDA420015B0FA /* NSData+Base64.h in Headers */,
 				CCC0197F1B4FDA420015B0FA /* base32.h in Headers */,
 				CCC019311B4FD9D20015B0FA /* network_util.h in Headers */,
+				CC5371861BA9CEE6001957D7 /* jsbridge_webview.h in Headers */,
 				CCC018C71B4FD9B70015B0FA /* logging.h in Headers */,
 				CCC019521B4FD9D20015B0FA /* process_manager.h in Headers */,
 				CC5371791BA85214001957D7 /* ZPYMenuHandler.h in Headers */,
@@ -2742,7 +2740,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC5371721BA84978001957D7 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3020,7 +3017,6 @@
 			files = (
 				CC6092461B5E880C003D185F /* process_helper_mac.mm in Sources */,
 				CC6092231B5D5AAD003D185F /* app.cpp in Sources */,
-				CC53717E1BA85214001957D7 /* ZPYMenuHandler.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

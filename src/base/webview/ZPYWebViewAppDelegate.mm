@@ -185,7 +185,7 @@ JSContextRef g_ctx = NULL;
     DEBUG_LOG(@"Invoking Native Function %@ (%ld args)", name, [args count]);
     
     Zephyros::JavaScript::Array params = Zephyros::JavaScript::CreateArray();
-    for (int i = 0; i < [args count]; ++i)
+    for (unsigned int i = 0; i < [args count]; ++i)
     {
         id arg = args[i];
         

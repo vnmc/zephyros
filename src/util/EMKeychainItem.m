@@ -614,4 +614,5 @@ static BOOL _logsErrors;
 		[self _modifyAttributeWithTag: kSecProtocolItemAttr toBeValue: &newProtocol ofLength: sizeof(newProtocol)];
 	}
 }
+
 @end

@@ -27,8 +27,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "ZPYMenuHandler.h"
-#import "ZPYAppDelegate.h"
+#import "base/ZPYAppDelegate.h"
+#import "base/ZPYMenuHandler.h"
+#import "base/types.h"
+
+#import "zephyros.h"
 
 
 @implementation ZPYMenuHandler

@@ -509,7 +509,7 @@ class ClientExtensionHandler : public NativeJavaScriptFunctionAdder, public Proc
 {
 public:
     ClientExtensionHandler();
-    ~ClientExtensionHandler();
+    virtual ~ClientExtensionHandler();
     
     virtual void ReleaseCefObjects();
     
@@ -540,7 +540,7 @@ class ClientExtensionHandler : public NativeJavaScriptFunctionAdder
 {
 public:
     ClientExtensionHandler();
-    ~ClientExtensionHandler();
+    virtual ~ClientExtensionHandler();
     
     virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT(""));
     
