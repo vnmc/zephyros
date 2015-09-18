@@ -371,7 +371,7 @@ if(OS_MACOSX)
 
   # AppStore configuration
   add_library(Zephyros_AppStore SHARED ${ZEPHYROS_APPSTORE_SRCS})
-  target_include_directories(Zephyros_AppStore PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+  target_include_directories(Zephyros_AppStore PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/base/webview)
   target_compile_definitions(Zephyros_AppStore PRIVATE -DUSE_WEBVIEW -DAPPSTORE ${PLATFORM})
   target_link_libraries(Zephyros_AppStore PRIVATE ${DEFAULT_LIBS} ${LIB_JAVASCRIPTCORE})
   set_target_properties(Zephyros_AppStore PROPERTIES

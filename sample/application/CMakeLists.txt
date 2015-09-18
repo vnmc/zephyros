@@ -2,14 +2,31 @@
 # Source files
 ###############################################################################
 
+# the folder containing the webapp
+set(WEBAPP app)
+
+# the native sources
 set(APP_SRCS
   src/app.cpp
   src/stdafx.h
 )
-set(APP_SRCS_MACOSX
+#APPEND_PLATFORM_SOURCES(APP_SRCS)
+
+# app resources
+set(APP_RESOURCES)
+set(APP_RESOURCES_MACOSX
   res/mac/Base.lproj/MainMenu.xib
+  res/mac/en.lproj/Localizable.strings
+  res/mac/Images.xcassets
+  ${WEBAPP}
 )
-APPEND_PLATFORM_SOURCES(APP_SRCS)
+APPEND_PLATFORM_SOURCES(APP_RESOURCES)
+
+set(APP_SRCS
+  ${APP_SRCS}
+  ${APP_RESOURCES}
+  ${APP_WEBAPP}
+)
 
 
 ###############################################################################
@@ -50,31 +67,31 @@ SET_CEF_TARGET_OUT_DIR()
 
 if(OS_MACOSX)
   # CEF Helper App
-  add_executable(App_CEF_Helper MACOSX_BUNDLE ${APP_SRCS} ../../src/base/cef/process_helper_mac.mm)
-  add_dependencies(App_CEF_Helper Zephyros_CEF_Helper)
-  target_include_directories(App_CEF_Helper PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
-  target_compile_definitions(App_CEF_Helper PRIVATE -DUSE_CEF ${PLATFORM})
-  target_link_libraries(App_CEF_Helper PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEFHELPER} ${LIB_CEF})
-  set_target_properties(App_CEF_Helper PROPERTIES
+  add_executable("App_CEF Helper" MACOSX_BUNDLE ${APP_SRCS} ../../src/base/cef/process_helper_mac.mm)
+  add_dependencies("App_CEF Helper" Zephyros_CEF_Helper)
+  target_include_directories("App_CEF Helper" PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+  target_compile_definitions("App_CEF Helper" PRIVATE -DUSE_CEF ${PLATFORM})
+  target_link_libraries("App_CEF Helper" PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEFHELPER} ${LIB_CEF})
+  set_target_properties("App_CEF Helper" PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-CEF-Helper.plist
   )
-  EMBED_FRAMEWORK(App_CEF_Helper ${DIR_ZEPHYROS_BIN}/Zephyros_CEF_Helper.framework)
-  FIX_MACOSX_HELPER_FRAMEWORK_LINK(App_CEF_Helper ${CEF_TARGET_OUT_DIR})
+  EMBED_FRAMEWORK("App_CEF Helper" ${DIR_ZEPHYROS_BIN}/Zephyros_CEF_Helper.framework)
+  FIX_MACOSX_HELPER_FRAMEWORK_LINK("App_CEF Helper" ${CEF_TARGET_OUT_DIR})
 
   # CEF App
   add_executable(App_CEF MACOSX_BUNDLE ${APP_SRCS})
   #target_include_directories(App_CEF PRIVATE ${DIR_ZEPHYROS})
-  add_dependencies(App_CEF App_CEF_Helper Zephyros_CEF)
+  add_dependencies(App_CEF "App_CEF Helper" Zephyros_CEF)
   target_include_directories(App_CEF PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
   target_compile_definitions(App_CEF PRIVATE -DUSE_CEF ${PLATFORM})
   target_link_libraries(App_CEF PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEF} ${LIB_CEF})
   set_target_properties(App_CEF PROPERTIES
-    RESOURCE "res/mac/Base.lproj/MainMenu.xib"
+    RESOURCE "${APP_RESOURCES}"
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-CEF.plist
   )
   EMBED_FRAMEWORK(App_CEF ${DIR_ZEPHYROS_BIN}/Zephyros_CEF.framework)
   EMBED_FRAMEWORK(App_CEF ${LIB_CEF})
-  EMBED_HELPERS(App_CEF App_CEF_Helper)
+  EMBED_HELPERS(App_CEF "App_CEF Helper")
   FIX_MACOSX_MAIN_FRAMEWORK_LINK(App_CEF ${CEF_TARGET_OUT_DIR})
 
   # WebView App
@@ -84,7 +101,7 @@ if(OS_MACOSX)
   target_compile_definitions(App_WebView PUBLIC -DUSE_WEBVIEW ${PLATFORM})
   target_link_libraries(App_WebView PUBLIC ${LIB_APPKIT} Zephyros_WebView)
   set_target_properties(App_WebView PROPERTIES
-    RESOURCE "res/mac/Base.lproj/MainMenu.xib"
+    RESOURCE "${APP_RESOURCES}"
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-WebView.plist
   )
   EMBED_FRAMEWORK(App_WebView ${DIR_ZEPHYROS_BIN}/Zephyros_WebView.framework)
@@ -96,7 +113,7 @@ if(OS_MACOSX)
   target_compile_definitions(App_AppStore PUBLIC -DUSE_WEBVIEW -DAPPSTORE ${PLATFORM})
   target_link_libraries(App_AppStore PUBLIC ${LIB_APPKIT} Zephyros_AppStore)
   set_target_properties(App_AppStore PROPERTIES
-    RESOURCE "res/mac/Base.lproj/MainMenu.xib"
+    RESOURCE "${APP_RESOURCES}"
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-AppStore.plist
   )
   EMBED_FRAMEWORK(App_AppStore ${DIR_ZEPHYROS_BIN}/Zephyros_AppStore.framework)

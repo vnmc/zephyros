@@ -223,7 +223,7 @@ macro(MAKE_MACOSX_HELPERS target app_path)
     POST_BUILD
     # The exported variables need to be set for generators other than Xcode.
     COMMAND export BUILT_PRODUCTS_DIR=${app_path} &&
-            export CONTENTS_FOLDER_PATH=/Contents &&
+            export CONTENTS_FOLDER_PATH=${target}.app/Contents &&
             tools/make_more_helpers.sh "Frameworks" "${target}"
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     VERBATIM
@@ -295,7 +295,7 @@ macro(EMBED_FRAMEWORK target framework)
       TARGET ${target}
       POST_BUILD
       # copy frameworks into the Frameworks directory
-      COMMAND ${CMAKE_COMMAND} -E copy_directory "${framework}" "${outdir}/${target}.app/Frameworks/${framework_name}" VERBATIM
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${framework}" "${outdir}/${target}.app/Contents/Frameworks/${framework_name}" VERBATIM
     )
   endif()
 endmacro()
