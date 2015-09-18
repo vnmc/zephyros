@@ -60,7 +60,7 @@ typedef std::string String;
 #define TEXT(string) string
 
 #define MAIN main
-#define MAIN_ARGS int argc, const char* argv[]
+#define MAIN_ARGS int argc, char* argv[]
 #define INIT_APPLICATION_ARGS argc, argv
 
 #endif  // OS_WIN
@@ -72,12 +72,12 @@ class NativeExtensions;
 
 } // namespace Zephyros
 
-    
+
 //////////////////////////////////////////////////////////////////////////
 // Zephyros Structures
 
 namespace Zephyros {
-    
+
 typedef struct
 {
     int nWidth;
@@ -91,7 +91,7 @@ typedef struct
 	int nMenuID;
 	int nAccelID;
 } WindowsInfo;
-    
+
 typedef struct
 {
     TCHAR* szStringTableName;
@@ -125,7 +125,7 @@ void SetResourceID(const TCHAR* szResourceName, int nID);
 int GetMenuIDForCommand(const TCHAR* szCommand);
 const TCHAR* GetMenuCommandForID(int nMenuID);
 void SetMenuIDForCommand(const TCHAR* szCommand, int nMenuID);
-    
+
 Size GetDefaultWindowSize();
 void SetDefaultWindowSize(int nWidth, int nHeight);
 
@@ -139,7 +139,7 @@ const TCHAR* GetCrashReportingURL();
 const TCHAR* GetCrashReportingPrivacyPolicyURL();
 void SetCrashReportingURL(const TCHAR* szReportingURL, const TCHAR* szPrivacyPolicyURL);
 #endif
-    
+
 #ifndef NO_SPARKLE
 const TCHAR* GetUpdaterURL();
 void SetUpdaterURL(const TCHAR* szURL);
@@ -150,10 +150,10 @@ void SetLicenseManager(AbstractLicenseManager* pLicenseManager);
 
 NativeExtensions* GetNativeExtensions();
 void SetNativeExtensions(NativeExtensions* pNativeExtensions);
-    
+
 String GetString(int stringId);
 void SetString(int stringId, String str);
-    
+
 bool UseLogging();
 void UseLogging(bool bUseLogging);
 

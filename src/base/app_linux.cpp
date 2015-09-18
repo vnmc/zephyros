@@ -33,11 +33,8 @@
 
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
-extern bool g_isMessageLoopRunning;
-extern bool g_isMultithreadedMessageLoop;
-//extern HWND g_hMessageWnd;
 
-TCHAR g_szLogFileName[MAX_PATH];
+FILE* g_hndLogFile;
 
 
 namespace Zephyros {
@@ -50,19 +47,7 @@ void Quit()
 
 void QuitMessageLoop()
 {
-	if (!g_isMessageLoopRunning)
-		return;
-/*
-	if (g_isMultithreadedMessageLoop)
-	{
-		// running in multi-threaded message loop mode
-		// need to execute PostQuitMessage on the main application thread
-		DCHECK(g_hMessageWnd);
-		PostMessage(g_hMessageWnd, WM_COMMAND, ID_QUIT, 0);
-	}
-	else
-		CefQuitMessageLoop();
-*/
+    CefQuitMessageLoop();
 }
 
 void BeginWait()
@@ -77,10 +62,10 @@ void Alert(String title, String msg, AlertStyle style)
 {
 }
 
-/*
-HANDLE OpenLogFile()
+FILE* OpenLogFile()
 {
-}*/
+    return NULL;
+}
 
 void Log(String msg)
 {
@@ -88,6 +73,7 @@ void Log(String msg)
 
 String ShowErrorMessage()
 {
+    return TEXT("");
 }
 
 void SetMenuItemStatuses(JavaScript::Object items)

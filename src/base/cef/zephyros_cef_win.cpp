@@ -67,11 +67,9 @@
 #define TIMER_SHOW_WINDW 1
 
 
-#if defined(OS_WIN)
 // Add Common Controls to the application manifest because it's required to
 // support the default tooltip implementation.
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")  // NOLINT(whitespace/line_length)
-#endif
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,7 +202,7 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	SetUserAgentString(settings);
 
 	g_isMultithreadedMessageLoop = settings.multi_threaded_message_loop != 0;
-  
+
 	// initialize CEF
 	CefInitialize(main_args, settings, app.get(), NULL);
 
@@ -225,9 +223,9 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	}
 
 	// create the main window and run
-	int result = 0;
+	int nResult = 0;
 	if (pMgr == NULL || pMgr->CanStartApp())
-		result = CreateMainWindow();
+		nResult = CreateMainWindow();
 
 	// shut down CEF
 	CefShutdown();
@@ -244,7 +242,7 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
 	Zephyros::Shutdown();
 
-	return result;
+	return nResult;
 }
 
 } // namespace Zephyros
@@ -322,7 +320,7 @@ int CreateMainWindow()
 	}
 
 	g_isMessageLoopRunning = true;
-	int result = 0;
+	int nResult = 0;
 	if (!g_isMultithreadedMessageLoop)
 	{
 		// run the CEF message loop
@@ -358,7 +356,7 @@ int CreateMainWindow()
 
 	if (szUpdaterURL != NULL && szUpdaterURL[0] != TCHAR('\0'))
 		win_sparkle_cleanup();
-	
+
 	Zephyros::OSUtil::CleanUp();
 
 	return result;
@@ -366,7 +364,7 @@ int CreateMainWindow()
 
 // Define the callback function that will be called on crash
 int CALLBACK CrashCallback(CR_CRASH_CALLBACK_INFO* pInfo)
-{  
+{
 	// the application has crashed!
 
 	// close the log file here to ensure CrashRpt is able to include it into error report
@@ -387,10 +385,10 @@ void InstallCrashReporting()
 		return;
 
 	// define CrashRpt configuration parameters
-	CR_INSTALL_INFO info;  
-	memset(&info, 0, sizeof(CR_INSTALL_INFO));  
+	CR_INSTALL_INFO info;
+	memset(&info, 0, sizeof(CR_INSTALL_INFO));
 	info.cb = sizeof(CR_INSTALL_INFO);
-	
+
 	info.pszAppName = Zephyros::GetAppName();
 	info.pszAppVersion = Zephyros::GetAppVersion();
 	info.pszUrl = szCrashReportingURL;
@@ -403,7 +401,7 @@ void InstallCrashReporting()
 
 	// Install all available exception handlers and restart the app after a crash
 	info.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_APP_RESTART | CR_INST_SEND_QUEUED_REPORTS;
-	
+
 	// Install crash reporting
 	if (crInstall(&info) == 0)
 	{
@@ -416,9 +414,9 @@ void InstallCrashReporting()
 		crAddFile2(g_szLogFileName, NULL, TEXT("Log File"), CR_AF_MAKE_FILE_COPY);
 	}
 	else
-	{    
+	{
 		// something went wrong. Get error message.
-		TCHAR szErrorMsg[512] = TEXT("");        
+		TCHAR szErrorMsg[512] = TEXT("");
 		crGetLastErrorMsg(szErrorMsg, 512);
 		Zephyros::App::Log(TEXT("Failed to install crash reporting:"));
 		Zephyros::App::Log(szErrorMsg);
@@ -563,7 +561,7 @@ void AdjustWindowPlacementToMonitor(Rect* pRect)
 	pt.x = pRect->x;
 	pt.y = pRect->y;
 	HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
-	
+
 	// get the monitor info
 	MONITORINFO info;
 	info.cbSize = sizeof(MONITORINFO);
@@ -655,7 +653,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			int wmId = LOWORD(wParam);
 			int wmEvent = HIWORD(wParam);
-      
+
 			// parse the menu selections:
 			switch (wmId)
 			{
@@ -776,7 +774,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_ENTERMENULOOP:
 		// entering the menu loop for the application menu
-		if (!wParam)        
+		if (!wParam)
 			CefSetOSModalLoop(true);
 		break;
 

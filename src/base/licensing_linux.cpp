@@ -26,7 +26,6 @@
 
 
 #include <iomanip>
-#include <tchar.h>
 
 #include "zephyros_strings.h"
 
@@ -74,14 +73,14 @@ String LicenseData::Now()
 // LicenseManager Implementation
 
 LicenseManagerImpl::LicenseManagerImpl()
-	: m_timerId(-1), m_pDemoDlg(NULL)
+//	: m_timerId(-1), m_pDemoDlg(NULL)
 {
 	InitConfig();
 }
 
 LicenseManagerImpl::~LicenseManagerImpl()
 {
-    KillTimer();
+//    KillTimer();
 }
 
 bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* szPubkey)
@@ -89,15 +88,17 @@ bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* szPubke
     return false;
 }
 
-
+/*
+// TODO: add if needed
 void LicenseManagerImpl::KillTimer()
 {
 }
+*/
 
 void LicenseManagerImpl::ShowDemoDialog()
 {
 	// cancel any previous timer
-	KillTimer();
+//	KillTimer();
 
 	// show the demo dialog
 	/*
@@ -106,7 +107,7 @@ void LicenseManagerImpl::ShowDemoDialog()
 	delete m_pDemoDlg;
 	m_pDemoDlg = NULL;
 	*/
-	m_canStartApp = result == IDOK;
+//	m_canStartApp = result == IDOK;
 
 	// check the validity of the demo after 6 hours
 	if (m_canStartApp && !IsActivated())

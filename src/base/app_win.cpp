@@ -23,7 +23,7 @@
  * Contributors:
  * Matthias Christen, Vanamco AG
  *******************************************************************************/
- 
+
 
 #include <windows.h>
 #include <commdlg.h>
@@ -48,7 +48,6 @@ extern bool g_isMultithreadedMessageLoop;
 extern HWND g_hMessageWnd;
 
 HANDLE g_hndLogFile;
-TCHAR g_szLogFileName[MAX_PATH];
 
 
 namespace Zephyros {
@@ -114,26 +113,27 @@ void Alert(String title, String msg, AlertStyle style)
 
 HANDLE OpenLogFile()
 {
-	SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, g_szLogFileName);
+    TCHAR szLogFileName[MAX_PATH];
+	SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szLogFileName);
 
 	const TCHAR* szCompanyName = Zephyros::GetCompanyName();
 	if (szCompanyName != NULL && szCompanyName[0] != TCHAR('\0'))
 	{
-		PathAddBackslash(g_szLogFileName);
-		PathAppend(g_szLogFileName, szCompanyName);
-		CreateDirectory(g_szLogFileName, NULL);
+		PathAddBackslash(szLogFileName);
+		PathAppend(szLogFileName, szCompanyName);
+		CreateDirectory(szLogFileName, NULL);
 	}
 
-	PathAddBackslash(g_szLogFileName);
-	PathAppend(g_szLogFileName, Zephyros::GetAppName());
-	CreateDirectory(g_szLogFileName, NULL);
+	PathAddBackslash(szLogFileName);
+	PathAppend(szLogFileName, Zephyros::GetAppName());
+	CreateDirectory(szLogFileName, NULL);
 
-	PathAppend(g_szLogFileName, TEXT("\\debug.log"));
-	HANDLE hndLogFile = CreateFile(g_szLogFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	PathAppend(szLogFileName, TEXT("\\debug.log"));
+	HANDLE hndLogFile = CreateFile(szLogFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hndLogFile == INVALID_HANDLE_VALUE)
 	{
 		//AppShowErrorMessage();
-		hndLogFile = CreateFile(g_szLogFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+		hndLogFile = CreateFile(szLogFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 	}
 
 	// write marker bytes to mark the file as UTF-8 encoded

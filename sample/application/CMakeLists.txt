@@ -49,7 +49,7 @@ if(OS_MACOSX)
 
 #  find_library(LIB_ZEPHYROS_CEF Zephyros_CEF PATHS ${DIR_ZEPHYROS_BIN})
 #  find_library(LIB_ZEPHYROS_CEFHELPER Zephyros_CEF_Helper PATHS ${DIR_ZEPHYROS_BIN})
-  
+
 #  find_library(LIB_ZEPHYROS_WEBVIEW Zephyros_WebView PATHS ${DIR_ZEPHYROS_BIN})
   find_library(LIB_ZEPHYROS_WEBVIEW Zephyros_WebView PATHS /Users/christen/Projects/zephyros/build/src/Debug)
 #  find_library(LIB_ZEPHYROS_WEBVIEW Zephyros_WebView PATHS "/Users/christen/Library/Developer/Xcode/DerivedData/Zephyros-cphdxfikckfikiesmgfffoplkisk/Build/Products/Debug")
@@ -119,4 +119,49 @@ if(OS_MACOSX)
   EMBED_FRAMEWORK(App_AppStore ${DIR_ZEPHYROS_BIN}/Zephyros_AppStore.framework)
 elseif(OS_WINDOWS)
 elseif(OS_LINUX)
+  # find required libraries and update compiler/linker variables
+  set(CEF_STANDARD_LIBS X11)
+  FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0")
+
+  set(CEF_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux-x86_64/Resources/")
+  set(CEF_BINARY_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux-x86_64/Release/")
+
+  add_executable(App ${APP_SRCS})
+  add_dependencies(App Zephyros)
+  target_include_directories(App PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+  target_compile_definitions(App PRIVATE -DUSE_CEF ${PLATFORM})
+  target_link_libraries(App PRIVATE Zephyros libcef_dll_wrapper ${CEF_BINARY_DIR}/libcef.so ${CEF_STANDARD_LIBS})
+
+  # set rpath so that libraries can be placed next to the executable
+  set_target_properties(App PROPERTIES
+    INSTALL_RPATH "$ORIGIN"
+    BUILD_WITH_INSTALL_RPATH TRUE
+    RUNTIME_OUTPUT_DIRECTORY ${CEF_TARGET_OUT_DIR}
+  )
+
+
+  # List of CEF binary files.
+  set(CEF_BINARY_FILES
+    libcef.so
+    natives_blob.bin
+    snapshot_blob.bin
+  )
+
+  # List of CEF resource files.
+  set(CEF_RESOURCE_FILES
+    cef.pak
+    cef_100_percent.pak
+    cef_200_percent.pak
+    cef_extensions.pak
+    devtools_resources.pak
+    icudtl.dat
+    locales
+  )
+
+  # copy CEF binary and resource files to the target output directory
+  COPY_FILES(App "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
+  COPY_FILES(App "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
+
+  # copy cefclient resource files to the target output directory
+  COPY_FILES(App "${WEBAPP}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
 endif()

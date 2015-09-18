@@ -55,7 +55,7 @@ enum AlertStyle
 
 
 #ifdef USE_CEF
-    
+
 /**
  * Returns the main browser window instance.
  */
@@ -64,7 +64,7 @@ CefRefPtr<CefBrowser> GetBrowser();
 /**
  * Returns the main application window handle.
  */
-CefWindowHandle GetMainHwnd();
+ClientWindowHandle GetMainHwnd();
 
 /**
  * Initialize the application command line.
@@ -80,10 +80,10 @@ CefRefPtr<CefCommandLine> GetCommandLine();
  * Returns the application settings based on command line arguments.
  */
 void GetSettings(CefSettings& settings);
-    
+
 #endif
 
-    
+
 /**
  * Quits the app.
  */
@@ -118,12 +118,12 @@ void Log(String msg);
  * Displays an error message.
  */
 String ShowErrorMessage();
-    
+
 /**
  * Sets the statuses (checked, enabled, ...) of app menu items.
  */
 void SetMenuItemStatuses(JavaScript::Object items);
-    
+
 /**
  * Returns a reference to the license manager or NULL if there is none.
  */

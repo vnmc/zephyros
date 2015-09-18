@@ -89,6 +89,7 @@ typedef CefRefPtr<CefBrowser> BrowserPtr;
 #define ClientWindowHandle CefWindowHandle
 #endif
 
+// TODO: is this still needed?
 typedef CefWindowHandle WindowHandle;
 
 typedef int CallbackId;

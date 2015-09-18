@@ -91,7 +91,7 @@ void ClientHandler::InitializeMIMETypes()
     m_mimeTypes[TEXT(".xml")] = TEXT("application/xml");
     m_mimeTypes[TEXT(".txt")] = TEXT("text/plain");
     m_mimeTypes[TEXT(".log")] = TEXT("text/plain");
-    
+
     // fonts
     m_mimeTypes[TEXT(".pdf")] = TEXT("application/pdf");
     m_mimeTypes[TEXT(".otf")] = TEXT("application/x-font-otf");
@@ -101,7 +101,7 @@ void ClientHandler::InitializeMIMETypes()
     m_mimeTypes[TEXT(".pfm")] = TEXT("application/x-font-type1");
     m_mimeTypes[TEXT(".afm")] = TEXT("application/x-font-type1");
     m_mimeTypes[TEXT(".woff")] = TEXT("application/font-woff");
-    
+
     // images
     m_mimeTypes[TEXT(".bmp'")] = TEXT("image/bmp");
     m_mimeTypes[TEXT(".cgm")] = TEXT("image/cgm");
@@ -116,7 +116,7 @@ void ClientHandler::InitializeMIMETypes()
     m_mimeTypes[TEXT(".svgz")] = TEXT("image/svg+xml");
     m_mimeTypes[TEXT(".tiff")] = TEXT("image/tiff");
     m_mimeTypes[TEXT(".tif")] = TEXT("image/tiff");
-    
+
     // audio
     m_mimeTypes[TEXT(".au")] = TEXT("audio/basic");
     m_mimeTypes[TEXT(".snd")] = TEXT("audio/basic");
@@ -206,7 +206,7 @@ bool ClientHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefP
     for (CefRefPtr<ProcessMessageDelegate> delegate : m_processMessageDelegates)
         if (delegate->OnProcessMessageReceived(this, browser, source_process, message))
             return true;
-    
+
     return false;
 }
 
@@ -244,7 +244,7 @@ bool ClientHandler::OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDrag
 	CEF_REQUIRE_UI_THREAD();
 
 	Zephyros::GetNativeExtensions()->GetDroppedURLs().clear();
-    
+
     std::vector<CefString> names;
     dragData->GetFileNames(names);
     for (CefString name : names)
@@ -253,7 +253,7 @@ bool ClientHandler::OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDrag
         if (FileUtil::ExistsFile(path))
             Zephyros::GetNativeExtensions()->GetDroppedURLs().push_back(Path(path));
     }
-    
+
     String linkUrl = dragData->GetLinkURL();
     if (!linkUrl.empty())
         Zephyros::GetNativeExtensions()->GetDroppedURLs().push_back(Path(linkUrl));
@@ -317,7 +317,7 @@ void ClientHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 	{
 		{
 			// free the browser pointer so that the browser can be destroyed
-			base::AutoLock lock_scope(m_lock);			
+			base::AutoLock lock_scope(m_lock);
 			m_browser = NULL;
 		}
 	}
@@ -453,7 +453,7 @@ void ClientHandler::CloseAllBrowsers(bool force_close)
 	}
 
 	// request that the main browser close
-	if (m_browser.get())    
+	if (m_browser.get())
 		m_browser->GetHost()->CloseBrowser(force_close);
 }
 
@@ -468,7 +468,7 @@ void ClientHandler::ShowDevTools(CefRefPtr<CefBrowser> browser, const CefPoint& 
 	CefWindowInfo windowInfo;
 	CefBrowserSettings settings;
 
-#if defined(OS_WIN)
+#ifdef OS_WIN
 	windowInfo.SetAsPopup(browser->GetHost()->GetWindowHandle(), "DevTools");
 #endif
 

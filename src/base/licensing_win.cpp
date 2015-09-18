@@ -85,7 +85,7 @@ LicenseData::LicenseData(const TCHAR* szLicenseInformationFilename)
 	HANDLE hFile = CreateFile(szFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	// if the file doesn't exist in the default location, try the /res folder within the program directory
-	if (hFile == INVALID_HANDLE_VALUE) 
+	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		Path path;
 		FileUtil::GetApplicationResourcesPath(path);
@@ -139,7 +139,7 @@ LicenseData::LicenseData(const TCHAR* szLicenseInformationFilename)
 
 		// read license key
 		if (ReadFile(hFile, &len, sizeof(DWORD), &numBytesRead, NULL))
-		{	
+		{
 			if (numBytesRead > 0 && 0 < len && len < 500)
 			{
 				buf = new TCHAR[len];
@@ -264,7 +264,7 @@ String LicenseData::Now()
 		// get the current time
 		SYSTEMTIME time;
 		GetLocalTime(&time);
-		
+
 		std::stringstream ss;
 		ss << time.wYear << "-" << time.wMonth << "-" << time.wDay << "-" << time.wDayOfWeek;
 		std::string strTimestamp = ss.str();
@@ -367,10 +367,10 @@ bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* szPubke
 
 				CryptDestroyHash(hHash);
 			}
-			
+
 			CryptDestroyKey(hPubKey);
 		}
-		
+
 		LocalFree(publicKeyInfo);
     }
 
@@ -535,7 +535,7 @@ public:
 		const TCHAR* szShopURL = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetShopURL();
 		if (szShopURL != NULL && szShopURL[0] != TCHAR('\0'))
     		AddButton(Zephyros::GetString(ZS_DEMODLG_PURCHASE_LICENSE), 114, 172, 80, 14, IDC_PURCHASELICENSE);
-    	
+
 		AddButton(Zephyros::GetString(ZS_DEMODLG_ENTER_LICKEY), 210, 172, 80, 14, IDC_ENTERLICENSEKEY);
 	}
 
@@ -679,10 +679,10 @@ void LicenseManagerImpl::ShowDemoDialog()
 
 	// show the demo dialog
 	m_pDemoDlg = new DemoDialog(GetNumDaysLeft());
-	INT_PTR result = m_pDemoDlg->DoModal();
+	INT_PTR nResult = m_pDemoDlg->DoModal();
 	delete m_pDemoDlg;
 	m_pDemoDlg = NULL;
-	m_canStartApp = result == IDOK;
+	m_canStartApp = nResult == IDOK;
 
 	// check the validity of the demo after 6 hours
 	if (m_canStartApp && !IsActivated())
@@ -831,7 +831,7 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
 					{
 						if (WinHttpReceiveResponse(hRequest, NULL))
 						{
-							char szBuf[BUF_SIZE + 1]; 
+							char szBuf[BUF_SIZE + 1];
 							DWORD dwBytesRead = 0;
 
 							while (WinHttpReadData(hRequest, szBuf, BUF_SIZE, &dwBytesRead))
@@ -868,7 +868,7 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
 
 		WinHttpCloseHandle(hSession);
 	}
-	
+
 	return ret;
 }
 
@@ -905,7 +905,7 @@ String LicenseManagerImpl::DecodeURI(String uri)
 	MultiByteToWideChar(CP_UTF8, 0, (LPCCH) strDecodedUri.c_str(), nUriLen, buf, nWcLen);
 	buf[nWcLen] = 0;
 	String result = String(buf, buf + nWcLen);
-	
+
 	delete[] decodedUri;
 	delete[] buf;
 

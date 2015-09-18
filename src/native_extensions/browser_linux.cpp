@@ -36,6 +36,10 @@ namespace BrowserUtil {
  */
 void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 {
+	if (*ppBrowsers != NULL)
+		return;
+
+	*ppBrowsers = new std::vector<Browser*>();
 }
 
 bool OpenURLInBrowser(String url, Browser* browser)

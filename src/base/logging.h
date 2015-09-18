@@ -15,3 +15,8 @@
 #ifdef OS_WIN
 #define DEBUG_LOG(s) if (Zephyros::UseLogging()) { App::Log(s); }
 #endif
+
+
+#ifdef OS_LINUX
+#define DEBUG_LOG(s) if (Zephyros::UseLogging()) { App::Log(s); }
+#endif

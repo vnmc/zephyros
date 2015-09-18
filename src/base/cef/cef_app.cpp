@@ -56,7 +56,7 @@ CefRefPtr<CefBrowser> GetBrowser()
     return g_handler->GetBrowser();
 }
 
-CefWindowHandle GetMainHwnd()
+ClientWindowHandle GetMainHwnd()
 {
     if (!g_handler.get())
         return NULL;
@@ -66,7 +66,7 @@ CefWindowHandle GetMainHwnd()
 void InitCommandLine(int argc, const char* const* argv)
 {
     g_command_line = CefCommandLine::CreateCommandLine();
-    
+
 #if defined(OS_WIN)
     g_command_line->InitFromString(::GetCommandLineW());
 #else
@@ -88,7 +88,7 @@ void GetSettings(CefSettings& settings)
         return;
 
 	settings.no_sandbox = true;
-    
+
 #if defined(OS_WIN)
     settings.multi_threaded_message_loop = false;// g_command_line->HasSwitch(cefclient::kMultiThreadedMessageLoop);
 #endif

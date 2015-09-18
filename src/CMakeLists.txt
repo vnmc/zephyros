@@ -76,7 +76,6 @@ set(ZEPHYROS__NATIVEEXT_SRCS
   native_extensions/pageimage.h
   native_extensions/path.cpp
   native_extensions/path.h
-  native_extensions/process_manager.h
   native_extensions/updater.h
 )
 set(ZEPHYROS__NATIVEEXT_SRCS_MACOSX
@@ -96,6 +95,7 @@ set(ZEPHYROS__NATIVEEXT_SRCS_WINDOWS
   native_extensions/network_util_win.cpp
   native_extensions/os_util_win.cpp
   native_extensions/pageimage_win.cpp
+  native_extensions/process_manager.h # TODO: rename to win
   native_extensions/process_manager_win.cpp
   native_extensions/updater_win.cpp
 )
@@ -108,7 +108,8 @@ set(ZEPHYROS__NATIVEEXT_SRCS_LINUX
   native_extensions/network_util_linux.cpp
   native_extensions/os_util_linux.cpp
   native_extensions/pageimage_linux.cpp
-  native_extensions/process_manager_linux.cpp
+#  native_extensions/process_manager_linux.cpp
+  native_extensions/updater_linux.cpp
 )
 set(ZEPHYROS__NATIVEEXT_IMPL_SRCS)
 set(ZEPHYROS__NATIVEEXT_STUB_SRCS)
@@ -212,6 +213,7 @@ set(ZEPHYROS_CEF_BASE_SRCS_WINDOWS
   base/cef/resource_util_win.cpp
 )
 set(ZEPHYROS_CEF_BASE_SRCS_LINUX
+  base/cef/resource_util_linux.cpp
   base/cef/resource_util_posix.cpp
 )
 APPEND_PLATFORM_SOURCES(ZEPHYROS_CEF_BASE_SRCS)
@@ -395,6 +397,9 @@ if(OS_MACOSX)
   )
 elseif(OS_WINDOWS)
 elseif(OS_LINUX)
+  # find required libraries and update compiler/linker variables
+  FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0")
+
   add_library(Zephyros STATIC ${ZEPHYROS_CEF_SRCS})
   target_include_directories(Zephyros PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
   target_compile_definitions(Zephyros PRIVATE -DUSE_CEF ${PLATFORM})

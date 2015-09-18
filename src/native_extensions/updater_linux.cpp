@@ -25,10 +25,28 @@
  *******************************************************************************/
 
 
-#include "util/base64.h"
-#include "native_extensions/image_util_linux.h"
+#include "base/cef/client_handler.h"
+#include "base/cef/extension_handler.h"
+
+#include "native_extensions/updater.h"
 
 
-namespace ImageUtil {
+namespace Zephyros {
+namespace UpdaterUtil {
 
-} // namespace ImageUtil
+JavaScript::Object GetSettings()
+{
+    JavaScript::Object settings = JavaScript::CreateObject();
+
+    settings->SetBool("autoCheck", false);
+    settings->SetInt("frequency", 0);
+
+    return settings;
+}
+
+void SetSettings(JavaScript::Object settings)
+{
+}
+
+} // namespace UpdaterUtil
+} // namespace Zephyros

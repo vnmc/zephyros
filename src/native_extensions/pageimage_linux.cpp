@@ -26,6 +26,7 @@
 
 
 #include <queue>
+#include <algorithm>
 
 #include "lib/cef/include/cef_browser.h"
 #include "lib/cef/include/cef_client.h"
@@ -34,11 +35,11 @@
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
 
-#include "native_extensions/image_util_win.h"
+#include "native_extensions/image_util_linux.h"
 #include "native_extensions/pageimage.h"
 
 
-void CALLBACK PaintComplete(HWND, UINT, UINT_PTR, DWORD);
+//void CALLBACK PaintComplete(HWND, UINT, UINT_PTR, DWORD);
 class OffscreenClientHandler;
 
 
@@ -58,16 +59,17 @@ class OffscreenClientHandler : public CefClient, public CefLifeSpanHandler, publ
 {
 private:
 	std::queue<QueueItem*> m_queue;
-	Gdiplus::Bitmap* m_image;
-	UINT_PTR m_timerId;
+//	Gdiplus::Bitmap* m_image;
+//	UINT_PTR m_timerId;
 	int m_numPainted;
 	CefRefPtr<CefBrowser> m_browser;
 
 public:
 	OffscreenClientHandler()
-		: m_timerId(0), m_numPainted(0), m_browser(NULL)
+//		: m_timerId(0), m_numPainted(0), m_browser(NULL)
+		: m_numPainted(0), m_browser(NULL)
 	{
-		m_image = new Gdiplus::Bitmap(Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight, PixelFormat32bppARGB);
+//		m_image = new Gdiplus::Bitmap(Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight, PixelFormat32bppARGB);
 	}
 
 	~OffscreenClientHandler()
@@ -80,13 +82,13 @@ public:
 
 		item->callbackId = callbackId;
 		item->url = url;
-		item->width = min(width, Zephyros::PageImage::ImageWidth);
+		item->width = std::min(width, Zephyros::PageImage::ImageWidth);
 
 		m_queue.push(item);
 
 		if (m_queue.size() == 1)
 		{
-			m_timerId = 0;
+//			m_timerId = 0;
 			m_numPainted = 0;
 
 			if (m_browser && m_browser.get())
@@ -96,8 +98,10 @@ public:
 
 	void ReturnResult()
 	{
+/*
 		if (m_timerId != 0)
 			KillTimer(NULL, m_timerId);
+*/
 
 		if (m_queue.size() == 0)
 			return;
@@ -121,22 +125,27 @@ public:
 */
 
 		// create a PNG and base64-encode it
+/*
 		BYTE* pData = NULL;
 		DWORD length = 0;
 		ImageUtil::BitmapToPNGData(pImage, &pData, &length);
+*/
 		Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
+/*
 		args->SetString(0, TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length));
-
+*/
 		g_handler->GetClientExtensionHandler()->InvokeCallback(item->callbackId, args);
 
+/*
 		delete[] pData;
 		if (pImage != m_image)
 			delete pImage;
+*/
 		delete item;
 
 		// process the next item in the queue
 		m_numPainted = 0;
-		m_timerId = 0;
+//		m_timerId = 0;
 		if (m_queue.size() > 0)
 			m_browser->GetMainFrame()->LoadURL(m_queue.front()->url);
 	}
@@ -154,12 +163,13 @@ public:
     virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser)
 	{
 		m_browser = NULL;
-
+/*
 		if (m_image != NULL)
 		{
 			delete m_image;
 			m_image = NULL;
 		}
+*/
 	}
 
 	virtual CefRefPtr<CefRenderHandler> GetRenderHandler()
@@ -175,7 +185,7 @@ public:
 
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
     {
-		if (m_image == NULL || m_queue.size() == 0)
+		if (/*m_image == NULL ||*/ m_queue.size() == 0)
 			return;
 
 /*
@@ -192,20 +202,21 @@ public:
 		m_numPainted++;
 		if (m_numPainted >= 100)
 			ReturnResult();
-		else
-			m_timerId = SetTimer(NULL, m_timerId, 3000, PaintComplete);
+//		else
+//			m_timerId = SetTimer(NULL, m_timerId, 3000, PaintComplete);
     }
 
 public:
     IMPLEMENT_REFCOUNTING(OffscreenClientHandler);
 };
 
-
+/*
 void CALLBACK PaintComplete(HWND hWnd, UINT uMsg, UINT_PTR timerId, DWORD dwTime)
 {
 	if (g_offscreenHandler && g_offscreenHandler.get())
 		g_offscreenHandler->ReturnResult();
 }
+*/
 
 
 namespace Zephyros {
