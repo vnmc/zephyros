@@ -53,10 +53,10 @@
 namespace Zephyros {
 namespace NetworkUtil {
 
-//
-// Returns the IP address (v4 or v6) from a SOCKADDR pointer.
-// NOTE: InetNtoP exists as of Windows Vista
-//
+/**
+ * Returns the IP address (v4 or v6) from a SOCKADDR pointer.
+ * NOTE: InetNtoP exists as of Windows Vista
+ */
 String GetIPAddress(LPSOCKADDR pAddr)
 {
 	TCHAR buf[MAX_BUF_LEN];
@@ -78,9 +78,9 @@ String GetIPAddress(LPSOCKADDR pAddr)
 	return String(buf);
 }
 
-//
-// Returns an array of network IP addresses.
-//
+/**
+ * Returns an array of network IP addresses.
+ */
 JavaScript::Array GetNetworkIPs()
 {
 	std::set<String> setAddrs;

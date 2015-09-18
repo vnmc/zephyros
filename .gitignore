@@ -18,4 +18,11 @@ debug.log
 /lib/cef/DLL/libcef/x64/Debug
 /lib/cef/DLL/libcef/x64/Release
 /lib/cef/DLL/libcef/x64/Resources
+/lib/cef/DLL/libcef/linux-i386/Debug
+/lib/cef/DLL/libcef/linux-i386/Release
+/lib/cef/DLL/libcef/linux-i386/Resources
+/lib/cef/DLL/libcef/linux-x86_64/Debug
+/lib/cef/DLL/libcef/linux-x86_64/Release
+/lib/cef/DLL/libcef/linux-x86_64/Resources
 /.vs
+*~

@@ -39,18 +39,24 @@ set(ZEPHYROS__BASE_SRCS_MACOSX
 set(ZEPHYROS__BASE_SRCS_WINDOWS
   base/app_win.cpp
 )
+set(ZEPHYROS__BASE_SRCS_LINUX
+  base/app_linux.cpp
+)
 APPEND_PLATFORM_SOURCES(ZEPHYROS__BASE_SRCS)
 source_group(Base FILES ${ZEPHYROS__BASE_SRCS})
 
 # - licensing (base)
 set(ZEPHYROS__BASE_LICENSING_SRCS
-  base/licensing.cpp  
+  base/licensing.cpp
 )
 set(ZEPHYROS__BASE_LICENSING_SRCS_MACOSX
   base/licensing_mac.mm
 )
 set(ZEPHYROS__BASE_LICENSING_SRCS_WINDOWS
   base/licensing_win.cpp
+)
+set(ZEPHYROS__BASE_LICENSING_SRCS_LINUX
+  base/licensing_linux.cpp
 )
 APPEND_PLATFORM_SOURCES(ZEPHYROS__BASE_LICENSING_SRCS)
 source_group(Base FILES ${ZEPHYROS__BASE_LICENSING_SRCS})
@@ -82,21 +88,26 @@ set(ZEPHYROS__NATIVEEXT_SRCS_MACOSX
   native_extensions/network_util_mac.mm
 )
 set(ZEPHYROS__NATIVEEXT_SRCS_WINDOWS
-  native_extensions/browser_win.mm
-  native_extensions/file_util_win.mm
-  native_extensions/file_watcher_win.mm
+  native_extensions/browser_win.cpp
+  native_extensions/file_util_win.cpp
+  native_extensions/file_watcher_win.cpp
   native_extensions/image_util_win.h
-  native_extensions/image_util_win.mm
-  native_extensions/network_util_win.mm
+  native_extensions/image_util_win.cpp
+  native_extensions/network_util_win.cpp
+  native_extensions/os_util_win.cpp
+  native_extensions/pageimage_win.cpp
   native_extensions/process_manager_win.cpp
+  native_extensions/updater_win.cpp
 )
-set(ZEPHYROS__NATIVEEXT_SRCS_WINDOWS
-  native_extensions/browser_linux.mm
-  native_extensions/file_util_linux.mm
-  native_extensions/file_watcher_linux.mm
+set(ZEPHYROS__NATIVEEXT_SRCS_LINUX
+  native_extensions/browser_linux.cpp
+  native_extensions/file_util_linux.cpp
+  native_extensions/file_watcher_linux.cpp
   native_extensions/image_util_linux.h
-  native_extensions/image_util_linux.mm
-  native_extensions/network_util_linux.mm
+  native_extensions/image_util_linux.cpp
+  native_extensions/network_util_linux.cpp
+  native_extensions/os_util_linux.cpp
+  native_extensions/pageimage_linux.cpp
   native_extensions/process_manager_linux.cpp
 )
 set(ZEPHYROS__NATIVEEXT_IMPL_SRCS)
@@ -384,4 +395,7 @@ if(OS_MACOSX)
   )
 elseif(OS_WINDOWS)
 elseif(OS_LINUX)
+  add_library(Zephyros STATIC ${ZEPHYROS_CEF_SRCS})
+  target_include_directories(Zephyros PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+  target_compile_definitions(Zephyros PRIVATE -DUSE_CEF ${PLATFORM})
 endif()

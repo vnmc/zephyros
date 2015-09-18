@@ -181,7 +181,7 @@ add_definitions(-D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS)
 if(OS_LINUX)
   # Platform-specific compiler/linker flags.
   set(CEF_LIBTYPE SHARED)
-  
+
   # -fno-strict-aliasing            = Avoid assumptions regarding non-aliasing of objects of different types
   # -fPIC                           = Generate position-independent code for shared libraries
   # -fstack-protector               = Protect some vulnerable functions from stack-smashing (security feature)
@@ -205,7 +205,7 @@ if(OS_LINUX)
   # -std=gnu++11                    = Use the C++11 language standard including GNU extensions
   # -Wsign-compare                  = Warn about mixed signed/unsigned type comparisons
   set(CEF_CXX_COMPILER_FLAGS "-fno-exceptions -fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -std=gnu++11 -Wsign-compare")
-  
+
   # -O0                             = Disable optimizations
   # -g                              = Generate debug information
   set(CEF_COMPILER_FLAGS_DEBUG    "-O0 -g")
@@ -217,7 +217,7 @@ if(OS_LINUX)
   # -U_FORTIFY_SOURCE               = Undefine _FORTIFY_SOURCE in case it was previously defined
   # -D_FORTIFY_SOURCE=2             = Add memory and string function protection (security feature, related to stack-protector)
   set(CEF_COMPILER_FLAGS_RELEASE "-O2 -fdata-sections -ffunction-sections -fno-ident -DNDEBUG -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2")
-  
+
   # -Wl,--disable-new-dtags         = Don't generate new-style dynamic tags in ELF
   # -Wl,--fatal-warnings            = Treat warnings as errors
   # -Wl,-rpath,.                    = Set rpath so that libraries can be placed next to the executable
@@ -225,7 +225,7 @@ if(OS_LINUX)
   # -Wl,-z,now                      = Resolve symbols on program start instead of on first use (security feature)
   # -Wl,-z,relro                    = Mark relocation sections as read-only (security feature)
   set(CEF_LINKER_FLAGS "-fPIC -pthread -Wl,--disable-new-dtags -Wl,--fatal-warnings -Wl,-rpath,. -Wl,-z,noexecstack -Wl,-z,now -Wl,-z,relro")
-  
+
   # -Wl,-O1                         = Enable linker optimizations
   # -Wl,--as-needed                 = Only link libraries that export symbols used by the binary
   # -Wl,--gc-sections               = Remove unused code resulting from -fdata-sections and -function-sections
@@ -280,7 +280,6 @@ if(OS_LINUX)
 
   # List of CEF binary files.
   set(CEF_BINARY_FILES
-    chrome-sandbox
     libcef.so
     natives_blob.bin
     snapshot_blob.bin
@@ -340,7 +339,7 @@ if(OS_MACOSX)
   # -O3                             = Optimize for maximum speed plus a few extras
   set(CEF_COMPILER_FLAGS_RELEASE  "-O3")
   # -Wl,-search_paths_first         = Search for static or shared library versions in the same pass
-  # -Wl,-ObjC                       = Support creation of creation of ObjC static libraries 
+  # -Wl,-ObjC                       = Support creation of creation of ObjC static libraries
   # -Wl,-pie                        = Generate position-independent code suitable for executables only
   #set(CEF_LINKER_FLAGS            "-Wl,-search_paths_first -Wl,-ObjC -Wl,-pie")
   set(CEF_LINKER_FLAGS            "-Xlinker -rpath -Xlinker @executable_path/../Frameworks -fobjc-arc -fobjc-link-runtime")
@@ -403,22 +402,22 @@ if(OS_WINDOWS)
   # /wd"4702"             = Ignore "unreachable code" warning
   # /wd"4996"             = Ignore "function or variable may be unsafe" warning
   set(CEF_COMPILER_FLAGS          "/MP /Gy /GR- /Zi /W4 /WX /wd\"4100\" /wd\"4127\" /wd\"4244\" /wd\"4512\" /wd\"4701\" /wd\"4702\" /wd\"4996\"")
-  
+
   # /MTd                  = Multithreaded debug runtime
   # /Od                   = Disable optimizations
   # /RTC1                 = Enable basic run-time checks
   set(CEF_COMPILER_FLAGS_DEBUG    "/MTd /RTC1 /Od")
-  
+
   # /MT                   = Multithreaded release runtime
   # /O2                   = Optimize for maximum speed
   # /Ob2                  = Inline any suitable function
   # /GF                   = Enable string pooling
   # /D NDEBUG /D _NDEBUG  = Not a debug build
   set(CEF_COMPILER_FLAGS_RELEASE  "/MT /O2 /Ob2 /GF /D NDEBUG /D _NDEBUG")
-  
+
   # /DEBUG                = Generate debug information
   set(CEF_LINKER_FLAGS_DEBUG      "/DEBUG")
-  
+
   # /MANIFEST:NO          = No default manifest (see ADD_WINDOWS_MANIFEST macro usage)
   set(CEF_EXE_LINKER_FLAGS        "/MANIFEST:NO")
 
