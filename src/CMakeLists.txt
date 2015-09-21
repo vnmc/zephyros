@@ -398,7 +398,7 @@ if(OS_MACOSX)
 elseif(OS_WINDOWS)
 elseif(OS_LINUX)
   # find required libraries and update compiler/linker variables
-  FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0")
+  FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-3.0 gthread-2.0")
 
   add_library(Zephyros STATIC ${ZEPHYROS_CEF_SRCS})
   target_include_directories(Zephyros PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)

@@ -121,7 +121,7 @@ elseif(OS_WINDOWS)
 elseif(OS_LINUX)
   # find required libraries and update compiler/linker variables
   set(CEF_STANDARD_LIBS X11)
-  FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0")
+  FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-3.0 gthread-2.0")
 
   set(CEF_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux-x86_64/Resources/")
   set(CEF_BINARY_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux-x86_64/Release/")

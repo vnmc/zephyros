@@ -50,23 +50,27 @@ String GetOSVersion();
 String GetComputerName();
 String GetUserName();
 String GetHomeDirectory();
-    
+
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd);
+
+#ifdef OS_LINUX
+String Exec(String command);
+#endif
 
 MenuHandle CreateContextMenu(JavaScript::Array menuItems);
 String ShowContextMenu(MenuHandle nMenuHandle, int x, int y);
-    
+
 #ifdef OS_WIN
 void GetWindowBorderSize(POINT* pPtBorder);
 #endif
 
 void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bool hasHeight, int* pNewWidth, int* pNewHeight);
 void SetMinimumWindowSize(int width, int height);
-    
+
 void DisplayNotification(String title, String details);
-    
+
 void RequestUserAttention();
-    
+
 void CopyToClipboard(String text);
 
 void CleanUp();

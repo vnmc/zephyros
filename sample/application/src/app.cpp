@@ -59,7 +59,7 @@ class MyNativeExtensions : public Zephyros::DefaultNativeExtensions
 				int n = args->GetInt(0);
 				long a = 0;
 				long b = 1;
-				
+
 				for (int i = 0; i < n; i++)
 				{
 					long c = a + b;
@@ -91,14 +91,14 @@ int MAIN(MAIN_ARGS)
 	Zephyros::SetNativeExtensions(new MyNativeExtensions());
 
 	//Zephyros::SetUpdaterURL(UPDATER_URL);
-    
+
     //Zephyros::UseLogging(true);
 
 #ifdef OS_WIN
 	Zephyros::SetWindowsInfo(TEXT("Software\\Vanamco\\ZephyrosSampleApp"), IDI_ZEPHYROS_SAMPLEAPP, IDC_ZEPHYROS_SAMPLEAPP, IDC_ZEPHYROS_SAMPLEAPP);
 	#include "..\res\windows\content.cpp"
 #endif
-    
+
 #ifdef OS_MACOSX
     Zephyros::SetOSXInfo(TEXT("Localizable"));
 #endif
