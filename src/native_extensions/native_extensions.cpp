@@ -26,6 +26,8 @@
  *******************************************************************************/
 
 
+#include <map>
+
 #include "base/app.h"
 #include "base/types.h"
 
@@ -154,7 +156,15 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptProcedure(
         TEXT("setMenuItemStatuses"),
         FUNC({
-            App::SetMenuItemStatuses(args->GetDictionary(0));
+            JavaScript::Object items = args->GetDictionary(0);
+            App::MenuItemStatuses statuses;
+        
+            JavaScript::KeyList keys;
+            items->GetKeys(keys);
+            for (JavaScript::KeyType commandId : keys)
+                statuses[commandId] = items->GetInt(commandId);
+
+            App::SetMenuItemStatuses(statuses);
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "items")

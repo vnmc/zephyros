@@ -300,15 +300,9 @@ set(ZEPHYROS_APPSTORE_SRCS
 # Configuration
 ###############################################################################
 
-if(OS_WINDOWS)
-  set(PLATFORM -DOS_WIN)
-elseif(OS_MACOSX)
-  set(PLATFORM -DOS_MACOSX)
-elseif(OS_LINUX)
-  set(PLATFORM -DOS_LINUX)
-endif()
-
 if(OS_MACOSX)
+  set(CMAKE_MACOSX_RPATH 1)
+
   find_library(LIB_APPKIT AppKit)
   find_library(LIB_COCOA Cocoa)
   find_library(LIB_WEBKIT WebKit)
@@ -317,39 +311,33 @@ if(OS_MACOSX)
   find_library(LIB_SYSTEMCONFIGURATION SystemConfiguration)
   find_library(LIB_SECURITY Security)
   find_library(LIB_SPARKLE Sparkle PATHS ${CMAKE_SOURCE_DIR}/lib)
-  find_library(LIB_CEF "Chromium Embedded Framework" PATHS ${CMAKE_SOURCE_DIR}/lib)
+  find_library(LIB_CEF "Chromium Embedded Framework" PATHS ${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/mac)
 
   set(DEFAULT_LIBS ${LIB_APPKIT} ${LIB_COCOA} ${LIB_WEBKIT} ${LIB_IOKIT} ${LIB_SYSTEMCONFIGURATION} ${LIB_SECURITY})
 endif()
 
 SET_CEF_TARGET_OUT_DIR()
-
-set(DIR_ZEPHYROS_BIN ${CEF_TARGET_OUT_DIR} PARENT_SCOPE)
-set(DIR_ZEPHYROS_LIB ${CMAKE_SOURCE_DIR}/lib PARENT_SCOPE)
-#set(DIR_ZEPHYROS_BIN "/Users/christen/Projects/zephyros/build/src/Debug" PARENT_SCOPE)
-
+set(ZEPHYROS_BUILD_DIR ${CEF_TARGET_OUT_DIR} PARENT_SCOPE)
 
 if(OS_MACOSX)
   # CEF configuration
   add_library(Zephyros_CEF SHARED ${ZEPHYROS_CEF_SRCS})
   add_dependencies(Zephyros_CEF libcef_dll_wrapper)
-  #set_property(SOURCE zephyros.h
-  #  PROPERTY MACOSX_PACKAGE_LOCATION Headers
-  #  )
-  #set(foo_ver ver4)
   target_include_directories(Zephyros_CEF PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
   target_compile_definitions(Zephyros_CEF PRIVATE -DUSE_CEF ${PLATFORM})
   target_link_libraries(Zephyros_CEF PUBLIC ${DEFAULT_LIBS} ${LIB_SPARKLE} ${LIB_CEF} libcef_dll_wrapper)
+  #set_source_files_properties()
+  #set_property(SOURCE zephyros.h
+  #  PROPERTY MACOSX_PACKAGE_LOCATION Headers
+  #  )
   set_target_properties(Zephyros_CEF PROPERTIES
     FRAMEWORK TRUE
     PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS}"
     RESOURCE "res/mac/LicenseCheckWindowController.xib"
-    MACOSX_RPATH "@rpath"
     INSTALL_NAME_DIR "@rpath"
-    DEBUG_POSTFIX -d
   )
   EMBED_FRAMEWORK(Zephyros_CEF ${LIB_SPARKLE})
-  FIX_MACOSX_MAIN_FRAMEWORK_LINK(Zephyros_CEF ${CEF_TARGET_OUT_DIR})
+  FIX_MACOSX_MAIN_FRAMEWORK_LINK(Zephyros_CEF ${CEF_TARGET_OUT_DIR} YES)
 
   # CEF Helper configuration
   add_library(Zephyros_CEF_Helper SHARED ${ZEPHYROS_CEFHELPER_SRCS})
@@ -360,9 +348,7 @@ if(OS_MACOSX)
   set_target_properties(Zephyros_CEF_Helper PROPERTIES
     FRAMEWORK TRUE
     PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS}"
-    MACOSX_RPATH "@rpath"
     INSTALL_NAME_DIR "@rpath"
-    DEBUG_POSTFIX -d
   )
   FIX_MACOSX_HELPER_FRAMEWORK_LINK(Zephyros_CEF_Helper ${CEF_TARGET_OUT_DIR})
 
@@ -375,10 +361,7 @@ if(OS_MACOSX)
     FRAMEWORK TRUE
     PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};base/webview/jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
     RESOURCE "res/mac/MainWindow.xib;res/mac/LicenseCheckWindowController.xib"
-    MACOSX_RPATH "@rpath"
-#    INSTALL_NAME_DIR "@rpath"
-    INSTALL_NAME_DIR "@executable_path/../../../Library/Frameworks"
-    DEBUG_POSTFIX -d
+    INSTALL_NAME_DIR "@rpath"
   )
   EMBED_FRAMEWORK(Zephyros_WebView ${LIB_SPARKLE})
 
@@ -391,9 +374,7 @@ if(OS_MACOSX)
     FRAMEWORK TRUE
     PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};base/webview/jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
     RESOURCE "res/mac/MainWindow.xib"
-    MACOSX_RPATH "@rpath"
     INSTALL_NAME_DIR "@rpath"
-    DEBUG_POSTFIX -d
   )
 elseif(OS_WINDOWS)
 elseif(OS_LINUX)

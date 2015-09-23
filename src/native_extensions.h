@@ -219,19 +219,6 @@ private:
 
 #ifdef USE_CEF
 
-
-#if defined(OS_LINUX)
-// The Linux client uses GTK instead of the underlying platform type (X11).
-#include <gtk/gtk.h>
-#define ClientWindowHandle GtkWidget*
-#else
-#define ClientWindowHandle CefWindowHandle
-#endif
-
-typedef CefWindowHandle WindowHandle;
-
-
-
 // ClientHandler implementation.
 class ClientHandler : public CefClient,
                       public CefContextMenuHandler,

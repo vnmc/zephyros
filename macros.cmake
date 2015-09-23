@@ -6,6 +6,28 @@
 # Shared macros.
 #
 
+
+# Determine the platform.
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+  set(OS_MACOSX 1)
+  set(OS_POSIX 1)
+elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+  set(OS_LINUX 1)
+  set(OS_POSIX 1)
+elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+  set(OS_WINDOWS 1)
+endif()
+
+# define the platform preprocessor definition
+if(OS_WINDOWS)
+  set(PLATFORM -DOS_WIN)
+elseif(OS_MACOSX)
+  set(PLATFORM -DOS_MACOSX)
+elseif(OS_LINUX)
+  set(PLATFORM -DOS_LINUX)
+endif()
+
+
 # Append platform specific sources to a list of sources.
 macro(APPEND_PLATFORM_SOURCES name_of_list)
   if(OS_LINUX AND ${name_of_list}_LINUX)
@@ -66,6 +88,19 @@ macro(COPY_FILES target file_list source_dir target_dir)
         )
     endif()
   endforeach()
+endmacro()
+
+# Copy a file/directory keeping symbolic links
+macro(COPY_R target src dest)
+  get_filename_component(directory_path "${dest}" DIRECTORY)
+  add_custom_command(
+    TARGET ${target}
+    POST_BUILD
+    COMMAND mkdir -p "${directory_path}"
+    COMMAND rm -rf "${dest}"
+    COMMAND cp -R "${src}" "${dest}"
+    VERBATIM
+  )
 endmacro()
 
 # Rename a directory replacing the target if it already exists.
@@ -175,46 +210,43 @@ endfunction()
 macro(FIX_MACOSX_HELPER_FRAMEWORK_LINK target app_path)
   get_property(target_type TARGET ${target} PROPERTY TYPE)
   if(${target_type} STREQUAL "SHARED_LIBRARY")
-    # embed in framework
-    add_custom_command(TARGET ${target}
-      POST_BUILD
-      COMMAND install_name_tool -change "@executable_path/Chromium Embedded Framework"
-              "@executable_path/../../../../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework"
-              "${app_path}/${target}.framework/Versions/Current/${target}"
-      VERBATIM
-    )
+    set(framework_path "${app_path}/${target}.framework/Versions/Current/${target}")
   else()
-    add_custom_command(TARGET ${target}
-      POST_BUILD
-      COMMAND install_name_tool -change "@executable_path/Chromium Embedded Framework"
-              "@executable_path/../../../../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework"
-              "${app_path}/${target}.app/Contents/MacOS/${target}"
-      VERBATIM
-    )
+    set(framework_path "${app_path}/${target}.app/Contents/MacOS/${target}")
   endif()
+
+  # embed in framework/app bundle
+  add_custom_command(TARGET ${target}
+    POST_BUILD
+    COMMAND install_name_tool -change
+      "@executable_path/Chromium Embedded Framework"
+      "@executable_path/../../../../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework"
+      "${framework_path}"
+    VERBATIM
+  )
 endmacro()
 
 # Fix the framework link in the main executable.
-macro(FIX_MACOSX_MAIN_FRAMEWORK_LINK target app_path)
+macro(FIX_MACOSX_MAIN_FRAMEWORK_LINK target app_path use_rpath)
   get_property(target_type TARGET ${target} PROPERTY TYPE)
   if(${target_type} STREQUAL "SHARED_LIBRARY")
-    # embed in framework
-    add_custom_command(TARGET ${target}
-      POST_BUILD
-      COMMAND install_name_tool -change "@executable_path/Chromium Embedded Framework"
-              "@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework"
-              "${app_path}/${target}.framework/Versions/Current/${target}"
-      VERBATIM
-    )
+    set(framework_path "${app_path}/${target}.framework/Versions/Current/${target}")
   else()
-    add_custom_command(TARGET ${target}
-      POST_BUILD
-      COMMAND install_name_tool -change "@executable_path/Chromium Embedded Framework"
-              "@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework"
-              "${app_path}/${target}.app/Contents/MacOS/${target}"
-      VERBATIM
-    )
+    set(framework_path "${app_path}/${target}.app/Contents/MacOS/${target}")
   endif()
+
+  if(${use_rpath})
+    set(install_path "@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework")
+  else()
+    set(install_path "@executable_path/../Chromium Embedded Framework.framework/Chromium Embedded Framework")
+  endif()
+
+  # embed in framework/app bundle
+  add_custom_command(TARGET ${target}
+    POST_BUILD
+    COMMAND install_name_tool -change "@executable_path/Chromium Embedded Framework" "${install_path}" "${framework_path}"
+    VERBATIM
+  )
 endmacro()
 
 # Make the other helper app bundles.
@@ -224,7 +256,7 @@ macro(MAKE_MACOSX_HELPERS target app_path)
     # The exported variables need to be set for generators other than Xcode.
     COMMAND export BUILT_PRODUCTS_DIR=${app_path} &&
             export CONTENTS_FOLDER_PATH=${target}.app/Contents &&
-            tools/make_more_helpers.sh "Frameworks" "${target}"
+            ${ZEPHYROS_DIR}/tools/make_more_helpers.sh "Frameworks" "${target}"
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     VERBATIM
     )
@@ -281,22 +313,12 @@ macro(EMBED_FRAMEWORK target framework)
     set(outdir "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>")
   endif()
 
-  get_filename_component(framework_name ${framework} NAME)
+  get_filename_component(framework_name "${framework}" NAME)
   get_property(target_type TARGET ${target} PROPERTY TYPE)
   if(${target_type} STREQUAL "SHARED_LIBRARY")
-    add_custom_command(
-      TARGET ${target}
-      POST_BUILD
-      # copy frameworks into the Frameworks directory
-      COMMAND ${CMAKE_COMMAND} -E copy_directory "${framework}" "${outdir}/${target}.framework/Versions/Current/Frameworks/${framework_name}" VERBATIM
-    )
+    COPY_R(${target} "${framework}" "${outdir}/${target}.framework/Versions/Current/Frameworks/${framework_name}")
   else()
-    add_custom_command(
-      TARGET ${target}
-      POST_BUILD
-      # copy frameworks into the Frameworks directory
-      COMMAND ${CMAKE_COMMAND} -E copy_directory "${framework}" "${outdir}/${target}.app/Contents/Frameworks/${framework_name}" VERBATIM
-    )
+    COPY_R(${target} "${framework}" "${outdir}/${target}.app/Contents/Frameworks/${framework_name}")
   endif()
 endmacro()
 
@@ -308,15 +330,7 @@ macro(EMBED_HELPERS target target_helper)
     set(outdir "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>")
   endif()
 
-  add_custom_command(
-    TARGET ${target}
-    POST_BUILD
-    # Copy the helper app bundle into the Frameworks directory.
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${outdir}/${target_helper}.app"
-            "${outdir}/${target}.app/Contents/Frameworks/${target_helper}.app"
-    VERBATIM
-  )
+  COPY_R(${target} "${outdir}/${target_helper}.app" "${outdir}/${target}.app/Contents/Frameworks/${target_helper}.app")
   MAKE_MACOSX_HELPERS(${target} ${outdir})
 endmacro()
 

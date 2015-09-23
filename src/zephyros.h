@@ -66,6 +66,26 @@ typedef std::string String;
 #endif  // OS_WIN
 
 
+#ifdef USE_CEF
+
+#ifndef CefWindowHandle
+#define CefWindowHandle void*
+#endif
+
+#ifdef OS_LINUX
+// The Linux client uses GTK instead of the underlying platform type (X11).
+#include <gtk/gtk.h>
+#define ClientWindowHandle GtkWidget*
+#else
+#define ClientWindowHandle CefWindowHandle
+#endif
+
+// TODO: is this still needed?
+//typedef CefWindowHandle WindowHandle;
+
+#endif
+
+
 namespace Zephyros {
 
 class NativeExtensions;
@@ -96,7 +116,18 @@ typedef struct
 {
     TCHAR* szStringTableName;
 } OSXInfo;
+    
+    
+namespace App {
 
+enum AlertStyle
+{
+    AlertInfo,
+    AlertWarning,
+    AlertError
+};
+
+} // namespace App
 } // namespace Zephyros
 
 

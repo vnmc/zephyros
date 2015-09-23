@@ -81,17 +81,6 @@ class CefBrowser;
 typedef CefRefPtr<Zephyros::ClientHandler> ClientHandlerPtr;
 typedef CefRefPtr<CefBrowser> BrowserPtr;
 
-#if defined(OS_LINUX)
-// The Linux client uses GTK instead of the underlying platform type (X11).
-#include <gtk/gtk.h>
-#define ClientWindowHandle GtkWidget*
-#else
-#define ClientWindowHandle CefWindowHandle
-#endif
-
-// TODO: is this still needed?
-typedef CefWindowHandle WindowHandle;
-
 typedef int CallbackId;
 
 #endif  // USE_CEF
