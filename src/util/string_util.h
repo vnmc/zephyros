@@ -11,7 +11,10 @@
 
 
 #include <string>
+#include <vector>
 #include "base/types.h"
+
+#include "zephyros.h"
 
 
 #ifdef USE_CEF
@@ -26,6 +29,16 @@ String StringReplace(const String& str, const String& from, const String& to);
 
 // Tests whether str ends with suffix.
 bool StringEndsWith(const String& str, const String& suffix);
+
+std::vector<String>& Split(const String &s, TCHAR delim, std::vector<String> &elems);
+
+std::vector<String> Split(const String &s, TCHAR delim);
+
+String& LTrim(String &s);
+
+String& RTrim(String &s);
+
+String& Trim(String &s);
 
 
 #endif // Zephyros_StringUtil_h

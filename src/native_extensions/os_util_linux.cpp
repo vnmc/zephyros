@@ -28,6 +28,8 @@
 #include <vector>
 #include <map>
 
+#include <sys/utsname.h>
+
 #include "base/app.h"
 
 #include "base/cef/client_handler.h"
@@ -44,6 +46,17 @@ extern int g_nMinWindowHeight;
 
 namespace Zephyros {
 namespace OSUtil {
+
+String GetOSVersion()
+{
+    utsname info;
+    uname(&info);
+
+    StringStream ss;
+    ss << info.sysname << TEXT("-") << info.version;
+
+    return ss.str();
+}
 
 String GetUserName()
 {
@@ -66,6 +79,25 @@ String GetComputerName()
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
 {
     // TODO: implement
+}
+
+String Exec(String command)
+{
+    FILE* pipe = popen(command.c_str(), TEXT("r"));
+    if (!pipe)
+    	return TEXT("");
+
+    char buffer[128];
+    StringStream result;
+
+    while (!feof(pipe))
+    {
+    	if (fgets(buffer, 128, pipe) != NULL)
+    		result << buffer;
+    }
+
+    pclose(pipe);
+    return result.str();
 }
 
 MenuHandle CreateContextMenu(JavaScript::Array menuItems)

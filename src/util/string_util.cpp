@@ -5,8 +5,12 @@
  *******************************************************************************/
 
 
+#include <iostream>
+#include <algorithm>
+#include <functional>
+#include <cctype>
+
 #include "util/string_util.h"
-#include "zephyros.h"
 
 #ifdef USE_CEF
 #include "lib/cef/include/cef_request.h"
@@ -43,7 +47,7 @@ void DumpRequestContents(CefRefPtr<CefRequest> request, String& str)
             for (; it != elements.end(); ++it)
             {
                 element = (*it);
-                
+
                 if (element->GetType() == PDE_TYPE_BYTES)
                 {
                     // the element is composed of bytes
@@ -87,7 +91,7 @@ String StringReplace(const String& str, const String& from, const String& to)
             pos += to_len;
         }
     } while (pos != String::npos);
-    
+
     return result;
 }
 
@@ -99,4 +103,49 @@ bool StringEndsWith(const String& str, const String& suffix)
 	if (lenSuffix > lenStr)
 		return false;
 	return str.compare(lenStr - lenSuffix, lenSuffix, suffix) == 0;
+}
+
+std::vector<String>& Split(const String &s, TCHAR delim, std::vector<String> &elems)
+{
+    StringStream ss(s);
+    String item;
+
+    while (std::getline(ss, item, delim))
+        elems.push_back(item);
+
+    return elems;
+}
+
+
+std::vector<String> Split(const String &s, TCHAR delim)
+{
+    std::vector<String> elems;
+    Split(s, delim, elems);
+    return elems;
+}
+
+/**
+ * Trim from start.
+ */
+String& LTrim(String &s)
+{
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+}
+
+/**
+ * Trim from end.
+ */
+String& RTrim(String &s)
+{
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
+/**
+ * Trim from both ends.
+ */
+String& Trim(String &s)
+{
+    return LTrim(RTrim(s));
 }

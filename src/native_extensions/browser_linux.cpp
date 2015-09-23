@@ -26,6 +26,11 @@
 
 
 #include "native_extensions/browser.h"
+#include "native_extensions/os_util.h"
+
+#include "util/string_util.h"
+
+#include "zephyros.h"
 
 
 namespace Zephyros {
@@ -40,10 +45,31 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 		return;
 
 	*ppBrowsers = new std::vector<Browser*>();
+
+    String strRet = OSUtil::Exec(TEXT("apropos \"web browser\""));
+    std::vector<String> vecRet = Split(strRet, TEXT('\n'));
+    for (String strLine : vecRet)
+    {
+        size_t pos = strLine.find(TEXT(' '));
+        if (pos != String::npos)
+        {
+            String strBrowserName = strLine.substr(0, pos);
+
+            String strWhichCmd = TEXT("which ");
+            strWhichCmd.append(strBrowserName);
+            String strPath = OSUtil::Exec(strWhichCmd);
+            Trim(strPath);
+
+            if (strPath.length() > 0)
+                (*ppBrowsers)->push_back(new Browser(strBrowserName, TEXT(""), strPath, TEXT(""), false));
+        }
+    }
 }
 
 bool OpenURLInBrowser(String url, Browser* browser)
 {
+    // TODO: open "url" in "browser"
+
     return false;
 }
 
