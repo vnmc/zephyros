@@ -164,6 +164,8 @@ int RunApplication(int argc, char* argv[])
 	// initialize CEF
 	CefInitialize(main_args, settings, app.get(), NULL);
 
+    gtk_init(&argc, &argv);
+
 	// check the license
 	Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
 	if (pMgr)
@@ -192,8 +194,6 @@ int RunApplication(int argc, char* argv[])
 
 void CreateMainWindow(int argc, char** argv)
 {
-    gtk_init(&argc, &argv);
-
     GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
 
@@ -201,7 +201,7 @@ void CreateMainWindow(int argc, char** argv)
     g_signal_connect(window, "window-state-event", G_CALLBACK(OnWindowState), NULL);
     g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(OnWindowConfigure), NULL);
 
-    GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+    GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     g_signal_connect(vbox, "size-allocate", G_CALLBACK(OnVboxSizeAllocated), NULL);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
@@ -466,11 +466,7 @@ void SetUserAgentString(CefSettings& settings)
 {
 	std::stringstream ssUserAgent;
 
-	// TODO: OS version needed?
-
-	String strAppName(Zephyros::GetAppName());
-	String strAppVersion(Zephyros::GetAppVersion());
-	ssUserAgent << std::string(strAppName.begin(), strAppName.end()) << " " << std::string(strAppVersion.begin(), strAppVersion.end()) << "; Linux; ";
+	ssUserAgent << Zephyros::GetAppName() << " " << Zephyros::GetAppVersion() << "; " << Zephyros::OSUtil::GetOSVersion();
 
 	bool isLangAdded = false;
 

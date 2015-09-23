@@ -73,23 +73,23 @@ typedef struct
 {
     LicenseInfo currentLicenseInfo;
     std::vector<LicenseInfo> prevLicenseInfo;
-    
+
     int numDemoDays;
-    
+
     const TCHAR* demoTokensURL;
     const TCHAR* activationURL;
     const TCHAR* deactivationURL;
-    
+
     const TCHAR* shopURL;
     const TCHAR* upgradeURL;
-    
+
     const TCHAR* activationLinkPrefix;
-    
+
     const TCHAR* licenseInfoFilename;
 
     ReceiptChecker* pReceiptChecker;
 } LicenseManagerConfig;
-    
+
 } // namespace Zephyros
 
 
@@ -97,7 +97,7 @@ typedef struct
 // Classes
 
 namespace Zephyros {
-    
+
 class LicenseData
 {
 	friend class LicenseManagerImpl;
@@ -108,7 +108,7 @@ public:
     {
         if (m_demoTokens.size() == 0)
             return false;
-        
+
         String hash = LicenseData::Now();
         if (m_timestampLastDemoTokenUsed == TEXT("") || m_timestampLastDemoTokenUsed != hash)
         {
@@ -116,7 +116,7 @@ public:
             m_timestampLastDemoTokenUsed = hash;
             Save();
         }
-        
+
         return true;
     }
 
@@ -124,10 +124,10 @@ public:
 
 private:
 	void Save();
-    
+
     static String Encrypt(String s);
     static String Decrypt(String s);
-    
+
     const TCHAR* m_szLicenseInfoFilename;
 
 	std::vector<String> m_demoTokens;
@@ -136,7 +136,7 @@ private:
     String m_licenseKey;
     String m_name;
     String m_company;
-    
+
     static char gheim[129];
 };
 
@@ -183,7 +183,7 @@ class LicenseManagerImpl : public AbstractLicenseManager
 public:
 	LicenseManagerImpl();
 	virtual ~LicenseManagerImpl();
-    
+
     inline void SetLicenseInfo(int productId, const TCHAR* szPublicKey)
 	{
 		m_config.currentLicenseInfo.productId = productId;
@@ -195,30 +195,30 @@ public:
 		 LicenseInfo info;
 		info.productId = productId;
 		info.pubkey = szPublicKey;
-        
+
 		m_config.prevLicenseInfo.push_back(info);
 	}
-    
+
 	inline int GetNumberOfDemoDays() { return m_config.numDemoDays; }
 	inline void SetNumberOfDemoDays(int numDemoDays) { m_config.numDemoDays = numDemoDays; }
-    
+
     inline void SetAPIURLs(const TCHAR* demoTokensURL, const TCHAR* activationURL, const TCHAR* deactivationURL)
 	{
 		m_config.demoTokensURL = demoTokensURL;
 		m_config.activationURL = activationURL;
 		m_config.deactivationURL = deactivationURL;
 	}
-    
+
 	inline const TCHAR* GetShopURL() { return m_config.shopURL; }
 	inline void SetShopURL(const TCHAR* shopURL) { m_config.shopURL = shopURL; }
-    
+
 	inline const TCHAR* GetUpgradeURL() { return m_config.upgradeURL; }
 	inline void SetUpgradeURL(const TCHAR* upgradeURL) { m_config.upgradeURL = upgradeURL; }
-    
+
 	inline void SetActivationLinkPrefix(const TCHAR* activationLinkPrefix) { m_config.activationLinkPrefix = activationLinkPrefix; }
-    
+
 	inline void SetLicenseInfoFilename(const TCHAR* licenseInfoFilename) { m_config.licenseInfoFilename = licenseInfoFilename; }
-    
+
 	inline ReceiptChecker* GetReceiptChecker() { return m_config.pReceiptChecker; }
 	inline void SetReceiptChecker(ReceiptChecker* pReceiptChecker) { m_config.pReceiptChecker = pReceiptChecker; }
 
@@ -228,7 +228,7 @@ public:
     virtual void Start();
 
 	bool RequestDemoTokens(String strMACAddr = TEXT(""));
-    
+
     String DecodeURI(String uri);
 
 	int Activate(String name, String company, String licenseKey);
@@ -239,7 +239,7 @@ public:
     {
         if (!m_config.activationLinkPrefix || !url)
             return false;
-        
+
         size_t len = _tcslen(m_config.activationLinkPrefix);
         return _tcsnccmp(url, m_config.activationLinkPrefix, len) == 0;
     }
@@ -254,7 +254,7 @@ public:
         // has the demo been started yet? if not, request demo tokens
         if (m_pLicenseData->m_demoTokens.size() == 0 && m_pLicenseData->m_timestampLastDemoTokenUsed == TEXT(""))
             return m_canStartApp = RequestDemoTokens();
-        
+
         if (!m_pLicenseData->GetDemoToken() || !VerifyAll(m_pLicenseData->m_demoTokens.at(0), NetworkUtil::GetAllMACAddresses(), m_config.currentLicenseInfo.pubkey))
         {
             // invalid token; destroy demo tokens
@@ -263,10 +263,10 @@ public:
             m_canStartApp = false;
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Check whether the demo is still valid.
      * If the product hasn't been activated, the demo dialog is shown.
@@ -281,19 +281,24 @@ public:
             return true;
         m_lastDemoValidityCheck = tick;
 #endif
-        
+
         // nothing to do if the app has been activated
         if (IsActivated())
             return true;
-        
+
         // consume a token if it isn't the same day
         m_canStartApp = false;
         m_pLicenseData->GetDemoToken();
         ShowDemoDialog();
         return false;
     }
-    
+
     virtual void ShowEnterLicenseDialog();
+
+#ifdef OS_LINUX
+    void ShowUpgradeLicenseDialog();
+#endif
+
     virtual void OpenPurchaseLicenseURL();
     void OpenUpgradeLicenseURL();
 
@@ -308,23 +313,23 @@ public:
         bool ret =
             m_pLicenseData->m_activationCookie.length() > 0 &&
             VerifyAll(m_pLicenseData->m_activationCookie, NetworkUtil::GetAllMACAddresses(), m_config.currentLicenseInfo.pubkey);
-        
+
 #ifdef OS_MACOSX
         // on Mac, if the activation check wasn't successful, also check whether there
         // is a AppStore receipt, and validate it
         if (!ret)
             ret = CheckReceipt();
 #endif
-        
+
         // try to activate with stored license
         if (!ret && m_pLicenseData->m_licenseKey != TEXT(""))
             ret = Activate(m_pLicenseData->m_name, m_pLicenseData->m_company, m_pLicenseData->m_licenseKey) == ACTIVATION_SUCCEEDED;
-            
+
         return ret;
     }
-    
+
     inline bool HasDemoTokens() { return m_pLicenseData->m_demoTokens.size() > 0; }
-    
+
     inline virtual JavaScript::Object GetLicenseInformation() final
     {
         JavaScript::Object info = JavaScript::CreateObject();
@@ -332,39 +337,39 @@ public:
         info->SetString(TEXT("licenseKey"), m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT(""));
         info->SetString(TEXT("fullName"), m_pLicenseData ? m_pLicenseData->m_name : TEXT(""));
         info->SetString(TEXT("company"), m_pLicenseData ? m_pLicenseData->m_company : TEXT(""));
-        
+
         return info;
     }
-    
+
     bool CheckReceipt();
 
 	String GetDemoButtonCaption();
 	String GetDaysCountLabelText();
-    
+
 private:
     inline void InitConfig()
     {
         m_pLicenseData = NULL;
-        
+
         m_config.currentLicenseInfo.productId = 0;
         m_config.currentLicenseInfo.pubkey = NULL;
-        
+
         m_config.numDemoDays = 7;
-        
+
         m_config.demoTokensURL = NULL;
         m_config.activationURL = NULL;
         m_config.deactivationURL = NULL;
-        
+
         m_config.shopURL = NULL;
         m_config.upgradeURL = NULL;
-        
+
         m_config.activationLinkPrefix = NULL;
-        
+
         m_config.licenseInfoFilename = TEXT("lic.dat");
-        
+
         m_config.pReceiptChecker = NULL;
     }
-    
+
 	inline int GetNumDaysLeft()
 	{
 		int numDaysLeft = (int) m_pLicenseData->m_demoTokens.size();
@@ -380,12 +385,12 @@ private:
 
     bool SendRequest(String url, std::string data, std::stringstream& out);
     bool ParseResponse(String url, std::string data, String errorMsg, picojson::object& result);
-    
+
 	void OnActivate(bool isSuccess);
 	void OnReceiveDemoTokens(bool isSuccess);
 
 	bool VerifyKey(String key, String info, const TCHAR* pubkey);
-    
+
     bool VerifyAll(String key, std::vector<String> v, const TCHAR* pubkey)
     {
         for (String k : v)
@@ -407,7 +412,7 @@ private:
 		uint8_t* pRawKey = new uint8_t[rawKeyLen];
 		int idx = 0;
 		for (String::iterator it = key.begin(); it != key.end(); ++it)
-		{		
+		{
 			// replace 9s with Is and 8s with Os
 			if (*it == TEXT('9'))
 				pRawKey[idx++] = 'I';
@@ -430,24 +435,24 @@ private:
 		*pRetBufLen = base32_decode(*pRetBuf, *pRetBufLen, pRawKey, rawKeyLen);
 		return *pRetBufLen > 0;
 	}
-    
+
 protected:
     LicenseManagerConfig m_config;
-    
+
 private:
 	LicenseData* m_pLicenseData;
 	bool m_canStartApp;
 
-    
+
 #if defined(OS_MACOSX)
-    
+
 public:
     LicenseCheckWindowControllerRef m_windowController;
 private:
     LicenseManagerTimerDelegateRef m_timerDelegate;
-    
+
 #elif defined(OS_WIN)
-    
+
 public:
 	void KillTimer();
 
@@ -456,12 +461,12 @@ public:
 private:
 	UINT_PTR m_timerId;
 	ULONGLONG m_lastDemoValidityCheck;
-    
+
 #endif
 };
 
 //#endif  // APPSTORE == 0
-   
+
 } // namespace Zephyros
 
 
