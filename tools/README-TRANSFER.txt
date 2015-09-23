@@ -5,6 +5,4 @@ original file locations.
 
 ../build/mac/change_mach_o_flags_from_xcode.sh
 ../build/mac/change_mach_o_flags.py
-../build/mac/strip_from_xcode
-../build/mac/strip_save_dsym
 ../build/mac/make_more_helpers.sh

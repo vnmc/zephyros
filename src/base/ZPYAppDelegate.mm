@@ -236,17 +236,27 @@
  * Enables/disables menu items.
  * NOTE: for this to work, the menu containing the menu item must have autoEnablesMenuItems=NO.
  */
-- (void) setMenuItemStatuses: (NSDictionary*) statuses
+- (void) setMenuItemStatuses: (Zephyros::App::MenuItemStatuses&) statuses
 {
     [self setMenuItemStatusesRecursive: statuses forMenu: [NSApp mainMenu]];
 }
 
-- (void) setMenuItemStatusesRecursive: (NSDictionary*) statuses forMenu: (NSMenu*) menu
+- (void) setMenuItemStatusesRecursive: (Zephyros::App::MenuItemStatuses&) statuses forMenu: (NSMenu*) menu
 {
     for (NSMenuItem *item in menu.itemArray)
     {
         if ([item isKindOfClass: ZPYMenuItem.class])
         {
+            String commandId([[(ZPYMenuItem*) item commandId] UTF8String]);
+            if (statuses.find(commandId) != statuses.end())
+            {
+                int status = statuses.at(commandId);
+                
+                [item setEnabled: (status & 0x01) ? YES : NO];
+                item.state = (status & 0x02) ? NSOnState : NSOffState;
+            }
+            
+            /*
             NSNumber *newStatus = [statuses objectForKey: [(ZPYMenuItem*) item commandId]];
             if (newStatus != nil)
             {
@@ -254,7 +264,7 @@
                 
                 [item setEnabled: (status & 0x01) ? YES : NO];
                 item.state = (status & 0x02) ? NSOnState : NSOffState;
-            }
+            }*/
         }
         
         if (item.hasSubmenu)

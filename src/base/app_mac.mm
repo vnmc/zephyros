@@ -78,16 +78,9 @@ void Log(String msg)
     NSLog(@"%@", [NSString stringWithUTF8String: msg.c_str()]);
 }
     
-void SetMenuItemStatuses(JavaScript::Object items)
+void SetMenuItemStatuses(MenuItemStatuses& items)
 {
-    NSMutableDictionary *statuses = [[NSMutableDictionary alloc] init];
-        
-    JavaScript::KeyList keys;
-    items->GetKeys(keys);
-    for (JavaScript::KeyType commandId : keys)
-        [statuses setObject: [NSNumber numberWithInt: items->GetInt(commandId)] forKey: [NSString stringWithUTF8String: String(commandId).c_str()]];
-        
-    [(ZPYAppDelegate*) [NSApp delegate] setMenuItemStatuses: statuses];
+    [(ZPYAppDelegate*) [NSApp delegate] setMenuItemStatuses: items];
 }
 
 } // namespace App

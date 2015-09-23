@@ -130,16 +130,12 @@ project(Zephyros)
 # Use folders in the resulting project files.
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 
-# Determine the platform.
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
-  set(OS_MACOSX 1)
-  set(OS_POSIX 1)
-elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-  set(OS_LINUX 1)
-  set(OS_POSIX 1)
-elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
-  set(OS_WINDOWS 1)
-endif()
+set(ZEPHYROS_DIR ${CMAKE_SOURCE_DIR})
+set(IS_ZEPHYROS_BUILD TRUE)
+
+# Include cmake macros.
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
+include("macros")
 
 # Determine the project architecture.
 if(NOT DEFINED PROJECT_ARCH)
@@ -161,10 +157,6 @@ if(NOT CMAKE_BUILD_TYPE AND
   set(CMAKE_BUILD_TYPE Release)
   message(WARNING "No CMAKE_BUILD_TYPE value selected, using ${CMAKE_BUILD_TYPE}")
 endif()
-
-# Include cmake macros.
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
-include("macros")
 
 # Source include directory.
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -252,6 +244,7 @@ if(OS_LINUX)
     set(CEF_CXX_COMPILER_FLAGS    "${CEF_CXX_COMPILER_FLAGS} -Wno-narrowing")
   endif()
 
+# TODO: move this to macros.cmake (also use in sample CMake file)
   if(PROJECT_ARCH STREQUAL "x86_64")
     # 64-bit architecture.
     set(CEF_COMPILER_FLAGS        "${CEF_COMPILER_FLAGS} -m64 -march=x86-64")
@@ -268,33 +261,33 @@ if(OS_LINUX)
   # Standard libraries.
   set(CEF_STANDARD_LIBS "X11")
 
-  # CEF directory paths.
-  set(CEF_RESOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
-  set(CEF_BINARY_DIR          "${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}")
-  set(CEF_BINARY_DIR_DEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug")
-  set(CEF_BINARY_DIR_RELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release")
+  # # CEF directory paths.
+  # set(CEF_RESOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
+  # set(CEF_BINARY_DIR          "${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}")
+  # set(CEF_BINARY_DIR_DEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug")
+  # set(CEF_BINARY_DIR_RELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release")
 
-  # CEF library paths.
-  set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.so")
-  set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.so")
+  # # CEF library paths.
+  # set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.so")
+  # set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.so")
 
-  # List of CEF binary files.
-  set(CEF_BINARY_FILES
-    libcef.so
-    natives_blob.bin
-    snapshot_blob.bin
-    )
+  # # List of CEF binary files.
+  # set(CEF_BINARY_FILES
+  #   libcef.so
+  #   natives_blob.bin
+  #   snapshot_blob.bin
+  #   )
 
-  # List of CEF resource files.
-  set(CEF_RESOURCE_FILES
-    cef.pak
-    cef_100_percent.pak
-    cef_200_percent.pak
-    cef_extensions.pak
-    devtools_resources.pak
-    icudtl.dat
-    locales
-    )
+  # # List of CEF resource files.
+  # set(CEF_RESOURCE_FILES
+  #   cef.pak
+  #   cef_100_percent.pak
+  #   cef_200_percent.pak
+  #   cef_extensions.pak
+  #   devtools_resources.pak
+  #   icudtl.dat
+  #   locales
+  #   )
 endif()
 
 
@@ -444,34 +437,35 @@ if(OS_WINDOWS)
   set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.lib")
   set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.lib")
 
-  # List of CEF binary files.
-  set(CEF_BINARY_FILES
-    d3dcompiler_43.dll
-    d3dcompiler_47.dll
-    libcef.dll
-    libEGL.dll
-    libGLESv2.dll
-    natives_blob.bin
-    snapshot_blob.bin
-    )
-  if(PROJECT_ARCH STREQUAL "x86")
-    # Only used on 32-bit platforms.
-    set(CEF_BINARY_FILES
-      ${CEF_BINARY_FILES}
-      wow_helper.exe
-      )
-  endif()
 
-  # List of CEF resource files.
-  set(CEF_RESOURCE_FILES
-    cef.pak
-    cef_100_percent.pak
-    cef_200_percent.pak
-    cef_extensions.pak
-    devtools_resources.pak
-    icudtl.dat
-    locales
-    )
+  # # List of CEF binary files.
+  # set(CEF_BINARY_FILES
+  #   d3dcompiler_43.dll
+  #   d3dcompiler_47.dll
+  #   libcef.dll
+  #   libEGL.dll
+  #   libGLESv2.dll
+  #   natives_blob.bin
+  #   snapshot_blob.bin
+  #   )
+  # if(PROJECT_ARCH STREQUAL "x86")
+  #   # Only used on 32-bit platforms.
+  #   set(CEF_BINARY_FILES
+  #     ${CEF_BINARY_FILES}
+  #     wow_helper.exe
+  #     )
+  # endif()
+
+  # # List of CEF resource files.
+  # set(CEF_RESOURCE_FILES
+  #   cef.pak
+  #   cef_100_percent.pak
+  #   cef_200_percent.pak
+  #   cef_extensions.pak
+  #   devtools_resources.pak
+  #   icudtl.dat
+  #   locales
+  #   )
 endif()
 
 

@@ -33,7 +33,7 @@
 
 namespace Zephyros {
     
-int RunApplication(int argc, const char** argv)
+int RunApplication(int argc, char** argv)
 {
     // create the application and load the main menu
     NSApplication *application = [NSApplication sharedApplication];

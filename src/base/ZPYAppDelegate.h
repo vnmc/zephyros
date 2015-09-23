@@ -36,6 +36,8 @@
 #import <Sparkle/Sparkle.h>
 #endif
 
+#import "base/app.h"
+
 #import "native_extensions/path.h"
 
 #import "zephyros.h"
@@ -62,7 +64,7 @@
 - (void) addLaunchPaths;
 
 - (void) createMenuItems;
-- (void) setMenuItemStatuses: (NSDictionary*) statuses;
+- (void) setMenuItemStatuses: (Zephyros::App::MenuItemStatuses&) statuses;
 
 - (ClientExtensionHandlerPtr) extensionHandler;
 

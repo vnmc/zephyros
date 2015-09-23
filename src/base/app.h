@@ -30,6 +30,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 #include "base/types.h"
 
@@ -45,13 +46,9 @@ class CefCommandLine;
 
 namespace Zephyros {
 namespace App {
-
-enum AlertStyle
-{
-	AlertInfo,
-	AlertWarning,
-	AlertError
-};
+    
+    
+typedef std::map<String, int> MenuItemStatuses;
 
 
 #ifdef USE_CEF
@@ -122,7 +119,7 @@ String ShowErrorMessage();
 /**
  * Sets the statuses (checked, enabled, ...) of app menu items.
  */
-void SetMenuItemStatuses(JavaScript::Object items);
+void SetMenuItemStatuses(MenuItemStatuses& statuses);
 
 /**
  * Returns a reference to the license manager or NULL if there is none.
