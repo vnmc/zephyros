@@ -43,6 +43,7 @@ namespace App {
 void Quit()
 {
 	// close the app's main window
+	// TODO
 }
 
 void QuitMessageLoop()
@@ -52,56 +53,60 @@ void QuitMessageLoop()
 
 void BeginWait()
 {
+    // TODO
 }
 
 void EndWait()
 {
+    // TODO
 }
 
 void Alert(String title, String msg, AlertStyle style)
 {
+    // TODO
 }
 
 FILE* OpenLogFile()
 {
+    // TODO
     return NULL;
 }
 
 void Log(String msg)
 {
+    // TODO
 }
 
 String ShowErrorMessage()
 {
+    // TODO
     return TEXT("");
 }
 
-void SetMenuItemStatuses(JavaScript::Object items)
+void SetMenuItemStatuses(MenuItemStatuses& statuses)
 {
 	if (!g_handler.get())
 		return;
 
+    // TODO
     /*
 	HMENU hMenu = GetMenu(g_handler->GetMainHwnd());
 	if (!hMenu)
 		return;
     */
 
-	JavaScript::KeyList keys;
-	items->GetKeys(keys);
-	for (JavaScript::KeyType commandId : keys)
-	{
-		String strCmdId = commandId;
-		int nID = Zephyros::GetMenuIDForCommand(strCmdId.c_str());
-		if (nID)
-		{
-			int status = items->GetInt(commandId);
+    for (MenuItemStatuses::iterator it = statuses.begin(); it != statuses.end(); ++it)
+    {
+        int nID = Zephyros::GetMenuIDForCommand(it->first.c_str());
+        if (nID)
+        {
+            int nStatus = it->second;
 			/*
 			EnableMenuItem(hMenu, nID, MF_BYCOMMAND | ((status & 0x01) ? MF_ENABLED : MF_DISABLED));
 			CheckMenuItem(hMenu, nID, MF_BYCOMMAND | ((status & 0x02) ? MF_CHECKED : MF_UNCHECKED));
 			*/
-		}
-	}
+        }
+    }
 }
 
 } // namespace App
