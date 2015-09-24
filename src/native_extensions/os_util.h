@@ -54,6 +54,7 @@ String GetHomeDirectory();
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd);
 
 #ifdef OS_LINUX
+String GetConfigDirectory();
 String Exec(String command);
 #endif
 

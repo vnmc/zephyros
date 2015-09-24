@@ -28,6 +28,10 @@
 #include <vector>
 #include <map>
 
+#include <unistd.h>
+#include <pwd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/utsname.h>
 
 #include "base/app.h"
@@ -60,14 +64,77 @@ String GetOSVersion()
 
 String GetUserName()
 {
-	// TODO: implement
-	return TEXT("");
+    passwd pwd;
+    passwd* result;
+
+    long bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+    if (bufsize == -1)
+        bufsize = 16384;
+
+    char* buf = new char[bufsize];
+    getpwuid_r(getuid(), &pwd, buf, bufsize, &result);
+
+    String ret;
+    if (result != NULL)
+        ret = pwd.pw_name;
+
+    delete[] buf;
+
+	return ret;
 }
 
 String GetHomeDirectory()
 {
-	// TODO: implement
-	return TEXT("");
+    passwd pwd;
+    passwd* result;
+
+    long bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+    if (bufsize == -1)
+        bufsize = 16384;
+
+    TCHAR* buf = new TCHAR[bufsize];
+    getpwuid_r(getuid(), &pwd, buf, bufsize, &result);
+
+    String ret;
+    if (result != NULL)
+        ret = pwd.pw_dir;
+
+    delete[] buf;
+
+	return ret;
+}
+
+String GetConfigDirectory()
+{
+    StringStream ss;
+
+    // construct a directory name of the form "~/.<normalized-app-name>"
+    ss << OSUtil::GetHomeDirectory() << TEXT("/.");
+
+    // normalize the app name
+    const TCHAR* szAppName = Zephyros::GetAppName();
+    size_t nLen = _tcslen(szAppName);
+    for (size_t i = 0; i < nLen; ++i)
+    {
+        TCHAR c = szAppName[i];
+        if ((TEXT('a') < c && c < TEXT('z')) || (TEXT('0') < c && c < TEXT('9')))
+            ss << c;
+        else if (TEXT('A') < c && c < TEXT('Z'))
+            ss << (c - TEXT('A') + TEXT('a'));
+        else
+            ss << TEXT('_');
+    }
+
+    String strConfigDir = ss.str();
+
+    // make sure the directory exists
+    DIR* dir = opendir(strConfigDir.c_str());
+    if (!dir)
+        mkdir(strConfigDir.c_str(), S_IRWXU | S_IXGRP | S_IXOTH);
+    else
+        closedir(dir);
+
+    return strConfigDir;
 }
 
 String GetComputerName()

@@ -444,15 +444,14 @@ private:
 	bool m_canStartApp;
 
 
-#if defined(OS_MACOSX)
-
+#ifdef OS_MACOSX
 public:
     LicenseCheckWindowControllerRef m_windowController;
 private:
     LicenseManagerTimerDelegateRef m_timerDelegate;
+#endif
 
-#elif defined(OS_WIN)
-
+#ifdef OS_WIN
 public:
 	void KillTimer();
 
@@ -461,7 +460,11 @@ public:
 private:
 	UINT_PTR m_timerId;
 	ULONGLONG m_lastDemoValidityCheck;
+#endif
 
+#ifdef OS_LINUX
+public:
+    GtkWidget* m_pDemoDlg;
 #endif
 };
 

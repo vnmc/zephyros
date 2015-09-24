@@ -75,7 +75,7 @@ if(OS_MACOSX)
   endif()
   if(${BUILD_APPSTORE_VERSION})
     math(EXPR _sum_ "${_sum_} + 1")
-  endif()  
+  endif()
 
   # set the app names:
   # if only one target type is selected, use APP_NAME as app name,
@@ -113,7 +113,7 @@ if(DEFINED IS_ZEPHYROS_BUILD)
   endif()
 else()
   # this CMake file is a used as a standalone
-  
+
   # find the Zephyros libraries
   if(OS_MACOSX)
     find_library(LIB_ZEPHYROS_CEF Zephyros_CEF PATHS ${ZEPHYROS_BUILD_DIR})
@@ -152,7 +152,7 @@ if(OS_MACOSX)
     else()
       target_include_directories(${APP_NAME_CEFHELPER} PRIVATE ${CMAKE_SOURCE_DIR}/src ${LIB_ZEPHYROS_CEFHELPER_PATH}/Headers ${ZEPHYROS_DIR} ${ZEPHYROS_DIR}/lib/cef)
     endif()
-    
+
     target_compile_definitions(${APP_NAME_CEFHELPER} PRIVATE -DUSE_CEF ${PLATFORM})
     target_link_libraries(${APP_NAME_CEFHELPER} PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEFHELPER} ${LIB_CEF})
     set_target_properties(${APP_NAME_CEFHELPER} PROPERTIES
@@ -170,10 +170,10 @@ if(OS_MACOSX)
     else()
       target_include_directories(${APP_NAME_CEF} PRIVATE ${CMAKE_SOURCE_DIR}/src ${LIB_ZEPHYROS_CEF_PATH}/Headers ${ZEPHYROS_DIR} ${ZEPHYROS_DIR}/lib/cef)
     endif()
-    
+
     target_compile_definitions(${APP_NAME_CEF} PRIVATE -DUSE_CEF ${PLATFORM})
     target_link_libraries(${APP_NAME_CEF} PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEF} ${LIB_CEF})
-    
+
     set_target_properties(${APP_NAME_CEF} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
       MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-CEF.plist
@@ -187,17 +187,17 @@ if(OS_MACOSX)
   # WebView App
   if(${BUILD_WEBVIEW_VERSION})
     add_executable(${APP_NAME_WEBVIEW} MACOSX_BUNDLE ${APP_SRCS})
-    
+
     if(DEFINED IS_ZEPHYROS_BUILD)
       add_dependencies(${APP_NAME_WEBVIEW} Zephyros_WebView)
       target_include_directories(${APP_NAME_WEBVIEW} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/base/webview)
     else()
       target_include_directories(${APP_NAME_WEBVIEW} PRIVATE ${CMAKE_SOURCE_DIR}/src ${LIB_ZEPHYROS_WEBVIEW_PATH}/Headers)
     endif()
-    
+
     target_compile_definitions(${APP_NAME_WEBVIEW} PRIVATE -DUSE_WEBVIEW ${PLATFORM})
     target_link_libraries(${APP_NAME_WEBVIEW} PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_WEBVIEW})
-    
+
     set_target_properties(${APP_NAME_WEBVIEW} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
       MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-WebView.plist
@@ -208,17 +208,17 @@ if(OS_MACOSX)
   # AppStore App
   if(${BUILD_APPSTORE_VERSION})
     add_executable(${APP_NAME_APPSTORE} MACOSX_BUNDLE ${APP_SRCS})
-    
+
     if(DEFINED IS_ZEPHYROS_BUILD)
       add_dependencies(${APP_NAME_APPSTORE} Zephyros_AppStore)
       target_include_directories(${APP_NAME_APPSTORE} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/base/webview)
     else()
       target_include_directories(${APP_NAME_APPSTORE} PRIVATE ${CMAKE_SOURCE_DIR}/src ${LIB_ZEPHYROS_APPSTORE_PATH}/Headers)
     endif()
-    
+
     target_compile_definitions(${APP_NAME_APPSTORE} PRIVATE -DUSE_WEBVIEW -DAPPSTORE ${PLATFORM})
     target_link_libraries(${APP_NAME_APPSTORE} PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_APPSTORE})
-    
+
     set_target_properties(${APP_NAME_APPSTORE} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
       MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-AppStore.plist
@@ -229,10 +229,10 @@ elseif(OS_WINDOWS)
 elseif(OS_LINUX)
   # find required libraries and update compiler/linker variables
   set(CEF_STANDARD_LIBS X11)
-  FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-3.0 gthread-2.0")
+  FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-3.0 gthread-2.0 openssl")
 
-  set(CEF_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux-x86_64/Resources/")
-  set(CEF_BINARY_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux-x86_64/Release/")
+  set(CEF_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux/x86_64/Resources/")
+  set(CEF_BINARY_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux/x86_64/Release/")
 
   add_executable(App ${APP_SRCS})
   add_dependencies(App Zephyros)

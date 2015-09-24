@@ -25,6 +25,16 @@
  *******************************************************************************/
 
 
+#include <set>
+#include <iomanip>
+
+#include <ifaddrs.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <sys/ioctl.h>
+
 #include "base/app.h"
 #include "base/cef/client_handler.h"
 
@@ -41,22 +51,84 @@ JavaScript::Array GetNetworkIPs()
 {
     JavaScript::Array addrs = JavaScript::CreateArray();
 
-    // TODO: implement
+    struct ifaddrs* ifaddr;
+    if (getifaddrs(&ifaddr) != -1)
+    {
+        int i = 0;
+        char host[NI_MAXHOST];
+
+        for (struct ifaddrs* ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+        {
+            if (ifa->ifa_addr == NULL || ifa->ifa_addr->sa_family != AF_INET)
+                continue;
+
+            if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
+                addrs->SetString(i++, host);
+        }
+
+        freeifaddrs(ifaddr);
+    }
 
     return addrs;
 }
 
 String GetPrimaryMACAddress()
 {
-    // TODO: implement
-    return TEXT("");
+    std::vector<String> addresses = GetAllMACAddresses();
+	return addresses.at(0);
+}
+
+String GetMACAddressForIFName(String strIFName)
+{
+    struct ifreq s;
+    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    String strRet;
+
+    strcpy(s.ifr_name, strIFName.c_str());
+    if (ioctl(fd, SIOCGIFHWADDR, &s) == 0)
+    {
+        StringStream ss;
+		ss << std::hex << std::setfill(TEXT('0'));
+        for (int i = 0; i < 6; ++i)
+        {
+            if (i > 0)
+                ss << TEXT(":");
+            ss << std::setw(2) << (int) (unsigned char) s.ifr_addr.sa_data[i];
+        }
+
+        strRet = ss.str();
+    }
+    else
+        strRet = TEXT("00:00:00:00:00:00");
+
+    close(fd);
+
+    return strRet;
 }
 
 std::vector<String> GetAllMACAddresses()
 {
 	std::vector<String> vecResult;
 
-    // TODO: implement
+    struct ifaddrs *ifaddr;
+    if (getifaddrs(&ifaddr) != -1)
+    {
+        std::set<String> names;
+        for (struct ifaddrs* ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+            names.insert(ifa->ifa_name);
+
+        for (String name : names)
+        {
+            String strMACAddr = GetMACAddressForIFName(name);
+            if (strMACAddr != TEXT("00:00:00:00:00:00"))
+                vecResult.push_back(strMACAddr);
+        }
+
+        freeifaddrs(ifaddr);
+    }
+
+    if (vecResult.empty())
+        vecResult.push_back(TEXT("00:00:00:00:00:00"));
 
 	return vecResult;
 }
