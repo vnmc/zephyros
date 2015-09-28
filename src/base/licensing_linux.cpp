@@ -37,6 +37,8 @@
 #include <openssl/pem.h>
 #include <openssl/sha.h>
 
+#include <curl/curl.h>
+
 #include <gtk/gtk.h>
 
 #include "zephyros_strings.h"
@@ -50,6 +52,9 @@
 #include "native_extensions/browser.h"
 #include "native_extensions/file_util.h"
 #include "native_extensions/os_util.h"
+
+
+#define SIGNAL_RESPONSE_STARTDEMO 1
 
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
@@ -166,7 +171,7 @@ void LicenseData::Save()
 	strFilename.append(TEXT("/"));
 	strFilename.append(m_szLicenseInfoFilename);
 
-	 std::ofstream file;
+    std::ofstream file;
     file.open(strFilename, std::ios::out | std::ios::binary);
 
     if (!file.is_open())
@@ -257,12 +262,16 @@ void DemoTimeout(int nSigNum)
 }
 
 LicenseManagerImpl::LicenseManagerImpl()
+    : m_pDemoDlg(NULL)
 {
 	InitConfig();
 
 	// initialize OpenSSL
 	OpenSSL_add_all_algorithms();
 	ERR_load_crypto_strings();
+
+	// initialize cURL
+	curl_global_init(CURL_GLOBAL_ALL);
 }
 
 LicenseManagerImpl::~LicenseManagerImpl()
@@ -270,6 +279,9 @@ LicenseManagerImpl::~LicenseManagerImpl()
     // shut down OpenSSL
     EVP_cleanup();
 	ERR_free_strings();
+
+	// shut down cURL
+	curl_global_cleanup();
 }
 
 bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* szPubkey)
@@ -287,7 +299,7 @@ bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* szPubke
         // read the PEM-encoded public key
         DSA* dsa = DSA_new();
         BIO *bio = BIO_new_mem_buf((void*) strPubKey.c_str(), -1);
-        DSA* x = PEM_read_bio_DSA_PUBKEY(bio, &dsa, NULL, NULL);
+        PEM_read_bio_DSA_PUBKEY(bio, &dsa, NULL, NULL);
         BIO_vfree(bio);
 
         if (dsa->pub_key)
@@ -313,23 +325,33 @@ void LicenseManagerImpl::ShowDemoDialog()
         return;
 
 	// create the demo dialog
-    GtkWidget* pDialog = gtk_dialog_new_with_buttons(
+    m_pDemoDlg = gtk_dialog_new_with_buttons(
         Zephyros::GetString(ZS_DEMODLG_WNDTITLE).c_str(),
         NULL,
         GTK_DIALOG_MODAL,
-        GetDemoButtonCaption().c_str(), 1,
+        GetDemoButtonCaption().c_str(), SIGNAL_RESPONSE_STARTDEMO,
         NULL
     );
 
     // create dialog widgets
-    GtkWidget* pIcon = gtk_image_new_from_file("");
-    GtkWidget* pLabelTitle = gtk_label_new(Zephyros::GetString(ZS_DEMODLG_TITLE).c_str());
+    GtkWidget* pIcon = gtk_image_new_from_file(TEXT(""));
+
+    GtkWidget* pLabelTitle = gtk_label_new(TEXT(""));
+    String strTitle(TEXT("<b>"));
+    strTitle.append(Zephyros::GetString(ZS_DEMODLG_TITLE));
+    strTitle.append(TEXT("</b>"));
+    gtk_label_set_markup(GTK_LABEL(pLabelTitle), strTitle.c_str());
+
     GtkWidget* pLabelDescription = gtk_label_new(Zephyros::GetString(ZS_DEMODLG_DESCRIPTION).c_str());
+    gtk_label_set_line_wrap(GTK_LABEL(pLabelDescription), TRUE);
 
     GtkWidget* pGroupRemainingTime = gtk_frame_new(Zephyros::GetString(ZS_DEMODLG_REMAINING_TIME).c_str());
     GtkWidget* pLabelRemainingTimeDescription = gtk_label_new(Zephyros::GetString(ZS_DEMODLG_REMAINING_TIME_DESC).c_str());
-    GtkWidget* pLevelRemainingTime = gtk_level_bar_new();
+    GtkWidget* pLevelRemainingTime = gtk_level_bar_new_for_interval(0, GetNumberOfDemoDays());
     GtkWidget* pLabelRemainingTimeCount = gtk_label_new(GetDaysCountLabelText().c_str());
+
+    // set level value
+    gtk_level_bar_set_value(GTK_LEVEL_BAR(pLevelRemainingTime), GetNumberOfDemoDays() - GetNumDaysLeft());
 
     // set label alignments
     gtk_misc_set_alignment((GtkMisc*) pLabelTitle, 0, 0.5);
@@ -338,23 +360,37 @@ void LicenseManagerImpl::ShowDemoDialog()
     gtk_misc_set_alignment((GtkMisc*) pLabelRemainingTimeCount, 0, 0.5);
 
     // layout
+    // - set sizes
+    gtk_widget_set_size_request(pIcon, 128, 128);
+    gtk_widget_set_size_request(pLabelDescription, 200, -1);
+
+    // - box containing the title and description
     GtkWidget* pBoxTitleTexts = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
     gtk_box_pack_start(GTK_BOX(pBoxTitleTexts), pLabelTitle, FALSE, FALSE, 8);
     gtk_box_pack_start(GTK_BOX(pBoxTitleTexts), pLabelDescription, FALSE, FALSE, 8);
+
+    // - box containing the header part: icon and texts right of it
     GtkWidget* pBoxTitle = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    gtk_container_set_border_width(GTK_CONTAINER(pBoxTitle), 16);
     gtk_box_pack_start(GTK_BOX(pBoxTitle), pIcon, FALSE, FALSE, 8);
     gtk_box_pack_start(GTK_BOX(pBoxTitle), pBoxTitleTexts, TRUE, TRUE, 8);
-    GtkWidget* pBoxRemainingTime = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
+
+    // - box containing the "remaining time" widgets
+    GtkWidget* pBoxRemainingTime = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(pGroupRemainingTime), pBoxRemainingTime);
+    gtk_container_set_border_width(GTK_CONTAINER(pBoxRemainingTime), 16);
+    gtk_container_set_border_width(GTK_CONTAINER(pGroupRemainingTime), 16);
     gtk_box_pack_start(GTK_BOX(pBoxRemainingTime), pLabelRemainingTimeDescription, FALSE, FALSE, 8);
     gtk_box_pack_start(GTK_BOX(pBoxRemainingTime), pLevelRemainingTime, FALSE, FALSE, 8);
     gtk_box_pack_start(GTK_BOX(pBoxRemainingTime), pLabelRemainingTimeCount, FALSE, FALSE, 8);
-    GtkWidget* pBoxMain = gtk_dialog_get_content_area(GTK_DIALOG(pDialog));
-    gtk_box_pack_start(GTK_BOX(pBoxMain), pBoxTitle, FALSE, FALSE, 8);
-    gtk_box_pack_start(GTK_BOX(pBoxMain), pGroupRemainingTime, FALSE, FALSE, 8);
+
+    // - main box containing the header box and the "remaining time" box
+    GtkWidget* pBoxMain = gtk_dialog_get_content_area(GTK_DIALOG(m_pDemoDlg));
+    gtk_box_pack_start(GTK_BOX(pBoxMain), pBoxTitle, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(pBoxMain), pGroupRemainingTime, FALSE, FALSE, 0);
 
     // add buttons
-    GtkWidget* pAreaAction = gtk_dialog_get_action_area(GTK_DIALOG(pDialog));
+    GtkWidget* pAreaAction = gtk_dialog_get_action_area(GTK_DIALOG(m_pDemoDlg));
 
     // "purchase" button
     const TCHAR* szShopURL = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetShopURL();
@@ -370,15 +406,14 @@ void LicenseManagerImpl::ShowDemoDialog()
     g_signal_connect(pButtonEnterLicense, "clicked", [](){ Zephyros::GetLicenseManager()->ShowEnterLicenseDialog(); }, NULL);
     gtk_box_pack_start(GTK_BOX(pAreaAction), pButtonEnterLicense, FALSE, FALSE, 8);
 
-    // destroy the dialog box after the user has responded
-    g_signal_connect_swapped(pDialog, "response", G_CALLBACK(gtk_widget_destroy), pDialog);
-
-    gtk_widget_show_all(pDialog);
+    gtk_widget_show_all(m_pDemoDlg);
 
     // show the demo dialog
     g_bIsDemoDialogShown = true;
-    m_canStartApp = gtk_dialog_run(GTK_DIALOG(pDialog)) == 1 && ContinueDemo();
+    m_canStartApp = gtk_dialog_run(GTK_DIALOG(m_pDemoDlg)) == SIGNAL_RESPONSE_STARTDEMO && ContinueDemo();
+    gtk_widget_destroy(m_pDemoDlg);
     g_bIsDemoDialogShown = false;
+    m_pDemoDlg = NULL;
 
 	// check the validity of the demo after 6 hours
 	if (m_canStartApp && !IsActivated())
@@ -389,17 +424,41 @@ void LicenseManagerImpl::ShowDemoDialog()
 		App::QuitMessageLoop();
 }
 
+typedef struct {
+    LicenseManagerImpl* pLicenseManager;
+    GtkWidget* pDialog;
+    GtkWidget* pTextName;
+    GtkWidget* pTextOrganization;
+    GtkWidget* pTextLicenseKey;
+} OnActivateClickedData;
+
+void OnActivateClicked(GtkWidget* widget, GdkEventFocus* event, gpointer userData)
+{
+    OnActivateClickedData* pData = (OnActivateClickedData*) userData;
+
+    int nRet = pData->pLicenseManager->Activate(
+        gtk_entry_get_text(GTK_ENTRY(pData->pTextName)),
+        gtk_entry_get_text(GTK_ENTRY(pData->pTextOrganization)),
+        gtk_entry_get_text(GTK_ENTRY(pData->pTextLicenseKey))
+    );
+
+    switch (nRet)
+    {
+    case ACTIVATION_SUCCEEDED:
+        gtk_dialog_response(GTK_DIALOG(pData->pDialog), GTK_RESPONSE_OK);
+        break;
+
+    case ACTIVATION_OBSOLETELICENSE:
+        gtk_dialog_response(GTK_DIALOG(pData->pDialog), GTK_RESPONSE_CANCEL);
+        pData->pLicenseManager->ShowUpgradeLicenseDialog();
+        break;
+    }
+}
+
 void LicenseManagerImpl::ShowEnterLicenseDialog()
 {
     // create the demo dialog
-    GtkWidget* pDialog = gtk_dialog_new_with_buttons(
-        Zephyros::GetString(ZS_ENTERLICKEYDLG_WNDTITLE).c_str(),
-        NULL,
-        GTK_DIALOG_MODAL,
-        Zephyros::GetString(ZS_ENTERLICKEYDLG_ACTIVATE).c_str(), GTK_RESPONSE_ACCEPT,
-        Zephyros::GetString(ZS_ENTERLICKEYDLG_CANCEL).c_str(), GTK_RESPONSE_REJECT,
-        NULL
-    );
+    GtkWidget* pDialog = gtk_dialog_new_with_buttons(Zephyros::GetString(ZS_ENTERLICKEYDLG_WNDTITLE).c_str(), GTK_WINDOW(m_pDemoDlg), GTK_DIALOG_MODAL, NULL);
 
     // create dialog widgets
     GtkWidget* pGroup = gtk_frame_new(Zephyros::GetString(ZS_ENTERLICKEYDLG_TITLE).c_str());
@@ -415,11 +474,31 @@ void LicenseManagerImpl::ShowEnterLicenseDialog()
     gtk_misc_set_alignment((GtkMisc*) pLabelOrganization, 1, 0.5);
     gtk_misc_set_alignment((GtkMisc*) pLabelLicenseKey, 1, 0.5);
 
-    // add buttons
+    // set minimum sizes of the text boxes and make them expand
+    gtk_widget_set_size_request(pTextName, 200, -1);
+    gtk_widget_set_size_request(pTextOrganization, 200, -1);
+    gtk_widget_set_size_request(pTextLicenseKey, 200, -1);
+    g_object_set(pTextName, "expand", TRUE, NULL);
+    g_object_set(pTextOrganization, "expand", TRUE, NULL);
+    g_object_set(pTextLicenseKey, "expand", TRUE, NULL);
 
+    // add buttons
+    GtkWidget* pAreaAction = gtk_dialog_get_action_area(GTK_DIALOG(pDialog));
+
+    // - activate
+    GtkWidget* pButtonActivate = gtk_button_new_with_label(Zephyros::GetString(ZS_ENTERLICKEYDLG_ACTIVATE).c_str());
+    OnActivateClickedData dataActivate = { this, pDialog, pTextName, pTextOrganization, pTextLicenseKey };
+    g_signal_connect(pButtonActivate, "clicked", G_CALLBACK(OnActivateClicked), &dataActivate);
+    gtk_box_pack_start(GTK_BOX(pAreaAction), pButtonActivate, FALSE, FALSE, 8);
+
+    // - cancel
+    gtk_dialog_add_button(GTK_DIALOG(pDialog), Zephyros::GetString(ZS_ENTERLICKEYDLG_CANCEL).c_str(), GTK_RESPONSE_REJECT);
 
     // layout
     GtkWidget* pGrid = gtk_grid_new();
+    gtk_container_set_border_width(GTK_CONTAINER(pGrid), 16);
+    gtk_grid_set_row_spacing(GTK_GRID(pGrid), 8);
+    gtk_grid_set_column_spacing(GTK_GRID(pGrid), 8);
     gtk_grid_attach(GTK_GRID(pGrid), pLabelName, 0, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(pGrid), pTextName, 1, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(pGrid), pLabelOrganization, 0, 1, 1, 1);
@@ -427,43 +506,21 @@ void LicenseManagerImpl::ShowEnterLicenseDialog()
     gtk_grid_attach(GTK_GRID(pGrid), pLabelLicenseKey, 0, 2, 1, 1);
     gtk_grid_attach(GTK_GRID(pGrid), pTextLicenseKey, 1, 2, 1, 1);
     gtk_container_add(GTK_CONTAINER(pGroup), pGrid);
+    gtk_container_set_border_width(GTK_CONTAINER(pGroup), 16);
     gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(pDialog))), pGroup, FALSE, FALSE, 8);
 
+    // destroy the dialog box after the user has responded
+    g_signal_connect_swapped(pDialog, "response", G_CALLBACK(gtk_widget_destroy), pDialog);
+
+    // show the dialog
     gtk_widget_show_all(pDialog);
-    int ret = gtk_dialog_run(GTK_DIALOG(pDialog));
-    if (ret == GTK_RESPONSE_ACCEPT)
-    {
-		int ret = Activate(
-            gtk_entry_get_text(GTK_ENTRY(pTextName)),
-            gtk_entry_get_text(GTK_ENTRY(pTextOrganization)),
-            gtk_entry_get_text(GTK_ENTRY(pTextLicenseKey))
-        );
-
-/*
-		switch (ret)
-		{
-		case ACTIVATION_SUCCEEDED:
-			EndDialog(m_hwnd, IDOK);
-			break;
-
-		case ACTIVATION_OBSOLETELICENSE:
-			EndDialog(m_hwnd, IDOK);
-			UpgradeDialog dlg(m_hwnd);
-			dlg.DoModal();
-			break;
-		}*/
-    }
+    gtk_dialog_run(GTK_DIALOG(pDialog));
 }
 
 void LicenseManagerImpl::ShowUpgradeLicenseDialog()
 {
     // create the demo dialog
-    GtkWidget* pDialog = gtk_dialog_new_with_buttons(
-        Zephyros::GetString(ZS_PREVVERSIONDLG_WNDTITLE).c_str(),
-        NULL,
-        GTK_DIALOG_MODAL,
-        NULL
-    );
+    GtkWidget* pDialog = gtk_dialog_new_with_buttons(Zephyros::GetString(ZS_PREVVERSIONDLG_WNDTITLE).c_str(), GTK_WINDOW(m_pDemoDlg), GTK_DIALOG_MODAL, NULL);
 
     // create dialog widgets
     GtkWidget* pLabelTitel = gtk_label_new(Zephyros::GetString(ZS_PREVVERSIONDLG_TITLE).c_str());
@@ -504,14 +561,37 @@ void LicenseManagerImpl::OpenUpgradeLicenseURL()
     }
 }
 
+size_t WriteToString(void* ptr, size_t nSize, size_t nCount, std::stringstream* pStream)
+{
+    size_t nLen = nSize * nCount;
+    *pStream << std::string((TCHAR*) ptr, 0, nLen);
+    return nLen;
+}
+
 bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::stringstream& out)
 {
-	return false;
+    CURL* curl = curl_easy_init();
+    if (!curl)
+        return false;
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, strPostData.c_str());
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteToString);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &out);
+
+    bool bRet = curl_easy_perform(curl) == CURLE_OK;
+    curl_easy_cleanup(curl);
+
+	return bRet;
 }
 
 void LicenseManagerImpl::OnActivate(bool isSuccess)
 {
     // close the demo dialog
+    if (m_pDemoDlg != NULL)
+        gtk_dialog_response(GTK_DIALOG(m_pDemoDlg), isSuccess ? SIGNAL_RESPONSE_STARTDEMO : GTK_RESPONSE_CANCEL);
 }
 
 void LicenseManagerImpl::OnReceiveDemoTokens(bool isSuccess)

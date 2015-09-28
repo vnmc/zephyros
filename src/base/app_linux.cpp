@@ -25,16 +25,22 @@
  *******************************************************************************/
 
 
+#include <fstream>
+
+#include <gtk/gtk.h>
+
 #include "lib/cef/include/cef_app.h"
 
 #include "zephyros.h"
 #include "base/app.h"
 #include "base/cef/client_handler.h"
 
+#include "native_extensions/os_util.h"
+
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
-FILE* g_hndLogFile;
+std::ofstream* g_pLogFile = NULL;
 
 
 namespace Zephyros {
@@ -44,11 +50,25 @@ void Quit()
 {
 	// close the app's main window
 	// TODO
+
+	if (g_pLogFile != NULL)
+	{
+        g_pLogFile->close();
+        delete g_pLogFile;
+        g_pLogFile = NULL;
+    }
 }
 
 void QuitMessageLoop()
 {
     CefQuitMessageLoop();
+
+	if (g_pLogFile != NULL)
+	{
+        g_pLogFile->close();
+        delete g_pLogFile;
+        g_pLogFile = NULL;
+    }
 }
 
 void BeginWait()
@@ -63,24 +83,45 @@ void EndWait()
 
 void Alert(String title, String msg, AlertStyle style)
 {
-    // TODO
+    GtkMessageType type = GTK_MESSAGE_INFO;
+    switch (style)
+    {
+    case AlertWarning:
+        type = GTK_MESSAGE_WARNING;
+        break;
+    case AlertError:
+        type = GTK_MESSAGE_WARNING;
+        break;
+    }
+
+    GtkWidget* pDialog = gtk_message_dialog_new(
+        GTK_WINDOW(App::GetMainHwnd()),
+        GTK_DIALOG_MODAL,
+        type,
+        GTK_BUTTONS_OK,
+        title.c_str()
+    );
+
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(pDialog), msg.c_str());
+
+    gtk_dialog_run (GTK_DIALOG(pDialog));
+    gtk_widget_destroy(pDialog);
 }
 
-FILE* OpenLogFile()
+std::ofstream* OpenLogFile()
 {
-    // TODO
-    return NULL;
+    String strFilename(OSUtil::GetConfigDirectory());
+	strFilename.append(TEXT("/debug.log"));
+
+    std::ofstream* pFile = new std::ofstream();
+    pFile->open(strFilename, std::ios::out);
+
+    return pFile;
 }
 
 void Log(String msg)
 {
-    // TODO
-}
-
-String ShowErrorMessage()
-{
-    // TODO
-    return TEXT("");
+    *g_pLogFile << msg << std::endl;
 }
 
 void SetMenuItemStatuses(MenuItemStatuses& statuses)

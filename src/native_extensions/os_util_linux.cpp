@@ -117,10 +117,10 @@ String GetConfigDirectory()
     for (size_t i = 0; i < nLen; ++i)
     {
         TCHAR c = szAppName[i];
-        if ((TEXT('a') < c && c < TEXT('z')) || (TEXT('0') < c && c < TEXT('9')))
+        if ((TEXT('a') <= c && c <= TEXT('z')) || (TEXT('0') <= c && c <= TEXT('9')))
             ss << c;
-        else if (TEXT('A') < c && c < TEXT('Z'))
-            ss << (c - TEXT('A') + TEXT('a'));
+        else if (TEXT('A') <= c && c <= TEXT('Z'))
+            ss << (TCHAR) (c - TEXT('A') + TEXT('a'));
         else
             ss << TEXT('_');
     }
