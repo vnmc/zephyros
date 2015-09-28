@@ -57,6 +57,7 @@ void Quit()
 {
 	// close the app's main window
 	DestroyWindow(App::GetMainHwnd());
+	CloseHandle(g_hndLogFile);
 }
 
 void QuitMessageLoop()
