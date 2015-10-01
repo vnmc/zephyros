@@ -38,7 +38,7 @@
 #import "components/ZPYWebView.h"
 
 
-@interface ZPYWebViewAppDelegate : ZPYAppDelegate
+@interface ZPYWebViewAppDelegate : ZPYAppDelegate <WebFrameLoadDelegate, WebUIDelegate>
 
 @property (assign) IBOutlet ZPYWebView *view;
 

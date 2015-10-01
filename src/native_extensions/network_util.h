@@ -32,6 +32,7 @@
 
 #include <vector>
 #include "base/types.h"
+#include "jsbridge.h"
 
 
 namespace Zephyros {

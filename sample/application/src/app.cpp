@@ -78,7 +78,8 @@ class MyNativeExtensions : public Zephyros::DefaultNativeExtensions
 
 int MAIN(MAIN_ARGS)
 {
-	//*
+#ifndef APPSTORE
+	/*
 	Zephyros::LicenseManager* pLicenseManager = new Zephyros::LicenseManager();
     pLicenseManager->SetLicenseInfo(102, TEXT(
         "MIIBtzCCASwGByqGSM44BAEwggEfAoGBAJ0BnatI/iQGeWpD7lIepUJVDogTj3vn\n"
@@ -102,6 +103,7 @@ int MAIN(MAIN_ARGS)
 
 	Zephyros::SetLicenseManager(pLicenseManager);
 	//*/
+#endif
 
 	Zephyros::SetNativeExtensions(new MyNativeExtensions());
 

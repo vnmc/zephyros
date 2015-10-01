@@ -807,13 +807,23 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptFunction(TEXT("getLicenseData"), FUNC({ return NO_ERROR; }));
     e->AddNativeJavaScriptProcedure(TEXT("deactivateLicense"), FUNC({ return NO_ERROR; }));
 #else
+
     // getLicenseData: (callback: (data: ILicenseData) => void) => void;
+    typedef std::map<String, String> StringMap;
     e->AddNativeJavaScriptFunction(
         TEXT("getLicenseData"),
         FUNC({
             AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
             if (pMgr)
-                ret->SetDictionary(0, pMgr->GetLicenseInformation());
+            {
+                StringMap info(pMgr->GetLicenseInformation());
+                JavaScript::Object obj = JavaScript::CreateObject();
+                
+                for (std::map<String, String>::iterator it = info.begin(); it != info.end(); ++it)
+                    obj->SetString(it->first, it->second);
+                
+                ret->SetDictionary(0, obj);
+            }
             else
                 ret->SetNull(0);
         

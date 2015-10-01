@@ -30,7 +30,7 @@
 #pragma once
 
 
-#include "base/types.h"
+#include "jsbridge.h"
 
 
 #ifndef APPSTORE

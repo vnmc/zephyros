@@ -6,8 +6,9 @@
 
 # - public headers
 set(ZEPHYROS__SRCS
-  native_extensions.h
   zephyros.h
+  native_extensions.h
+  jsbridge.h
   zephyros_strings.h
   licensing.h
 )
@@ -25,7 +26,6 @@ set(ZEPHYROS__BASE_SRCS
   base/zephyros_impl.cpp
   base/app.h
   base/jsbridge.cpp
-  base/jsbridge.h
   base/logging.h
   base/types.h
 )
@@ -200,7 +200,6 @@ set(ZEPHYROS_CEF_BASE_SRCS
   base/cef/client_handler.h
   base/cef/extension_handler.cpp
   base/cef/extension_handler.h
-  base/cef/jsbridge_v8.h
   base/cef/resource_util.h
   base/cef/v8_util.cpp
   base/cef/v8_util.h
@@ -266,7 +265,6 @@ set(ZEPHYROS_CEFHELPER_SRCS
 set(ZEPHYROS_WEBVIEW_BASE_SRCS
   base/webview/zephyros_webview.mm
   base/webview/jsbridge_webview.cpp
-  base/webview/jsbridge_webview.h
   base/webview/webview_extension.mm
   base/webview/ZPYWebViewAppDelegate.h
   base/webview/ZPYWebViewAppDelegate.mm
@@ -332,7 +330,7 @@ if(OS_MACOSX)
   #  )
   set_target_properties(Zephyros_CEF PROPERTIES
     FRAMEWORK TRUE
-    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS}"
+    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
     RESOURCE "res/mac/LicenseCheckWindowController.xib"
     INSTALL_NAME_DIR "@rpath"
   )
@@ -347,7 +345,7 @@ if(OS_MACOSX)
   target_link_libraries(Zephyros_CEF_Helper PUBLIC ${DEFAULT_LIBS} ${LIB_SPARKLE} ${LIB_CEF} libcef_dll_wrapper)
   set_target_properties(Zephyros_CEF_Helper PROPERTIES
     FRAMEWORK TRUE
-    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS}"
+    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
     INSTALL_NAME_DIR "@rpath"
   )
   FIX_MACOSX_HELPER_FRAMEWORK_LINK(Zephyros_CEF_Helper ${CEF_TARGET_OUT_DIR})
@@ -359,7 +357,7 @@ if(OS_MACOSX)
   target_link_libraries(Zephyros_WebView PUBLIC ${DEFAULT_LIBS} ${LIB_JAVASCRIPTCORE} ${LIB_SPARKLE})
   set_target_properties(Zephyros_WebView PROPERTIES
     FRAMEWORK TRUE
-    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};base/webview/jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
+    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
     RESOURCE "res/mac/MainWindow.xib;res/mac/LicenseCheckWindowController.xib"
     INSTALL_NAME_DIR "@rpath"
   )
@@ -372,7 +370,7 @@ if(OS_MACOSX)
   target_link_libraries(Zephyros_AppStore PRIVATE ${DEFAULT_LIBS} ${LIB_JAVASCRIPTCORE})
   set_target_properties(Zephyros_AppStore PROPERTIES
     FRAMEWORK TRUE
-    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};base/webview/jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
+    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
     RESOURCE "res/mac/MainWindow.xib"
     INSTALL_NAME_DIR "@rpath"
   )
