@@ -30,6 +30,9 @@
 #pragma once
 
 
+#include <map>
+
+
 //////////////////////////////////////////////////////////////////////////
 // Constants
 
@@ -37,31 +40,6 @@
 #define ACTIVATION_FAILED 0
 #define ACTIVATION_OBSOLETELICENSE -1
 
-
-//////////////////////////////////////////////////////////////////////////
-// Types
-
-#ifdef USE_WEBVIEW
-#include "jsbridge_webview.h"
-#endif
-
-#ifdef USE_CEF
-
-template<class T> class CefRefPtr;
-class CefListValue;
-class CefDictionaryValue;
-
-
-namespace Zephyros {
-namespace JavaScript {
-    
-typedef CefRefPtr<CefDictionaryValue> Object;
-typedef CefRefPtr<CefListValue> Array;
-    
-} // namespace JavaScript
-} // namespace Zephyros
-
-#endif
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,7 +66,7 @@ public:
     virtual bool CanStartApp() = 0;
     virtual bool CheckDemoValidity() { return false; }
         
-    virtual JavaScript::Object GetLicenseInformation() = 0;
+    virtual std::map<String, String> GetLicenseInformation() = 0;
         
     virtual int ActivateFromURL(String url) { return ACTIVATION_FAILED; }
     virtual bool Deactivate() { return false; }
@@ -135,7 +113,7 @@ public:
     virtual bool CanStartApp();
     virtual bool CheckDemoValidity();
         
-    virtual JavaScript::Object GetLicenseInformation();
+    virtual std::map<String, String> GetLicenseInformation();
         
     virtual int ActivateFromURL(String url);
     virtual bool Deactivate();

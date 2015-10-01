@@ -27,6 +27,7 @@
 
 #import "base/types.h"
 #import "native_extensions/os_util.h"
+#import "jsbridge.h"
 
 
 namespace Zephyros {

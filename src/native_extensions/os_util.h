@@ -31,6 +31,7 @@
 
 
 #include "base/types.h"
+#include "jsbridge.h"
 
 
 #ifdef OS_WIN

@@ -238,7 +238,8 @@ macro(FIX_MACOSX_MAIN_FRAMEWORK_LINK target app_path use_rpath)
   if(${use_rpath})
     set(install_path "@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework")
   else()
-    set(install_path "@executable_path/../Chromium Embedded Framework.framework/Chromium Embedded Framework")
+#    set(install_path "@executable_path/../Chromium Embedded Framework.framework/Chromium Embedded Framework")
+    set(install_path "@executable_path/../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework")
   endif()
 
   # embed in framework/app bundle

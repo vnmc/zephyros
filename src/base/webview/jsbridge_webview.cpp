@@ -26,7 +26,9 @@
 
 
 #include <memory>
+
 #include "base/types.h"
+#include "jsbridge.h"
 
 
 #define IMPLEMENT_METHODS(ClassName, K)                                  \

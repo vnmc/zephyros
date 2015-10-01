@@ -144,9 +144,10 @@ bool LicenseManager::CheckDemoValidity()
     return false;
 }
 
-JavaScript::Object LicenseManager::GetLicenseInformation()
+std::map<String, String> LicenseManager::GetLicenseInformation()
 {
-    return NULL;
+    std::map<String, String> map;
+    return map;
 }
 
 int LicenseManager::ActivateFromURL(String url)

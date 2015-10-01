@@ -29,9 +29,11 @@
 #import <stdint.h>
 
 #import "base/app.h"
-#import "base/jsbridge.h"
+#import "base/types.h"
 
 #import "native_extensions/path.h"
+
+#import "jsbridge.h"
 
 
 extern JSContextRef g_ctx;

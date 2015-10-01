@@ -70,8 +70,6 @@ typedef std::stringstream StringStream;
 
 #ifdef USE_CEF
 
-#include "base/cef/jsbridge_v8.h"
-
 namespace Zephyros {
 class ClientHandler;
 }
@@ -96,8 +94,6 @@ typedef NSView* WindowHandle;
 #include <objc/objc.h>
 typedef id WindowHandle;
 #endif
-
-#include "base/webview/jsbridge_webview.h"
 
 #endif  // USE_WEBVIEW
 

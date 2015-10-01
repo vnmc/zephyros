@@ -330,13 +330,13 @@ public:
 
     inline bool HasDemoTokens() { return m_pLicenseData->m_demoTokens.size() > 0; }
 
-    inline virtual JavaScript::Object GetLicenseInformation() final
+    inline virtual std::map<String, String> GetLicenseInformation() final
     {
-        JavaScript::Object info = JavaScript::CreateObject();
+        std::map<String, String> info;
 
-        info->SetString(TEXT("licenseKey"), m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT(""));
-        info->SetString(TEXT("fullName"), m_pLicenseData ? m_pLicenseData->m_name : TEXT(""));
-        info->SetString(TEXT("company"), m_pLicenseData ? m_pLicenseData->m_company : TEXT(""));
+        info[TEXT("licenseKey")] = m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT("");
+        info[TEXT("fullName")] = m_pLicenseData ? m_pLicenseData->m_name : TEXT("");
+        info[TEXT("company")] = m_pLicenseData ? m_pLicenseData->m_company : TEXT("");
 
         return info;
     }

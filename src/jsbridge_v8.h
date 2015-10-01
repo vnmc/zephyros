@@ -30,6 +30,11 @@
 #pragma once
 
 
+template<class T> class CefRefPtr;
+class CefListValue;
+class CefDictionaryValue;
+
+
 namespace Zephyros {
 namespace JavaScript {
 

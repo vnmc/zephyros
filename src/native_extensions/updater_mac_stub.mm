@@ -27,6 +27,7 @@
 
 #ifndef APPSTORE
 
+#include "base/types.h"
 #include "native_extensions/updater.h"
 
 

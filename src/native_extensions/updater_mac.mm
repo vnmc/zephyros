@@ -30,6 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <Sparkle/SUUpdater.h>
 
+#import "base/types.h"
 #import "native_extensions/updater.h"
 
 

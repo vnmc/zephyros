@@ -32,7 +32,6 @@
 #endif
 
 #include "base/app.h"
-#include "base/jsbridge.h"
 #include "base/logging.h"
 
 #include "base/cef/client_handler.h"
@@ -40,6 +39,8 @@
 #include "base/cef/v8_util.h"
 
 #include "native_extensions/path.h"
+
+#include "jsbridge.h"
 
 
 namespace Zephyros {

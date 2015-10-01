@@ -41,6 +41,7 @@
 #import "native_extensions/path.h"
 
 #import "zephyros.h"
+#import "jsbridge.h"
 #import "native_extensions.h"
 
 

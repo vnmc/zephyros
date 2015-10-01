@@ -25,12 +25,19 @@
  *******************************************************************************/
 
 
-#ifndef Zephyros_jsbridge_h
-#define Zephyros_jsbridge_h
+#ifndef Zephyros_Jsbridge_h
+#define Zephyros_Jsbridge_h
 #pragma once
 
 
-#include "base/types.h"
+
+#ifdef USE_CEF
+#include "jsbridge_v8.h"
+#endif
+
+#ifdef USE_WEBVIEW
+#include "jsbridge_webview.h"
+#endif
 
 
 namespace Zephyros {
@@ -46,4 +53,4 @@ bool HasType(int type, int expectedType);
 } // namespace Zephyros
 
 
-#endif // Zephyros_jsbridge_h
+#endif // Zephyros_Jsbridge_h

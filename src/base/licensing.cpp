@@ -185,7 +185,7 @@ bool LicenseManager::CheckDemoValidity()
 	return m_pMgr->CheckDemoValidity();
 }
 
-JavaScript::Object LicenseManager::GetLicenseInformation()
+std::map<String, String> LicenseManager::GetLicenseInformation()
 {
 	return m_pMgr->GetLicenseInformation();
 }

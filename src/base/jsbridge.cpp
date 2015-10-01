@@ -25,8 +25,10 @@
  *******************************************************************************/
 
 
-#include "base/jsbridge.h"
+#include "base/types.h"
+
 #include "zephyros.h"
+#include "jsbridge.h"
 
 
 namespace Zephyros {
