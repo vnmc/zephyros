@@ -25,6 +25,8 @@
  *******************************************************************************/
 
 
+#include <fstream>
+
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
@@ -79,7 +81,7 @@ int g_nMenubarHeight = 0;
 
 String g_strCustomUrlToAdd(TEXT(""));
 
-extern FILE* g_hndLogFile;
+extern std::ofstream* g_pLogFile;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +116,7 @@ void AdjustWindowPlacementToMonitor(Rect* pRect);
 namespace Zephyros {
 namespace App {
 
-FILE* OpenLogFile();
+std::ofstream* OpenLogFile();
 
 } // namespace App
 } // namespace Zephyros
@@ -127,10 +129,8 @@ namespace Zephyros {
 
 int RunApplication(int argc, char* argv[])
 {
-	// TODO: determine if another instance of the application is already running
-
 	// open the log file for writing
-	g_hndLogFile = Zephyros::App::OpenLogFile();
+	g_pLogFile = Zephyros::App::OpenLogFile();
 
     // create a copy of "argv" on Linux because Chromium mangles the value internally (see issue #620)
     CefScopedArgArray scoped_arg_array(argc, argv);
@@ -483,6 +483,8 @@ void SetUserAgentString(CefSettings& settings)
 
 void LoadWindowPlacement(Rect* pRectNormal, bool* pbIsMaximized)
 {
+    // TODO
+
 /*
 	pRectNormal->x = CW_USEDEFAULT;
 	pRectNormal->y = CW_USEDEFAULT;
@@ -523,6 +525,8 @@ void LoadWindowPlacement(Rect* pRectNormal, bool* pbIsMaximized)
 
 void SaveWindowPlacement(Rect* pRectNormal, bool bIsMaximized)
 {
+    // TODO
+
 /*
 	HKEY hKey;
 	if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
@@ -538,6 +542,8 @@ void SaveWindowPlacement(Rect* pRectNormal, bool bIsMaximized)
 
 void AdjustWindowPlacementToMonitor(Rect* pRect)
 {
+    // TODO
+
 /*
 	POINT pt;
 	pt.x = pRect->x;
