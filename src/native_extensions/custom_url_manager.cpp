@@ -43,7 +43,6 @@
 namespace Zephyros {
     
 CustomURLManager::CustomURLManager()
-    : m_e(NULL)
 {
 }
 
@@ -59,14 +58,11 @@ void CustomURLManager::AddURL(String url)
 
 void CustomURLManager::FireCustomURLs()
 {
-	if (!m_e)
-		return;
-
 	for (String url : m_urls)
 	{
         Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
 		args->SetString(0, url);
-		m_e->InvokeCallbacks(TEXT("onCustomURL"), args);
+		Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onCustomURL"), args);
 	}
 
 	m_urls.clear();

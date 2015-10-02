@@ -375,14 +375,23 @@ void SetNativeExtensions(NativeExtensions* pNativeExtensions)
 String GetString(int stringId)
 {
     std::map<int, String>::iterator it = g_mapStrings.find(stringId);
-    return it == g_mapStrings.end() ? TEXT("") : it->second;
+    
+    if (it == g_mapStrings.end())
+        return TEXT("");
+    
+    if (it->second.find(TEXT("{{")) != String::npos)
+    {
+        return g_mapStrings[stringId] = StringReplace(StringReplace(it->second,
+            TEXT("{{appName}}"), g_szAppName),
+            TEXT("{{appVersion}}"), g_szAppVersion);
+    }
+    
+    return it->second;
 }
     
 void SetString(int stringId, String str)
 {
-    g_mapStrings[stringId] = StringReplace(StringReplace(str,
-        TEXT("{{appName}}"), g_szAppName),
-        TEXT("{{appVersion}}"), g_szAppVersion);
+    g_mapStrings[stringId] = str;
 }
 
 bool UseLogging()
