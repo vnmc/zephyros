@@ -259,35 +259,7 @@ if(OS_LINUX)
   add_definitions(-D_FILE_OFFSET_BITS=64)
 
   # Standard libraries.
-  set(CEF_STANDARD_LIBS "X11")
-
-  # # CEF directory paths.
-  # set(CEF_RESOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
-  # set(CEF_BINARY_DIR          "${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}")
-  # set(CEF_BINARY_DIR_DEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug")
-  # set(CEF_BINARY_DIR_RELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release")
-
-  # # CEF library paths.
-  # set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.so")
-  # set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.so")
-
-  # # List of CEF binary files.
-  # set(CEF_BINARY_FILES
-  #   libcef.so
-  #   natives_blob.bin
-  #   snapshot_blob.bin
-  #   )
-
-  # # List of CEF resource files.
-  # set(CEF_RESOURCE_FILES
-  #   cef.pak
-  #   cef_100_percent.pak
-  #   cef_200_percent.pak
-  #   cef_extensions.pak
-  #   devtools_resources.pak
-  #   icudtl.dat
-  #   locales
-  #   )
+#  set(CEF_STANDARD_LIBS "X11")
 endif()
 
 
@@ -340,7 +312,7 @@ if(OS_MACOSX)
   set(CEF_LINKER_FLAGS_RELEASE    "-Wl,-dead_strip")
 
   # Standard libraries.
-  set(CEF_STANDARD_LIBS "-lpthread" "-framework Cocoa" "-framework AppKit")
+#  set(CEF_STANDARD_LIBS "-lpthread" "-framework Cocoa" "-framework AppKit")
 
   # Find the newest available base SDK.
   execute_process(COMMAND xcode-select --print-path OUTPUT_VARIABLE XCODE_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -367,10 +339,6 @@ if(OS_MACOSX)
   set(CEF_BINARY_DIR          "${CMAKE_CURRENT_SOURCE_DIR}/$<CONFIGURATION>")
   set(CEF_BINARY_DIR_DEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug")
   set(CEF_BINARY_DIR_RELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release")
-
-  # CEF library paths.
-  set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/Chromium Embedded Framework.framework/Chromium Embedded Framework")
-  set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/Chromium Embedded Framework.framework/Chromium Embedded Framework")
 endif()
 
 
@@ -394,7 +362,8 @@ if(OS_WINDOWS)
   # /wd"4701"             = Ignore "potentially uninitialized local variable" warning
   # /wd"4702"             = Ignore "unreachable code" warning
   # /wd"4996"             = Ignore "function or variable may be unsafe" warning
-  set(CEF_COMPILER_FLAGS          "/MP /Gy /GR- /Zi /W4 /WX /wd\"4100\" /wd\"4127\" /wd\"4244\" /wd\"4512\" /wd\"4701\" /wd\"4702\" /wd\"4996\"")
+#  set(CEF_COMPILER_FLAGS          "/MP /Gy /GR- /Zi /EHsc /W4 /WX /wd\"4100\" /wd\"4127\" /wd\"4244\" /wd\"4512\" /wd\"4701\" /wd\"4702\" /wd\"4996\" /wd\"4091\"")
+  set(CEF_COMPILER_FLAGS          "/MP /Gy /GR- /Zi /EHsc /W4 /wd\"4100\" /wd\"4127\" /wd\"4244\" /wd\"4512\" /wd\"4701\" /wd\"4702\" /wd\"4996\" /wd\"4091\"")
 
   # /MTd                  = Multithreaded debug runtime
   # /Od                   = Disable optimizations
@@ -421,51 +390,18 @@ if(OS_WINDOWS)
   # -DNOMINMAX                            = Use the standard's templated min/max
   # -DWIN32_LEAN_AND_MEAN                 = Exclude less common API declarations
   # -D_HAS_EXCEPTIONS=0                   = Disable exceptions
-  add_definitions(-DWIN32 -D_WIN32 -D_WINDOWS -DUNICODE -D_UNICODE -DWINVER=0x0602
-                  -D_WIN32_WINNT=0x602 -DNOMINMAX -DWIN32_LEAN_AND_MEAN -D_HAS_EXCEPTIONS=0)
+#  add_definitions(-DWIN32 -D_WIN32 -D_WINDOWS -DUNICODE -D_UNICODE -DWINVER=0x0602
+#                  -D_WIN32_WINNT=0x602 -DNOMINMAX -DWIN32_LEAN_AND_MEAN -D_HAS_EXCEPTIONS=0)
+  add_definitions(-DWIN32 -D_WIN32 -D_WINDOWS -DUNICODE -D_UNICODE -DWINVER=0x0602 -D_WIN32_WINNT=0x602 -DNOMINMAX -D_HAS_EXCEPTIONS=0)
 
   # Standard libraries.
-  set(CEF_STANDARD_LIBS "comctl32.lib" "rpcrt4.lib" "shlwapi.lib")
+#  set(CEF_STANDARD_LIBS "comctl32.lib" "rpcrt4.lib" "shlwapi.lib")
 
   # CEF directory paths.
   set(CEF_RESOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
   set(CEF_BINARY_DIR          "${CMAKE_CURRENT_SOURCE_DIR}/$<CONFIGURATION>")
   set(CEF_BINARY_DIR_DEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug")
   set(CEF_BINARY_DIR_RELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release")
-
-  # CEF library paths.
-  set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.lib")
-  set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.lib")
-
-
-  # # List of CEF binary files.
-  # set(CEF_BINARY_FILES
-  #   d3dcompiler_43.dll
-  #   d3dcompiler_47.dll
-  #   libcef.dll
-  #   libEGL.dll
-  #   libGLESv2.dll
-  #   natives_blob.bin
-  #   snapshot_blob.bin
-  #   )
-  # if(PROJECT_ARCH STREQUAL "x86")
-  #   # Only used on 32-bit platforms.
-  #   set(CEF_BINARY_FILES
-  #     ${CEF_BINARY_FILES}
-  #     wow_helper.exe
-  #     )
-  # endif()
-
-  # # List of CEF resource files.
-  # set(CEF_RESOURCE_FILES
-  #   cef.pak
-  #   cef_100_percent.pak
-  #   cef_200_percent.pak
-  #   cef_extensions.pak
-  #   devtools_resources.pak
-  #   icudtl.dat
-  #   locales
-  #   )
 endif()
 
 
@@ -517,8 +453,8 @@ if(OS_MACOSX)
   message(STATUS "Target SDK:                   ${CEF_TARGET_SDK}")
 endif()
 
-set(LIBRARIES ${CEF_STANDARD_LIBS})
-message(STATUS "Standard libraries:           ${LIBRARIES}")
+#set(LIBRARIES ${CEF_STANDARD_LIBS})
+#message(STATUS "Standard libraries:           ${LIBRARIES}")
 
 get_directory_property(DEFINITIONS COMPILE_DEFINITIONS)
 message(STATUS "Compiler definitions:         ${DEFINITIONS}")

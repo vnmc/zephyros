@@ -25,10 +25,7 @@
  *******************************************************************************/
 
 
-#include <windows.h>
-#include <commdlg.h>
-#include <shellapi.h>
-#include <direct.h>
+#include <Windows.h>
 #include <Shlwapi.h>
 #include <ShlObj.h>
 
@@ -48,7 +45,7 @@ extern bool g_isMultithreadedMessageLoop;
 extern HWND g_hMessageWnd;
 
 HANDLE g_hndLogFile;
-
+TCHAR g_szLogFileName[MAX_PATH];
 
 namespace Zephyros {
 namespace App {
@@ -114,27 +111,26 @@ void Alert(String title, String msg, AlertStyle style)
 
 HANDLE OpenLogFile()
 {
-    TCHAR szLogFileName[MAX_PATH];
-	SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szLogFileName);
+	SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, g_szLogFileName);
 
 	const TCHAR* szCompanyName = Zephyros::GetCompanyName();
 	if (szCompanyName != NULL && szCompanyName[0] != TCHAR('\0'))
 	{
-		PathAddBackslash(szLogFileName);
-		PathAppend(szLogFileName, szCompanyName);
-		CreateDirectory(szLogFileName, NULL);
+		PathAddBackslash(g_szLogFileName);
+		PathAppend(g_szLogFileName, szCompanyName);
+		CreateDirectory(g_szLogFileName, NULL);
 	}
 
-	PathAddBackslash(szLogFileName);
-	PathAppend(szLogFileName, Zephyros::GetAppName());
-	CreateDirectory(szLogFileName, NULL);
+	PathAddBackslash(g_szLogFileName);
+	PathAppend(g_szLogFileName, Zephyros::GetAppName());
+	CreateDirectory(g_szLogFileName, NULL);
 
-	PathAppend(szLogFileName, TEXT("\\debug.log"));
-	HANDLE hndLogFile = CreateFile(szLogFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	PathAppend(g_szLogFileName, TEXT("\\debug.log"));
+	HANDLE hndLogFile = CreateFile(g_szLogFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hndLogFile == INVALID_HANDLE_VALUE)
 	{
 		//AppShowErrorMessage();
-		hndLogFile = CreateFile(szLogFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+		hndLogFile = CreateFile(g_szLogFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 	}
 
 	// write marker bytes to mark the file as UTF-8 encoded
@@ -186,7 +182,7 @@ String ShowErrorMessage()
 	if (msg != NULL)
 	{
 		MessageBox(NULL, msg, TEXT("Error"), MB_ICONERROR);
-		String strMsg = String(msg);
+		strMsg = String(msg);
 		LocalFree(msg);
 	}
 	else
@@ -207,7 +203,7 @@ String ShowErrorMessage()
 	return strMsg;
 }
 
-void SetMenuItemStatuses(JavaScript::Object items)
+void SetMenuItemStatuses(MenuItemStatuses& statuses)
 {
 	if (!g_handler.get())
 		return;
@@ -216,15 +212,12 @@ void SetMenuItemStatuses(JavaScript::Object items)
 	if (!hMenu)
 		return;
 
-	JavaScript::KeyList keys;
-	items->GetKeys(keys);
-	for (JavaScript::KeyType commandId : keys)
+	for (MenuItemStatuses::iterator it = statuses.begin(); it != statuses.end(); ++it)
 	{
-		String strCmdId = commandId;
-		int nID = Zephyros::GetMenuIDForCommand(strCmdId.c_str());
+		int nID = Zephyros::GetMenuIDForCommand(it->first.c_str());
 		if (nID)
 		{
-			int status = items->GetInt(commandId);
+			int status = it->second;
 			EnableMenuItem(hMenu, nID, MF_BYCOMMAND | ((status & 0x01) ? MF_ENABLED : MF_DISABLED));
 			CheckMenuItem(hMenu, nID, MF_BYCOMMAND | ((status & 0x02) ? MF_CHECKED : MF_UNCHECKED));
 		}

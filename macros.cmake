@@ -28,6 +28,63 @@ elseif(OS_LINUX)
 endif()
 
 
+# CEF distributable files
+if(OS_WINDOWS)
+  set(CEF_BINARY_FILES
+    d3dcompiler_43.dll
+    d3dcompiler_47.dll
+    libcef.dll
+    libEGL.dll
+    libGLESv2.dll
+    natives_blob.bin
+    snapshot_blob.bin
+  )
+  if(PROJECT_ARCH STREQUAL "x86")
+    # only used on 32-bit platforms
+    set(CEF_BINARY_FILES
+      ${CEF_BINARY_FILES}
+      wow_helper.exe
+    )
+  endif()
+elseif(OS_LINUX)
+  # list of CEF binary files
+  set(CEF_BINARY_FILES
+    libcef.so
+    natives_blob.bin
+    snapshot_blob.bin
+  )
+endif()
+
+# list of CEF resource files
+set(CEF_RESOURCE_FILES
+  cef.pak
+  cef_100_percent.pak
+  cef_200_percent.pak
+  cef_extensions.pak
+  devtools_resources.pak
+  icudtl.dat
+  locales
+)
+
+
+# WinSparkle distributable files
+if(OS_WINDOWS)
+  set(WINSPARKLE_BINARY_FILES
+    WinSparkle.dll
+  )
+endif()
+
+# CrashRpt distributable files
+if(OS_WINDOWS)
+  set(CRASHREPORTER_BINARY_FILES
+    crashrpt_lang.ini
+    CrashRpt1402.dll
+    CrashSender1402.exe
+    dbghelp.dll
+  )
+endif()
+
+
 # Append platform specific sources to a list of sources.
 macro(APPEND_PLATFORM_SOURCES name_of_list)
   if(OS_LINUX AND ${name_of_list}_LINUX)

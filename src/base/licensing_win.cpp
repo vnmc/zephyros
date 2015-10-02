@@ -300,7 +300,7 @@ String LicenseData::Now()
 // LicenseManager Implementation
 
 LicenseManagerImpl::LicenseManagerImpl()
-	: m_timerId(-1), m_pDemoDlg(NULL)
+	: m_timerId((UINT_PTR) -1), m_pDemoDlg(NULL)
 {
 	InitConfig();
 }
@@ -669,7 +669,7 @@ void LicenseManagerImpl::KillTimer()
 		return;
 
 	::KillTimer(NULL, m_timerId);
-	m_timerId = -1;
+	m_timerId = (UINT_PTR) -1;
 }
 
 void LicenseManagerImpl::ShowDemoDialog()
