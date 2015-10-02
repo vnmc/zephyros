@@ -47,6 +47,12 @@ set(APP_RESOURCES_MACOSX
   res/mac/Images.xcassets
   ${WEBAPP}
 )
+set(APP_RESOURCES_WINDOWS
+  res/windows/app.rc
+  res/windows/content.rc
+  res/windows/app.ico
+  res/windows/small.ico
+)
 APPEND_PLATFORM_SOURCES(APP_RESOURCES)
 
 # plist files for Mac
@@ -98,15 +104,20 @@ if(OS_MACOSX)
   endif()
 endif()
 
+# on Windows, let the user choose if she wants to use WinSparkle and CrashRpt
+if(OS_WINDOWS)
+  option(USE_WINSPARKLE "Use the WinSparkle updater" ON)
+  option(USE_CRASHRPT "Use the CrashRpt crash reporter" ON)
+endif()
+
 
 # set Zephyros libraries and library paths
 if(DEFINED IS_ZEPHYROS_BUILD)
   # this CMake file is included by the CMake file in Zephyros's root directory
 
   # set the Zephyros libraries to the Zephyros targets
-  set(LIB_ZEPHYROS_CEF Zephyros_CEF)
-
   if(OS_MACOSX)
+    set(LIB_ZEPHYROS_CEF Zephyros_CEF)
     set(LIB_ZEPHYROS_CEFHELPER Zephyros_CEF_Helper)
     set(LIB_ZEPHYROS_WEBVIEW Zephyros_WebView)
     set(LIB_ZEPHYROS_APPSTORE Zephyros_AppStore)
@@ -115,6 +126,9 @@ if(DEFINED IS_ZEPHYROS_BUILD)
     set(LIB_ZEPHYROS_CEFHELPER_PATH "${ZEPHYROS_BUILD_DIR}/${LIB_ZEPHYROS_CEFHELPER}.framework")
     set(LIB_ZEPHYROS_WEBVIEW_PATH "${ZEPHYROS_BUILD_DIR}/${LIB_ZEPHYROS_WEBVIEW}.framework")
     set(LIB_ZEPHYROS_APPSTORE_PATH "${ZEPHYROS_BUILD_DIR}/${LIB_ZEPHYROS_APPSTORE}.framework")
+  else()
+    set(LIB_ZEPHYROS_CEF Zephyros)
+    set(LIB_DLL_WRAPPER libcef_dll_wrapper)
   endif()
 else()
   # this CMake file is a used as a standalone
@@ -130,6 +144,12 @@ else()
     set(LIB_ZEPHYROS_CEFHELPER_PATH "${LIB_ZEPHYROS_CEFHELPER}")
     set(LIB_ZEPHYROS_WEBVIEW_PATH "${LIB_ZEPHYROS_WEBVIEW}")
     set(LIB_ZEPHYROS_APPSTORE_PATH "${LIB_ZEPHYROS_APPSTORE}")
+  elseif(OS_WINDOWS)
+    set(LIB_ZEPHYROS_CEF "${ZEPHYROS_BUILD_DIR}/Zephyros.lib")
+    set(LIB_DLL_WRAPPER "${ZEPHYROS_BUILD_DIR}/libcef_dll_wrapper.lib")
+  elseif(OS_LINUX)
+    set(LIB_ZEPHYROS_CEF "${ZEPHYROS_BUILD_DIR}/Zephyros.a")
+    set(LIB_DLL_WRAPPER "${ZEPHYROS_BUILD_DIR}/libcef_dll_wrapper.a")
   endif()
 endif()
 
@@ -232,45 +252,104 @@ if(OS_MACOSX)
     EMBED_FRAMEWORK("${APP_NAME_APPSTORE}" "${LIB_ZEPHYROS_APPSTORE_PATH}")
   endif()
 elseif(OS_WINDOWS)
-  add_executable()
+  add_executable(${APP_NAME} WIN32 ${APP_ALL_SRCS})
+
+  if(DEFINED IS_ZEPHYROS_BUILD)
+    add_dependencies(${APP_NAME} Zephyros)
+    target_include_directories(${APP_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+  else()
+    target_include_directories(${APP_NAME} PRIVATE ${ZEPHYROS_DIR} ${ZEPHYROS_DIR}/src ${ZEPHYROS_DIR}/lib/cef)
+  endif()
+
+  set(CEF_STANDARD_LIBS
+    winhttp.lib
+#    dnsapi.lib
+    version.lib
+#    msimg32.lib
+    ws2_32.lib
+#    usp10.lib
+#    psapi.lib
+#    dbghelp.lib
+#    winmm.lib
+    shlwapi.lib
+    kernel32.lib
+    gdi32.lib
+#    winspool.lib
+    comdlg32.lib
+#    advapi32.lib
+    shell32.lib
+#    ole32.lib
+#    oleaut32.lib
+    user32.lib
+#    uuid.lib
+#    odbc32.lib
+#    odbccp32.lib
+#    delayimp.lib
+#    comctl32.lib
+#    rpcrt4.lib
+#    opengl32.lib
+#    glu32.lib
+    gdiplus.lib
+    iphlpapi.lib
+    crypt32.lib
+    uxtheme.lib
+  )
+
+  if(USE_WINSPARKLE)
+    set(CEF_STANDARD_LIBS ${CEF_STANDARD_LIBS} "${ZEPHYROS_DIR}/lib/winsparkle/\$(Platform)/WinSparkle.lib")
+    COPY_FILES(${APP_NAME} ${WINSPARKLE_BINARY_FILES} "${ZEPHYROS_DIR}/lib/winsparkle/x64" "${CEF_TARGET_OUT_DIR}")
+  else()
+    set(APP_ALL_SRCS ${APP_ALL_SRCS} "${ZEPHYROS_DIR}/src/stubs_win.cpp")
+    target_compile_definitions(${APP_NAME} PRIVATE -DNO_WINSPARKLE)
+  endif()
+
+  if(USE_CRASHRPT)
+    set(CEF_STANDARD_LIBS ${CEF_STANDARD_LIBS} "${ZEPHYROS_DIR}/lib/CrashRpt/\$(Platform)/CrashRpt1402.lib")
+    COPY_FILES(${APP_NAME} ${CRASHREPORTER_BINARY_FILES} "${ZEPHYROS_DIR}/lib/CrashRpt/x64" "${CEF_TARGET_OUT_DIR}")
+  else()
+    set(APP_ALL_SRCS ${APP_ALL_SRCS} "${ZEPHYROS_DIR}/src/stubs_win.cpp")
+    target_compile_definitions(${APP_NAME} PRIVATE -DNO_CRASHRPT)
+  endif()
+
+  set(CEF_RESOURCE_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/windows/x64/Resources/")
+  set(CEF_BINARY_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/windows/x64/Release/")
+
+  target_compile_definitions(${APP_NAME} PRIVATE -DUSE_CEF ${PLATFORM})
+  target_link_libraries(${APP_NAME} PRIVATE ${LIB_ZEPHYROS_CEF} ${LIB_DLL_WRAPPER} ${CEF_BINARY_DIR}/libcef.lib ${CEF_STANDARD_LIBS})
+
+  # add the custom manifest files to the executable
+#  ADD_WINDOWS_MANIFEST("${CMAKE_CURRENT_SOURCE_DIR}/resources/win" "${CEF_TARGET}")
+
+  # copy CEF binary and resource files to the target output directory
+  COPY_FILES(${APP_NAME} "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
+  COPY_FILES(${APP_NAME} "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
+
 elseif(OS_LINUX)
   # find required libraries and update compiler/linker variables
   set(CEF_STANDARD_LIBS X11)
   FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-3.0 gthread-2.0 openssl libcurl")
 
-  set(CEF_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux/x86_64/Resources/")
-  set(CEF_BINARY_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux/x86_64/Release/")
+  set(CEF_RESOURCE_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/linux/x86_64/Resources/")
+  set(CEF_BINARY_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/linux/x86_64/Release/")
 
-  add_executable(${APP_NAME} ${APP_SRCS})
-  add_dependencies(${APP_NAME} Zephyros)
-  target_include_directories(${APP_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+  add_executable(${APP_NAME} ${APP_ALL_SRCS})
+
+  if(DEFINED IS_ZEPHYROS_BUILD)
+    add_dependencies(${APP_NAME} Zephyros)
+    target_include_directories(${APP_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+    target_link_libraries(${APP_NAME} PRIVATE Zephyros libcef_dll_wrapper ${CEF_BINARY_DIR}/libcef.so ${CEF_STANDARD_LIBS})
+  else()
+    target_include_directories(${APP_NAME} PRIVATE ${ZEPHYROS_DIR} ${ZEPHYROS_DIR}/src ${ZEPHYROS_DIR}/lib/cef)
+  endif()
+
+  target_link_libraries(${APP_NAME} PRIVATE ${LIB_ZEPHYROS_CEF} ${LIB_DLL_WRAPPER} ${CEF_BINARY_DIR}/libcef.so ${CEF_STANDARD_LIBS})
   target_compile_definitions(${APP_NAME} PRIVATE -DUSE_CEF ${PLATFORM})
-  target_link_libraries(${APP_NAME} PRIVATE Zephyros libcef_dll_wrapper ${CEF_BINARY_DIR}/libcef.so ${CEF_STANDARD_LIBS})
 
   # set rpath so that libraries can be placed next to the executable
   set_target_properties(${APP_NAME} PROPERTIES
     INSTALL_RPATH "$ORIGIN"
     BUILD_WITH_INSTALL_RPATH TRUE
     RUNTIME_OUTPUT_DIRECTORY ${CEF_TARGET_OUT_DIR}
-  )
-
-
-  # List of CEF binary files.
-  set(CEF_BINARY_FILES
-    libcef.so
-    natives_blob.bin
-    snapshot_blob.bin
-  )
-
-  # List of CEF resource files.
-  set(CEF_RESOURCE_FILES
-    cef.pak
-    cef_100_percent.pak
-    cef_200_percent.pak
-    cef_extensions.pak
-    devtools_resources.pak
-    icudtl.dat
-    locales
   )
 
   # copy CEF binary and resource files to the target output directory
