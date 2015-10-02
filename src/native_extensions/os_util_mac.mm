@@ -30,12 +30,14 @@
 #import <glob.h>
 
 #import "base/ZPYAppDelegate.h"
+#import "base/ZPYMenuHandler.h"
 
 #ifdef USE_CEF
 #import "base/cef/client_handler.h"
 #import "base/cef/extension_handler.h"
 #endif
 
+#import "components/ZPYMenu.h"
 #import "components/ZPYMenuItem.h"
 
 #import "native_extensions/os_util.h"
@@ -535,6 +537,82 @@ void DisplayNotification(String title, String details)
 void RequestUserAttention()
 {
     [NSApp requestUserAttention: NSCriticalRequest];
+}
+    
+void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMenuHandler* menuHandler)
+{
+    int numItems = (int) menuItems->GetSize();
+    for (int i = 0; i < numItems; ++i)
+    {
+        JavaScript::Object item = menuItems->GetDictionary(i);
+        NSMenuItem* menuItem = nil;
+        
+        String caption = item->GetString("caption");
+        if (caption == TEXT("-"))
+        {
+            // this menu item is a separator
+            menuItem = [NSMenuItem separatorItem];
+        }
+        else
+        {
+            menuItem = [[ZPYMenuItem alloc] init];
+            
+            if (item->HasKey("systemCommandId"))
+                menuItem.action = NSSelectorFromString([NSString stringWithUTF8String: String(item->GetString("systemCommandId")).c_str()]);
+            else
+            {
+                ((ZPYMenuItem*) menuItem).commandId = [NSString stringWithUTF8String: String(item->GetString("commandId")).c_str()];
+                menuItem.action = @selector(performClick:);
+                menuItem.target = menuHandler;
+            }
+            
+            menuItem.title = [NSString stringWithUTF8String: caption.c_str()];
+            
+            if (item->HasKey("key"))
+                menuItem.keyEquivalent = [NSString stringWithUTF8String: String(item->GetString("key")).c_str()];
+            
+            if (item->HasKey("keyModifiers"))
+            {
+                int nModifiers = item->GetInt("keyModifiers");
+                int nMask = 0;
+                
+                if (nModifiers & 1)
+                    nMask |= NSShiftKeyMask;
+                if (nModifiers & 2)
+                    nMask |= NSCommandKeyMask;
+                if (nModifiers & 4)
+                    nMask |= NSAlternateKeyMask;
+                if (nModifiers & 8)
+                    nMask |= NSControlKeyMask;
+                
+                menuItem.keyEquivalentModifierMask = nMask;
+            }
+
+            if (item->HasKey("image"))
+            {
+                String image = item->GetString("image");
+                if (image.length() > 0)
+                    menuItem.image = ImageUtil::Base64EncodedPNGToNSImage(image, NSMakeSize(19, 19));
+            }
+            
+            if (item->HasKey("subMenuItems"))
+            {
+                NSMenu* menu = [[ZPYMenu alloc] init];
+                menu.title = menuItem.title;
+                menuItem.submenu = menu;
+                CreateMenuRecursive(menu, item->GetList("subMenuItems"), menuHandler);
+            }
+        }
+        
+        [menuParent insertItem: menuItem atIndex: i];
+    }
+}
+    
+void CreateMenu(JavaScript::Array menuItems)
+{
+    NSMenu* mainMenu = [[NSMenu alloc] init];
+    CreateMenuRecursive(mainMenu, menuItems, [[ZPYMenuHandler alloc] init]);
+    [NSApp setMainMenu: mainMenu];
 }
 
     

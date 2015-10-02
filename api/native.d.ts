@@ -98,6 +98,10 @@ declare module NativeInterface
 		// UI Commands
 
 		/**
+		 */
+		createMenu: (menuItems: IMenuItem[]) => void;
+
+		/**
 		 * Call this function to enable/disable or check/uncheck menu items of
 		 * the application's native menu bar.
 		 *
@@ -729,8 +733,21 @@ declare module NativeInterface
 	export interface IMenuItem
 	{
 		caption: string;
+		key?: string;
+		
+		/**
+		 * Key modifier; bitwise combination of
+		 * 1: Shift
+		 * 2: Ctrl (Windows) / Cmd (Mac)
+		 * 4: Alt
+		 * 8: Ctrl (Mac)
+		 */
+		keyModifiers?: number;
+
 		image?: string;
-		menuCommandId: string;
+		menuCommandId?: string;
+		systemCommandId?: string|number;
+		subMenuItems?: IMenuItem[];
 	}
 
 	export interface IUpdaterSettings

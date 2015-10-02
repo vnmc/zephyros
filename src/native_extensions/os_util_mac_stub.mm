@@ -75,6 +75,10 @@ void RequestUserAttention()
 {
 }
     
+void CreateMenu(JavaScript::Array menuItems)
+{
+}
+    
 MenuHandle CreateContextMenu(JavaScript::Array menuItems)
 {
     return 0;

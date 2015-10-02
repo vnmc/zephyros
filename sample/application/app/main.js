@@ -34,3 +34,42 @@ $(document).ready(function()
 	    });        
 	});
 });
+
+
+app.createMenu([
+	{
+		caption: 'App',
+		subMenuItems: [
+			{
+				caption: 'About',
+				menuCommandId: 'about'
+			}
+		]
+	},
+	{
+		caption: 'File',
+		subMenuItems: [
+			{
+				caption: 'New',
+				menuCommandId: 'new'
+			}
+		]
+	},
+	{
+		caption: 'Edit',
+		subMenuItems: [
+			{
+				caption: 'Copy',
+				key: 'c',
+				keyModifiers: 1,
+				systemCommandId: 'copy:'
+			},
+			{
+				caption: 'Paste',
+				key: 'v',
+				keyModifiers: 1,
+				systemCommandId: 'paste:'
+			}
+		]
+	}
+]);

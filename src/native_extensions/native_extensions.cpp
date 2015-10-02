@@ -149,6 +149,16 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     //////////////////////////////////////////////////////////////////////
     // UI
     
+    // createMenu: (menu: IMenuItem[]) => void
+    e->AddNativeJavaScriptProcedure(
+        TEXT("createMenu"),
+        FUNC({
+            OSUtil::CreateMenu(args->GetList(0));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_LIST, "menu")
+    ));
+    
 	// setMenuItemStatuses: (items: IMenuItemFlags) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("setMenuItemStatuses"),

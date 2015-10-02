@@ -59,6 +59,7 @@ String GetConfigDirectory();
 String Exec(String command);
 #endif
 
+void CreateMenu(JavaScript::Array menuItems);
 MenuHandle CreateContextMenu(JavaScript::Array menuItems);
 String ShowContextMenu(MenuHandle nMenuHandle, int x, int y);
 
