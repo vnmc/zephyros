@@ -226,6 +226,7 @@ if(OS_MACOSX)
     EMBED_FRAMEWORK("${APP_NAME_APPSTORE}" "${LIB_ZEPHYROS_APPSTORE_PATH}")
   endif()
 elseif(OS_WINDOWS)
+  add_executable()
 elseif(OS_LINUX)
   # find required libraries and update compiler/linker variables
   set(CEF_STANDARD_LIBS X11)
@@ -234,14 +235,14 @@ elseif(OS_LINUX)
   set(CEF_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux/x86_64/Resources/")
   set(CEF_BINARY_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux/x86_64/Release/")
 
-  add_executable(App ${APP_SRCS})
-  add_dependencies(App Zephyros)
-  target_include_directories(App PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
-  target_compile_definitions(App PRIVATE -DUSE_CEF ${PLATFORM})
-  target_link_libraries(App PRIVATE Zephyros libcef_dll_wrapper ${CEF_BINARY_DIR}/libcef.so ${CEF_STANDARD_LIBS})
+  add_executable(${APP_NAME} ${APP_SRCS})
+  add_dependencies(${APP_NAME} Zephyros)
+  target_include_directories(${APP_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+  target_compile_definitions(${APP_NAME} PRIVATE -DUSE_CEF ${PLATFORM})
+  target_link_libraries(${APP_NAME} PRIVATE Zephyros libcef_dll_wrapper ${CEF_BINARY_DIR}/libcef.so ${CEF_STANDARD_LIBS})
 
   # set rpath so that libraries can be placed next to the executable
-  set_target_properties(App PROPERTIES
+  set_target_properties(${APP_NAME} PROPERTIES
     INSTALL_RPATH "$ORIGIN"
     BUILD_WITH_INSTALL_RPATH TRUE
     RUNTIME_OUTPUT_DIRECTORY ${CEF_TARGET_OUT_DIR}
@@ -267,9 +268,9 @@ elseif(OS_LINUX)
   )
 
   # copy CEF binary and resource files to the target output directory
-  COPY_FILES(App "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
-  COPY_FILES(App "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
+  COPY_FILES(${APP_NAME} "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
+  COPY_FILES(${APP_NAME} "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
 
   # copy cefclient resource files to the target output directory
-  COPY_FILES(App "${WEBAPP}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
+  COPY_FILES(${APP_NAME} "${WEBAPP}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
 endif()
