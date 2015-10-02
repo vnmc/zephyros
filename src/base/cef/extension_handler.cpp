@@ -150,6 +150,7 @@ String NativeFunction::GetArgList()
 
 ClientExtensionHandler::ClientExtensionHandler()
 {
+    Zephyros::GetNativeExtensions()->SetClientExtensionHandler(this);
 }
 
 ClientExtensionHandler::~ClientExtensionHandler()
