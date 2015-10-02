@@ -49,10 +49,15 @@ set(APP_RESOURCES_MACOSX
 )
 APPEND_PLATFORM_SOURCES(APP_RESOURCES)
 
-set(APP_SRCS
+# plist files for Mac
+set(APP_CEF_PLIST res/mac/Info-CEF.plist)
+set(APP_CEFHELPER_PLIST res/mac/Info-CEF-Helper.plist)
+set(APP_WEBVIEW_PLIST res/mac/Info-WebView.plist)
+set(APP_APPSTORE_PLIST res/mac/Info-AppStore.plist)
+
+set(APP_ALL_SRCS
   ${APP_SRCS}
   ${APP_RESOURCES}
-  ${APP_WEBAPP}
 )
 
 
@@ -156,18 +161,19 @@ if(OS_MACOSX)
     target_compile_definitions(${APP_NAME_CEFHELPER} PRIVATE -DUSE_CEF ${PLATFORM})
     target_link_libraries(${APP_NAME_CEFHELPER} PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEFHELPER} ${LIB_CEF})
     set_target_properties(${APP_NAME_CEFHELPER} PROPERTIES
-      MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-CEF-Helper.plist
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/${APP_CEFHELPER_PLIST}"
     )
     EMBED_FRAMEWORK("${APP_NAME_CEFHELPER}" "${LIB_ZEPHYROS_CEFHELPER_PATH}")
     FIX_MACOSX_HELPER_FRAMEWORK_LINK("${APP_NAME_CEFHELPER}" "${CEF_TARGET_OUT_DIR}")
 
     # CEF App
-    add_executable(${APP_NAME_CEF} MACOSX_BUNDLE ${APP_SRCS})
+    add_executable(${APP_NAME_CEF} MACOSX_BUNDLE ${APP_ALL_SRCS})
 
     if(DEFINED IS_ZEPHYROS_BUILD)
       add_dependencies(${APP_NAME_CEF} "${APP_NAME_CEFHELPER}" Zephyros_CEF)
       target_include_directories(${APP_NAME_CEF} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
     else()
+      add_dependencies(${APP_NAME_CEF} "${APP_NAME_CEFHELPER}")
       target_include_directories(${APP_NAME_CEF} PRIVATE ${CMAKE_SOURCE_DIR}/src ${LIB_ZEPHYROS_CEF_PATH}/Headers ${ZEPHYROS_DIR} ${ZEPHYROS_DIR}/lib/cef)
     endif()
 
@@ -176,7 +182,7 @@ if(OS_MACOSX)
 
     set_target_properties(${APP_NAME_CEF} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
-      MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-CEF.plist
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/${APP_CEF_PLIST}"
     )
     EMBED_FRAMEWORK("${APP_NAME_CEF}" "${LIB_ZEPHYROS_CEF_PATH}")
     EMBED_FRAMEWORK("${APP_NAME_CEF}" "${LIB_CEF}")
@@ -186,7 +192,7 @@ if(OS_MACOSX)
 
   # WebView App
   if(${BUILD_WEBVIEW_VERSION})
-    add_executable(${APP_NAME_WEBVIEW} MACOSX_BUNDLE ${APP_SRCS})
+    add_executable(${APP_NAME_WEBVIEW} MACOSX_BUNDLE ${APP_ALL_SRCS})
 
     if(DEFINED IS_ZEPHYROS_BUILD)
       add_dependencies(${APP_NAME_WEBVIEW} Zephyros_WebView)
@@ -200,14 +206,14 @@ if(OS_MACOSX)
 
     set_target_properties(${APP_NAME_WEBVIEW} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
-      MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-WebView.plist
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/${APP_WEBVIEW_PLIST}"
     )
     EMBED_FRAMEWORK("${APP_NAME_WEBVIEW}" "${LIB_ZEPHYROS_WEBVIEW_PATH}")
   endif()
 
   # AppStore App
   if(${BUILD_APPSTORE_VERSION})
-    add_executable(${APP_NAME_APPSTORE} MACOSX_BUNDLE ${APP_SRCS})
+    add_executable(${APP_NAME_APPSTORE} MACOSX_BUNDLE ${APP_ALL_SRCS})
 
     if(DEFINED IS_ZEPHYROS_BUILD)
       add_dependencies(${APP_NAME_APPSTORE} Zephyros_AppStore)
@@ -221,7 +227,7 @@ if(OS_MACOSX)
 
     set_target_properties(${APP_NAME_APPSTORE} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
-      MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/res/mac/Info-AppStore.plist
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/${APP_APPSTORE_PLIST}"
     )
     EMBED_FRAMEWORK("${APP_NAME_APPSTORE}" "${LIB_ZEPHYROS_APPSTORE_PATH}")
   endif()
@@ -234,7 +240,7 @@ elseif(OS_LINUX)
   set(CEF_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux/x86_64/Resources/")
   set(CEF_BINARY_DIR "${CMAKE_SOURCE_DIR}/lib/cef/DLL/libcef/linux/x86_64/Release/")
 
-  add_executable(App ${APP_SRCS})
+  add_executable(App ${APP_ALL_SRCS})
   add_dependencies(App Zephyros)
   target_include_directories(App PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
   target_compile_definitions(App PRIVATE -DUSE_CEF ${PLATFORM})

@@ -53,7 +53,7 @@ void FileWatcher::FireFileChanged(std::vector<String>& files)
 
     JavaScript::Array args = JavaScript::CreateArray();
     args->SetList(0, listFiles);
-    m_clientExtensionHandler->InvokeCallbacks(TEXT("onFileChanged"), args);
+    Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onFileChanged"), args);
 }
 
 } // namespace Zephyros

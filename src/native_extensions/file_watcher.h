@@ -66,8 +66,7 @@
 // Forward Declarations
 
 namespace Zephyros {
-    
-class ClientExtensionHandler;
+
 class FileWatcher;
 
 }
@@ -126,11 +125,6 @@ public:
     
     void FireFileChanged(std::vector<String>& files);
     
-    inline void SetClientExtensionHandler(ClientExtensionHandlerPtr e)
-    {
-        m_clientExtensionHandler = e;
-    }
-
 #ifdef OS_MACOSX
     void ScheduleNonEmptyFileCheck(std::vector<String>& filenames);
     void ScheduleEmptyFileCheck(std::vector<String>& filenames);
@@ -221,8 +215,6 @@ public:
 
 	HANDLE m_hEventTerminate;
 #endif
-    
-    ClientExtensionHandlerPtr m_clientExtensionHandler;
 };
     
 } // namespace Zephyros

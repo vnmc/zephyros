@@ -247,13 +247,17 @@
     {
         if ([item isKindOfClass: ZPYMenuItem.class])
         {
-            String commandId([[(ZPYMenuItem*) item commandId] UTF8String]);
-            if (statuses.find(commandId) != statuses.end())
+            NSString *commandId = [(ZPYMenuItem*) item commandId];
+            if (commandId)
             {
-                int status = statuses.at(commandId);
-                
-                [item setEnabled: (status & 0x01) ? YES : NO];
-                item.state = (status & 0x02) ? NSOnState : NSOffState;
+                String strCommandId([commandId UTF8String]);
+                if (statuses.find(strCommandId) != statuses.end())
+                {
+                    int status = statuses.at(strCommandId);
+                    
+                    [item setEnabled: (status & 0x01) ? YES : NO];
+                    item.state = (status & 0x02) ? NSOnState : NSOffState;
+                }
             }
             
             /*

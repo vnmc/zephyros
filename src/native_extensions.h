@@ -499,9 +499,9 @@ public:
     ClientExtensionHandler();
     virtual ~ClientExtensionHandler();
     
-    virtual void ReleaseCefObjects();
+    virtual void ReleaseCefObjects() override;
     
-	virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT(""));
+	virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) override;
 
 	bool InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args);
 	bool InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args);
@@ -510,7 +510,7 @@ public:
     // ProcessMessageDelegate Implementation
     
     virtual bool OnProcessMessageReceived(CefRefPtr<ClientHandler> handler, CefRefPtr<CefBrowser> browser,
-        CefProcessId source_process, CefRefPtr<CefProcessMessage> message);
+        CefProcessId source_process, CefRefPtr<CefProcessMessage> message) override;
     
 private:
     std::map<String, NativeFunction*> m_mapFunctions;
@@ -550,6 +550,7 @@ public:
     
     virtual void AddNativeExtensions(NativeJavaScriptFunctionAdder* extensionHandler) = 0;
     virtual void SetClientExtensionHandler(ClientExtensionHandlerPtr e);
+    virtual ClientExtensionHandlerPtr GetClientExtensionHandler() { return m_e; }
     
     inline std::vector<Zephyros::Path>& GetDroppedURLs() { return m_droppedURLs; }
     inline CustomURLManager* GetCustomURLManager() { return m_customURLManager; }

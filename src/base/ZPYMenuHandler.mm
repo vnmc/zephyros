@@ -36,6 +36,13 @@
 
 @implementation ZPYMenuHandler
 
+- (id) init
+{
+    self = [super init];
+    NSLog(@">>> ZPYMenuHandler");
+    return self;
+}
+
 
 /**
  * Invoked when a menu has been clicked.
@@ -43,6 +50,8 @@
 - (IBAction) performClick: (id) sender
 {
     NSString *commandId = [sender valueForKey: @"commandId"];
+    NSLog(@"%@", commandId);
+    
     if (commandId == nil || [commandId isEqualToString: @""])
         return;
     

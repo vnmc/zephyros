@@ -86,9 +86,6 @@ DefaultNativeExtensions::~DefaultNativeExtensions()
 void DefaultNativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
 {
     NativeExtensions::SetClientExtensionHandler(e);
-        
-    m_fileWatcher->SetClientExtensionHandler(e);
-    m_customURLManager->SetClientExtensionHandler(e);
 }
 
 /**
