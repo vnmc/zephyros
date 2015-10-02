@@ -26,16 +26,14 @@
  *******************************************************************************/
 
 
-#include <windows.h>
-#include <CommDlg.h>
+#include <Windows.h>
 #include <Psapi.h>
-#include <ShellAPI.h>
 #include <ShlObj.h>
 #include <Shlwapi.h>
 #include <Shobjidl.h>
 #include <stdio.h>
-#include <sys/stat.h>
 #include <tchar.h>
+#include <sys/stat.h>
 
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"

@@ -31,6 +31,7 @@
 
 #include <Windows.h>
 #include <minmax.h>
+#include <objidl.h>
 #include <gdiplus.h>
 
 #include "include/cef_base.h"

@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <map>
+
 #include <ShlObj.h>
 
 #include "base/app.h"

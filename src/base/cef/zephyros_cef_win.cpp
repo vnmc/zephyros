@@ -25,10 +25,7 @@
  *******************************************************************************/
 
 
-#include <windows.h>
-#include <commdlg.h>
-#include <shellapi.h>
-#include <direct.h>
+#include <Windows.h>
 #include <Shlwapi.h>
 #include <ShlObj.h>
 
@@ -38,6 +35,7 @@
 #include <map>
 
 #include <minmax.h>
+#include <objidl.h>
 #include <gdiplus.h>
 
 #include "lib/cef/include/base/cef_bind.h"
@@ -267,7 +265,7 @@ static void SetFocusToBrowser(CefRefPtr<CefBrowser> browser)
 
 int CreateMainWindow()
 {
-	Zephyros::WindowsInfo* pInfo = &(Zephyros::GetWindowsInfo());
+	Zephyros::WindowsInfo info = Zephyros::GetWindowsInfo();
 
 	// create the window class name
 	TCHAR szWindowClass[256];
@@ -282,12 +280,12 @@ int CreateMainWindow()
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = g_hInst;
-	wcex.hIcon = pInfo->nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(pInfo->nIconID)) : NULL;
+	wcex.hIcon = info.nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(info.nIconID)) : NULL;
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = MAKEINTRESOURCE(pInfo->nMenuID);
+	wcex.lpszMenuName = MAKEINTRESOURCE(info.nMenuID);
 	wcex.lpszClassName = szWindowClass;
-	wcex.hIconSm = pInfo->nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(pInfo->nIconID)) : NULL;
+	wcex.hIconSm = info.nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(info.nIconID)) : NULL;
 	::RegisterClassEx(&wcex);
 
 	// create the main window
@@ -307,7 +305,7 @@ int CreateMainWindow()
 		return FALSE;
 	}
 
-	HACCEL hAccelTable = LoadAccelerators(g_hInst, MAKEINTRESOURCE(pInfo->nAccelID));
+	HACCEL hAccelTable = LoadAccelerators(g_hInst, MAKEINTRESOURCE(info.nAccelID));
 	g_handler->SetAccelTable(hAccelTable);
 
 	// initialize winsparkle
@@ -348,7 +346,7 @@ int CreateMainWindow()
 		DestroyWindow(g_hMessageWnd);
 		g_hMessageWnd = NULL;
 
-		result = static_cast<int>(msg.wParam);
+		nResult = static_cast<int>(msg.wParam);
 	}
 
 	g_isMessageLoopRunning = false;
@@ -359,7 +357,7 @@ int CreateMainWindow()
 
 	Zephyros::OSUtil::CleanUp();
 
-	return result;
+	return nResult;
 }
 
 // Define the callback function that will be called on crash
@@ -652,7 +650,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				browser = g_handler->GetBrowser();
 
 			int wmId = LOWORD(wParam);
-			int wmEvent = HIWORD(wParam);
 
 			// parse the menu selections:
 			switch (wmId)
