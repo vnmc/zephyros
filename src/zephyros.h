@@ -59,6 +59,14 @@ typedef std::string String;
 #define TCHAR        char
 #define TEXT(string) string
 
+#define _tprintf     printf
+#define _tcscpy      strcpy
+#define _tcscat      strcat
+#define _tcslen      strlen
+#define _ttoi        atoi
+#define _tcsnccmp    strncmp
+#define _wtoi64      atoi
+
 #define MAIN main
 #define MAIN_ARGS int argc, char* argv[]
 #define INIT_APPLICATION_ARGS argc, argv

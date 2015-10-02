@@ -47,8 +47,9 @@ bool isFileEmpty(NSString* fileName)
     return fileInfo.st_size == 0;
 }
 
-void fsevents_callback(ConstFSEventStreamRef streamRef, void *userData, size_t numEvents, void *eventPaths,
-                       const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[])
+void fsevents_callback(
+    ConstFSEventStreamRef streamRef, void *userData, size_t numEvents, void *eventPaths,
+    const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[])
 {
     //DEBUG_LOG(@"-- File changed --");
     Zephyros::FileWatcher *me = (Zephyros::FileWatcher*) userData;
