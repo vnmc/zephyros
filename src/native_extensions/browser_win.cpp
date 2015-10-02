@@ -28,6 +28,8 @@
 #include <iomanip>
 #include <tchar.h>
 
+#include <Windows.h>
+
 #include "base/app.h"
 #include "base/logging.h"
 

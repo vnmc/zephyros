@@ -54,7 +54,9 @@
 #endif
 
 #ifdef OS_WIN
+#include <Windows.h>
 #include <minmax.h>
+#include <objidl.h>
 #include <gdiplus.h>
 #endif
 

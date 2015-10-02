@@ -258,7 +258,6 @@ bool ProcessManager::CreateProcess(
 	// prepare the command line
 	String cmdLine;
 	size_t pos = strExePath.find_last_of(TEXT('.'));
-	size_t len = strExePath.length();
 	String extension = pos == String::npos ? TEXT("") : strExePath.substr(pos);
 	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 

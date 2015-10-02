@@ -26,7 +26,10 @@
 
 
 #include <queue>
+
+#include <Windows.h>
 #include <minmax.h>
+#include <objidl.h>
 #include <gdiplus.h>
 
 #include "lib/cef/include/cef_browser.h"
