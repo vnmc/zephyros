@@ -65,7 +65,7 @@ AbstractLicenseManager* g_pLicenseManager = NULL;
 NativeExtensions* g_pNativeExtensions = NULL;
     
 std::map<String, int> g_mapResourceIDs;
-std::map<int, const TCHAR*> g_mapMenuCommands;
+std::map<int, String> g_mapMenuCommands;
 std::map<String, int> g_mapMenuIDs;
 std::map<int, String> g_mapStrings;
     
@@ -259,8 +259,8 @@ int GetMenuIDForCommand(const TCHAR* szCommand)
 
 const TCHAR* GetMenuCommandForID(int nMenuID)
 {
-	std::map<int, const TCHAR*>::iterator it = g_mapMenuCommands.find(nMenuID);
-	return it == g_mapMenuCommands.end() ? NULL : it->second;
+	std::map<int, String>::iterator it = g_mapMenuCommands.find(nMenuID);
+	return it == g_mapMenuCommands.end() ? NULL : it->second.c_str();
 }
 
 void SetMenuIDForCommand(const TCHAR* szCommand, int nMenuID)

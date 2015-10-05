@@ -35,6 +35,8 @@
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
 
+#include "util/string_util.h"
+
 #include "native_extensions/os_util.h"
 #include "native_extensions/image_util_win.h"
 #include "native_extensions/process_manager.h"
@@ -43,6 +45,9 @@
 
 
 #define FILENAME TEXT("Kernel32.dll")
+#define MENU_BUF_SIZE 4096
+#define MAX_ACCELS 256
+
 
 extern HINSTANCE g_hInst;
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
@@ -157,6 +162,205 @@ void StartProcess(CallbackId callback, String executableFileName, std::vector<St
 	// the process manager deletes itself once the process has terminated
 	ProcessManager* pMgr = new ProcessManager(callback, executableFileName, arguments, cwd);
 	pMgr->Start();
+}
+
+WORD TranslateKeyToVirtKey(TCHAR c)
+{
+	switch (c)
+	{
+	case TEXT('\uf700'): return VK_UP;
+	case TEXT('\uf701'): return VK_DOWN;
+	case TEXT('\uf702'): return VK_LEFT;
+	case TEXT('\uf703'): return VK_RIGHT;
+	case TEXT('\uf704'): return VK_F1;
+	case TEXT('\uf705'): return VK_F2;
+	case TEXT('\uf706'): return VK_F3;
+	case TEXT('\uf707'): return VK_F4;
+	case TEXT('\uf708'): return VK_F5;
+	case TEXT('\uf709'): return VK_F6;
+	case TEXT('\uf70a'): return VK_F7;
+	case TEXT('\uf70b'): return VK_F8;
+	case TEXT('\uf70c'): return VK_F9;
+	case TEXT('\uf70d'): return VK_F10;
+	case TEXT('\uf70e'): return VK_F11;
+	case TEXT('\uf70f'): return VK_F12;
+	case TEXT('\uf710'): return VK_F13;
+	case TEXT('\uf711'): return VK_F14;
+	case TEXT('\uf712'): return VK_F15;
+	case TEXT('\uf713'): return VK_F16;
+	case TEXT('\uf714'): return VK_F17;
+	case TEXT('\uf715'): return VK_F18;
+	case TEXT('\uf716'): return VK_F19;
+	case TEXT('\uf717'): return VK_F20;
+	case TEXT('\uf718'): return VK_F21;
+	case TEXT('\uf719'): return VK_F22;
+	case TEXT('\uf71a'): return VK_F23;
+	case TEXT('\uf71b'): return VK_F24;
+	case TEXT('\uf727'): return VK_INSERT;
+	case TEXT('\uf728'): return VK_DELETE;
+	case TEXT('\uf729'): return VK_HOME;
+	case TEXT('\uf72b'): return VK_END;
+	case TEXT('\uf72c'): return VK_PRIOR;	// page up
+	case TEXT('\uf72d'): return VK_NEXT;	// page down
+	case TEXT('\uf72e'): return VK_PRINT;
+	case TEXT('\uf72f'): return VK_SCROLL;
+	case TEXT('\uf730'): return VK_PAUSE;
+	}
+
+	return (WORD) toupper(c);
+}
+
+String GetKeyName(WORD wVkCode)
+{
+	WORD nFlags = 2;
+	if (0x20 <= wVkCode && wVkCode <= 0x2f)
+		nFlags |= 1;
+
+	// get the key name
+	TCHAR szName[128];
+	int nRet = GetKeyNameText(MapVirtualKey(wVkCode, MAPVK_VK_TO_VSC) << 16 | (nFlags << 24), szName, 127);
+	szName[nRet] = TEXT('\0');
+
+	// capitalize the name
+	bool bPrevWasAlnum = false;
+	for (int i = 0; i < nRet; ++i)
+	{
+		TCHAR c = szName[i];
+
+		if (bPrevWasAlnum)
+			szName[i] = tolower(c);
+		if (i > 0 && c == TEXT('-'))
+			szName[i] = TEXT(' ');
+		
+		bPrevWasAlnum = isalnum(c);
+	}
+
+	return szName;
+}
+
+void CreateMenuRecursive(BYTE* pBufMenu, DWORD& dwOffsetMenu, ACCEL* pBufAccel, DWORD& dwNumAccels, JavaScript::Array menuItems, WORD& wCurrentID)
+{
+	int nNumItems = (int) menuItems->GetSize();
+	for (int i = 0; i < nNumItems; ++i)
+	{
+		JavaScript::Object item = menuItems->GetDictionary(i);
+		MENUITEMTEMPLATE* pTemplate = (MENUITEMTEMPLATE*) (pBufMenu + dwOffsetMenu);
+
+		String strCaption = item->GetString(TEXT("caption"));
+		if (strCaption == TEXT("-"))
+		{
+			pTemplate->mtOption = (i == nNumItems - 1 ? MF_END : 0);
+			// ID and mtString are 0x0000
+
+			dwOffsetMenu += sizeof(MENUITEMTEMPLATE);
+		}
+		else
+		{
+			bool bHasSubMenuItems = item->HasKey(TEXT("subMenuItems"));
+			wchar_t* pCaption = pTemplate->mtString;
+			pTemplate->mtOption = (bHasSubMenuItems ? MF_POPUP : 0) | (i == nNumItems - 1 ? MF_END : 0);
+
+			// menu ID
+			if (!bHasSubMenuItems)
+			{
+				WORD wCmd = 0;
+				bool bHasCommand = false;
+
+				if (item->HasKey(TEXT("systemCommandId")))
+				{
+					pTemplate->mtID = wCmd = item->GetInt(TEXT("systemCommandId"));
+					bHasCommand = true;
+				}
+				else if (item->HasKey(TEXT("menuCommandId")))
+				{
+					Zephyros::SetMenuIDForCommand(item->GetString(TEXT("menuCommandId")).c_str(), wCurrentID);
+					pTemplate->mtID = wCmd = wCurrentID;
+					++wCurrentID;
+					bHasCommand = true;
+				}
+
+				// add the accelerator key
+				if (bHasCommand && item->HasKey(TEXT("key")))
+				{
+					int nModifiers = 0;
+					if (item->HasKey(TEXT("keyModifiers")))
+						nModifiers = item->GetInt(TEXT("keyModifiers"));
+
+					String strKey = item->GetString("key");
+
+					pBufAccel[dwNumAccels].fVirt = FVIRTKEY | ((nModifiers & 1) ? FSHIFT : 0) | ((nModifiers & 2) ? FCONTROL : 0) | ((nModifiers & 4) ? FALT : 0);
+					WORD wVkCode = TranslateKeyToVirtKey(strKey.at(0));
+					pBufAccel[dwNumAccels].key = wVkCode;
+					pBufAccel[dwNumAccels].cmd = wCmd;
+					++dwNumAccels;
+
+					// add the keyboard shortcut to the menu item caption
+					strCaption.append(TEXT("\t"));
+					if (nModifiers & 1)
+						strCaption.append(GetKeyName(VK_SHIFT) + TEXT("+"));
+					if (nModifiers & 2)
+						strCaption.append(GetKeyName(VK_CONTROL) + TEXT("+"));
+					if (nModifiers & 4)
+						strCaption.append(GetKeyName(VK_MENU) + TEXT("+"));
+					strCaption.append(GetKeyName(wVkCode));
+				}
+
+				dwOffsetMenu += 2 * sizeof(WORD);
+			}
+			else
+			{
+				// popup menus don't have an ID member
+				pCaption = (wchar_t*) (((BYTE*) pCaption) - sizeof(WORD));
+				dwOffsetMenu += sizeof(WORD);
+			}
+
+			// caption (Windows expects a "&" before the underlined character)
+			strCaption = StringReplace(StringReplace(strCaption, TEXT("&"), TEXT("&&")), TEXT("_"), TEXT("&"));
+			dwOffsetMenu += (DWORD) ((strCaption.length() + 1) * sizeof(wchar_t));
+			if (dwOffsetMenu >= MENU_BUF_SIZE)
+				return;
+			wcscpy(pCaption, strCaption.c_str());
+
+			if (bHasSubMenuItems)
+				CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, item->GetList("subMenuItems"), wCurrentID);
+		}
+	}
+}
+
+void CreateMenu(JavaScript::Array menuItems)
+{
+	BYTE* pBufMenu = new BYTE[MENU_BUF_SIZE];
+	ZeroMemory(pBufMenu, MENU_BUF_SIZE);
+	ACCEL* pBufAccel = new ACCEL[MAX_ACCELS];
+
+	((MENUITEMTEMPLATEHEADER*) pBufMenu)->versionNumber = 0;
+	((MENUITEMTEMPLATEHEADER*) pBufMenu)->offset = 0;
+
+	DWORD dwOffsetMenu = sizeof(MENUITEMTEMPLATEHEADER);
+	DWORD dwNumAccels = 0;
+	WORD wCurrentMenuID = 1000;
+
+	// create the menu structure in memory
+	CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, menuItems, wCurrentMenuID);
+
+	// remove the old menu
+	HWND hWnd = g_handler->GetMainHwnd();
+	HMENU hMenuOld = GetMenu(hWnd);
+	if (hMenuOld)
+		DestroyMenu(hMenuOld);
+
+	// create and set the menu
+	SetMenu(hWnd, LoadMenuIndirect(static_cast<MENUTEMPLATE*>(pBufMenu)));
+
+	// create and set the accelerator table
+	if (dwNumAccels > 0)
+	{
+		DestroyAcceleratorTable(g_handler->GetAccelTable());
+		g_handler->SetAccelTable(CreateAcceleratorTable(pBufAccel, dwNumAccels));
+	}
+
+	delete[] pBufMenu;
+	delete[] pBufAccel;
 }
 
 

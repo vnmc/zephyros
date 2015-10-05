@@ -305,8 +305,11 @@ int CreateMainWindow()
 		return FALSE;
 	}
 
-	HACCEL hAccelTable = LoadAccelerators(g_hInst, MAKEINTRESOURCE(info.nAccelID));
-	g_handler->SetAccelTable(hAccelTable);
+	if (info.nAccelID)
+	{
+		HACCEL hAccelTable = LoadAccelerators(g_hInst, MAKEINTRESOURCE(info.nAccelID));
+		g_handler->SetAccelTable(hAccelTable);
+	}
 
 	// initialize winsparkle
 	const TCHAR* szUpdaterURL = Zephyros::GetUpdaterURL();
@@ -336,7 +339,8 @@ int CreateMainWindow()
 		// run the application message loop
 		while (GetMessage(&msg, NULL, 0, 0))
 		{
-			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+			HACCEL hAccel = g_handler->GetAccelTable();
+			if (hAccel && !TranslateAccelerator(msg.hwnd, hAccel, &msg))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
@@ -678,7 +682,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					const TCHAR* szCommand = Zephyros::GetMenuCommandForID(wmId);
 					if (szCommand)
 					{
-						if (g_handler.get())
+						if (_tcscmp(szCommand, TEXT("check_update")) == 0)
+							win_sparkle_check_update_with_ui();
+						else if (_tcscmp(szCommand, TEXT("purchase_license")) == 0)
+						{
+							if (Zephyros::GetLicenseManager())
+								Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
+						}
+						else if (_tcscmp(szCommand, TEXT("enter_license")) == 0)
+						{
+							if (Zephyros::GetLicenseManager())
+								Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
+						}
+						else if (_tcscmp(szCommand, TEXT("terminate")) == 0)
+						{
+							if (g_handler.get())
+								g_handler->CloseAllBrowsers(false);
+						}
+						else if (g_handler.get())
 						{
 							CefRefPtr<CefListValue> args = CefListValue::Create();
 							args->SetString(0, szCommand);

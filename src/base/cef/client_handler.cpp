@@ -72,7 +72,11 @@ ClientHandler::ClientHandler()
     m_bIsClosing(false),
     m_mainHwnd(NULL)
 {
-    m_processMessageDelegates.insert(static_cast< CefRefPtr<ProcessMessageDelegate> >(m_clientExtensionHandler));
+#ifdef OS_WIN
+	m_hAccelTable = NULL;
+#endif
+
+	m_processMessageDelegates.insert(static_cast< CefRefPtr<ProcessMessageDelegate> >(m_clientExtensionHandler));
     Zephyros::GetNativeExtensions()->AddNativeExtensions(m_clientExtensionHandler.get());
 	InitializeMIMETypes();
 }
