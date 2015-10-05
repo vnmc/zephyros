@@ -32,7 +32,7 @@
 #include "components/dialog_win.h"
 
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 4096
 
 
 extern HINSTANCE g_hInst;

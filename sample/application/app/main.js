@@ -20,11 +20,6 @@ $(document).ready(function()
 		});
 	});
 
-	app.onMenuCommand(function(commandId)
-	{
-		$('body').append('<div>Menu "' + commandId + '" selected.</div>');
-	});
-
 	$('.compute-fib').click(function ()
 	{
 	    var n = parseInt($('.fib-number').val(), 10);
@@ -35,19 +30,21 @@ $(document).ready(function()
 	});
 });
 
-
+// create the app menu
 app.createMenu([
 	{
-		caption: 'App',
+		caption: '_App',
 		subMenuItems: [
 			{
-				caption: 'About',
-				menuCommandId: 'about'
+				caption: 'A_bout',
+				menuCommandId: 'about',
+				key: '1',
+				keyModifiers: 2
 			}
 		]
 	},
 	{
-		caption: 'File',
+		caption: '_File',
 		subMenuItems: [
 			{
 				caption: 'New',
@@ -56,20 +53,30 @@ app.createMenu([
 		]
 	},
 	{
-		caption: 'Edit',
+		caption: '_Edit',
 		subMenuItems: [
 			{
-				caption: 'Copy',
+				caption: '_Copy',
 				key: 'c',
-				keyModifiers: 1,
+				keyModifiers: 2,
 				systemCommandId: 'copy:'
 			},
 			{
-				caption: 'Paste',
+				caption: '_Paste',
 				key: 'v',
-				keyModifiers: 1,
+				keyModifiers: 2,
 				systemCommandId: 'paste:'
 			}
 		]
 	}
 ]);
+
+// react to the menu
+app.onMenuCommand(function(commandId)
+{
+	$('#messages').html('Menu command: ' + commandId);
+	setTimeout(function()
+	{
+		$('#messages').html('');
+	}, 2000);
+});

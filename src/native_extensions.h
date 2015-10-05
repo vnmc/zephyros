@@ -283,10 +283,8 @@ public:
 	ClientWindowHandle GetMainHwnd() const;
 
 #if OS_WIN
-	void SetAccelTable(HACCEL hAccelTable)
-	{
-		m_hAccelTable = hAccelTable;
-	}
+	inline HACCEL GetAccelTable() { return m_hAccelTable; }
+	inline void SetAccelTable(HACCEL hAccelTable) { m_hAccelTable = hAccelTable; }
 #endif
 
 	CefRefPtr<ClientExtensionHandler> GetClientExtensionHandler();

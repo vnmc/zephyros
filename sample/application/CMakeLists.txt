@@ -297,7 +297,7 @@ elseif(OS_WINDOWS)
 
   if(USE_WINSPARKLE)
     set(CEF_STANDARD_LIBS ${CEF_STANDARD_LIBS} "${ZEPHYROS_DIR}/lib/winsparkle/\$(Platform)/WinSparkle.lib")
-    COPY_FILES(${APP_NAME} ${WINSPARKLE_BINARY_FILES} "${ZEPHYROS_DIR}/lib/winsparkle/x64" "${CEF_TARGET_OUT_DIR}")
+    COPY_FILES(${APP_NAME} "${WINSPARKLE_BINARY_FILES}" "${ZEPHYROS_DIR}/lib/winsparkle/x64" "${CEF_TARGET_OUT_DIR}")
   else()
     set(APP_ALL_SRCS ${APP_ALL_SRCS} "${ZEPHYROS_DIR}/src/stubs_win.cpp")
     target_compile_definitions(${APP_NAME} PRIVATE -DNO_WINSPARKLE)
@@ -305,7 +305,7 @@ elseif(OS_WINDOWS)
 
   if(USE_CRASHRPT)
     set(CEF_STANDARD_LIBS ${CEF_STANDARD_LIBS} "${ZEPHYROS_DIR}/lib/CrashRpt/\$(Platform)/CrashRpt1402.lib")
-    COPY_FILES(${APP_NAME} ${CRASHREPORTER_BINARY_FILES} "${ZEPHYROS_DIR}/lib/CrashRpt/x64" "${CEF_TARGET_OUT_DIR}")
+    COPY_FILES(${APP_NAME} "${CRASHREPORTER_BINARY_FILES}" "${ZEPHYROS_DIR}/lib/CrashRpt/x64" "${CEF_TARGET_OUT_DIR}")
   else()
     set(APP_ALL_SRCS ${APP_ALL_SRCS} "${ZEPHYROS_DIR}/src/stubs_win.cpp")
     target_compile_definitions(${APP_NAME} PRIVATE -DNO_CRASHRPT)
@@ -319,6 +319,14 @@ elseif(OS_WINDOWS)
 
   # add the custom manifest files to the executable
 #  ADD_WINDOWS_MANIFEST("${CMAKE_CURRENT_SOURCE_DIR}/resources/win" "${CEF_TARGET}")
+
+  # build resource files (res/windows/content.rc and res/windows/content.cpp)
+  add_custom_command(TARGET ${APP_NAME}
+    PRE_BUILD
+    COMMAND "${ZEPHYROS_DIR}/tools/generate_resources.bat" "${CMAKE_CURRENT_SOURCE_DIR}/res/windows/content.rc" "${CMAKE_CURRENT_SOURCE_DIR}/res/windows/content.cpp"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${WEBAPP}"
+    VERBATIM
+  )
 
   # copy CEF binary and resource files to the target output directory
   COPY_FILES(${APP_NAME} "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")

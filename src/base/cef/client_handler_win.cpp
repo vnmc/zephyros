@@ -57,7 +57,7 @@ void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 
 bool ClientHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event)
 {
-	if (!os_event)
+	if (!os_event || !m_hAccelTable)
 		return false;
 	return TranslateAccelerator(m_mainHwnd, m_hAccelTable, os_event) ? true : false;
 }
