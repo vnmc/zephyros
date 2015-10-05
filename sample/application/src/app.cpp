@@ -79,7 +79,7 @@ class MyNativeExtensions : public Zephyros::DefaultNativeExtensions
 int MAIN(MAIN_ARGS)
 {
 #ifndef APPSTORE
-	/*
+    /*
 	Zephyros::LicenseManager* pLicenseManager = new Zephyros::LicenseManager();
     pLicenseManager->SetLicenseInfo(102, TEXT(
         "MIIBtzCCASwGByqGSM44BAEwggEfAoGBAJ0BnatI/iQGeWpD7lIepUJVDogTj3vn\n"
@@ -96,9 +96,9 @@ int MAIN(MAIN_ARGS)
     pLicenseManager->SetNumberOfDemoDays(7);
     //pLicenseManager->SetAPIURLs(TEXT("demo"), TEXT("activation"), TEXT("deactivation"));
     pLicenseManager->SetAPIURLs(
-        TEXT("http://awesome.vanamco.com/zephyros-demo/generate-demotokens.php"),
-        TEXT("http://awesome.vanamco.com/zephyros-demo/generate-activation.php"),
-        TEXT("http://awesome.vanamco.com/zephyros-demo/generate-deactivation.php")
+        TEXT("http://ghostlab2.vanamco.com/zephyros-demo/generate-demotokens.php"),
+        TEXT("http://ghostlab2.vanamco.com/zephyros-demo/generate-activation.php"),
+        TEXT("http://ghostlab2.vanamco.com/zephyros-demo/generate-deactivation.php")
     );
 
 	Zephyros::SetLicenseManager(pLicenseManager);
