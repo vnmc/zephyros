@@ -232,7 +232,7 @@ String GetKeyName(WORD wVkCode)
 		if (i > 0 && c == TEXT('-'))
 			szName[i] = TEXT(' ');
 		
-		bPrevWasAlnum = isalnum(c);
+		bPrevWasAlnum = isalnum(c) != 0;
 	}
 
 	return szName;
