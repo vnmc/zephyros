@@ -238,7 +238,12 @@ String GetKeyName(WORD wVkCode)
 	return szName;
 }
 
-void CreateMenuRecursive(BYTE* pBufMenu, DWORD& dwOffsetMenu, ACCEL* pBufAccel, DWORD& dwNumAccels, JavaScript::Array menuItems, WORD& wCurrentID)
+
+static std::vector<HBITMAP> g_vecCreatedBitmaps;
+
+void CreateMenuRecursive(
+	BYTE* pBufMenu, DWORD& dwOffsetMenu, ACCEL* pBufAccel, DWORD& dwNumAccels, JavaScript::Array menuItems, WORD& wCurrentID,
+	SIZE sizeIcon, std::map<WORD, HBITMAP>& mapImageItems)
 {
 	int nNumItems = (int) menuItems->GetSize();
 	for (int i = 0; i < nNumItems; ++i)
@@ -279,8 +284,24 @@ void CreateMenuRecursive(BYTE* pBufMenu, DWORD& dwOffsetMenu, ACCEL* pBufAccel, 
 					bHasCommand = true;
 				}
 
+				// create the menu item icon
+				if (bHasCommand && item->HasKey(TEXT("image")))
+				{
+					String strImage = item->GetString(TEXT("image"));
+					if (strImage.length() > 0)
+					{
+						// create a bitmap from the image, which is interpreted as a base64-encoded PNG
+						HBITMAP hBmp = ImageUtil::Base64PNGDataToBitmap(strImage, sizeIcon);
+						if (hBmp)
+						{
+							g_vecCreatedBitmaps.push_back(hBmp);
+							mapImageItems[wCmd] = hBmp;
+						}
+					}
+				}
+
 				// add the accelerator key
-				if (bHasCommand && item->HasKey(TEXT("key")))
+				if (pBufAccel && bHasCommand && item->HasKey(TEXT("key")))
 				{
 					int nModifiers = 0;
 					if (item->HasKey(TEXT("keyModifiers")))
@@ -322,99 +343,107 @@ void CreateMenuRecursive(BYTE* pBufMenu, DWORD& dwOffsetMenu, ACCEL* pBufAccel, 
 			wcscpy(pCaption, strCaption.c_str());
 
 			if (bHasSubMenuItems)
-				CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, item->GetList("subMenuItems"), wCurrentID);
+				CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, item->GetList("subMenuItems"), wCurrentID, sizeIcon, mapImageItems);
 		}
 	}
 }
 
-void CreateMenu(JavaScript::Array menuItems)
+bool CreateMenuInternal(JavaScript::Array menuItems, WORD wStartCommandID, bool bIsPopupMenu, HMENU* phMenu, HACCEL* phAccel = NULL)
 {
+	*phMenu = NULL;
+	if (phAccel)
+		*phAccel = NULL;
+
 	BYTE* pBufMenu = new BYTE[MENU_BUF_SIZE];
 	ZeroMemory(pBufMenu, MENU_BUF_SIZE);
-	ACCEL* pBufAccel = new ACCEL[MAX_ACCELS];
+	ACCEL* pBufAccel = phAccel ? new ACCEL[MAX_ACCELS] : NULL;
 
 	((MENUITEMTEMPLATEHEADER*) pBufMenu)->versionNumber = 0;
 	((MENUITEMTEMPLATEHEADER*) pBufMenu)->offset = 0;
 
 	DWORD dwOffsetMenu = sizeof(MENUITEMTEMPLATEHEADER);
 	DWORD dwNumAccels = 0;
-	WORD wCurrentMenuID = 1000;
+	WORD wCurrentMenuID = wStartCommandID;
 
-	// create the menu structure in memory
-	CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, menuItems, wCurrentMenuID);
-
-	// remove the old menu
-	HWND hWnd = g_handler->GetMainHwnd();
-	HMENU hMenuOld = GetMenu(hWnd);
-	if (hMenuOld)
-		DestroyMenu(hMenuOld);
-
-	// create and set the menu
-	SetMenu(hWnd, LoadMenuIndirect(static_cast<MENUTEMPLATE*>(pBufMenu)));
-
-	// create and set the accelerator table
-	if (dwNumAccels > 0)
+	// add a dummy top level menu if this is a popup menu
+	if (bIsPopupMenu)
 	{
-		DestroyAcceleratorTable(g_handler->GetAccelTable());
-		g_handler->SetAccelTable(CreateAcceleratorTable(pBufAccel, dwNumAccels));
+		// mtOption
+		*((WORD*) (pBufMenu + dwOffsetMenu)) = MF_POPUP | MF_END;
+		dwOffsetMenu += sizeof(WORD);
+
+		// mtString
+		wcscpy((wchar_t*) (pBufMenu + dwOffsetMenu), TEXT("_"));
+		dwOffsetMenu += 2 * sizeof(wchar_t);
 	}
-
-	delete[] pBufMenu;
-	delete[] pBufAccel;
-}
-
-
-static std::vector<HMENU> g_vecCreatedMenus;
-static std::vector<HBITMAP> g_vecCreatedBitmaps;
-static std::map<HMENU, std::vector<String> > g_mapCommandIDs;
-
-MenuHandle CreateContextMenu(JavaScript::Array menuItems)
-{
-	// create the popup menu
-	HMENU hMenu = CreatePopupMenu();
-	g_vecCreatedMenus.push_back(hMenu);
-	std::vector<String> vecCmdIDs;
 
 	// get the size for the menu icons
 	SIZE sizeIcon;
 	sizeIcon.cx = GetSystemMetrics(SM_CXSMICON);
 	sizeIcon.cy = GetSystemMetrics(SM_CYSMICON);
 
-	// create the menu items
-	int nNumItems = (int) menuItems->GetSize();
-	for (int i = 0; i < nNumItems; i++)
+	std::map<WORD, HBITMAP> mapImages;
+
+	// create the menu structure in memory
+	CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, menuItems, wCurrentMenuID, sizeIcon, mapImages);
+
+	// create the menu
+	*phMenu = LoadMenuIndirect(static_cast<MENUTEMPLATE*>(pBufMenu));
+
+	// set the menu bitmaps
+	for (std::map<WORD, HBITMAP>::iterator it = mapImages.begin(); it != mapImages.end(); ++it)
+		SetMenuItemBitmaps(*phMenu, it->first, MF_BYCOMMAND, it->second, it->second);
+
+	// create the accelerator table
+	if (phAccel)
+		*phAccel = CreateAcceleratorTable(pBufAccel, dwNumAccels);
+
+	// clean up
+	delete[] pBufMenu;
+	if (pBufAccel)
+		delete[] pBufAccel;
+
+	return true;
+}
+
+void CreateMenu(JavaScript::Array menuItems)
+{
+	// create and set the menu
+	HMENU hMenu;
+	HACCEL hAccel;
+	if (!CreateMenuInternal(menuItems, 1000, false, &hMenu, &hAccel))
+		return;
+
+	// remove the old menu and set the new one
+	if (hMenu)
 	{
-		JavaScript::Object item = menuItems->GetDictionary(i);
+		HWND hWnd = g_handler->GetMainHwnd();
+		HMENU hMenuOld = GetMenu(hWnd);
+		if (hMenuOld)
+			DestroyMenu(hMenuOld);
 
-		String strCaption = item->GetString(TEXT("caption"));
-
-		// create a separator if the caption is "-"
-		bool isSeparator = strCaption == TEXT("-");
-
-		InsertMenu(hMenu, i, MF_BYPOSITION | (isSeparator ? MF_SEPARATOR : 0), CONTEXT_MENU_STARTID + i, strCaption.c_str());
-
-		if (!isSeparator)
-		{
-			String strCmdID = item->GetString(TEXT("menuCommandId"));
-			vecCmdIDs.push_back(strCmdID);
-
-			String strImage;
-			if (item->HasKey(TEXT("image")))
-				strImage = item->GetString(TEXT("image"));
-			if (strImage.length() > 0)
-			{
-				// create a bitmap from the image, which is interpreted as a base64-encoded PNG
-				HBITMAP hBmp = ImageUtil::Base64PNGDataToBitmap(strImage, sizeIcon);
-				if (hBmp)
-				{
-					g_vecCreatedBitmaps.push_back(hBmp);
-					SetMenuItemBitmaps(hMenu, i, MF_BYPOSITION, hBmp, hBmp);
-				}
-			}
-		}
+		SetMenu(hWnd, hMenu);
 	}
 
-	g_mapCommandIDs[hMenu] = vecCmdIDs;
+	// create and set the accelerator table
+	if (hAccel)
+	{
+		DestroyAcceleratorTable(g_handler->GetAccelTable());
+		g_handler->SetAccelTable(hAccel);
+	}
+}
+
+
+static std::vector<HMENU> g_vecCreatedMenus;
+static WORD g_wCurrentPopupMenuID = CONTEXT_MENU_STARTID;
+
+MenuHandle CreateContextMenu(JavaScript::Array menuItems)
+{
+	HMENU hMenu;
+	if (!CreateMenuInternal(menuItems, g_wCurrentPopupMenuID, true, &hMenu))
+		return (MenuHandle) NULL;
+
+	g_vecCreatedMenus.push_back(hMenu);
 	return (MenuHandle) hMenu;
 }
 
@@ -425,22 +454,13 @@ String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
 	POINT pt;
 	pt.x = x;
 	pt.y = y;
-
 	ClientToScreen(hWnd, &pt);
-	int ret = TrackPopupMenu((HMENU) nMenuHandle, TPM_RETURNCMD, pt.x, pt.y, 0, hWnd, NULL);
 
-	if (ret == FALSE)
+	int nRet = TrackPopupMenu(GetSubMenu((HMENU) nMenuHandle, 0), TPM_RETURNCMD, pt.x, pt.y, 0, hWnd, NULL);
+	if (nRet == FALSE)
 		return TEXT("");
 	
-	if (g_mapCommandIDs.find((HMENU) nMenuHandle) == g_mapCommandIDs.end())
-		return TEXT("");
-
-	std::vector<String> vecCmdIDs = g_mapCommandIDs[(HMENU) nMenuHandle];
-	int idx = ret - CONTEXT_MENU_STARTID;
-	if (idx < 0 || idx >= (int) vecCmdIDs.size())
-		return TEXT("");
-
-	return vecCmdIDs[idx];
+	return Zephyros::GetMenuCommandForID(nRet);
 }
 
 void GetWindowBorderSize(POINT* pPtBorder)

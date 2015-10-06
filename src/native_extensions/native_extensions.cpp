@@ -193,7 +193,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 	e->AddNativeJavaScriptFunction(
 		TEXT("showContextMenu"),
 		FUNC({
-			ret->SetString(0, OSUtil::ShowContextMenu(_wtoi64(String(args->GetString(0)).c_str()), args->GetInt(1), args->GetInt(2)));
+			ret->SetString(0, OSUtil::ShowContextMenu(_wtoi64(String(args->GetString(0)).c_str()), (int) args->GetDouble(1), (int) args->GetDouble(2)));
 			return NO_ERROR;
 		},
 		ARG(VTYPE_STRING, "menuHandle")
