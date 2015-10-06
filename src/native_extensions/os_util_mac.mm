@@ -43,6 +43,8 @@
 #import "native_extensions/os_util.h"
 #import "native_extensions/image_util_mac.h"
 
+#import "util/string_util.h"
+
 
 #define TYPE_STDOUT 0
 #define TYPE_STDERR 2
@@ -54,6 +56,8 @@ extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 #ifdef USE_WEBVIEW
 extern JSContextRef g_ctx;
 #endif
+
+ZPYMenuHandler* g_menuHandler = nil;
 
 
 @interface MenuDummyView : NSView
@@ -547,7 +551,9 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
         JavaScript::Object item = menuItems->GetDictionary(i);
         NSMenuItem* menuItem = nil;
         
-        String caption = item->GetString("caption");
+        // get the caption (get rid of underscores; Mac doesn't support underlined characters)
+        String caption = StringReplace(item->GetString("caption"), "_", "");
+        
         if (caption == TEXT("-"))
         {
             // this menu item is a separator
@@ -558,34 +564,58 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
             menuItem = [[ZPYMenuItem alloc] init];
             
             if (item->HasKey("systemCommandId"))
+            {
+                // set the menu action to the selector corresponding to systemCommandId,
+                // but don't set target => the target will be the first responder
                 menuItem.action = NSSelectorFromString([NSString stringWithUTF8String: String(item->GetString("systemCommandId")).c_str()]);
+            }
             else
             {
-                ((ZPYMenuItem*) menuItem).commandId = [NSString stringWithUTF8String: String(item->GetString("commandId")).c_str()];
-                menuItem.action = @selector(performClick:);
-                menuItem.target = menuHandler;
+                NSString *commandId = [NSString stringWithUTF8String: String(item->GetString("menuCommandId")).c_str()];
+                
+                // special command IDs
+                if ([commandId isEqualToString: @"terminate"])
+                {
+                    menuItem.action = @selector(terminate:);
+                    menuItem.target = [NSApplication sharedApplication];
+                }
+#ifndef APPSTORE
+                else if ([commandId isEqualToString: @"check_update"])
+                {
+                    menuItem.action = @selector(checkForUpdates:);
+                    menuItem.target = ((ZPYAppDelegate*) [[NSApplication sharedApplication] delegate]).updater;
+                }
+#endif
+                else
+                {
+                    ((ZPYMenuItem*) menuItem).commandId = commandId;
+                    menuItem.action = @selector(menuItemSelected:);
+                    menuItem.target = menuHandler;
+                }
             }
             
             menuItem.title = [NSString stringWithUTF8String: caption.c_str()];
             
             if (item->HasKey("key"))
+            {
                 menuItem.keyEquivalent = [NSString stringWithUTF8String: String(item->GetString("key")).c_str()];
             
-            if (item->HasKey("keyModifiers"))
-            {
-                int nModifiers = item->GetInt("keyModifiers");
-                int nMask = 0;
+                if (item->HasKey("keyModifiers"))
+                {
+                    int nModifiers = item->GetInt("keyModifiers");
+                    int nMask = 0;
                 
-                if (nModifiers & 1)
-                    nMask |= NSShiftKeyMask;
-                if (nModifiers & 2)
-                    nMask |= NSCommandKeyMask;
-                if (nModifiers & 4)
-                    nMask |= NSAlternateKeyMask;
-                if (nModifiers & 8)
-                    nMask |= NSControlKeyMask;
+                    if (nModifiers & 1)
+                        nMask |= NSShiftKeyMask;
+                    if (nModifiers & 2)
+                        nMask |= NSCommandKeyMask;
+                    if (nModifiers & 4)
+                        nMask |= NSAlternateKeyMask;
+                    if (nModifiers & 8)
+                        nMask |= NSControlKeyMask;
                 
-                menuItem.keyEquivalentModifierMask = nMask;
+                    menuItem.keyEquivalentModifierMask = nMask;
+                }
             }
 
             if (item->HasKey("image"))
@@ -610,8 +640,11 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
     
 void CreateMenu(JavaScript::Array menuItems)
 {
+    if (!g_menuHandler)
+        g_menuHandler = [[ZPYMenuHandler alloc] init];
+    
     NSMenu* mainMenu = [[NSMenu alloc] init];
-    CreateMenuRecursive(mainMenu, menuItems, [[ZPYMenuHandler alloc] init]);
+    CreateMenuRecursive(mainMenu, menuItems, g_menuHandler);
     [NSApp setMainMenu: mainMenu];
 }
 
@@ -626,32 +659,7 @@ MenuHandle CreateContextMenu(JavaScript::Array menuItems)
     MenuHandle menuHandle = (MenuHandle) g_arrContextMenus.count;
     [g_arrContextMenus addObject: menu];
     
-    int numItems = (int) menuItems->GetSize();
-    for (int i = 0; i < numItems; ++i)
-    {
-        JavaScript::Object item = menuItems->GetDictionary(i);
-        
-        String caption = item->GetString("caption");
-        String cmdId = item->GetString("menuCommandId");
-        
-        BOOL isSeparator = caption == TEXT("-");
-        
-        NSMenuItem* menuItem = isSeparator ? [NSMenuItem separatorItem] : [[ZPYMenuItem alloc] init];
-        if (!isSeparator)
-        {
-            menuItem.title = [NSString stringWithUTF8String: caption.c_str()];
-            ((ZPYMenuItem*) menuItem).commandId = [NSString stringWithUTF8String: cmdId.c_str()];
-            menuItem.action = @selector(menuItemSelected:);
-        
-            String image = "";
-            if (item->HasKey("image"))
-                image = item->GetString("image");
-            if (image.length() > 0)
-                menuItem.image = ImageUtil::Base64EncodedPNGToNSImage(image, NSMakeSize(19, 19));
-        }
-
-        [menu insertItem: menuItem atIndex: i];
-    }
+    CreateMenuRecursive(menu, menuItems, nil);
     
     return menuHandle;
 }

@@ -20,13 +20,53 @@ $(document).ready(function()
 		});
 	});
 
-	$('.compute-fib').click(function ()
+	$('.compute-fib').click(function()
 	{
 	    var n = parseInt($('.fib-number').val(), 10);
 	    app.fibonacci(n, function(result)
 	    {
 	        $('.fib-result').html(result);
 	    });        
+	});
+
+	var contextMenuHandle = null;
+	app.createContextMenu(
+		[
+			{
+				caption: 'One',
+				menuCommandId: 'the-one'
+			},
+			{
+				caption: 'Two',
+				menuCommandId: 'another-one'
+			},
+			{
+				caption: 'More',
+				subMenuItems: [
+					{
+						caption: 'A',
+						menuCommandId: 'a'
+					},
+					{
+						caption: 'B',
+						menuCommandId: 'b'
+					}
+				]
+			}
+		],
+		function(handle) { contextMenuHandle = handle; }
+	);
+	$('.context-menu').click(function()
+	{
+		var offs = $('.context-menu').offset();
+		app.showContextMenu(contextMenuHandle, offs.left, offs.top + 30, function(commandId)
+		{
+			$('#messages').html('Context menu command: ' + commandId);
+			setTimeout(function()
+			{
+				$('#messages').html('');
+			}, 2000);
+		});
 	});
 });
 
@@ -39,6 +79,12 @@ app.createMenu([
 				caption: 'A_bout',
 				menuCommandId: 'about',
 				key: '1',
+				keyModifiers: 2
+			},
+			{
+				caption: '_Quit',
+				menuCommandId: 'terminate',
+				key: 'q',
 				keyModifiers: 2
 			}
 		]
