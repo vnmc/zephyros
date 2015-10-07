@@ -581,6 +581,7 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
             {
                 NSString *commandId = [NSString stringWithUTF8String: String(item->GetString("menuCommandId")).c_str()];
                 
+                // don't add licensing related menu items if not in demo mode
                 if (!bIsInDemoMode && ([commandId isEqualToString: @"enter_license"] || [commandId isEqualToString: @"purchase_license"]))
                     continue;
                 
