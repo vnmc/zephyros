@@ -82,6 +82,11 @@ void GetSettings(CefSettings& settings);
 
 
 /**
+ * Returns the user-agent string to use.
+ */
+String GetUserAgent();
+
+/**
  * Quits the app.
  */
 void Quit();
@@ -125,6 +130,11 @@ void SetMenuItemStatuses(MenuItemStatuses& statuses);
  * Returns a reference to the license manager or NULL if there is none.
  */
 Zephyros::LicenseManager* GetLicenseManager();
+
+/**
+ * Removes all the menu items from the app menu related to the demo mode.
+ */
+void RemoveDemoMenuItems();
 
 } // namespace App
 } // namespace Zephyros

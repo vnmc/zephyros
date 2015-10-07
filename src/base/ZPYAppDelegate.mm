@@ -59,13 +59,6 @@
     delete m_extension;
 }
 
-- (void) awakeFromNib
-{
-    Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
-    if (pMgr && pMgr->GetReceiptChecker())
-        pMgr->GetReceiptChecker()->CopyAppStoreReceipt();
-}
-
 - (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication*) sender
 {
     return NSTerminateNow;
@@ -111,6 +104,10 @@
                                                        andSelector: @selector(handleGetURLEvent:withReplyEvent:)
                                                      forEventClass: kInternetEventClass
                                                         andEventID: kAEGetURL];
+
+    Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
+    if (pMgr && pMgr->GetReceiptChecker())
+        pMgr->GetReceiptChecker()->CopyAppStoreReceipt();
 }
 
 /**
@@ -208,28 +205,6 @@
     m_extension->InvokeCallbacks("onAddURLs", args);
     
     m_launchPaths.clear();
-}
-
-/**
- * Create extra menu items.
- * Subclasses should override if desired
- */
-- (void) createMenuItems
-{
-#ifndef APPSTORE
-    if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
-    {
-        NSMenu *appMenu = [[[NSApp mainMenu] itemAtIndex: 0] submenu];
-    
-        // create the "check for updates" menu item
-        NSMenuItem *checkUpdatesMenuItem = [[NSMenuItem alloc] initWithTitle: [NSString stringWithUTF8String: Zephyros::GetString(ZS_UPDATES_CHECK).c_str()]
-                                                                      action: @selector(checkForUpdates:)
-                                                               keyEquivalent: @"u"];
-        checkUpdatesMenuItem.keyEquivalentModifierMask = NSShiftKeyMask | NSCommandKeyMask;
-        checkUpdatesMenuItem.target = self.updater;
-        [appMenu insertItem: checkUpdatesMenuItem atIndex: 1];
-    }
-#endif
 }
 
 /**

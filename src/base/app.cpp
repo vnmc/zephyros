@@ -25,15 +25,18 @@
  *******************************************************************************/
 
 
-#ifndef Zephyros_ZPYMenu_h
-#define Zephyros_ZPYMenu_h
-#pragma once
+#include "base/app.h"
+#include "native_extensions/os_util.h"
 
 
-#import <Cocoa/Cocoa.h>
-
-@interface ZPYMenu : NSMenu
-@end
-
-
-#endif // Zephyros_ZPYMenu_h
+namespace Zephyros {
+namespace App {
+    
+void RemoveDemoMenuItems()
+{
+    OSUtil::RemoveMenuItem(TEXT("enter_license"));
+    OSUtil::RemoveMenuItem(TEXT("purchase_license"));
+}
+    
+} // namespace App
+} // namespace Zephyros

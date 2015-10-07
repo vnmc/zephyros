@@ -77,13 +77,16 @@ extern bool g_isWindowLoaded;
 - (void) createApp: (id) object
 {
     NSApplication* app = [NSApplication sharedApplication];
-    NSArray* tl;
-    [[NSBundle mainBundle] loadNibNamed: @"MainMenu" owner: app topLevelObjects: &tl];
+
+    if (Zephyros::GetOSXInfo().szMainNibName)
+    {
+        NSArray* tl;
+        [[NSBundle mainBundle] loadNibNamed: [NSString stringWithUTF8String: Zephyros::GetOSXInfo().szMainNibName] owner: app topLevelObjects: &tl];
+    }
 
     // set the delegate for application events
     app.delegate = self;
     
-    [self createMenuItems];
     [self applicationWillFinishLaunching: nil];
 
     Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();

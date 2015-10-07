@@ -37,7 +37,6 @@
 #import "base/cef/extension_handler.h"
 #endif
 
-#import "components/ZPYMenu.h"
 #import "components/ZPYMenuItem.h"
 
 #import "native_extensions/os_util.h"
@@ -543,9 +542,12 @@ void RequestUserAttention()
     [NSApp requestUserAttention: NSCriticalRequest];
 }
     
-void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMenuHandler* menuHandler)
+void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMenuHandler* menuHandler, bool bIsInDemoMode)
 {
+    int pos = 0;
+    bool bPrevItemWasSeparator = false;
     int numItems = (int) menuItems->GetSize();
+    
     for (int i = 0; i < numItems; ++i)
     {
         JavaScript::Object item = menuItems->GetDictionary(i);
@@ -557,21 +559,32 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
         if (caption == TEXT("-"))
         {
             // this menu item is a separator
+            
+            // don't add a separator if the previous item already was one
+            if (bPrevItemWasSeparator)
+                continue;
+            
+            // add the separator
             menuItem = [NSMenuItem separatorItem];
+            bPrevItemWasSeparator = true;
         }
         else
         {
-            menuItem = [[ZPYMenuItem alloc] init];
-            
             if (item->HasKey("systemCommandId"))
             {
                 // set the menu action to the selector corresponding to systemCommandId,
                 // but don't set target => the target will be the first responder
+                menuItem = [[ZPYMenuItem alloc] init];
                 menuItem.action = NSSelectorFromString([NSString stringWithUTF8String: String(item->GetString("systemCommandId")).c_str()]);
             }
             else
             {
                 NSString *commandId = [NSString stringWithUTF8String: String(item->GetString("menuCommandId")).c_str()];
+                
+                if (!bIsInDemoMode && ([commandId isEqualToString: @"enter_license"] || [commandId isEqualToString: @"purchase_license"]))
+                    continue;
+                
+                menuItem = [[ZPYMenuItem alloc] init];
                 
                 // special command IDs
                 if ([commandId isEqualToString: @"terminate"])
@@ -627,14 +640,15 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
             
             if (item->HasKey("subMenuItems"))
             {
-                NSMenu* menu = [[ZPYMenu alloc] init];
+                NSMenu* menu = [[NSMenu alloc] init];
                 menu.title = menuItem.title;
                 menuItem.submenu = menu;
-                CreateMenuRecursive(menu, item->GetList("subMenuItems"), menuHandler);
+                CreateMenuRecursive(menu, item->GetList("subMenuItems"), menuHandler, bIsInDemoMode);
             }
         }
         
-        [menuParent insertItem: menuItem atIndex: i];
+        [menuParent insertItem: menuItem atIndex: pos++];
+        bPrevItemWasSeparator = false;
     }
 }
     
@@ -644,8 +658,36 @@ void CreateMenu(JavaScript::Array menuItems)
         g_menuHandler = [[ZPYMenuHandler alloc] init];
     
     NSMenu* mainMenu = [[NSMenu alloc] init];
-    CreateMenuRecursive(mainMenu, menuItems, g_menuHandler);
+    CreateMenuRecursive(mainMenu, menuItems, g_menuHandler, Zephyros::GetLicenseManager() != NULL && Zephyros::GetLicenseManager()->IsInDemoMode());
     [NSApp setMainMenu: mainMenu];
+}
+    
+bool RemoveMenuItemRecursive(NSMenu* menu, String& strCommandId)
+{
+    if (!menu)
+        return false;
+    
+    int idx = 0;
+    for (NSMenuItem* item in [menu itemArray])
+    {
+        if ([item isKindOfClass: ZPYMenuItem.class] && strCommandId == [((ZPYMenuItem*) item).commandId UTF8String])
+        {
+            [menu removeItemAtIndex: idx];
+            return true;
+        }
+        
+        if (item.menu && RemoveMenuItemRecursive(item.menu, strCommandId))
+            return true;
+        
+        ++idx;
+    }
+    
+    return false;
+}
+    
+void RemoveMenuItem(String strCommandId)
+{
+    RemoveMenuItemRecursive([NSApp mainMenu], strCommandId);
 }
 
     
@@ -659,7 +701,7 @@ MenuHandle CreateContextMenu(JavaScript::Array menuItems)
     MenuHandle menuHandle = (MenuHandle) g_arrContextMenus.count;
     [g_arrContextMenus addObject: menu];
     
-    CreateMenuRecursive(menu, menuItems, nil);
+    CreateMenuRecursive(menu, menuItems, nil, false);
     
     return menuHandle;
 }

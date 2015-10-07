@@ -47,8 +47,46 @@ extern HWND g_hMessageWnd;
 HANDLE g_hndLogFile;
 TCHAR g_szLogFileName[MAX_PATH];
 
+
 namespace Zephyros {
 namespace App {
+
+String GetUserAgent()
+{
+	String strOS = Zephyros::OSUtil::GetOSVersion();
+	if (strOS[strOS.length() - 1] == TEXT('\0'))
+		strOS = strOS.substr(0, strOS.length() - 1);
+
+	StringStream ssUserAgent;
+	ssUserAgent << Zephyros::GetAppName() << " " << Zephyros::GetAppVersion() << TEXT("; Windows NT/") << strOS << TEXT("; ");
+
+	bool isLangAdded = false;
+
+	ULONG numLangs = 0;
+	ULONG cchBuf = 0;
+	if (GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &numLangs, NULL, &cchBuf))
+	{
+		TCHAR* pszLanguages = new TCHAR[cchBuf];
+		if (GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &numLangs, pszLanguages, &cchBuf))
+		{
+			if (numLangs > 0)
+			{
+				ssUserAgent << pszLanguages[0] << pszLanguages[1];
+				isLangAdded = true;
+			}
+		}
+
+		delete[] pszLanguages;
+	}
+
+	if (!isLangAdded)
+	{
+		// default language if no languages are found
+		ssUserAgent << TEXT("en");
+	}
+
+	return ssUserAgent.str();
+}
 
 void Quit()
 {

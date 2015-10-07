@@ -79,6 +79,10 @@ void CreateMenu(JavaScript::Array menuItems)
 {
 }
     
+void RemoveMenuItem(String strCommandId)
+{
+}
+    
 MenuHandle CreateContextMenu(JavaScript::Array menuItems)
 {
     return 0;

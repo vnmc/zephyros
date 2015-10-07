@@ -143,6 +143,11 @@ bool LicenseManager::CheckDemoValidity()
 {
     return false;
 }
+    
+bool LicenseManager::IsInDemoMode()
+{
+    return false;
+}
 
 std::map<String, String> LicenseManager::GetLicenseInformation()
 {

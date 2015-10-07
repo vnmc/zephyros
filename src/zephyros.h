@@ -120,7 +120,7 @@ typedef struct
 
 typedef struct
 {
-    TCHAR* szStringTableName;
+    TCHAR* szMainNibName;
 } OSXInfo;
     
     

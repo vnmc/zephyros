@@ -184,6 +184,11 @@ bool LicenseManager::CheckDemoValidity()
 {
 	return m_pMgr->CheckDemoValidity();
 }
+    
+bool LicenseManager::IsInDemoMode()
+{
+    return !m_pMgr->IsActivated();
+}
 
 std::map<String, String> LicenseManager::GetLicenseInformation()
 {
@@ -363,6 +368,7 @@ int LicenseManagerImpl::Activate(String name, String company, String licenseKey)
 
     m_canStartApp = ret;
     OnActivate(ret);
+    Zephyros::App::RemoveDemoMenuItems();
 
 	return ACTIVATION_SUCCEEDED;
 }

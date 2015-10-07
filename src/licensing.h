@@ -65,6 +65,7 @@ public:
     virtual void Start() {}
     virtual bool CanStartApp() = 0;
     virtual bool CheckDemoValidity() { return false; }
+    virtual bool IsInDemoMode() { return false; }
         
     virtual std::map<String, String> GetLicenseInformation() = 0;
         
@@ -101,7 +102,7 @@ public:
         
     const TCHAR* GetUpgradeURL();
     void SetUpgradeURL(const TCHAR* upgradeURL);
-        
+
     void SetActivationLinkPrefix(const TCHAR* activationLinkPrefix);
         
     void SetLicenseInfoFilename(const TCHAR* licenseInfoFilename);
@@ -112,6 +113,7 @@ public:
     virtual void Start();
     virtual bool CanStartApp();
     virtual bool CheckDemoValidity();
+    virtual bool IsInDemoMode();
         
     virtual std::map<String, String> GetLicenseInformation();
         

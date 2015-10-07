@@ -93,7 +93,7 @@ bool g_isWindowBeingLoaded = true;
 ZPYCEFAppDelegate *g_appDelegate = nil;
 
 namespace Zephyros {
-
+    
 int RunApplication(int argc, char* argv[])
 {
     CefMainArgs main_args(argc, (char**) argv);
@@ -114,6 +114,9 @@ int RunApplication(int argc, char* argv[])
 
     // populate the settings based on command line arguments
     Zephyros::App::GetSettings(settings);
+
+    // set the user agent
+    CefString(&settings.user_agent).FromASCII(Zephyros::App::GetUserAgent().c_str());
 
     // initialize CEF
     CefInitialize(main_args, settings, app.get(), NULL);

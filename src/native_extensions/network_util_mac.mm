@@ -240,7 +240,8 @@ bool GetProxyForURL(String url, String& type, String& host, int& port, String& u
                         // Work around <rdar://problem/5530166>.  This dummy call to
                         // CFNetworkCopyProxiesForURL initialise some state within CFNetwork
                         // that is required by CFNetworkCopyProxiesForAutoConfigurationScript.
-                        CFNetworkCopyProxiesForURL((__bridge CFURLRef) pUrl, NULL);
+                        CFDictionaryRef settings = CFDictionaryCreate(NULL, NULL, NULL, 0, NULL, NULL);
+                        CFNetworkCopyProxiesForURL((__bridge CFURLRef) pUrl, settings);
                             
                         CFRunLoopSourceRef rls = CFNetworkExecuteProxyAutoConfigurationURL(scriptURL, (__bridge CFURLRef) pUrl, ResultCallback, &context);
                         if (rls != NULL)

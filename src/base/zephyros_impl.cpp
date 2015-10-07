@@ -181,8 +181,8 @@ void Shutdown()
     if (g_windowsInfo.szRegistryKey != NULL)
         delete[] g_windowsInfo.szRegistryKey;
     
-    if (g_osxInfo.szStringTableName != NULL)
-        delete[] g_osxInfo.szStringTableName;
+    if (g_osxInfo.szMainNibName != NULL)
+        delete[] g_osxInfo.szMainNibName;
     
     if (g_szUpdaterURL != NULL)
         delete[] g_szUpdaterURL;
@@ -204,7 +204,7 @@ void Shutdown()
 	g_szAppVersion = NULL;
 	g_szAppURL = NULL;
 	g_windowsInfo.szRegistryKey = NULL;
-    g_osxInfo.szStringTableName = NULL;
+    g_osxInfo.szMainNibName = NULL;
 	g_szUpdaterURL = NULL;
 	g_szCrashReportingURL = NULL;
 	g_szCrashReportingPrivacyPolicyURL = NULL;
@@ -302,12 +302,12 @@ OSXInfo GetOSXInfo()
     return g_osxInfo;
 }
     
-void SetOSXInfo(const TCHAR* szStringTableName)
+void SetOSXInfo(const TCHAR* szMainNibName)
 {
-    if (g_osxInfo.szStringTableName)
-        delete g_osxInfo.szStringTableName;
-    g_osxInfo.szStringTableName = new TCHAR[_tcslen(szStringTableName) + 1];
-    _tcscpy(g_osxInfo.szStringTableName, szStringTableName);
+    if (g_osxInfo.szMainNibName)
+        delete g_osxInfo.szMainNibName;
+    g_osxInfo.szMainNibName = new TCHAR[_tcslen(szMainNibName) + 1];
+    _tcscpy(g_osxInfo.szMainNibName, szMainNibName);
 }
 
 const TCHAR* GetCrashReportingURL()
