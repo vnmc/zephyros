@@ -752,10 +752,12 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
 	HINTERNET hSession = WinHttpOpen(Zephyros::GetAppName(), WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 	if (hSession != NULL)
 	{
-		HINTERNET hHttp = WinHttpConnect(hSession, urlComponents.lpszHostName, urlComponents.nPort, 0);
+		String strHostName(urlComponents.lpszHostName, urlComponents.dwHostNameLength);
+		HINTERNET hHttp = WinHttpConnect(hSession, strHostName.c_str(), urlComponents.nPort, 0);
 		if (hHttp != NULL)
 		{
-			HINTERNET hRequest = WinHttpOpenRequest(hHttp, TEXT("POST"), urlComponents.lpszUrlPath, NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+			String strPath(urlComponents.lpszUrlPath, urlComponents.dwUrlPathLength);
+			HINTERNET hRequest = WinHttpOpenRequest(hHttp, TEXT("POST"), strPath.c_str(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
 			if (hRequest != NULL)
 			{
 				// check for proxy

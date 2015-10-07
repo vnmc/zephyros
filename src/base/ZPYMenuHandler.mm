@@ -54,9 +54,9 @@
         return;
     
 #ifndef APPSTORE
-    if ([commandId isEqualToString: @"enter_license"])
+    if ([commandId isEqualToString: @MENUCOMMAND_ENTER_LICENSE])
         Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
-    else if ([commandId isEqualToString: @"purchase_license"])
+    else if ([commandId isEqualToString: @MENUCOMMAND_PURCHASE_LICENSE])
         Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
     else
 #endif

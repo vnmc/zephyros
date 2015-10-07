@@ -6,7 +6,7 @@
 #pragma once
 
 #ifdef OS_WIN
-#include "targetver.h"
+#include "../res/windows/targetver.h"
 #endif
 
 

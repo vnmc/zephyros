@@ -243,9 +243,11 @@ static std::vector<HBITMAP> g_vecCreatedBitmaps;
 
 void CreateMenuRecursive(
 	BYTE* pBufMenu, DWORD& dwOffsetMenu, ACCEL* pBufAccel, DWORD& dwNumAccels, JavaScript::Array menuItems, WORD& wCurrentID,
-	SIZE sizeIcon, std::map<WORD, HBITMAP>& mapImageItems)
+	SIZE sizeIcon, std::map<WORD, HBITMAP>& mapImageItems, bool bIsInDemoMode)
 {
+	bool bPrevItemWasSeparator = false;
 	int nNumItems = (int) menuItems->GetSize();
+
 	for (int i = 0; i < nNumItems; ++i)
 	{
 		JavaScript::Object item = menuItems->GetDictionary(i);
@@ -254,10 +256,14 @@ void CreateMenuRecursive(
 		String strCaption = item->GetString(TEXT("caption"));
 		if (strCaption == TEXT("-"))
 		{
+			if (bPrevItemWasSeparator)
+				continue;
+
 			pTemplate->mtOption = (i == nNumItems - 1 ? MF_END : 0);
 			// ID and mtString are 0x0000
 
 			dwOffsetMenu += sizeof(MENUITEMTEMPLATE);
+			bPrevItemWasSeparator = true;
 		}
 		else
 		{
@@ -278,7 +284,13 @@ void CreateMenuRecursive(
 				}
 				else if (item->HasKey(TEXT("menuCommandId")))
 				{
-					Zephyros::SetMenuIDForCommand(item->GetString(TEXT("menuCommandId")).c_str(), wCurrentID);
+					String strCommandId = item->GetString(TEXT("menuCommandId"));
+
+					// don't add licensing related item if not in demo mode
+					if (!bIsInDemoMode && (strCommandId == TEXT(MENUCOMMAND_ENTER_LICENSE) || strCommandId == TEXT(MENUCOMMAND_PURCHASE_LICENSE)))
+						continue;
+
+					Zephyros::SetMenuIDForCommand(strCommandId.c_str(), wCurrentID);
 					pTemplate->mtID = wCmd = wCurrentID;
 					++wCurrentID;
 					bHasCommand = true;
@@ -341,9 +353,10 @@ void CreateMenuRecursive(
 			if (dwOffsetMenu >= MENU_BUF_SIZE)
 				return;
 			wcscpy(pCaption, strCaption.c_str());
+			bPrevItemWasSeparator = false;
 
 			if (bHasSubMenuItems)
-				CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, item->GetList("subMenuItems"), wCurrentID, sizeIcon, mapImageItems);
+				CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, item->GetList("subMenuItems"), wCurrentID, sizeIcon, mapImageItems, bIsInDemoMode);
 		}
 	}
 }
@@ -385,7 +398,10 @@ bool CreateMenuInternal(JavaScript::Array menuItems, WORD wStartCommandID, bool 
 	std::map<WORD, HBITMAP> mapImages;
 
 	// create the menu structure in memory
-	CreateMenuRecursive(pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, menuItems, wCurrentMenuID, sizeIcon, mapImages);
+	CreateMenuRecursive(
+		pBufMenu, dwOffsetMenu, pBufAccel, dwNumAccels, menuItems, wCurrentMenuID, sizeIcon, mapImages,
+		!bIsPopupMenu && Zephyros::GetLicenseManager() != NULL && Zephyros::GetLicenseManager()->IsInDemoMode()
+	);
 
 	// create the menu
 	*phMenu = LoadMenuIndirect(static_cast<MENUTEMPLATE*>(pBufMenu));
@@ -431,6 +447,38 @@ void CreateMenu(JavaScript::Array menuItems)
 		DestroyAcceleratorTable(g_handler->GetAccelTable());
 		g_handler->SetAccelTable(hAccel);
 	}
+}
+
+/*
+bool RemoveMenuItemRecursive(HMENU hMenu, UINT nID)
+{
+	if (!hMenu || nID == 0)
+		return false;
+
+	int nNumMenuItems = GetMenuItemCount(hMenu);
+	for (int i = 0; i < nNumMenuItems; ++i)
+	{
+		UINT nMenuItemID = GetMenuItemID(hMenu, i);
+		if (nMenuItemID == nID)
+		{
+			RemoveMenu(hMenu, MF_BYPOSITION, i);
+			return true;
+		}
+
+		if (nMenuItemID == (UINT) -1 && RemoveMenuItemRecursive(GetSubMenu(hMenu, i), nID))
+			return true;
+	}
+
+	return false;
+}*/
+
+void RemoveMenuItem(String strCommandId)
+{
+	//RemoveMenuItemRecursive(GetMenu(g_handler->GetMainHwnd()), (UINT) Zephyros::GetMenuIDForCommand(strCommandId.c_str()));
+
+	int nMenuID = Zephyros::GetMenuIDForCommand(strCommandId.c_str());
+	if (nMenuID != 0)
+		RemoveMenu(GetMenu(g_handler->GetMainHwnd()), nMenuID, MF_BYCOMMAND);
 }
 
 
