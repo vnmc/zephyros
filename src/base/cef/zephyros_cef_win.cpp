@@ -282,8 +282,8 @@ int CreateMainWindow()
 	wcex.hInstance = g_hInst;
 	wcex.hIcon = info.nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(info.nIconID)) : NULL;
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = MAKEINTRESOURCE(info.nMenuID);
+	wcex.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+	wcex.lpszMenuName = info.nMenuID ? MAKEINTRESOURCE(info.nMenuID) : NULL;
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = info.nIconID ? LoadIcon(g_hInst, MAKEINTRESOURCE(info.nIconID)) : NULL;
 	::RegisterClassEx(&wcex);
@@ -648,19 +648,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					const TCHAR* szCommand = Zephyros::GetMenuCommandForID(wmId);
 					if (szCommand)
 					{
-						if (_tcscmp(szCommand, TEXT("check_update")) == 0)
+						if (_tcscmp(szCommand, TEXT(MENUCOMMAND_CHECK_UPDATE)) == 0)
 							win_sparkle_check_update_with_ui();
-						else if (_tcscmp(szCommand, TEXT("purchase_license")) == 0)
+						else if (_tcscmp(szCommand, TEXT(MENUCOMMAND_PURCHASE_LICENSE)) == 0)
 						{
 							if (Zephyros::GetLicenseManager())
 								Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
 						}
-						else if (_tcscmp(szCommand, TEXT("enter_license")) == 0)
+						else if (_tcscmp(szCommand, TEXT(MENUCOMMAND_ENTER_LICENSE)) == 0)
 						{
 							if (Zephyros::GetLicenseManager())
 								Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
 						}
-						else if (_tcscmp(szCommand, TEXT("terminate")) == 0)
+						else if (_tcscmp(szCommand, TEXT(MENUCOMMAND_TERMINATE)) == 0)
 						{
 							if (g_handler.get())
 								g_handler->CloseAllBrowsers(false);
