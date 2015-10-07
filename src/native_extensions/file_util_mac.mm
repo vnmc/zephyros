@@ -34,6 +34,10 @@
 #import "native_extensions/image_util_mac.h"
 
 
+#ifdef USE_CEF
+extern CefRefPtr<Zephyros::ClientHandler> g_handler;
+#endif
+
 #ifdef USE_WEBVIEW
 extern JSContextRef g_ctx;
 #endif
@@ -66,13 +70,13 @@ void GetPathFromNSURL(NSURL* url, Path& path, BOOL useParentDirForSecurityBookma
     
     path = Path([url.path UTF8String], [[urlWithBookmark absoluteString] UTF8String], bookmarkData != nil);
 }
-    
-    
-#ifdef USE_WEBVIEW
 
-void ShowOpenDialog(JSObjectRef callback, BOOL canChooseFiles, BOOL useParentDirForSecurityBookmark)
+
+void ShowOpenDialog(CallbackId callback, BOOL canChooseFiles, BOOL useParentDirForSecurityBookmark)
 {
+#ifdef USE_WEBVIEW
     JSValueProtect(g_ctx, callback);
+#endif
 
     // create and configure an open panel
     NSOpenPanel* browsePanel = [NSOpenPanel openPanel];
@@ -82,23 +86,46 @@ void ShowOpenDialog(JSObjectRef callback, BOOL canChooseFiles, BOOL useParentDir
 
     [browsePanel beginSheetModalForWindow: [NSApp mainWindow] completionHandler: ^(NSInteger result)
     {
+#ifdef USE_CEF
+        JavaScript::Array args = JavaScript::CreateArray();
+#endif
+#ifdef USE_WEBVIEW
         JSValueRef arg;
+#endif
 
         if (result == NSFileHandlingPanelOKButton)
         {
             Path path;
             GetPathFromNSURL(browsePanel.URL, path, useParentDirForSecurityBookmark);
+            
+#ifdef USE_CEF
+            args->SetDictionary(0, path.CreateJSRepresentation());
+#endif
+#ifdef USE_WEBVIEW
             arg = path.CreateJSRepresentation()->AsJS();
+#endif
         }
         else
+        {
+#ifdef USE_CEF
+            args->SetNull(0);
+#endif
+#ifdef USE_WEBVIEW
             arg = JSValueMakeNull(g_ctx);
+#endif
+        }
         
+#ifdef USE_CEF
+        g_handler->GetClientExtensionHandler()->InvokeCallback(callback, args);
+#endif
+#ifdef USE_WEBVIEW
         JSObjectCallAsFunction(g_ctx, callback, NULL, 1, &arg, NULL);
         JSValueUnprotect(g_ctx, callback);
+#endif
     }];
 }
     
-void ShowSaveFileDialog(JSObjectRef callback)
+void ShowSaveFileDialog(CallbackId callback)
 {
     // create and configure a save panel
     NSSavePanel* savePanel = [NSSavePanel savePanel];
@@ -107,97 +134,59 @@ void ShowSaveFileDialog(JSObjectRef callback)
     // show the save panel
     [savePanel beginSheetModalForWindow: [NSApp mainWindow] completionHandler: ^(NSInteger result)
     {
+#ifdef USE_CEF
+        JavaScript::Array args = JavaScript::CreateArray();
+#endif
+#ifdef USE_WEBVIEW
         JSValueRef arg;
-             
+#endif
+        
         if (result == NSFileHandlingPanelOKButton)
         {
             Path path;
             GetPathFromNSURL(savePanel.URL, path, NO);
+            
+#ifdef USE_CEF
+            args->SetDictionary(0, path.CreateJSRepresentation());
+#endif
+#ifdef USE_WEBVIEW
             arg = path.CreateJSRepresentation()->AsJS();
+#endif
         }
         else
+        {
+#ifdef USE_CEF
+            args->SetNull(0);
+#endif
+#ifdef USE_WEBVIEW
             arg = JSValueMakeNull(g_ctx);
-             
+#endif
+        }
+      
+#ifdef USE_CEF
+        g_handler->GetClientExtensionHandler()->InvokeCallback(callback, args);
+#endif
+#ifdef USE_WEBVIEW
         JSObjectCallAsFunction(g_ctx, callback, NULL, 1, &arg, NULL);
         JSValueUnprotect(g_ctx, callback);
+#endif
     }];
 }
 
-void ShowOpenFileDialog(JSObjectRef callback)
+void ShowOpenFileDialog(CallbackId callback)
 {
     ShowOpenDialog(callback, YES, NO);
 }
     
-void ShowOpenDirectoryDialog(JSObjectRef callback)
+void ShowOpenDirectoryDialog(CallbackId callback)
 {
     ShowOpenDialog(callback, NO, NO);
 }
     
-void ShowOpenFileOrDirectoryDialog(JSObjectRef callback)
+void ShowOpenFileOrDirectoryDialog(CallbackId callback)
 {
     ShowOpenDialog(callback, YES, YES);
 }
-
-#else
-    
-bool ShowOpenDialog(Path& path, BOOL canChooseFiles, BOOL useParentDirForSecurityBookmark)
-{
-    bool ret = false;
-    
-    // create and configure an open panel
-    NSOpenPanel* browsePanel = [NSOpenPanel openPanel];
-    browsePanel.canChooseFiles = canChooseFiles;
-    browsePanel.canChooseDirectories = YES;
-    browsePanel.allowsMultipleSelection = NO;
-    
-    // show the open panel
-    [browsePanel beginSheetModalForWindow: [NSApp mainWindow] completionHandler: nil];
-    if ([browsePanel runModal] == NSModalResponseOK && browsePanel.URLs.count > 0)
-    {
-        GetPathFromNSURL(browsePanel.URL, path, useParentDirForSecurityBookmark);
-        ret = true;
-    }
-    
-    [NSApp endSheet: browsePanel];
-    return ret;
-}
-    
-bool ShowSaveFileDialog(Path& path)
-{
-    bool ret = false;
-    
-    // create and configure a save panel
-    NSSavePanel* savePanel = [NSSavePanel savePanel];
-    savePanel.canCreateDirectories = YES;
-        
-    // show the save panel
-    [savePanel beginSheetModalForWindow: [NSApp mainWindow] completionHandler: nil];
-    if ([savePanel runModal] == NSModalResponseOK)
-    {
-        GetPathFromNSURL(savePanel.URL, path, NO);
-        ret = true;
-    }
-        
-    [NSApp endSheet: savePanel];
-    return ret;
-}
-    
-bool ShowOpenFileDialog(Path& path)
-{
-    return ShowOpenDialog(path, YES, NO);
-}
-    
-bool ShowOpenDirectoryDialog(Path& path)
-{
-    return ShowOpenDialog(path, NO, NO);
-}
-    
-bool ShowOpenFileOrDirectoryDialog(Path& path)
-{
-    return ShowOpenDialog(path, YES, YES);
-}
-
-#endif
 
 void ShowInFileManager(String path)
 {

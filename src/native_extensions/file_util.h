@@ -36,19 +36,17 @@
 
 namespace Zephyros {
 namespace FileUtil {
-    
-#ifdef USE_CEF
+
+#ifdef OS_MACOSX
+void ShowOpenFileDialog(CallbackId callback);
+void ShowSaveFileDialog(CallbackId callback);
+void ShowOpenDirectoryDialog(CallbackId callback);
+void ShowOpenFileOrDirectoryDialog(CallbackId callback);
+#else
 bool ShowOpenFileDialog(Path& path);
 bool ShowSaveFileDialog(Path& path);
 bool ShowOpenDirectoryDialog(Path& path);
 bool ShowOpenFileOrDirectoryDialog(Path& path);
-#endif
-
-#ifdef USE_WEBVIEW
-void ShowOpenFileDialog(JSObjectRef callback);
-void ShowSaveFileDialog(JSObjectRef callback);
-void ShowOpenDirectoryDialog(JSObjectRef callback);
-void ShowOpenFileOrDirectoryDialog(JSObjectRef callback);
 #endif
 
 void ShowInFileManager(String path);

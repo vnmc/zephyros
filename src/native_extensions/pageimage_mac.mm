@@ -60,7 +60,7 @@ extern JSContextRef g_ctx;
 @end
 
 
-@interface ScreenshotWebViewFrameLoadDelegate : NSObject
+@interface ScreenshotWebViewFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
 
 @property NSMutableArray* queue;
 - (void) addToQueue: (CallbackId) callback url: (String) url width: (int) width;

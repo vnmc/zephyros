@@ -42,7 +42,6 @@ set(APP_SRCS
 # app resources
 set(APP_RESOURCES)
 set(APP_RESOURCES_MACOSX
-  res/mac/Base.lproj/MainMenu.xib
   res/mac/en.lproj/Localizable.strings
   res/mac/Images.xcassets
   ${WEBAPP}

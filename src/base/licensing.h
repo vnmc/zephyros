@@ -327,7 +327,7 @@ public:
 
         return ret;
     }
-
+    
     inline bool HasDemoTokens() { return m_pLicenseData->m_demoTokens.size() > 0; }
 
     inline virtual std::map<String, String> GetLicenseInformation() final

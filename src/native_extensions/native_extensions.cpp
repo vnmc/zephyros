@@ -295,10 +295,35 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
+    // showSaveFileDialog: (callback: (path: IPath) => void) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("showSaveFileDialog"),
+#ifdef OS_MACOSX
+        FUNC({
+            Zephyros::FileUtil::ShowSaveFileDialog(callback);
+            return RET_DELAYED_CALLBACK;
+        })
+#else
+        FUNC({
+            Path path;
+            if (FileUtil::ShowOpenFileDialog(path))
+                ret->SetDictionary(0, path.CreateJSRepresentation());
+            else
+                ret->SetNull(0);
+            return NO_ERROR;
+        })
+#endif
+    );
+
     // showOpenFileDialog: (callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenFileDialog"),
-#ifdef USE_CEF
+#ifdef OS_MACOSX
+        FUNC({
+            Zephyros::FileUtil::ShowOpenFileDialog(callback);
+            return RET_DELAYED_CALLBACK;
+        })
+#else
         FUNC({
             Path path;
             if (FileUtil::ShowOpenFileDialog(path))
@@ -308,18 +333,17 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
 		})
 #endif
-#ifdef USE_WEBVIEW
-		FUNC({
-            Zephyros::FileUtil::ShowOpenFileDialog(callback);
-            return RET_DELAYED_CALLBACK;
-		})
-#endif
     );
 
     // showOpenDirectoryDialog: (callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenDirectoryDialog"),
-#ifdef USE_CEF
+#ifdef OS_MACOSX
+        FUNC({
+            Zephyros::FileUtil::ShowOpenDirectoryDialog(callback);
+            return RET_DELAYED_CALLBACK;
+        })
+#else
         FUNC({
             Path path;
             if (FileUtil::ShowOpenDirectoryDialog(path))
@@ -329,18 +353,17 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
 		})
 #endif
-#ifdef USE_WEBVIEW
-		FUNC({
-			Zephyros::FileUtil::ShowOpenDirectoryDialog(callback);
-			return RET_DELAYED_CALLBACK;
-        })
-#endif
     );
 
     // showOpenFileOrDirectoryDialog: (callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenFileOrDirectoryDialog"),
-#ifdef USE_CEF
+#ifdef OS_MACOSX
+        FUNC({
+            Zephyros::FileUtil::ShowOpenFileOrDirectoryDialog(callback);
+            return RET_DELAYED_CALLBACK;
+        })
+#else
         FUNC({
             Path path;
             if (FileUtil::ShowOpenFileOrDirectoryDialog(path))
@@ -348,12 +371,6 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
-#endif
-#ifdef USE_WEBVIEW
-        FUNC({
-            Zephyros::FileUtil::ShowOpenFileOrDirectoryDialog(callback);
-            return RET_DELAYED_CALLBACK;
         })
 #endif
     );

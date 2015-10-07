@@ -64,7 +64,6 @@
 
 - (void) addLaunchPaths;
 
-- (void) createMenuItems;
 - (void) setMenuItemStatuses: (Zephyros::App::MenuItemStatuses&) statuses;
 
 - (ClientExtensionHandlerPtr) extensionHandler;

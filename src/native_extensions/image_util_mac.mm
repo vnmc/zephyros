@@ -38,7 +38,7 @@ String NSImageToBase64EncodedPNG(NSImage* image)
     NSBitmapImageRep* bitmapRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, image.size.width, image.size.height)];
     [image unlockFocus];
     
-    NSData* data = [bitmapRep representationUsingType: NSPNGFileType properties: nil];
+    NSData* data = [bitmapRep representationUsingType: NSPNGFileType properties: [[NSDictionary alloc] init]];
     if (data == nil)
         return "";
     

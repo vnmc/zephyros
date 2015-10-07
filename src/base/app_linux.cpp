@@ -46,6 +46,25 @@ std::ofstream* g_pLogFile = NULL;
 namespace Zephyros {
 namespace App {
 
+String GetUserAgent()
+{
+    StringStream ssUserAgent;
+
+    ssUserAgent << Zephyros::GetAppName() << " " << Zephyros::GetAppVersion() << "; " << Zephyros::OSUtil::GetOSVersion();
+
+    bool isLangAdded = false;
+
+    // TODO: get system language
+
+    if (!isLangAdded)
+    {
+        // default language if no languages are found
+        ssUserAgent << "en";
+    }
+
+    return ssUserAgent.str();
+}
+
 void Quit()
 {
 	// close the app's main window

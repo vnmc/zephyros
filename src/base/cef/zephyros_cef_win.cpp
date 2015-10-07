@@ -427,43 +427,9 @@ void InstallCrashReporting()
 
 void SetUserAgentString(CefSettings& settings)
 {
-	std::stringstream ssUserAgent;
-
-	String strOSWide = Zephyros::OSUtil::GetOSVersion();
-	std::string strOS(strOSWide.begin(), strOSWide.end());
-	if (strOS[strOS.length() - 1] == '\0')
-		strOS = strOS.substr(0, strOS.length() - 1);
-
-	String strAppName(Zephyros::GetAppName());
-	String strAppVersion(Zephyros::GetAppVersion());
-	ssUserAgent << std::string(strAppName.begin(), strAppName.end()) << " " << std::string(strAppVersion.begin(), strAppVersion.end()) << "; Windows NT/" << strOS << "; ";
-
-	bool isLangAdded = false;
-
-	ULONG numLangs = 0;
-	ULONG cchBuf = 0;
-	if (GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &numLangs, NULL, &cchBuf))
-	{
-		TCHAR* pszLanguages = new TCHAR[cchBuf];
-		if (GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &numLangs, pszLanguages, &cchBuf))
-		{
-			if (numLangs > 0)
-			{
-				ssUserAgent << (char) pszLanguages[0] << (char) pszLanguages[1];
-				isLangAdded = true;
-			}
-		}
-
-		delete[] pszLanguages;
-	}
-
-	if (!isLangAdded)
-	{
-		// default language if no languages are found
-		ssUserAgent << "en";
-	}
-
-	CefString(&settings.user_agent).FromASCII(ssUserAgent.str().c_str());
+	String userAgent = Zephyros::App::GetUserAgent();
+	std::string strUserAgent(userAgent.begin(), userAgent.end());
+	CefString(&settings.user_agent).FromASCII(strUserAgent.c_str());
 }
 
 bool HandleOpenCustomURL(LPTSTR lpCommandLine, bool bOtherInstanceRunning)

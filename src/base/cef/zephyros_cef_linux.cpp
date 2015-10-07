@@ -107,7 +107,6 @@ GtkWidget* CreateMenu(GtkWidget* menu_bar, const char* text);
 GtkWidget* CreateMenuBar();
 // --------------------
 
-void SetUserAgentString(CefSettings& settings);
 void LoadWindowPlacement(Rect* pRectNormal, bool* pbIsMaximized);
 void SaveWindowPlacement(Rect* pRectNormal, bool bIsMaximized);
 void AdjustWindowPlacementToMonitor(Rect* pRect);
@@ -155,7 +154,7 @@ int RunApplication(int argc, char* argv[])
 	Zephyros::App::GetSettings(settings);
 
 	// set the user agent
-	SetUserAgentString(settings);
+    CefString(&settings.user_agent).FromASCII(Zephyros::App::GetUserAgent().c_str());
 
     // install xlib error handlers so that the application won't be terminated on non-fatal errors
     XSetErrorHandler(XErrorHandlerImpl);
@@ -461,25 +460,6 @@ GtkWidget* CreateMenuBar() {
 }
 // --------------------
 
-
-void SetUserAgentString(CefSettings& settings)
-{
-	std::stringstream ssUserAgent;
-
-	ssUserAgent << Zephyros::GetAppName() << " " << Zephyros::GetAppVersion() << "; " << Zephyros::OSUtil::GetOSVersion();
-
-	bool isLangAdded = false;
-
-    // TODO: get system language
-
-	if (!isLangAdded)
-	{
-		// default language if no languages are found
-		ssUserAgent << "en";
-	}
-
-	CefString(&settings.user_agent).FromASCII(ssUserAgent.str().c_str());
-}
 
 void LoadWindowPlacement(Rect* pRectNormal, bool* pbIsMaximized)
 {

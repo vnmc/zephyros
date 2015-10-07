@@ -1,3 +1,20 @@
+var timeoutId = null;
+
+function setMessage(message)
+{
+	$('#messages').html(message);
+
+	if (timeoutId !== null)
+		clearTimeout(timeoutId);
+
+	timeoutId = setTimeout(function()
+	{
+		$('#messages').html('');
+		timeoutId = null;
+	}, 2000);
+}
+
+
 $(document).ready(function()
 {
 	// find all the browsers installed on the system
@@ -63,11 +80,23 @@ $(document).ready(function()
 		var offs = $('.context-menu').offset();
 		app.showContextMenu(contextMenuHandle, offs.left, offs.top + 30, function(commandId)
 		{
-			$('#messages').html('Context menu command: ' + commandId);
-			setTimeout(function()
-			{
-				$('#messages').html('');
-			}, 2000);
+			setMessage('Context menu command: ' + commandId);
+		});
+	});
+
+	$('.save-file').click(function()
+	{
+		app.showSaveFileDialog(function(path)
+		{
+			setMessage('Path: ' + path.path);
+		});
+	});
+
+	$('.open-file').click(function()
+	{
+		app.showOpenFileDialog(function(path)
+		{
+			setMessage('Path: ' + path.path);
 		});
 	});
 });
@@ -83,6 +112,12 @@ app.createMenu([
 				key: '1',
 				keyModifiers: 2
 			},
+			{ caption: '-' },
+			{
+				caption: 'Enter License Key',
+				menuCommandId: 'enter_license'
+			},
+			{ caption: '-' },
 			{
 				caption: '_Quit',
 				menuCommandId: 'terminate',
@@ -122,9 +157,5 @@ app.createMenu([
 // react to the menu
 app.onMenuCommand(function(commandId)
 {
-	$('#messages').html('Menu command: ' + commandId);
-	setTimeout(function()
-	{
-		$('#messages').html('');
-	}, 2000);
+	setMessage('Menu command: ' + commandId);
 });

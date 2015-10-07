@@ -17,7 +17,6 @@ source_group(Public\ Headers FILES ${ZEPHYROS__SRCS})
 set(ZEPHYROS__PUBLICHEADERS_SRCS
   ${ZEPHYROS__SRCS}
   base/ZPYAppDelegate.h
-  components/ZPYMenu.h
   components/ZPYMenuItem.h
 )
 
@@ -25,6 +24,7 @@ set(ZEPHYROS__PUBLICHEADERS_SRCS
 set(ZEPHYROS__BASE_SRCS
   base/zephyros_impl.cpp
   base/app.h
+  base/app.cpp
   base/jsbridge.cpp
   base/logging.h
   base/types.h
@@ -135,8 +135,6 @@ source_group(Native\ Extensions FILES
 # - components
 set(ZEPHYROS__COMPONENTS_SRCS)
 set(ZEPHYROS__COMPONENTS_SRCS_MACOSX
-  components/ZPYMenu.h
-  components/ZPYMenu.mm
   components/ZPYMenuItem.h
   components/ZPYMenuItem.mm
 )

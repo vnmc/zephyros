@@ -62,6 +62,7 @@ String Exec(String command);
 void CreateMenu(JavaScript::Array menuItems);
 MenuHandle CreateContextMenu(JavaScript::Array menuItems);
 String ShowContextMenu(MenuHandle nMenuHandle, int x, int y);
+void RemoveMenuItem(String strCommandId);
 
 #ifdef OS_WIN
 void GetWindowBorderSize(POINT* pPtBorder);

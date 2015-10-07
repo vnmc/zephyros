@@ -61,8 +61,6 @@ JSContextRef g_ctx = NULL;
 
 - (void) applicationDidFinishLaunching: (NSNotification*) notification
 {
-    NSBundle* bundle = [NSBundle mainBundle];
-    
     _view.extension = m_extension;
     
     // set this class as the web view's frame load delegate
@@ -78,15 +76,10 @@ JSContextRef g_ctx = NULL;
     // construct a user agent string
     // format:
     // <app-name> <version>; <os>[/<os-supplement>]; <language>
-    NSString* bundleId = [bundle bundleIdentifier];
-    _view.customUserAgent = [NSString stringWithFormat: @"%s %@; Mac OS X/%@; %@",
-        Zephyros::GetAppName(),
-        [bundle objectForInfoDictionaryKey: @"CFBundleShortVersionString"],
-        [bundleId substringFromIndex: [bundleId rangeOfString: @"." options: NSBackwardsSearch].location + 1],
-        [[NSLocale preferredLanguages] objectAtIndex: 0]];
+    _view.customUserAgent = [NSString stringWithUTF8String: Zephyros::App::GetUserAgent().c_str()];
     
     // set the GUI URL
-    NSMutableString *url = [NSMutableString stringWithString: [bundle resourcePath]];
+    NSMutableString *url = [NSMutableString stringWithString: [[NSBundle mainBundle] resourcePath]];
     [url appendString: @"/"];
     [url appendString: [NSString stringWithUTF8String: Zephyros::GetAppURL()]];
     _view.mainFrameURL = url;

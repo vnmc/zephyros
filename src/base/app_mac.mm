@@ -33,6 +33,24 @@ namespace Zephyros {
 namespace App {
     
     
+String GetUserAgent()
+{
+    // construct a user agent string
+    // format:
+    // <app-name> <version>; <os>[/<os-supplement>]; <language>
+
+    NSBundle* bundle = [NSBundle mainBundle];
+    NSString* bundleId = [bundle bundleIdentifier];
+    
+    NSString* userAgent = [NSString stringWithFormat: @"%s %@; Mac OS X/%@; %@",
+        Zephyros::GetAppName(),
+        [bundle objectForInfoDictionaryKey: @"CFBundleShortVersionString"],
+        [bundleId substringFromIndex: [bundleId rangeOfString: @"." options: NSBackwardsSearch].location + 1],
+        [[NSLocale preferredLanguages] objectAtIndex: 0]];
+    
+    return String([userAgent UTF8String]);
+}
+
 void Quit()
 {
     [NSApp terminate: [NSApp delegate]];
