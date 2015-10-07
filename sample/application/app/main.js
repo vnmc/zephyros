@@ -99,6 +99,12 @@ $(document).ready(function()
 			setMessage('Path: ' + path.path);
 		});
 	});
+
+	$('.remove-menuitem').click(function()
+	{
+		app.removeMenuItem('enter_license');
+		app.removeMenuItem('open_recent');
+	});
 });
 
 // create the app menu
@@ -132,6 +138,19 @@ app.createMenu([
 			{
 				caption: 'New',
 				menuCommandId: 'new'
+			},
+			{
+				caption: 'Open',
+				subMenuItems: [
+					{
+						caption: 'Select File',
+						menuCommandId: 'select_file'
+					},
+					{
+						caption: 'Open Recent',
+						menuCommandId: 'open_recent'
+					}
+				]
 			}
 		]
 	},

@@ -34,6 +34,7 @@
 #include "zephyros.h"
 #include "base/app.h"
 #include "base/cef/client_handler.h"
+#include "native_extensions/os_util.h"
 
 #include "res/windows/resource.h"
 

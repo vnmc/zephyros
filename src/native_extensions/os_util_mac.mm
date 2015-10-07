@@ -581,19 +581,19 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
             {
                 NSString *commandId = [NSString stringWithUTF8String: String(item->GetString("menuCommandId")).c_str()];
                 
-                if (!bIsInDemoMode && ([commandId isEqualToString: @"enter_license"] || [commandId isEqualToString: @"purchase_license"]))
+                if (!bIsInDemoMode && ([commandId isEqualToString: @MENUCOMMAND_ENTER_LICENSE] || [commandId isEqualToString: @MENUCOMMAND_PURCHASE_LICENSE]))
                     continue;
                 
                 menuItem = [[ZPYMenuItem alloc] init];
                 
                 // special command IDs
-                if ([commandId isEqualToString: @"terminate"])
+                if ([commandId isEqualToString: @MENUCOMMAND_TERMINATE])
                 {
                     menuItem.action = @selector(terminate:);
                     menuItem.target = [NSApplication sharedApplication];
                 }
 #ifndef APPSTORE
-                else if ([commandId isEqualToString: @"check_update"])
+                else if ([commandId isEqualToString: @MENUCOMMAND_CHECK_UPDATE])
                 {
                     menuItem.action = @selector(checkForUpdates:);
                     menuItem.target = ((ZPYAppDelegate*) [[NSApplication sharedApplication] delegate]).updater;

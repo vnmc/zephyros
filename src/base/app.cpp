@@ -34,8 +34,8 @@ namespace App {
     
 void RemoveDemoMenuItems()
 {
-    OSUtil::RemoveMenuItem(TEXT("enter_license"));
-    OSUtil::RemoveMenuItem(TEXT("purchase_license"));
+    OSUtil::RemoveMenuItem(TEXT(MENUCOMMAND_ENTER_LICENSE));
+    OSUtil::RemoveMenuItem(TEXT(MENUCOMMAND_PURCHASE_LICENSE));
 }
     
 } // namespace App
