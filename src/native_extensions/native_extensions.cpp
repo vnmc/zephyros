@@ -160,6 +160,15 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         },
         ARG(VTYPE_LIST, "menu")
     ));
+
+	e->AddNativeJavaScriptProcedure(
+		TEXT("removeMenuItem"),
+		FUNC({
+			OSUtil::RemoveMenuItem(args->GetString(0));
+			return NO_ERROR;
+		},
+		ARG(VTYPE_STRING, "commandId")
+	));
     
 	// setMenuItemStatuses: (items: IMenuItemFlags) => void
     e->AddNativeJavaScriptProcedure(

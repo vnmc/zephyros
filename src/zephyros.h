@@ -33,6 +33,15 @@
 
 
 //////////////////////////////////////////////////////////////////////////
+// Constants
+
+#define MENUCOMMAND_TERMINATE         "terminate"
+#define MENUCOMMAND_CHECK_UPDATE      "check_update"
+#define MENUCOMMAND_ENTER_LICENSE     "enter_license"
+#define MENUCOMMAND_PURCHASE_LICENSE  "purchase_license"
+
+
+//////////////////////////////////////////////////////////////////////////
 // Types
 
 #ifdef OS_WIN
@@ -167,9 +176,9 @@ Size GetDefaultWindowSize();
 void SetDefaultWindowSize(int nWidth, int nHeight);
 
 WindowsInfo GetWindowsInfo();
-void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nAccelID);
+void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID = 0, int nAccelID = 0);
 OSXInfo GetOSXInfo();
-void SetOSXInfo(const TCHAR* szStringTableName);
+void SetOSXInfo(const TCHAR* szMainNibName);
 
 #ifndef NO_CRASHRPT
 const TCHAR* GetCrashReportingURL();
