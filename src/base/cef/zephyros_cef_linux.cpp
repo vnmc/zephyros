@@ -76,6 +76,8 @@ extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 int g_nMinWindowWidth = 0;
 int g_nMinWindowHeight = 0;
 
+GtkWidget* g_pMenuBar = NULL;
+
 // height of the integrated menu bar (if any) at the top of the GTK window.
 int g_nMenubarHeight = 0;
 
@@ -100,12 +102,6 @@ void OnMenubarSizeAllocated(GtkWidget* widget, GtkAllocation* allocation, void* 
 gboolean OnWindowFocusIn(GtkWidget* widget, GdkEventFocus* event, gpointer user_data);
 gboolean OnWindowState(GtkWidget* widget, GdkEventWindowState* event, gpointer user_data);
 gboolean OnWindowConfigure(GtkWindow* window, GdkEvent* event, gpointer data);
-
-// --------------------
-GtkWidget* AddMenuEntry(GtkWidget* menu_widget, const char* text, GCallback callback);
-GtkWidget* CreateMenu(GtkWidget* menu_bar, const char* text);
-GtkWidget* CreateMenuBar();
-// --------------------
 
 void LoadWindowPlacement(Rect* pRectNormal, bool* pbIsMaximized);
 void SaveWindowPlacement(Rect* pRectNormal, bool bIsMaximized);
@@ -204,10 +200,9 @@ void CreateMainWindow(int argc, char** argv)
     g_signal_connect(vbox, "size-allocate", G_CALLBACK(OnVboxSizeAllocated), NULL);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
-    GtkWidget* menu_bar = CreateMenuBar();
-    g_signal_connect(menu_bar, "size-allocate", G_CALLBACK(OnMenubarSizeAllocated), NULL);
-
-    gtk_box_pack_start(GTK_BOX(vbox), menu_bar, FALSE, FALSE, 0);
+    g_pMenuBar = gtk_menu_bar_new();
+    g_signal_connect(g_pMenuBar, "size-allocate", G_CALLBACK(OnMenubarSizeAllocated), NULL);
+    gtk_box_pack_start(GTK_BOX(vbox), g_pMenuBar, FALSE, FALSE, 0);
 
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(OnDestroy), NULL);
     g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(OnDeleteEvent), window);
@@ -419,47 +414,6 @@ gboolean OnWindowConfigure(GtkWindow* window, GdkEvent* event, gpointer data)
     // don't stop this message
     return FALSE;
 }
-
-
-// --------------------
-GtkWidget* AddMenuEntry(GtkWidget* menu_widget, const char* text,
-                        GCallback callback) {
-  GtkWidget* entry = gtk_menu_item_new_with_label(text);
-  g_signal_connect(entry, "activate", callback, NULL);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu_widget), entry);
-  return entry;
-}
-
-GtkWidget* CreateMenu(GtkWidget* menu_bar, const char* text) {
-  GtkWidget* menu_widget = gtk_menu_new();
-  GtkWidget* menu_header = gtk_menu_item_new_with_label(text);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu_header), menu_widget);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), menu_header);
-  return menu_widget;
-}
-
-GtkWidget* CreateMenuBar() {
-  GtkWidget* menu_bar = gtk_menu_bar_new();
-  GtkWidget* debug_menu = CreateMenu(menu_bar, "Tests");
-
-  AddMenuEntry(debug_menu, "Get Source", NULL);
-               //G_CALLBACK(GetSourceActivated));
-  AddMenuEntry(debug_menu, "Get Text", NULL);
-  AddMenuEntry(debug_menu, "Popup Window", NULL);
-  AddMenuEntry(debug_menu, "Request", NULL);
-  AddMenuEntry(debug_menu, "Plugin Info", NULL);
-  AddMenuEntry(debug_menu, "Zoom In", NULL);
-  AddMenuEntry(debug_menu, "Zoom Out", NULL);
-  AddMenuEntry(debug_menu, "Zoom Reset", NULL);
-  AddMenuEntry(debug_menu, "Begin Tracing", NULL);
-  AddMenuEntry(debug_menu, "End Tracing", NULL);
-  AddMenuEntry(debug_menu, "Print", NULL);
-  AddMenuEntry(debug_menu, "Other Tests", NULL);
-
-  return menu_bar;
-}
-// --------------------
-
 
 void LoadWindowPlacement(Rect* pRectNormal, bool* pbIsMaximized)
 {

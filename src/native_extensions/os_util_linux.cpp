@@ -34,6 +34,10 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 
+#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
+#include <gtk/gtk.h>
+
 #include "base/app.h"
 
 #include "base/cef/client_handler.h"
@@ -46,6 +50,8 @@ extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
 extern int g_nMinWindowWidth;
 extern int g_nMinWindowHeight;
+
+extern GtkWidget* g_pMenuBar;
 
 
 namespace Zephyros {
@@ -165,6 +171,74 @@ String Exec(String command)
 
     pclose(pipe);
     return result.str();
+}
+
+void CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsInDemoMode)
+{
+    bool bPrevItemWasSeparator = false;
+    int nNumItems = (int) menuItems->GetSize();
+
+	for (int i = 0; i < nNumItems; ++i)
+	{
+		JavaScript::Object item = menuItems->GetDictionary(i);
+
+		GtkWidget* pMenuItem = NULL;
+
+		String strCaption = item->GetString(TEXT("caption"));
+		if (strCaption == TEXT("-"))
+		{
+            // this menu item is a separator
+
+            if (bPrevItemWasSeparator)
+                continue;
+
+            pMenuItem = gtk_separator_menu_item_new();
+            bPrevItemWasSeparator = true;
+		}
+		else
+		{
+            if (item->HasKey(TEXT("subMenuItems")))
+            {
+                pMenuItem = gtk_menu_item_new_with_mnemonic(strCaption.c_str());
+                GtkWidget* pSubMenu = gtk_menu_new();
+                gtk_menu_item_set_submenu(GTK_MENU_ITEM(pMenuItem), pSubMenu);
+                CreateMenuRecursive(pSubMenu, item->GetList(TEXT("subMenuItems")), bIsInDemoMode);
+            }
+            else
+            {
+                if (item->HasKey(TEXT("systemCommandId")))
+                {
+                }
+                else if (item->HasKey(TEXT("menuCommandId")))
+                {
+                    String strCommandId = item->GetString(TEXT("menuCommandId"));
+
+                    if (!bIsInDemoMode && (strCommandId == TEXT(MENUCOMMAND_ENTER_LICENSE) || strCommandId == TEXT(MENUCOMMAND_PURCHASE_LICENSE)))
+                        continue;
+
+                    pMenuItem = gtk_menu_item_new_with_mnemonic(strCaption.c_str());
+
+                    // special command IDs
+
+                    // TODO: implement handlers, icons, accels
+                }
+            }
+		}
+
+        gtk_menu_shell_append(GTK_MENU_SHELL(pMenu), pMenuItem);
+        bPrevItemWasSeparator = false;
+    }
+}
+
+void CreateMenu(JavaScript::Array menuItems)
+{
+    // TODO: empty existing menu bar
+
+    CreateMenuRecursive(g_pMenuBar, menuItems, Zephyros::GetLicenseManager() != NULL && Zephyros::GetLicenseManager()->IsInDemoMode());
+}
+
+void RemoveMenuItem(String strCommandId)
+{
 }
 
 MenuHandle CreateContextMenu(JavaScript::Array menuItems)

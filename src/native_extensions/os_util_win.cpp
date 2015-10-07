@@ -231,7 +231,7 @@ String GetKeyName(WORD wVkCode)
 			szName[i] = tolower(c);
 		if (i > 0 && c == TEXT('-'))
 			szName[i] = TEXT(' ');
-		
+
 		bPrevWasAlnum = isalnum(c) != 0;
 	}
 
@@ -256,6 +256,8 @@ void CreateMenuRecursive(
 		String strCaption = item->GetString(TEXT("caption"));
 		if (strCaption == TEXT("-"))
 		{
+            // this menu item is a separator
+
 			if (bPrevItemWasSeparator)
 				continue;
 
@@ -507,7 +509,7 @@ String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
 	int nRet = TrackPopupMenu(GetSubMenu((HMENU) nMenuHandle, 0), TPM_RETURNCMD, pt.x, pt.y, 0, hWnd, NULL);
 	if (nRet == FALSE)
 		return TEXT("");
-	
+
 	return Zephyros::GetMenuCommandForID(nRet);
 }
 
@@ -518,7 +520,7 @@ void GetWindowBorderSize(POINT* pPtBorder)
 
 	GetWindowRect(hWnd, &rectWnd);
 	GetClientRect(hWnd, &rectClient);
-	
+
 	pPtBorder->x = rectWnd.right - rectWnd.left - rectClient.right;
 	pPtBorder->y = rectWnd.bottom - rectWnd.top - rectClient.bottom;
 }
@@ -694,7 +696,7 @@ void DisplayNotification(String title, String details)
 		if (IsWin7OrLater())
 		{
 			g_pnfiNotifyIcon->uFlags |= NIF_GUID;
-			
+
 			// {8F4D4A24-DD64-4AC6-8EE1-296806488C73}
 			static const GUID guid = { 0x8f4d4a24, 0xdd64, 0x4ac6, { 0x8e, 0xe1, 0x29, 0x68, 0x6, 0x48, 0x8c, 0x73 } };
 			g_pnfiNotifyIcon->guidItem = guid;
