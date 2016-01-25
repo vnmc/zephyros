@@ -32,6 +32,9 @@
 
 #include "base/types.h"
 #include "jsbridge.h"
+#ifdef USE_WEBVIEW
+#include "native_extensions.h"
+#endif
 
 
 #ifdef OS_WIN
