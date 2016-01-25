@@ -130,8 +130,8 @@ int RunApplication(int argc, char* argv[])
     if (pLicenseMgr == NULL || pLicenseMgr->CanStartApp())
     {
         // create the application window
-        [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: NO];
-
+        [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: YES];
+        [g_appDelegate.window orderFrontRegardless];
         // run the application message loop
         g_isMessageLoopRunning = true;
         CefRunMessageLoop();
