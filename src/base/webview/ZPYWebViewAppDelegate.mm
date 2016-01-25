@@ -101,7 +101,6 @@ JSContextRef g_ctx = NULL;
     }
 #endif
     
-    [self createMenuItems];
     self.window.isVisible = YES;
     
     // register ourselves as delegate for the notification center
