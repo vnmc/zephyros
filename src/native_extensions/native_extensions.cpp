@@ -67,24 +67,24 @@ void NativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
 {
     m_e = e;
 }
-    
-    
+
+
 DefaultNativeExtensions::DefaultNativeExtensions()
 	: m_pBrowsers(NULL)
 {
     m_fileWatcher = new FileWatcher();
-    m_customURLManager = new CustomURLManager();    
+    m_customURLManager = new CustomURLManager();
 }
-    
+
 DefaultNativeExtensions::~DefaultNativeExtensions()
 {
     delete m_fileWatcher;
     delete m_customURLManager;
-    
+
 	if (m_pBrowsers)
 		BrowserUtil::CleanUp(m_pBrowsers);
 }
-    
+
 void DefaultNativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
 {
     NativeExtensions::SetClientExtensionHandler(e);
@@ -132,7 +132,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         }
     ));
-    
+
     // onCustomURL: (callback: (url: string) => void) => void
     e->AddNativeJavaScriptCallback(
         TEXT("onCustomURL"),
@@ -147,10 +147,10 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     fnxOnAppTerminating->SetAllCallbacksCompletedHandler(PROC({ App::QuitMessageLoop(); }));
     e->AddNativeJavaScriptCallback(TEXT("onAppTerminating"), fnxOnAppTerminating);
 
-    
+
     //////////////////////////////////////////////////////////////////////
     // UI
-    
+
     // createMenu: (menu: IMenuItem[]) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("createMenu"),
@@ -169,14 +169,14 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 		},
 		ARG(VTYPE_STRING, "commandId")
 	));
-    
+
 	// setMenuItemStatuses: (items: IMenuItemFlags) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("setMenuItemStatuses"),
         FUNC({
             JavaScript::Object items = args->GetDictionary(0);
             App::MenuItemStatuses statuses;
-        
+
             JavaScript::KeyList keys;
             items->GetKeys(keys);
             for (JavaScript::KeyType commandId : keys)
@@ -210,10 +210,10 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 		ARG(VTYPE_INT, "y")
 	));
 
-    
+
     //////////////////////////////////////////////////////////////////////
     // OS Browsers
-    
+
     // getBrowsers: (callback: (browsers: IBrowser[]) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("getBrowsers"),
@@ -273,7 +273,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 
     //////////////////////////////////////////////////////////////////////
     // File System
-    
+
     // getComputerName: (callback: (computerName: string) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("getComputerName"),
@@ -383,7 +383,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         })
 #endif
     );
-    
+
     // showInFileManager: (path: IPath) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("showInFileManager"),
@@ -417,7 +417,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 			return NO_ERROR;
 		}
 	));
-    
+
     // startAccessingPath: (path: IPath) => void
     e->AddNativeJavaScriptFunction(
         TEXT("startAccessingPath"),
@@ -452,7 +452,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
                     ret->SetString(0, result);
                 else
                     ret->SetNull(0);
-        
+
                 FileUtil::StopAccessingPath(path);
             }
             else
@@ -463,7 +463,19 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "path")
         ARG(VTYPE_DICTIONARY, "options")
     ));
-    
+
+    // writeFile: (path: IPath, contents: String)
+    e->AddNativeJavaScriptFunction(
+        TEXT("writeFile"),
+        FUNC({
+            Path path(args->GetDictionary(0));
+            FileUtil::WriteFile(path.GetPath(), args->GetString(1));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_DICTIONARY, "path")
+        ARG(VTYPE_STRING, "contents")
+    ));
+
 	// existsFile: (path: IPath, callback(exists: boolean) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("existsFile"),
@@ -476,7 +488,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             }
             else
                 ret->SetBool(0, false);
-        
+
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "path")
@@ -494,12 +506,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             }
             else
                 ret->SetBool(0, false);
-        
+
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "path")
     ));
-    
+
     // makeDirectory: (path: IPath, callback(success: boolean) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("makeDirectory"),
@@ -512,13 +524,13 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             }
             else
                 ret->SetBool(0, false);
-        
+
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "path")
     ));
-    
-    
+
+
     // startWatchingFiles: (path: string, fileExtensions: string[]) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("startWatchingFiles"),
@@ -543,7 +555,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         }
     ));
-    
+
     // getApplicationResourcesDirectory: (callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("getApplicationResourcesDirectory"),
@@ -554,7 +566,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         }
     ));
-    
+
 	// startProcess: (executablePath: string, arguments: string[], cwd: string, callback: (exitCode: number, output: IOutputStreamData[]) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("startProcess"),
@@ -571,10 +583,10 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_STRING, "cwd")
     ));
 
-    
+
     //////////////////////////////////////////////////////////////////////
     // Preferences
-    
+
     // loadPreferences: (callback: (key: string, data: any) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("loadPreferences"),
@@ -600,7 +612,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_STRING, "data")), // the native function ultimately receives a string
         TEXT("return storePreferences(key, JSON.stringify(data));")
     );
-    
+
 #ifdef APPSTORE
     e->AddNativeJavaScriptFunction(TEXT("getUpdaterSettings"), FUNC({ return NO_ERROR; }));
     e->AddNativeJavaScriptProcedure(TEXT("setUpdaterSettings"), FUNC({ return NO_ERROR; }, ARG(VTYPE_DICTIONARY, "updaterSettings")));
@@ -613,7 +625,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         })
     );
-    
+
 	// setUpdaterSettings: (settings: IUpdaterSettings) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("setUpdaterSettings"),
@@ -625,7 +637,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 	));
 #endif
 
-    
+
     //////////////////////////////////////////////////////////////////////
     // Networking
 
@@ -646,7 +658,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         }
     ));
-    
+
     // getProxyForURL: (url: string, callback: (proxyConfig: IProxyConfig) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("getProxyForURL"),
@@ -656,7 +668,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             String username;
             String password;
             int port;
-        
+
             NetworkUtil::GetProxyForURL(args->GetString(0), proxyType, host, port, username, password);
 
             JavaScript::Object proxyConfig = JavaScript::CreateObject();
@@ -665,13 +677,13 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             proxyConfig->SetInt(TEXT("port"), port);
             proxyConfig->SetString(TEXT("username"), username);
             proxyConfig->SetString(TEXT("password"), password);
-                
+
             ret->SetDictionary(0, proxyConfig);
             return NO_ERROR;
         },
         ARG(VTYPE_STRING, "url")
     ));
-    
+
 #ifdef USE_WEBVIEW
     // mimicks the Zepto ajax function
     // Syntax:
@@ -689,24 +701,24 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         TEXT("ajax"),
         FUNC({
             JavaScript::Object options = args->GetDictionary(0);
-        
+
             String httpMethod = options->GetString(TEXT("type"));
             if (httpMethod == "")
                 httpMethod = TEXT("GET");
-        
+
             String url = options->GetString(TEXT("url"));
-        
+
             String postData = options->GetString(TEXT("data"));
             String postDataContentType = options->GetString(TEXT("contentType"));
             if (postData != "" && postDataContentType == "")
                 postDataContentType = TEXT("application/x-www-form-urlencoded");
-        
+
             String responseDataType = options->GetString(TEXT("dataType"));
             if (responseDataType == "")
                 responseDataType = TEXT("text");
-        
+
             NetworkUtil::MakeRequest(callback, httpMethod, url, postData, postDataContentType, responseDataType);
-        
+
             return RET_DELAYED_CALLBACK;
         }
         ARG(VTYPE_DICTIONARY, "options")),
@@ -726,7 +738,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_STRING, "imageData")
     ));
 #endif
-    
+
     e->AddNativeJavaScriptFunction(
         TEXT("getPageImageForURL"),
         FUNC({
@@ -737,10 +749,10 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_INT, "width")
     ));
 
-    
+
     //////////////////////////////////////////////////////////////////////
     // Windows, Notifications
-    
+
 #ifdef OS_WIN
 #	define SET_WINDOW_SIZE_RETVAL NO_ERROR
 #else
@@ -756,54 +768,54 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             bool hasHeight = false;
 
             JavaScript::Object size = args->GetDictionary(0);
-        
+
             if (size->HasKey(TEXT("width")))
             {
                 width = size->GetInt(TEXT("width"));
                 hasWidth = true;
             }
-        
+
             if (size->HasKey(TEXT("height")))
             {
                 height = size->GetInt(TEXT("height"));
                 hasHeight = true;
             }
-        
+
             int newWidth = 0;
             int newHeight = 0;
             OSUtil::SetWindowSize(callback, width, height, hasWidth, hasHeight, &newWidth, &newHeight);
-        
+
             JavaScript::Object newSize = JavaScript::CreateObject();
             newSize->SetInt(TEXT("width"), newWidth);
             newSize->SetInt(TEXT("height"), newHeight);
             ret->SetDictionary(0, newSize);
-        
+
 			return SET_WINDOW_SIZE_RETVAL;
         },
         ARG(VTYPE_DICTIONARY, "size")
     ));
-    
+
 	// setMinimumWindowSize: (size: ISize) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("setMinimumWindowSize"),
         FUNC({
             int width = 0;
             int height = 0;
-        
+
             JavaScript::Object size = args->GetDictionary(0);
-        
+
             if (size->HasKey(TEXT("width")))
                 width = size->GetInt(TEXT("width"));
             if (size->HasKey(TEXT("height")))
                 height = size->GetInt(TEXT("height"));
-        
+
             OSUtil::SetMinimumWindowSize(width, height);
 
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "size")
     ));
-    
+
     // displayNotification: (title: string, details: string) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("displayNotification"),
@@ -814,7 +826,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_STRING, "title")
         ARG(VTYPE_STRING, "details")
     ));
-    
+
     // requestUserAttention: () => void;
     e->AddNativeJavaScriptProcedure(
         TEXT("requestUserAttention"),
@@ -823,7 +835,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         }
     ));
-    
+
     // copyToClipboard: (text: string) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("copyToClipboard"),
@@ -837,7 +849,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 
     //////////////////////////////////////////////////////////////////////
     // Licensing
-    
+
 #ifdef APPSTORE
     e->AddNativeJavaScriptFunction(TEXT("getLicenseData"), FUNC({ return NO_ERROR; }));
     e->AddNativeJavaScriptProcedure(TEXT("deactivateLicense"), FUNC({ return NO_ERROR; }));
@@ -853,19 +865,19 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             {
                 StringMap info(pMgr->GetLicenseInformation());
                 JavaScript::Object obj = JavaScript::CreateObject();
-                
+
                 for (std::map<String, String>::iterator it = info.begin(); it != info.end(); ++it)
                     obj->SetString(it->first, it->second);
-                
+
                 ret->SetDictionary(0, obj);
             }
             else
                 ret->SetNull(0);
-        
+
             return NO_ERROR;
         }
     ));
-    
+
     // deactivateLicense: () => void;
     e->AddNativeJavaScriptProcedure(
         TEXT("deactivateLicense"),

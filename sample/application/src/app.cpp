@@ -26,11 +26,15 @@
 
 
 #include "stdafx.h"
+#include "content.h"
 
 #ifdef OS_WIN
 #include "Resource.h"
 #endif
 
+#ifdef OS_LINUX
+#include <X11/Xlib.h>
+#endif
 
 #ifdef OS_MACOSX
 #define UPDATER_URL TEXT("http://my-server.com/zephyros-sampleapp-cast.xml")
@@ -113,8 +117,14 @@ int MAIN(MAIN_ARGS)
 
 #ifdef OS_WIN
 	Zephyros::SetWindowsInfo(TEXT("Software\\Vanamco\\ZephyrosSampleApp"), IDI_ZEPHYROS_SAMPLEAPP);
-	#include "..\res\windows\content.cpp"
 #endif
 
+#ifndef OS_MACOSX
+    SetResources();
+#endif
+
+#ifdef OS_LINUX
+    XInitThreads();
+#endif
 	return Zephyros::Run(INIT_APPLICATION_ARGS, TEXT("Zephyros Sample App"), TEXT("1.0.0"), TEXT("app/index.html"));
 }

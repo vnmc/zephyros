@@ -24,7 +24,7 @@
  * Matthias Christen, Vanamco AG
  *******************************************************************************/
 
-
+#include <iostream>
 #include "native_extensions/browser.h"
 #include "native_extensions/os_util.h"
 
@@ -66,15 +66,27 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
     }
 }
 
+using namespace std;
+
 bool OpenURLInBrowser(String url, Browser* browser)
 {
-    // TODO: open "url" in "browser"
+    if (browser == NULL)
+        return false;
 
-    return false;
+    String cmdString = browser->GetIdentifier();
+    cmdString.append(" ");
+    cmdString.appedn(url);
+    cmdString.append(" &");
+
+    system( cmdString.c_str() );
+    return true;
 }
+
 
 void CleanUp(std::vector<Browser*>* pBrowsers)
 {
+    for (Browser *pBrowser: *pBrowsers)
+        delete pBrowser;
 }
 
 } // namespace BrowserUtil

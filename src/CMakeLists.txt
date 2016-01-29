@@ -204,14 +204,12 @@ set(ZEPHYROS_CEF_BASE_SRCS
 )
 set(ZEPHYROS_CEF_BASE_SRCS_MACOSX
   base/cef/resource_util_mac.mm
-  base/cef/resource_util_posix.cpp
 )
 set(ZEPHYROS_CEF_BASE_SRCS_WINDOWS
   base/cef/resource_util_win.cpp
 )
 set(ZEPHYROS_CEF_BASE_SRCS_LINUX
   base/cef/resource_util_linux.cpp
-  base/cef/resource_util_posix.cpp
 )
 APPEND_PLATFORM_SOURCES(ZEPHYROS_CEF_BASE_SRCS)
 source_group(Base FILES ${ZEPHYROS_CEF_BASE_SRCS})

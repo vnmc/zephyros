@@ -131,8 +131,8 @@ typedef struct
 {
     TCHAR* szMainNibName;
 } OSXInfo;
-    
-    
+
+
 namespace App {
 
 enum AlertStyle
@@ -165,9 +165,6 @@ const TCHAR* GetAppURL();
 const TCHAR* GetCompanyName();
 void SetCompanyName(const TCHAR* szCompanyName);
 
-int GetResourceID(const TCHAR* szResourceName);
-void SetResourceID(const TCHAR* szResourceName, int nID);
-
 int GetMenuIDForCommand(const TCHAR* szCommand);
 const TCHAR* GetMenuCommandForID(int nMenuID);
 void SetMenuIDForCommand(const TCHAR* szCommand, int nMenuID);
@@ -199,6 +196,15 @@ void SetNativeExtensions(NativeExtensions* pNativeExtensions);
 
 String GetString(int stringId);
 void SetString(int stringId, String str);
+
+#ifdef OS_WIN
+int GetResourceID(const TCHAR* szResourceName);
+void SetResourceID(const TCHAR* szResourceName, int nID);
+#endif
+#ifdef OS_LINUX
+bool GetResource(const TCHAR* szResourceName, char*& pData, int& nLen);
+void SetResource(const TCHAR* szResourceName, char* pData, int nLen);
+#endif
 
 bool UseLogging();
 void UseLogging(bool bUseLogging);
