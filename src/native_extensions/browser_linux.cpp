@@ -75,7 +75,7 @@ bool OpenURLInBrowser(String url, Browser* browser)
 
     String cmdString = browser->GetIdentifier();
     cmdString.append(" ");
-    cmdString.appedn(url);
+    cmdString.append(url);
     cmdString.append(" &");
 
     system( cmdString.c_str() );
