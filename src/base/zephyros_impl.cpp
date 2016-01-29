@@ -63,15 +63,26 @@ OSXInfo g_osxInfo = { 0 };
 
 AbstractLicenseManager* g_pLicenseManager = NULL;
 NativeExtensions* g_pNativeExtensions = NULL;
-    
-std::map<String, int> g_mapResourceIDs;
+
 std::map<int, String> g_mapMenuCommands;
 std::map<String, int> g_mapMenuIDs;
 std::map<int, String> g_mapStrings;
-    
+
+#ifdef OS_WIN
+std::map<String, int> g_mapResourceIDs;
+#endif
+
+#ifdef OS_LINUX
+typedef struct {
+    char* pData;
+    int nLength;
+} Resource;
+std::map<String, Resource> g_mapResources;
+#endif
+
 bool g_bUseLogging = false;
 
-    
+
 void InitDefaultStrings()
 {
     SET_DEFAULT(ZS_DEMODLG_WNDTITLE, TEXT("{{appName}} Demo"));
@@ -117,13 +128,22 @@ void InitDefaultStrings()
     SET_DEFAULT(ZS_LIC_DEACTIVATION_SUCCESS, TEXT("You have successfully deactivated {{appName}}.\nThe application will quit now."));
 
     SET_DEFAULT(ZS_LIC_DEMO_ERROR, TEXT("Unfortunately, an error while retrieving a demo license from the licensing server:\n"));
-    
+
     SET_DEFAULT(ZS_UPDATES_CHECK, TEXT("Check for Updates"));
-    
+
     SET_DEFAULT(ZS_OPEN_FINDER, TEXT("Open in Finder"));
     SET_DEFAULT(ZS_OPEN_EXPLORER, TEXT("Open in Explorer"));
     SET_DEFAULT(ZS_OPEN_FILEMANAGER, TEXT("Open in file manager"));
     SET_DEFAULT(ZS_OPEN_PATH_DOESNT_EXIST, TEXT("The path %s does not exist."));
+
+    SET_DEFAULT(ZS_DIALOG_OPEN_FILE, TEXT("Select file"));
+    SET_DEFAULT(ZS_DIALOG_OPEN_FOLDER, TEXT("Select folder"));
+    SET_DEFAULT(ZS_DIALOG_SAVE_FILE, TEXT("Save file"));
+    SET_DEFAULT(ZS_DIALOG_FILE_OPEN_BUTTON, TEXT("_Open"));
+    SET_DEFAULT(ZS_DIALOG_FILE_CANCEL_BUTTON, TEXT("_Cancel"));
+    SET_DEFAULT(ZS_DIALOG_FILE_SAVE_BUTTON, TEXT("_Save"));
+
+
 }
 
 int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
@@ -132,7 +152,7 @@ int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHA
     g_szAppName = new TCHAR[lenAppName + 1];
     g_szAppVersion = new TCHAR[_tcslen(szAppVersion) + 1];
     g_szAppURL = new TCHAR[_tcslen(szAppURL) + 8];
-    
+
     _tcscpy(g_szAppName, szAppName);
     _tcscpy(g_szAppVersion, szAppVersion);
 
@@ -143,10 +163,10 @@ int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHA
     _tcscpy(g_szAppURL, TEXT("http://"));
     _tcscat(g_szAppURL, szAppURL);
 #endif
-    
+
     // initialize with default values
     InitDefaultStrings();
-    
+
 #ifdef OS_WIN
     // - set the registry key to "Software\<AppName>"
 	if (g_windowsInfo.szRegistryKey == NULL)
@@ -156,14 +176,14 @@ int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHA
         _tcscat(g_windowsInfo.szRegistryKey, g_szAppName);
     }
 #endif
-    
+
     if (g_pNativeExtensions == NULL)
         g_pNativeExtensions = new DefaultNativeExtensions();
 
     // initialize and start the application
     return RunApplication(INIT_APPLICATION_ARGS);
 }
-    
+
 void Shutdown()
 {
 	if (g_szCompanyName != NULL)
@@ -171,19 +191,19 @@ void Shutdown()
 
     if (g_szAppName != NULL)
         delete[] g_szAppName;
-    
+
     if (g_szAppVersion != NULL)
         delete[] g_szAppVersion;
-    
+
     if (g_szAppURL != NULL)
         delete[] g_szAppURL;
-    
+
     if (g_windowsInfo.szRegistryKey != NULL)
         delete[] g_windowsInfo.szRegistryKey;
-    
+
     if (g_osxInfo.szMainNibName != NULL)
         delete[] g_osxInfo.szMainNibName;
-    
+
     if (g_szUpdaterURL != NULL)
         delete[] g_szUpdaterURL;
 
@@ -192,7 +212,7 @@ void Shutdown()
 
 	if (g_szCrashReportingPrivacyPolicyURL != NULL)
 		delete[] g_szCrashReportingPrivacyPolicyURL;
-    
+
     if (g_pLicenseManager != NULL)
         delete g_pLicenseManager;
 
@@ -211,17 +231,17 @@ void Shutdown()
 	g_pLicenseManager = NULL;
 	g_pNativeExtensions = NULL;
 }
-    
+
 const TCHAR* GetAppName()
 {
     return g_szAppName;
 }
-    
+
 const TCHAR* GetAppVersion()
 {
     return g_szAppVersion;
 }
-    
+
 const TCHAR* GetAppURL()
 {
     return g_szAppURL;
@@ -238,17 +258,6 @@ void SetCompanyName(const TCHAR* szCompanyName)
 		delete[] g_szCompanyName;
 	g_szCompanyName = new TCHAR[_tcslen(szCompanyName) + 1];
 	_tcscpy(g_szCompanyName, szCompanyName);
-}
-
-int GetResourceID(const TCHAR* szResourceName)
-{
-	std::map<String, int>::iterator it = g_mapResourceIDs.find(szResourceName);
-    return it == g_mapResourceIDs.end() ? -1 : it->second;
-}
-
-void SetResourceID(const TCHAR* szResourceName, int nID)
-{
-	g_mapResourceIDs[szResourceName] = nID;
 }
 
 int GetMenuIDForCommand(const TCHAR* szCommand)
@@ -268,12 +277,12 @@ void SetMenuIDForCommand(const TCHAR* szCommand, int nMenuID)
 	g_mapMenuCommands[nMenuID] = szCommand;
 	g_mapMenuIDs[szCommand] = nMenuID;
 }
-    
+
 Size GetDefaultWindowSize()
 {
     return g_defaultWindowSize;
 }
-    
+
 void SetDefaultWindowSize(int nWidth, int nHeight)
 {
     g_defaultWindowSize.nWidth = nWidth;
@@ -284,7 +293,7 @@ WindowsInfo GetWindowsInfo()
 {
     return g_windowsInfo;
 }
-    
+
 void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nAccelID)
 {
     if (g_windowsInfo.szRegistryKey)
@@ -296,12 +305,12 @@ void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nA
 	g_windowsInfo.nMenuID = nMenuID;
 	g_windowsInfo.nAccelID = nAccelID;
 }
-    
+
 OSXInfo GetOSXInfo()
 {
     return g_osxInfo;
 }
-    
+
 void SetOSXInfo(const TCHAR* szMainNibName)
 {
     if (g_osxInfo.szMainNibName)
@@ -338,12 +347,12 @@ void SetCrashReportingURL(const TCHAR* szReportingURL, const TCHAR* szPrivacyPol
 	else
 		g_szCrashReportingPrivacyPolicyURL = NULL;
 }
-    
+
 const TCHAR* GetUpdaterURL()
 {
     return g_szUpdaterURL;
 }
-    
+
 void SetUpdaterURL(const TCHAR* szURL)
 {
     if (g_szUpdaterURL)
@@ -351,12 +360,12 @@ void SetUpdaterURL(const TCHAR* szURL)
     g_szUpdaterURL = new TCHAR[_tcslen(szURL) + 1];
     _tcscpy(g_szUpdaterURL, szURL);
 }
-    
+
 AbstractLicenseManager* GetLicenseManager()
 {
     return g_pLicenseManager;
 }
-    
+
 void SetLicenseManager(AbstractLicenseManager* pLicenseManager)
 {
     g_pLicenseManager = pLicenseManager;
@@ -366,42 +375,77 @@ NativeExtensions* GetNativeExtensions()
 {
     return g_pNativeExtensions;
 }
-    
+
 void SetNativeExtensions(NativeExtensions* pNativeExtensions)
 {
     g_pNativeExtensions = pNativeExtensions;
 }
-    
+
 String GetString(int stringId)
 {
     std::map<int, String>::iterator it = g_mapStrings.find(stringId);
-    
+
     if (it == g_mapStrings.end())
         return TEXT("");
-    
+
     if (it->second.find(TEXT("{{")) != String::npos)
     {
         return g_mapStrings[stringId] = StringReplace(StringReplace(it->second,
             TEXT("{{appName}}"), g_szAppName),
             TEXT("{{appVersion}}"), g_szAppVersion);
     }
-    
+
     return it->second;
 }
-    
+
 void SetString(int stringId, String str)
 {
     g_mapStrings[stringId] = str;
 }
 
+#ifdef OS_WIN
+int GetResourceID(const TCHAR* szResourceName)
+{
+	std::map<String, int>::iterator it = g_mapResourceIDs.find(szResourceName);
+    return it == g_mapResourceIDs.end() ? -1 : it->second;
+}
+
+void SetResourceID(const TCHAR* szResourceName, int nID)
+{
+	g_mapResourceIDs[szResourceName] = nID;
+}
+#endif // OS_WIN
+
+#ifdef OS_LINUX
+bool GetResource(const TCHAR* szResourceName, char*& pData, int& nLen)
+{
+    std::map<String, Resource>::iterator it = g_mapResources.find(szResourceName);
+    if (it == g_mapResources.end())
+        return false;
+
+    pData = it->second.pData;
+    nLen = it->second.nLength;
+    return true;
+}
+
+void SetResource(const TCHAR* szResourceName, char* pData, int nLen)
+{
+    Resource resource;
+    resource.pData = pData;
+    resource.nLength = nLen;
+
+    g_mapResources[szResourceName] = resource;
+}
+#endif // OS_LINUX
+
 bool UseLogging()
 {
     return g_bUseLogging;
 }
-    
+
 void UseLogging(bool bUseLogging)
 {
     g_bUseLogging = bUseLogging;
 }
-    
+
 } // namespace Zephyros

@@ -10,6 +10,7 @@ set(APP_NAME App)
 # the folder containing the webapp
 set(WEBAPP app)
 
+
 if(NOT(DEFINED IS_ZEPHYROS_BUILD))
   project(${APP_NAME})
 
@@ -51,6 +52,9 @@ set(APP_RESOURCES_WINDOWS
   res/windows/content.rc
   res/windows/app.ico
   res/windows/small.ico
+)
+set(APP_RESOURCES_LINUX
+    res/linux/content.s
 )
 APPEND_PLATFORM_SOURCES(APP_RESOURCES)
 
@@ -219,6 +223,7 @@ if(OS_MACOSX)
     else()
       target_include_directories(${APP_NAME_WEBVIEW} PRIVATE ${CMAKE_SOURCE_DIR}/src ${LIB_ZEPHYROS_WEBVIEW_PATH}/Headers)
     endif()
+    target_include_directories(${APP_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/res/mac)
 
     target_compile_definitions(${APP_NAME_WEBVIEW} PRIVATE -DUSE_WEBVIEW ${PLATFORM})
     target_link_libraries(${APP_NAME_WEBVIEW} PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_WEBVIEW})
@@ -259,6 +264,7 @@ elseif(OS_WINDOWS)
   else()
     target_include_directories(${APP_NAME} PRIVATE ${ZEPHYROS_DIR} ${ZEPHYROS_DIR}/src ${ZEPHYROS_DIR}/lib/cef)
   endif()
+  target_include_directories(${APP_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/res/windows)
 
   set(CEF_STANDARD_LIBS
     winhttp.lib
@@ -319,10 +325,10 @@ elseif(OS_WINDOWS)
   # add the custom manifest files to the executable
 #  ADD_WINDOWS_MANIFEST("${CMAKE_CURRENT_SOURCE_DIR}/resources/win" "${CEF_TARGET}")
 
-  # build resource files (res/windows/content.rc and res/windows/content.cpp)
+  # build resource files (res/windows/content.rc and res/windows/content.h)
   add_custom_command(TARGET ${APP_NAME}
     PRE_BUILD
-    COMMAND "${ZEPHYROS_DIR}/tools/generate_resources.bat" "${CMAKE_CURRENT_SOURCE_DIR}/res/windows/content.rc" "${CMAKE_CURRENT_SOURCE_DIR}/res/windows/content.cpp"
+    COMMAND "${ZEPHYROS_DIR}/tools/generate_resources.bat" "${CMAKE_CURRENT_SOURCE_DIR}/res/windows/content.rc" "${CMAKE_CURRENT_SOURCE_DIR}/res/windows/content.h"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${WEBAPP}"
     VERBATIM
   )
@@ -332,6 +338,8 @@ elseif(OS_WINDOWS)
   COPY_FILES(${APP_NAME} "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
 
 elseif(OS_LINUX)
+  enable_language(ASM-ATT)
+
   # find required libraries and update compiler/linker variables
   set(CEF_STANDARD_LIBS X11)
   FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-3.0 gthread-2.0 openssl libcurl")
@@ -348,6 +356,7 @@ elseif(OS_LINUX)
   else()
     target_include_directories(${APP_NAME} PRIVATE ${ZEPHYROS_DIR} ${ZEPHYROS_DIR}/src ${ZEPHYROS_DIR}/lib/cef)
   endif()
+  target_include_directories(${APP_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/res/linux)
 
   target_link_libraries(${APP_NAME} PRIVATE ${LIB_ZEPHYROS_CEF} ${LIB_DLL_WRAPPER} ${CEF_BINARY_DIR}/libcef.so ${CEF_STANDARD_LIBS})
   target_compile_definitions(${APP_NAME} PRIVATE -DUSE_CEF ${PLATFORM})
@@ -359,10 +368,15 @@ elseif(OS_LINUX)
     RUNTIME_OUTPUT_DIRECTORY ${CEF_TARGET_OUT_DIR}
   )
 
+  # build resource files (res/linux/content.S and res/linux/content.h)
+  add_custom_command(TARGET ${APP_NAME}
+    PRE_BUILD
+    COMMAND "${ZEPHYROS_DIR}/tools/generate_resources.sh" "${CMAKE_CURRENT_SOURCE_DIR}/res/linux/content.s" "${CMAKE_CURRENT_SOURCE_DIR}/res/linux/content.h"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${WEBAPP}"
+    VERBATIM
+  )
+
   # copy CEF binary and resource files to the target output directory
   COPY_FILES(${APP_NAME} "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
   COPY_FILES(${APP_NAME} "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
-
-  # copy cefclient resource files to the target output directory
-  COPY_FILES(${APP_NAME} "${WEBAPP}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
 endif()

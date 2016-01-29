@@ -35,6 +35,8 @@
 
 namespace ImageUtil {
 
+String Base64Encode(char* data, size_t length);
+
 } // namespace ImageUtil
 
 

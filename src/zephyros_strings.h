@@ -81,5 +81,14 @@
 #define ZS_OPEN_FILEMANAGER              1802
 #define ZS_OPEN_PATH_DOESNT_EXIST        1803
 
+#define ZS_DIALOG_OPEN_FILE              1901
+#define ZS_DIALOG_OPEN_FOLDER            1902
+#define ZS_DIALOG_SAVE_FILE              1903
+#define ZS_DIALOG_FILE_OPEN_BUTTON       1904
+#define ZS_DIALOG_FILE_CANCEL_BUTTON     1905
+#define ZS_DIALOG_FILE_SAVE_BUTTON       1906
+
+
+
 
 #endif // Zephyros_ZephyrosStrings_h

@@ -4,19 +4,35 @@ function setMessage(message)
 {
 	$('#messages').html(message);
 
-	if (timeoutId !== null)
+/*	if (timeoutId !== null)
 		clearTimeout(timeoutId);
 
 	timeoutId = setTimeout(function()
 	{
 		$('#messages').html('');
 		timeoutId = null;
-	}, 2000);
+	}, 2000);*/
+}
+
+function getParameter()
+{
+    return $('#param').val();
+}
+
+function getParameterAsPath()
+{
+    return {
+	    path: getParameter(),
+	    urlWithSecurityAccessData: '',
+	    hasSecurityAccessData: false
+	};
 }
 
 
 $(document).ready(function()
 {
+   
+    
 	// find all the browsers installed on the system
 	app.getBrowsers(function(browsers)
 	{
@@ -26,7 +42,7 @@ $(document).ready(function()
 		browsers.forEach(function(browser)
 		{
 			var $elt = $('<li><img src="' + browser.image + '"/> ' + browser.name + '</li>');
-
+            alert('browser: ' + JSON.stringify(browser));
 			// open a webpage in that browser when the list entry is clicked
 			$elt.click(function()
 			{
@@ -94,6 +110,7 @@ $(document).ready(function()
 
 	$('.open-file').click(function()
 	{
+	setMessage('opening file...');
 		app.showOpenFileDialog(function(path)
 		{
 			setMessage('Path: ' + path.path);
@@ -105,6 +122,125 @@ $(document).ready(function()
 		app.removeMenuItem('enter_license');
 		app.removeMenuItem('open_recent');
 	});
+	
+	$('#getComputerName').click(function()
+	{
+	    app.getComputerName(function(computerName)
+        {
+           setMessage('Computer Name: ' +  computerName); 
+        });
+	});
+	
+	$('#showInFileManager').click(function()
+	{
+	    var p = getParameter();
+	    setMessage('Open ' + p + ' in file manager');
+	    var path = {
+	        path: p,
+	        urlWithSecurityAccessData: '',
+	        hasSecurityAccessData: false
+	    };
+	    app.showInFileManager(path);
+	});
+	
+	$('#existsFile').click(function()
+	{
+	    var path = getParameterAsPath();
+	    setMessage('Checking if ' + path.path + ' exists...');
+	    app.existsFile(path, function(response) {
+    	    setMessage('File ' + path.path + ' exists: ' + response);	    
+	    });
+	});
+	
+	$('#isDirectory').click(function()
+	{
+	    var path = getParameterAsPath();
+	    setMessage('Checking if ' + path.path + ' is a directory...');
+	    app.isDirectory(path, function(response) {
+    	    setMessage('File ' + path.path + ' is a directory: ' + response);	    
+	    });
+	});
+	
+	$('#makeDirectory').click(function()
+	{
+	    var path = getParameterAsPath();
+	    setMessage('Trying to create directory ' + path.path + '...');
+	    app.makeDirectory(path, function(response) {
+    	    setMessage('File ' + path.path + ' has been created: ' + response);	    
+	    });
+	});
+	
+	$('#readFile').click(function()
+	{
+	    var path = getParameterAsPath();
+	    setMessage('Trying to read file  ' + path.path + '...');
+	    app.readFile(path, { encoding: '' }, function(data)
+        {
+            if (data !== null)
+        	    setMessage(data);	    
+        	else
+        	    setMessage('Could not read file ' + path.path);
+    	 });
+	});
+	
+	$('#writeFile').click(function()
+	{
+	    var path = getParameterAsPath();
+	    setMessage('Trying to write to file  ' + path.path + '...');
+	    app.writeFile(path, "Hey this is the file contents");
+	});
+
+	$('#showOpenFileDialog').click(function()
+	{
+		setMessage('Trying to select file via dialog...');
+		app.showOpenFileDialog(function(path) {
+			setMessage('File selected: ' + path.path);	
+		});
+	});
+
+	$('#showOpenDirectoryDialog').click(function()
+	{
+		setMessage('Trying to select folder via dialog...');
+		app.showOpenDirectoryDialog(function(path) {
+			setMessage('Folder selected: ' + path.path);	
+		});
+	});
+
+
+	$('#storePreferences').click(function()
+	{
+		setMessage('Trying to store preferences');
+		var keyValueArray = getParameter().split("=");
+		if(keyValueArray.length !== 2)
+		{
+			setMessage('Make sure to type key=value in the paramter field to try out storing preferences...');
+			return;
+		}
+
+		app.storePreferences(keyValueArray[0], keyValueArray[1], function(data){
+			setMessage('I have been called back from storePreferences, data: ' + data);
+		});
+		
+	});
+
+	$('#loadPreferences').click(function()
+	{
+		var key = getParameter();
+		setMessage('Trying to load preferences for key ' + key);
+		
+		app.loadPreferences(key, function(data){
+			setMessage('I have been called back from loadPreferences, data: ' + data);
+		});
+		
+	});
+
+	
+
+	
+
+	
+
+
 });
 
 // create the app menu

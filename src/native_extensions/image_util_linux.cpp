@@ -31,4 +31,21 @@
 
 namespace ImageUtil {
 
+/**
+ * Base64-encodes data.
+ */
+String Base64Encode(char* data, size_t length)
+{
+	if (data == NULL)
+		return "";
+
+	size_t outLength;
+	char* outBuf = NewBase64Encode(data, length, false, &outLength);
+	String res = String(outBuf, outBuf + outLength);
+	free(outBuf);
+
+	return res;
+}
+
+
 } // namespace ImageUtil

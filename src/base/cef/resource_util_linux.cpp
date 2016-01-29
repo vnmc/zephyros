@@ -3,33 +3,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+
+#include "lib/cef/include/base/cef_logging.h"
+#include "lib/cef/include/cef_stream.h"
+#include "lib/cef/include/wrapper/cef_byte_read_handler.h"
 
 #include "base/cef/resource_util.h"
 
 
-bool GetResourceDir(std::string& dir)
+CefRefPtr<CefStreamReader> GetBinaryResourceReader(const TCHAR* szResourceName)
 {
-  char buff[1024];
+    char* pData = NULL;
+    int nLen = 0;
 
-  // Retrieve the executable path.
-  ssize_t len = readlink("/proc/self/exe", buff, sizeof(buff)-1);
-  if (len == -1)
-    return false;
+	if (!Zephyros::GetResource(szResourceName, pData, nLen))
+        return NULL;
 
-  buff[len] = 0;
-
-  // Remove the executable name from the path.
-  char* pos = strrchr(buff, '/');
-  if (!pos)
-    return false;
-
-  // Add "files" to the path.
-//  strcpy(pos+1, "files");  // NOLINT(runtime/printf)
-    *pos = '\0';
-
-  dir = std::string(buff);
-  return true;
+	return CefStreamReader::CreateForHandler(new CefByteReadHandler((unsigned char*) pData, nLen, NULL));
 }

@@ -145,8 +145,7 @@ String GetConfigDirectory()
 
 String GetComputerName()
 {
-	// TODO: implement
-	return TEXT("");
+	return OSUtil::Exec("hostname");
 }
 
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
