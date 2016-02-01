@@ -234,6 +234,26 @@ $(document).ready(function()
 		
 	});
 
+	$('#startWatchingFiles').click(function()
+	{
+		var dir = getParameterAsPath();
+		var extensions = ['.txt', '.tx']
+		setMessage('Trying to start watching files in: ' + dir);
+		
+		app.startWatchingFiles(dir, extensions);
+		setMessage('Called function ok');
+		
+	});
+
+	$('#stopWatchingFiles').click(function()
+	{
+		setMessage('Telling app to stop watching files');
+		app.stopWatchingFiles();
+		
+	});
+
+
+
 	
 
 	
@@ -313,4 +333,11 @@ app.createMenu([
 app.onMenuCommand(function(commandId)
 {
 	setMessage('Menu command: ' + commandId);
+});
+
+
+// onFileChanged: (callback: (paths: string[]) => void) => void
+app.onFileChanged(function(paths){
+	setMessage('File(s) was/were changed...paths = ' + JSON.stringify(paths));
+
 });
