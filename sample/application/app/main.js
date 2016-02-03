@@ -279,6 +279,12 @@ $(document).ready(function()
 		setMessage('+DONE setting minimum window dimensions to 400x400.');
 	});
 
+	$('#requestUserAttention').click(function()
+	{
+		setMessage('Requesting user attention');
+		app.requestUserAttention();
+	});
+
 
 
 	
