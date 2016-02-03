@@ -252,6 +252,33 @@ $(document).ready(function()
 		
 	});
 
+	$('#resizeMainWindow').click(function()
+	{
+		var sizeArr = getParameter().split('x');
+		if(sizeArr.length !== 2)
+		{
+			setMessage('To resize windows, specify parameter as 123x123 (e.g.)');
+		}
+		else
+		{
+			setMessage('Resizing window to ' + sizeArr[0] + ' by ' + sizeArr[1]);
+			app.setWindowSize({width: parseInt(sizeArr[0]), 
+				height: parseInt(sizeArr[1])
+			}, function(data) {
+				setMessage('Callback was called with data: ' + JSON.stringify(data));
+			})	;
+		}
+		
+	});
+
+	$('#setMinimumWindowWidth').click(function()
+	{
+
+		setMessage('Setting minimum window dimensions to 400x400');
+		app.setMinimumWindowSize({width: 400, height: 400});
+		setMessage('+DONE setting minimum window dimensions to 400x400.');
+	});
+
 
 
 	
