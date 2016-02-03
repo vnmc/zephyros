@@ -285,6 +285,14 @@ $(document).ready(function()
 		app.requestUserAttention();
 	});
 
+	$('#copyToClipboard').click(function()
+	{
+		var t = getParameter();
+		app.copyToClipboard(t);
+		setMessage('Copied to clipboard: "' + t + '"');
+
+	});
+
 
 
 	
