@@ -38,6 +38,7 @@
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 
+
 #include "base/app.h"
 
 #include "base/cef/client_handler.h"
@@ -359,14 +360,12 @@ void RequestUserAttention()
 {
     GtkWindow *window = GTK_WINDOW( gtk_widget_get_ancestor (App::GetMainHwnd(), GTK_TYPE_WINDOW) );
     gtk_window_set_urgency_hint (window, true);
-
-    // Round 1
 }
 
 void CopyToClipboard(String text)
 {
-    // TODO: implement
-    // Round 1
+    GtkClipboard *cb = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+    gtk_clipboard_set_text(cb, text.c_str(), -1);
 }
 
 void CleanUp()
