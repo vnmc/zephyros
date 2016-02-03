@@ -76,6 +76,7 @@ extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 int g_nMinWindowWidth = 0;
 int g_nMinWindowHeight = 0;
 
+GtkWidget* g_window = NULL;
 GtkWidget* g_pMenuBar = NULL;
 
 // height of the integrated menu bar (if any) at the top of the GTK window.
@@ -189,23 +190,23 @@ int RunApplication(int argc, char* argv[])
 
 void CreateMainWindow(int argc, char** argv)
 {
-    GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    g_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(g_window), 800, 600);
 
-    g_signal_connect(window, "focus-in-event", G_CALLBACK(OnWindowFocusIn), NULL);
-    g_signal_connect(window, "window-state-event", G_CALLBACK(OnWindowState), NULL);
-    g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(OnWindowConfigure), NULL);
+    g_signal_connect(g_window, "focus-in-event", G_CALLBACK(OnWindowFocusIn), NULL);
+    g_signal_connect(g_window, "window-state-event", G_CALLBACK(OnWindowState), NULL);
+    g_signal_connect(G_OBJECT(g_window), "configure-event", G_CALLBACK(OnWindowConfigure), NULL);
 
     GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     g_signal_connect(vbox, "size-allocate", G_CALLBACK(OnVboxSizeAllocated), NULL);
-    gtk_container_add(GTK_CONTAINER(window), vbox);
+    gtk_container_add(GTK_CONTAINER(g_window), vbox);
 
     g_pMenuBar = gtk_menu_bar_new();
     g_signal_connect(g_pMenuBar, "size-allocate", G_CALLBACK(OnMenubarSizeAllocated), NULL);
     gtk_box_pack_start(GTK_BOX(vbox), g_pMenuBar, FALSE, FALSE, 0);
 
-    g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(OnDestroy), NULL);
-    g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(OnDeleteEvent), window);
+    g_signal_connect(G_OBJECT(g_window), "destroy", G_CALLBACK(OnDestroy), NULL);
+    g_signal_connect(G_OBJECT(g_window), "delete_event", G_CALLBACK(OnDeleteEvent), g_window);
 
     // create the handler
     g_handler = new Zephyros::ClientHandler();
@@ -216,10 +217,10 @@ void CreateMainWindow(int argc, char** argv)
     settings.web_security = STATE_DISABLED;
 
     // show the GTK window
-    gtk_widget_show_all(GTK_WIDGET(window));
+    gtk_widget_show_all(GTK_WIDGET(g_window));
 
     // the GTK window must be visible before we can retrieve the XID
-    ::Window xwindow = GDK_WINDOW_XID(gtk_widget_get_window(window));
+    ::Window xwindow = GDK_WINDOW_XID(gtk_widget_get_window(g_window));
     info.SetAsChild(xwindow, CefRect(0, 0, 800, 600));
 
     // create the browser window
@@ -313,12 +314,17 @@ gboolean OnWindowFocusIn(GtkWidget* widget, GdkEventFocus* event, gpointer user_
 {
     if (g_handler && event->in)
     {
+        // Set urgency to false so we can use it again...
+        if (gtk_window_get_urgency_hint(GTK_WINDOW(g_window)))
+            gtk_window_set_urgency_hint(GTK_WINDOW(g_window), false);
+
         CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
         if (browser)
         {
             browser->GetHost()->SetFocus(true);
             return TRUE;
         }
+
     }
 
     return FALSE;

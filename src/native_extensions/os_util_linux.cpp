@@ -45,6 +45,8 @@
 
 #include "native_extensions/os_util.h"
 
+#include <iostream>
+
 
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
@@ -57,6 +59,7 @@ extern GtkWidget* g_pMenuBar;
 
 namespace Zephyros {
 namespace OSUtil {
+
 
 String GetOSVersion()
 {
@@ -354,7 +357,9 @@ void DisplayNotification(String title, String details)
 
 void RequestUserAttention()
 {
-    // TODO: implement
+    GtkWindow *window = GTK_WINDOW( gtk_widget_get_ancestor (App::GetMainHwnd(), GTK_TYPE_WINDOW) );
+    gtk_window_set_urgency_hint (window, true);
+
     // Round 1
 }
 
