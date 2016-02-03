@@ -60,6 +60,7 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
             String strPath = OSUtil::Exec(strWhichCmd);
             Trim(strPath);
 
+            // TODO: version (2nd arg) and icon (4th arg) would be added here
             if (strPath.length() > 0)
                 (*ppBrowsers)->push_back(new Browser(strBrowserName, TEXT(""), strPath, TEXT(""), false));
         }

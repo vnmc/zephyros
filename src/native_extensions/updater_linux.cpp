@@ -36,6 +36,8 @@ namespace UpdaterUtil {
 
 JavaScript::Object GetSettings()
 {
+    // TODO: implement
+    // Round 2
     JavaScript::Object settings = JavaScript::CreateObject();
 
     settings->SetBool("autoCheck", false);
@@ -46,6 +48,9 @@ JavaScript::Object GetSettings()
 
 void SetSettings(JavaScript::Object settings)
 {
+    // TODO: implement
+    // Round 2
+
 }
 
 } // namespace UpdaterUtil

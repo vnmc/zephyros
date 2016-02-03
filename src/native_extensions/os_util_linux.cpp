@@ -46,6 +46,7 @@
 #include "native_extensions/os_util.h"
 
 
+
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
 extern int g_nMinWindowWidth;
@@ -64,7 +65,7 @@ String GetOSVersion()
 
     StringStream ss;
     ss << info.sysname << TEXT("-") << info.version;
-
+    // TODO: should be something like Linux_Ubuntu_14.0.4
     return ss.str();
 }
 
@@ -151,6 +152,7 @@ String GetComputerName()
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
 {
     // TODO: implement
+    // Round 1
 }
 
 String Exec(String command)
@@ -232,23 +234,26 @@ void CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIs
 void CreateMenu(JavaScript::Array menuItems)
 {
     // TODO: empty existing menu bar
-
+    // Round 1
     CreateMenuRecursive(g_pMenuBar, menuItems, Zephyros::GetLicenseManager() != NULL && Zephyros::GetLicenseManager()->IsInDemoMode());
 }
 
 void RemoveMenuItem(String strCommandId)
 {
+    // Round 1
 }
 
 MenuHandle CreateContextMenu(JavaScript::Array menuItems)
 {
     // TODO: implement
+    // Round 2
 	return (MenuHandle) 0;
 }
 
 String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
 {
     // TODO: implement
+    // Round 2
     return TEXT("");
 }
 
@@ -262,29 +267,101 @@ int lastHeight = -1;
 
 void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bool hasHeight, int* pNewWidth, int* pNewHeight)
 {
-    // TODO: implement
+    // TODO: fullscreen not handled yet
+    GdkScreen *screen = gdk_screen_get_default();
+    GtkWindow *window = GTK_WINDOW( gtk_widget_get_ancestor (App::GetMainHwnd(), GTK_TYPE_WINDOW) );
+    gint sWidth = gdk_screen_get_width(screen);
+    gint sHeight = gdk_screen_get_height(screen);
+    gint posX;
+    gint posY;
+    gtk_window_get_position(window, &posX, &posY);
+
+    gint newPosX = posX;
+    gint newPosY = posY;
+
+    bool windowMoved = posX != lastX || posY != lastY;
+
+    if (hasWidth)
+    {
+        // do we need to restore the lastOriginX?
+        if ( lastWidth > width  && lastOriginX != INT_MIN)
+        {
+            if (!windowMoved) {
+                newPosX = lastOriginX;
+            }
+            lastOriginX = INT_MIN;
+        }
+
+        // adjust the windows x position if, after resizing, the window would fall off the screen
+        if ( (newPosX + width) > sWidth)
+        {
+            newPosX = sWidth - width;
+            if (newPosX < 0)
+                newPosX = 0;
+        }
+        lastWidth = width;
+    }
+    else
+        lastWidth = -1;
+
+    if (hasHeight)
+    {
+        // do we need to restore the lastOriginY?
+        if (lastHeight > height && lastOriginY != INT_MIN)
+        {
+            if (!windowMoved)
+            {
+                newPosY = lastOriginY;
+            }
+            lastOriginY = INT_MIN;
+        }
+
+        // adjust the windows y position if, after resizing, the window would fall off the screen
+        if ( (newPosY + height) > sHeight)
+        {
+            newPosY = sHeight - height;
+            if (newPosY < 0)
+                newPosY = 0;
+        }
+        lastHeight = height;
+    }
+    else
+        lastHeight = -1;
+
+    gtk_window_move(window, newPosX, newPosY);
+    gtk_window_resize(window, width, height);
+
 }
 
 
 void SetMinimumWindowSize(int width, int height)
 {
-    // TODO: implement
+    GtkWindow *window = GTK_WINDOW( gtk_widget_get_ancestor (App::GetMainHwnd(), GTK_TYPE_WINDOW) );
+
+    GdkGeometry hints;
+    hints.min_width = width;
+    hints.min_height = height;
+
+    gtk_window_set_geometry_hints (window, NULL, &hints, GDK_HINT_MIN_SIZE);
 }
 
 
 void DisplayNotification(String title, String details)
 {
     // TODO: implement
+    // Round 2
 }
 
 void RequestUserAttention()
 {
     // TODO: implement
+    // Round 1
 }
 
 void CopyToClipboard(String text)
 {
     // TODO: implement
+    // Round 1
 }
 
 void CleanUp()

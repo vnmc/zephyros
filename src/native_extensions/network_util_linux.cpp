@@ -136,6 +136,7 @@ std::vector<String> GetAllMACAddresses()
 bool GetProxyForURL(String url, String& proxyType, String& host, int& port, String& username, String& password)
 {
     // TODO: implement
+    // Round 1
 	return false;
 }
 
