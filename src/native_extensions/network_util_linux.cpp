@@ -39,6 +39,12 @@
 #include "base/cef/client_handler.h"
 
 #include "native_extensions/network_util.h"
+#include "native_extensions/os_util.h"
+#include "util/string_util.h"
+
+#include "lib/cef/include/cef_parser.h"
+
+#include <iostream>
 
 
 namespace Zephyros {
@@ -135,8 +141,57 @@ std::vector<String> GetAllMACAddresses()
 
 bool GetProxyForURL(String url, String& proxyType, String& host, int& port, String& username, String& password)
 {
-    // TODO: implement
-    // Round 1
+    proxyType = TEXT("");
+	host = TEXT("");
+	port = -1;
+	username = TEXT("");
+	password = TEXT("");
+
+	CefURLParts urlParts;
+	CefParseURL(url, urlParts);
+    String urlHost = CefString(&urlParts.host).ToString();
+
+
+    char* proxyEnv = NULL;
+    char* noProxy = getenv("NO_PROXY");
+    char* digit = getenv("PATH");
+    String myProxyType = "http";
+
+    if (noProxy != NULL)
+    {
+        std::vector<String> proxyExceptions = Split(String(noProxy), TEXT(','));
+        for (String item : proxyExceptions)
+        {
+            if (urlHost.compare(item) == 0)
+                return false;
+            // TODO: check for .domain.tld, ip/MASK
+        }
+    }
+
+
+    if (url.find("http://") == 0)
+    {
+        proxyEnv = getenv("HTTP_PROXY");
+        myProxyType = "http";
+    }
+    else if (url.find("https://") == 0)
+    {
+        proxyEnv = getenv("HTTPS_PROXY");
+        myProxyType = "https";
+    }
+
+
+    if (proxyEnv == NULL)
+        return false;
+
+    CefURLParts proxyUrlParts;
+    CefParseURL(String(proxyEnv), proxyUrlParts);
+    host = CefString(&proxyUrlParts.host).ToString();
+    port = atoi(CefString(&proxyUrlParts.port).ToString().c_str());
+    username = CefString(&proxyUrlParts.username).ToString();
+    password = CefString(&proxyUrlParts.password).ToString();
+    proxyType = myProxyType;
+
 	return false;
 }
 

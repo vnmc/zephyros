@@ -293,6 +293,18 @@ $(document).ready(function()
 
 	});
 
+	$('#getProxyForUrl').click(function()
+	{
+		var url = getParameter();
+		setMessage('proxy for url ' + url);
+		app.getProxyForURL(url, function(data){
+			setMessage('Proxy: ' + JSON.stringify(data));
+		});
+
+
+	});	
+	
+
 
 
 	
