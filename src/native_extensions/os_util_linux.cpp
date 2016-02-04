@@ -22,6 +22,7 @@
  *
  * Contributors:
  * Matthias Christen, Vanamco AG
+ * Florian Müller, Vanamco AG
  *******************************************************************************/
 
 
@@ -40,6 +41,7 @@
 
 
 #include "base/app.h"
+#include "base/types.h"
 
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
@@ -48,8 +50,20 @@
 
 #include <iostream>
 
+typedef struct
+{
+	int type;
+	String text;
+} StreamDataEntry;
 
+struct StartProcessThreadData
+{
+    CallbackId *callback;
+    String *executableFileName;
+    std::vector<String> *arguments;
+    String *cwd;
 
+};
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
@@ -57,6 +71,75 @@ extern int g_nMinWindowWidth;
 extern int g_nMinWindowHeight;
 
 extern GtkWidget* g_pMenuBar;
+
+
+void CleanupStartProcessThreadData(void *arg)
+{
+    StartProcessThreadData *data = (StartProcessThreadData *) arg;
+    delete data->callback;
+    delete data->executableFileName;
+    delete data->arguments;
+    delete data->cwd;
+    delete data;
+}
+
+using namespace std;
+void *startProcessThread(void *arg)
+{
+   // pthread_cleanup_push(CleanupStartProcessThreadData, arg);
+    struct StartProcessThreadData *data = (struct StartProcessThreadData *) arg;
+
+    String execString = *data->executableFileName;
+
+    execString.append(" ");
+    for(String arg: *data->arguments)
+    {
+        execString.append(arg);
+        execString.append(" ");
+    }
+    execString.append("2>&1");
+
+
+    int exitCode = 0;
+    std::vector<String> execOutput;
+
+    std::shared_ptr<FILE> pipe(popen(execString.c_str(), "r"), pclose);
+    if (!pipe) {
+        exitCode = -1;
+    }
+
+    char buffer[128];
+    std::string result = "";
+    while (!feof(pipe.get())) {
+        if (fgets(buffer, 128, pipe.get()) != NULL)
+        {
+               execOutput.push_back(buffer);
+               cout << "BUFFER: " << buffer << endl;
+        }
+
+    }
+
+    Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
+    Zephyros::JavaScript::Array stream = Zephyros::JavaScript::CreateArray();
+    int i = 0;
+    for (String line: execOutput)
+    {
+        Zephyros::JavaScript::Object streamEntry = Zephyros::JavaScript::CreateObject();
+        streamEntry->SetInt(TEXT("fd"), 1);
+        streamEntry->SetString(TEXT("text"), line);
+        stream->SetDictionary(i++, streamEntry);
+    }
+
+
+
+    args->SetInt(0, exitCode);
+	args->SetList(1, stream);
+	g_handler->GetClientExtensionHandler()->InvokeCallback(*data->callback, args);
+   // pthread_cleanup_pop(arg);
+
+
+}
+
 
 
 namespace Zephyros {
@@ -161,8 +244,18 @@ String GetComputerName()
 
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
 {
-    // TODO: implement
-    // Round 1
+    pthread_t thread;
+    struct StartProcessThreadData *data = new StartProcessThreadData;
+    data->callback = new int(callback);
+    data->executableFileName = new String(executableFileName);
+    data->arguments = new std::vector<String>();
+    for (String arg : arguments)
+        data->arguments->push_back(arg);
+
+    data->cwd = new String(cwd);
+
+    // Start thread
+    pthread_create(&thread, NULL, startProcessThread, data);
 }
 
 String Exec(String command)

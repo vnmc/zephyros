@@ -300,9 +300,19 @@ $(document).ready(function()
 		app.getProxyForURL(url, function(data){
 			setMessage('Proxy: ' + JSON.stringify(data));
 		});
-
-
 	});	
+
+
+	$('#startProcess').click(function()
+	{
+		setMessage('Starting process...');
+		var t = getParameter();
+		app.startProcess("ls", ["-lisa"], "/home/administrator", function(exitCode, data){
+			setMessage("yo");
+			setMessage('Program exited with code ' + exitCode + ', with the following output: ' + JSON.stringify(data));
+		} );
+
+	});
 	
 
 
