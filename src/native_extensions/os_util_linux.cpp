@@ -50,6 +50,7 @@
 
 
 
+
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
 extern int g_nMinWindowWidth;
@@ -68,9 +69,14 @@ String GetOSVersion()
     uname(&info);
 
     StringStream ss;
-    ss << info.sysname << TEXT("-") << info.version;
-    // TODO: should be something like Linux_Ubuntu_14.0.4
-    return ss.str();
+    ss << info.sysname << TEXT("_") << info.version;
+    String retVal = ss.str();
+    size_t space = retVal.find(" ");
+    while(space != std::string::npos) {
+        retVal = retVal.replace(space, 1, "_");
+        space = retVal.find(" ");
+    }
+    return retVal;
 }
 
 String GetUserName()
@@ -244,6 +250,12 @@ void CreateMenu(JavaScript::Array menuItems)
 
 void RemoveMenuItem(String strCommandId)
 {
+   /* GList *children = gtk_container_get_children(GTK_CONTAINER(g_pMenuBar));
+    GList *l;
+    for (l = children; l != NULL; l = l->next)
+    {
+        std::cout << "Child " << l << std::endl;
+    }*/
     // Round 1
 }
 
