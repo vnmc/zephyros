@@ -50,6 +50,10 @@
 
 #include <iostream>
 
+#include <spawn.h> // see manpages-posix-dev
+#include <poll.h>
+#include <sys/wait.h>
+
 typedef struct
 {
 	int type;
@@ -58,10 +62,10 @@ typedef struct
 
 struct StartProcessThreadData
 {
-    CallbackId *callback;
-    String *executableFileName;
+    CallbackId callback;
+    String executableFileName;
     std::vector<String> *arguments;
-    String *cwd;
+    String cwd;
 
 };
 
@@ -76,68 +80,96 @@ extern GtkWidget* g_pMenuBar;
 void CleanupStartProcessThreadData(void *arg)
 {
     StartProcessThreadData *data = (StartProcessThreadData *) arg;
-    delete data->callback;
-    delete data->executableFileName;
     delete data->arguments;
-    delete data->cwd;
     delete data;
 }
 
 using namespace std;
+// cf. http://stackoverflow.com/questions/13893085/posix-spawnp-and-piping-child-output-to-a-string
 void *startProcessThread(void *arg)
 {
-   // pthread_cleanup_push(CleanupStartProcessThreadData, arg);
     struct StartProcessThreadData *data = (struct StartProcessThreadData *) arg;
+    int exit_code;
+    int cout_pipe[2];
+    int cerr_pipe[2];
+    int i;
+    posix_spawn_file_actions_t action;
 
-    String execString = *data->executableFileName;
+    pthread_cleanup_push(CleanupStartProcessThreadData, arg);
 
-    execString.append(" ");
-    for(String arg: *data->arguments)
+    if(pipe(cout_pipe) || pipe(cerr_pipe))
+        cout << "pipe returned an error.\n";
+
+    /* Prepare spawn pipes */
+    posix_spawn_file_actions_init(&action);
+    posix_spawn_file_actions_addclose(&action, cout_pipe[0]);
+    posix_spawn_file_actions_addclose(&action, cerr_pipe[0]);
+    posix_spawn_file_actions_adddup2(&action, cout_pipe[1], 1);
+    posix_spawn_file_actions_adddup2(&action, cerr_pipe[1], 2);
+
+    posix_spawn_file_actions_addclose(&action, cout_pipe[1]);
+    posix_spawn_file_actions_addclose(&action, cerr_pipe[1]);
+
+
+    /* Build spawn arguments */
+    char** args = new char*[data->arguments->size() + 2];
+    args[0] = new char[data->executableFileName.length() + data->cwd.length() + 1];
+    strcpy(args[0], (data->executableFileName).c_str());
+    i = 1;
+    for (String arg : *(data->arguments))
     {
-        execString.append(arg);
-        execString.append(" ");
+        args[i] = new char[arg.length() + 1];
+        strcpy(args[i], arg.c_str());
+        ++i;
     }
-    execString.append("2>&1");
+    args[i] = 0;
 
 
-    int exitCode = 0;
-    std::vector<String> execOutput;
+    /* Change to indicated working directory and Spawn process */
+    if (data->cwd.length() > 0)
+        chdir(data->cwd.c_str());
 
-    std::shared_ptr<FILE> pipe(popen(execString.c_str(), "r"), pclose);
-    if (!pipe) {
-        exitCode = -1;
-    }
+    pid_t pid;
+    if(posix_spawnp(&pid, args[0], &action, NULL, &args[0], NULL) != 0)
+        cout << "posix_spawnp failed with error: " << strerror(errno) << "\n";
 
-    char buffer[128];
-    std::string result = "";
-    while (!feof(pipe.get())) {
-        if (fgets(buffer, 128, pipe.get()) != NULL)
-        {
-               execOutput.push_back(buffer);
-               cout << "BUFFER: " << buffer << endl;
-        }
+    close(cout_pipe[1]), close(cerr_pipe[1]); // close child-side of pipes
 
-    }
-
-    Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
+    /* Read process output until terminated, build JS callback arguments on the go */
+    i = 0;
+    Zephyros::JavaScript::Array callbackArgs = Zephyros::JavaScript::CreateArray();
     Zephyros::JavaScript::Array stream = Zephyros::JavaScript::CreateArray();
-    int i = 0;
-    for (String line: execOutput)
-    {
+    string buffer(1024,' ');
+    std::vector<pollfd> plist = { {cout_pipe[0],POLLIN}, {cerr_pipe[0],POLLIN} };
+    for ( int rval; (rval=poll(&plist[0],plist.size(),/*timeout*/-1))>0; ) {
         Zephyros::JavaScript::Object streamEntry = Zephyros::JavaScript::CreateObject();
-        streamEntry->SetInt(TEXT("fd"), 1);
-        streamEntry->SetString(TEXT("text"), line);
-        stream->SetDictionary(i++, streamEntry);
+        if ( plist[0].revents&POLLIN) {
+          int bytes_read = read(cout_pipe[0], &buffer[0], buffer.length());
+          streamEntry->SetString(TEXT("text"), buffer.substr(0, static_cast<size_t>(bytes_read)));
+          streamEntry->SetInt(TEXT("fd"), 0);
+          stream->SetDictionary(i++, streamEntry);
+        }
+        else if ( plist[1].revents&POLLIN ) {
+          int bytes_read = read(cerr_pipe[0], &buffer[0], buffer.length());
+          streamEntry->SetString(TEXT("text"), buffer.substr(0, static_cast<size_t>(bytes_read)));
+          streamEntry->SetInt(TEXT("fd"), 1);
+          stream->SetDictionary(i++, streamEntry);
+        }
+        else break; // nothing left to read
     }
 
+    /* Wait for process to terminate */
+    waitpid(pid,&exit_code,0);
 
 
-    args->SetInt(0, exitCode);
-	args->SetList(1, stream);
-	g_handler->GetClientExtensionHandler()->InvokeCallback(*data->callback, args);
-   // pthread_cleanup_pop(arg);
+    /* Fire JS Callback */
+    callbackArgs->SetInt(0, exit_code);
+    callbackArgs->SetList(1, stream);
+    g_handler->GetClientExtensionHandler()->InvokeCallback(data->callback, callbackArgs);
 
-
+    /* Clean up */
+    posix_spawn_file_actions_destroy(&action);
+    pthread_cleanup_pop(arg);
 }
 
 
@@ -246,13 +278,13 @@ void StartProcess(CallbackId callback, String executableFileName, std::vector<St
 {
     pthread_t thread;
     struct StartProcessThreadData *data = new StartProcessThreadData;
-    data->callback = new int(callback);
-    data->executableFileName = new String(executableFileName);
+    data->callback = callback;
+    data->executableFileName = executableFileName;
     data->arguments = new std::vector<String>();
     for (String arg : arguments)
         data->arguments->push_back(arg);
 
-    data->cwd = new String(cwd);
+    data->cwd = cwd;
 
     // Start thread
     pthread_create(&thread, NULL, startProcessThread, data);
