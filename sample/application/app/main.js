@@ -3,15 +3,11 @@ var timeoutId = null;
 function setMessage(message)
 {
 	$('#messages').html(message);
+}
 
-/*	if (timeoutId !== null)
-		clearTimeout(timeoutId);
-
-	timeoutId = setTimeout(function()
-	{
-		$('#messages').html('');
-		timeoutId = null;
-	}, 2000);*/
+function appendMessage(message)
+{
+	$('#messages').html($('#messages').html() + message);
 }
 
 function getParameter()
@@ -307,10 +303,23 @@ $(document).ready(function()
 	{
 		setMessage('Starting process...');
 		var t = getParameter();
-		app.startProcess("ls", ["-lisa"], "/home/administrator", function(exitCode, data){
-			setMessage("yo");
-			setMessage('Program exited with code ' + exitCode + ', with the following output: ' + JSON.stringify(data));
+		app.startProcess("/usr/bin/node", ["xx.js", "__111___"], "/home/administrator/tmp/stderrout", function(exitCode, data){
+			var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
+			for(var i = 0; i < data.length; i++) {
+				msg += data[i].text.replace('\n', '<br>');
+			}
+			 appendMessage(msg);
 		} );
+
+		setTimeout(function(){
+			app.startProcess("/usr/bin/node", ["xx.js", "__222___"], "/home/administrator/tmp/stderrout", function(exitCode, data){
+			var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
+			for(var i = 0; i < data.length; i++) {
+				msg += data[i].text.replace('\n', '<br>');
+			}
+			 appendMessage(msg);
+		} );
+		}, 2);
 
 	});
 	
