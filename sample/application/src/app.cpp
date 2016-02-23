@@ -26,14 +26,15 @@
 
 
 #include "stdafx.h"
-#include "content.h"
 
 #ifdef OS_WIN
 #include "Resource.h"
+#include "content.h"
 #endif
 
 #ifdef OS_LINUX
 #include <X11/Xlib.h>
+#include "content.h"
 #endif
 
 #ifdef OS_MACOSX

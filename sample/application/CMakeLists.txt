@@ -219,12 +219,10 @@ if(OS_MACOSX)
 
     if(DEFINED IS_ZEPHYROS_BUILD)
       add_dependencies(${APP_NAME_WEBVIEW} Zephyros_WebView)
-      target_include_directories(${APP_NAME_WEBVIEW} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/base/webview)
+      target_include_directories(${APP_NAME_WEBVIEW} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/base/webview ${CMAKE_CURRENT_SOURCE_DIR}/res/mac)
     else()
-      target_include_directories(${APP_NAME_WEBVIEW} PRIVATE ${CMAKE_SOURCE_DIR}/src ${LIB_ZEPHYROS_WEBVIEW_PATH}/Headers)
+      target_include_directories(${APP_NAME_WEBVIEW} PRIVATE ${CMAKE_SOURCE_DIR}/src ${LIB_ZEPHYROS_WEBVIEW_PATH}/Headers ${CMAKE_CURRENT_SOURCE_DIR}/res/mac)
     endif()
-    target_include_directories(${APP_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/res/mac)
-
     target_compile_definitions(${APP_NAME_WEBVIEW} PRIVATE -DUSE_WEBVIEW ${PLATFORM})
     target_link_libraries(${APP_NAME_WEBVIEW} PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_WEBVIEW})
 
