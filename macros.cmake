@@ -173,6 +173,17 @@ macro(RENAME_DIRECTORY target source_dir target_dir)
     )
 endmacro()
 
+macro(CODESIGN target app_path app_name codesigning_id) 
+  # codesign Helper Bundle
+  add_custom_command(
+    TARGET ${target}
+    POST_BUILD
+    COMMAND codesign -s ${codesigning_id} --deep 
+    "${app_path}/${app_name}"
+    VERBATIM
+  )
+endmacro()
+
 
 #
 # Linux macros.
@@ -281,6 +292,7 @@ macro(FIX_MACOSX_HELPER_FRAMEWORK_LINK target app_path)
       "${framework_path}"
     VERBATIM
   )
+
 endmacro()
 
 # Fix the framework link in the main executable.
