@@ -201,6 +201,7 @@ set(ZEPHYROS_CEF_BASE_SRCS
   base/cef/resource_util.h
   base/cef/v8_util.cpp
   base/cef/v8_util.h
+  jsbridge_v8.h
 )
 set(ZEPHYROS_CEF_BASE_SRCS_MACOSX
   base/cef/resource_util_mac.mm
@@ -260,6 +261,7 @@ set(ZEPHYROS_CEFHELPER_SRCS
 # Zephyros WebView sources
 set(ZEPHYROS_WEBVIEW_BASE_SRCS
   base/webview/zephyros_webview.mm
+  jsbridge_webview.h
   base/webview/jsbridge_webview.cpp
   base/webview/webview_extension.mm
   base/webview/ZPYWebViewAppDelegate.h
