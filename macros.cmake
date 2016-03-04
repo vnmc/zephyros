@@ -178,7 +178,7 @@ macro(CODESIGN target app_path app_name codesigning_id)
   add_custom_command(
     TARGET ${target}
     POST_BUILD
-    COMMAND codesign -s ${codesigning_id} --deep 
+    COMMAND codesign -s ${codesigning_id} --deep -f 
     "${app_path}/${app_name}"
     VERBATIM
   )
