@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -72,7 +72,7 @@ public:
         virtual void OnWebKitInitialized(CefRefPtr<ClientApp> app) {}
         virtual void OnBrowserCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser) {}
         virtual void OnBrowserDestroyed(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser) {}
-        
+
 		virtual CefRefPtr<CefLoadHandler> GetLoadHandler(CefRefPtr<ClientApp> app)
 		{
 			return NULL;
@@ -87,7 +87,7 @@ public:
 
         virtual void OnContextCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context) {}
         virtual void OnContextReleased(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context) {}
-        
+
         virtual void OnUncaughtException(
             CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
             CefRefPtr<CefV8Context> context, CefRefPtr<CefV8Exception> exception, CefRefPtr<CefV8StackTrace> stackTrace)
@@ -107,7 +107,7 @@ public:
 
 	typedef std::set<CefRefPtr<RenderDelegate> > RenderDelegateSet;
 
-  
+
 	ClientApp();
 	~ClientApp();
 
@@ -116,7 +116,7 @@ private:
     {
         return this;
     }
-    
+
     virtual CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() OVERRIDE
     {
         return this;
@@ -154,7 +154,7 @@ private:
 
 	CefRefPtr<AppExtensionHandler> m_pAppExtensionHandler;
 
-    
+
     IMPLEMENT_REFCOUNTING(ClientApp);
 };
 

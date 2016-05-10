@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -68,14 +68,14 @@ void SetListValue(CefRefPtr<CefListValue> list, int index, CefRefPtr<CefV8Value>
 void SetList(CefRefPtr<CefV8Value> source, CefRefPtr<CefListValue> target)
 {
     DCHECK(source->IsArray());
-    
+
     int arg_length = source->GetArrayLength();
     if (arg_length == 0)
         return;
-    
+
     // Start with null types in all spaces.
     target->SetSize(arg_length);
-    
+
     for (int i = 0; i < arg_length; ++i)
         SetListValue(target, i, source->GetValue(i));
 }
@@ -114,7 +114,7 @@ void SetDictionaryValue(CefRefPtr<CefDictionaryValue> dict, CefString key, CefRe
 void SetDictionary(CefRefPtr<CefV8Value> source, CefRefPtr<CefDictionaryValue> target)
 {
     DCHECK(source->IsObject());
-    
+
     std::vector<CefString> keys;
     source->GetKeys(keys);
 
@@ -140,11 +140,11 @@ void SetListValue(CefRefPtr<CefV8Value> list, int index, CefRefPtr<CefListValue>
 void SetList(CefRefPtr<CefListValue> source, CefRefPtr<CefV8Value> target)
 {
     DCHECK(target->IsArray());
-    
+
     int arg_length = static_cast<int>(source->GetSize());
     if (arg_length == 0)
         return;
-    
+
     for (int i = 0; i < arg_length; ++i)
         SetListValue(target, i, source);
 }
@@ -164,10 +164,10 @@ void SetDictionaryValue(CefRefPtr<CefV8Value> obj, CefString key, CefRefPtr<CefD
 void SetDictionary(CefRefPtr<CefDictionaryValue> source, CefRefPtr<CefV8Value> target)
 {
     DCHECK(target->IsObject());
-    
+
     CefDictionaryValue::KeyList keys;
     source->GetKeys(keys);
-    
+
     for (CefString key : keys)
         SetDictionaryValue(target, key, source);
 }
@@ -175,7 +175,7 @@ void SetDictionary(CefRefPtr<CefDictionaryValue> source, CefRefPtr<CefV8Value> t
 CefRefPtr<CefV8Value> ListValueToV8Value(CefRefPtr<CefListValue> value, int index)
 {
     CefRefPtr<CefV8Value> new_value;
-    
+
     CefValueType type = value->GetType(index);
     switch (type)
     {
@@ -209,14 +209,14 @@ CefRefPtr<CefV8Value> ListValueToV8Value(CefRefPtr<CefListValue> value, int inde
         new_value = CefV8Value::CreateNull();
         break;
     }
-    
+
     return new_value;
 }
 
 CefRefPtr<CefV8Value> DictionaryValueToV8Value(CefRefPtr<CefDictionaryValue> value, CefString key)
 {
     CefRefPtr<CefV8Value> new_value;
-    
+
     CefValueType type = value->GetType(key);
     switch (type)
     {
@@ -250,7 +250,7 @@ CefRefPtr<CefV8Value> DictionaryValueToV8Value(CefRefPtr<CefDictionaryValue> val
         new_value = CefV8Value::CreateNull();
         break;
     }
-    
+
     return new_value;
 }
 
@@ -261,7 +261,7 @@ void CopyList(CefRefPtr<CefListValue> source, CefRefPtr<CefListValue> dest, int 
     {
         if (i + offset < 0)
             continue;
-        
+
         switch (source->GetType(i))
         {
         case VTYPE_BINARY:
@@ -299,14 +299,14 @@ void CopyList(CefRefPtr<CefListValue> source, CefRefPtr<CefListValue> dest, int 
         default:
             break;
         }
-    }    
+    }
 }
 
 void CopyDictionary(CefRefPtr<CefDictionaryValue> source, CefRefPtr<CefDictionaryValue> dest)
 {
     CefDictionaryValue::KeyList keys;
     source->GetKeys(keys);
-    
+
     for (CefString key : keys)
     {
         switch (source->GetType(key))

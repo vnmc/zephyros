@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -61,11 +61,11 @@ char LicenseData::gheim[] = "zM#>Vj|wx+RG>)t/a@'Y>Pg^VmPK$Tq<<RWLz8.H2~8\\#m!s+;
 String LicenseData::Encrypt(String s)
 {
     StringStream ss;
-    
+
     int j = 0;
     for (String::iterator it = s.begin(); it != s.end(); ++it, ++j)
         ss << (((int) (*it)) ^ LicenseData::gheim[j % 128]) << TEXT('.');
-    
+
     return ss.str();
 }
 
@@ -73,7 +73,7 @@ String LicenseData::Decrypt(String s)
 {
     StringStream ss;
     StringStream ssChar;
-    
+
     int j = 0;
     for (String::iterator it = s.begin(); it != s.end(); ++it)
     {
@@ -85,16 +85,16 @@ String LicenseData::Decrypt(String s)
         }
         else
             ssChar << *it;
-        
+
     }
-    
+
     return ss.str();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 // LicenseManager Implementation
-    
+
 LicenseManager::LicenseManager()
 {
 	m_pMgr = new LicenseManagerImpl();
@@ -114,7 +114,7 @@ void LicenseManager::AddObsoleteLicenseInfo(int productId, const TCHAR* szPublic
 {
 	m_pMgr->AddObsoleteLicenseInfo(productId, szPublicKey);
 }
-    
+
 int LicenseManager::GetNumberOfDemoDays()
 {
 	return m_pMgr->GetNumberOfDemoDays();
@@ -124,12 +124,12 @@ void LicenseManager::SetNumberOfDemoDays(int numDemoDays)
 {
 	m_pMgr->SetNumberOfDemoDays(numDemoDays);
 }
-    
+
 void LicenseManager::SetAPIURLs(const TCHAR* demoTokensURL, const TCHAR* activationURL, const TCHAR* deactivationURL)
 {
 	m_pMgr->SetAPIURLs(demoTokensURL, activationURL, deactivationURL);
 }
-    
+
 const TCHAR* LicenseManager::GetShopURL()
 {
 	return m_pMgr->GetShopURL();
@@ -139,7 +139,7 @@ void LicenseManager::SetShopURL(const TCHAR* shopURL)
 {
 	m_pMgr->SetShopURL(shopURL);
 }
-    
+
 const TCHAR* LicenseManager::GetUpgradeURL()
 {
 	return m_pMgr->GetUpgradeURL();
@@ -149,17 +149,17 @@ void LicenseManager::SetUpgradeURL(const TCHAR* upgradeURL)
 {
 	m_pMgr->SetUpgradeURL(upgradeURL);
 }
-    
+
 void LicenseManager::SetActivationLinkPrefix(const TCHAR* activationLinkPrefix)
 {
 	m_pMgr->SetActivationLinkPrefix(activationLinkPrefix);
 }
-    
+
 void LicenseManager::SetLicenseInfoFilename(const TCHAR* licenseInfoFilename)
 {
 	m_pMgr->SetLicenseInfoFilename(licenseInfoFilename);
 }
-    
+
 void LicenseManager::SetReceiptChecker(ReceiptChecker* pReceiptChecker)
 {
 	m_pMgr->SetReceiptChecker(pReceiptChecker);
@@ -184,7 +184,7 @@ bool LicenseManager::CheckDemoValidity()
 {
 	return m_pMgr->CheckDemoValidity();
 }
-    
+
 bool LicenseManager::IsInDemoMode()
 {
     return !m_pMgr->IsActivated();
@@ -209,7 +209,7 @@ bool LicenseManager::IsLicensingLink(const TCHAR* url)
 {
 	return m_pMgr->IsLicensingLink(url);
 }
-    
+
 void LicenseManager::ShowEnterLicenseDialog()
 {
 	m_pMgr->ShowEnterLicenseDialog();
@@ -235,7 +235,7 @@ String LicenseManagerImpl::GetDemoButtonCaption()
 String LicenseManagerImpl::GetDaysCountLabelText()
 {
 	int numDaysLeft = GetNumDaysLeft();
-	
+
 	if (numDaysLeft > 1)
 	{
 		StringStream ss;
@@ -261,7 +261,7 @@ bool LicenseManagerImpl::ParseResponse(String url, std::string data, String erro
         App::Alert(title, msg, App::AlertStyle::AlertError);
         return false;
     }
-    
+
     picojson::value value;
 	std::string err = picojson::parse(value, out);
 	if (err.length() > 0)
@@ -275,16 +275,16 @@ bool LicenseManagerImpl::ParseResponse(String url, std::string data, String erro
 	if (value.is<picojson::object>())
 	{
 		picojson::object objResponse = value.get<picojson::object>();
-    
+
 		if (objResponse.find("status") != objResponse.end() && objResponse["status"].get<std::string>() == "success")
 		{
 			result = objResponse;
 			return true;
 		}
-    
+
 		std::string respMsg = objResponse.find("message") != objResponse.end() ? objResponse["message"].get<std::string>() : "";
 		msg.append(respMsg.begin(), respMsg.end());
-    
+
 	    App::Alert(title, msg, App::AlertStyle::AlertError);
 		return false;
 	}
@@ -332,10 +332,10 @@ int LicenseManagerImpl::Activate(String name, String company, String licenseKey)
             App::Alert(title, Zephyros::GetString(ZS_LIC_LICINVALID), App::AlertStyle::AlertError);
             return ACTIVATION_FAILED;
         }
-        
+
 		return ACTIVATION_OBSOLETELICENSE;
 	}
-    
+
 	// add the POST data
 	std::stringstream ssData;
 	String strMACAddr = NetworkUtil::GetPrimaryMACAddress();
@@ -362,7 +362,7 @@ int LicenseManagerImpl::Activate(String name, String company, String licenseKey)
         m_pLicenseData->m_name = name;
         m_pLicenseData->m_company = company;
 		m_pLicenseData->Save();
-        
+
         App::Alert(title, Zephyros::GetString(ZS_LIC_ACTIVATION_SUCCESS), App::AlertStyle::AlertInfo);
     }
 
@@ -377,7 +377,7 @@ int LicenseManagerImpl::ActivateFromURL(String url)
 {
     if (!AbstractLicenseManager::IsLicensingLink(url))
 		return ACTIVATION_FAILED;
-        
+
     StringStream ssUrl(url.c_str() + _tcslen(m_config.activationLinkPrefix));
     std::vector<String> parts;
     while (!ssUrl.eof())
@@ -387,10 +387,10 @@ int LicenseManagerImpl::ActivateFromURL(String url)
         std::getline(ssUrl, strPart, TEXT('/'));
         parts.push_back(strPart);
     }
-    
+
     if (parts.size() != 3)
         return ACTIVATION_FAILED;
-    
+
     return Activate(DecodeURI(parts[0]), DecodeURI(parts[1]), DecodeURI(parts[2]));
 }
 
@@ -399,7 +399,7 @@ bool LicenseManagerImpl::Deactivate()
 {
     if (!m_config.deactivationURL || m_pLicenseData->m_activationCookie.length() == 0 || m_pLicenseData->m_licenseKey.length() == 0)
         return false;
-    
+
     std::stringstream ssData;
     String strMACAddr = NetworkUtil::GetPrimaryMACAddress();
     ssData <<
@@ -410,7 +410,7 @@ bool LicenseManagerImpl::Deactivate()
 
     picojson::object result;
     bool ret = ParseResponse(m_config.deactivationURL, strData, Zephyros::GetString(ZS_LIC_DEACTIVATION_ERROR), result);
-    
+
     if (ret)
     {
         // write new (empty) license data
@@ -424,10 +424,10 @@ bool LicenseManagerImpl::Deactivate()
         App::Alert(Zephyros::GetString(ZS_LIC_DEACTIVATION), Zephyros::GetString(ZS_LIC_DEACTIVATION_SUCCESS), App::AlertStyle::AlertInfo);
         App::Quit();
     }
-    
+
     return ret;
 }
-    
+
 /**
  * Starts the license manager.
  */
@@ -440,17 +440,17 @@ void LicenseManagerImpl::Start()
         DIE(TEXT("The public key must not be NULL. Please set it using LicenseManager::SetLicenseInfo."));
     if (m_config.licenseInfoFilename == NULL)
         DIE(TEXT("The license info filename must not be NULL. Please set it using LicenseManager::SetLicenseInfoFilename."));
-        
+
     // create and read the license data
     if (m_pLicenseData == NULL)
         m_pLicenseData = new LicenseData(m_config.licenseInfoFilename);
-        
+
     m_canStartApp = false;
-        
+
 #ifdef OS_WIN
     m_lastDemoValidityCheck = 0;
 #endif
-        
+
     if (!IsActivated())
         ShowDemoDialog();
     else
@@ -479,7 +479,7 @@ bool LicenseManagerImpl::RequestDemoTokens(String strMACAddr)
     picojson::object result;
     bool ret = ParseResponse(m_config.demoTokensURL, strData, Zephyros::GetString(ZS_LIC_DEMO_ERROR), result);
     App::EndWait();
-    
+
     if (ret)
     {
         // the response is a JSON object of the format { "status": <string>, "tokens": <array<string>> }
@@ -492,9 +492,9 @@ bool LicenseManagerImpl::RequestDemoTokens(String strMACAddr)
 				m_pLicenseData->m_demoTokens.push_back(String(strToken.begin(), strToken.end()));
 			}
 		}
-        
+
 		m_pLicenseData->Save();
-        
+
 		bool canContinueDemo = ContinueDemo();
 		if (!canContinueDemo)
 			m_canStartApp = false;
@@ -502,10 +502,10 @@ bool LicenseManagerImpl::RequestDemoTokens(String strMACAddr)
     }
     else
         m_canStartApp = false;
-    
+
 	return ret;
 }
 
 #endif // !APPSTORE
-    
+
 } // namespace Zephyros

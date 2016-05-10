@@ -116,7 +116,6 @@ std::vector<String>& Split(const String &s, TCHAR delim, std::vector<String> &el
     return elems;
 }
 
-
 std::vector<String> Split(const String &s, TCHAR delim)
 {
     std::vector<String> elems;

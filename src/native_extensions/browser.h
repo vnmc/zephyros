@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -51,46 +51,46 @@ public:
         m_isDefaultBrowser(isDefaultBrowser)
     {
     }
-   
+
     inline String GetName()
     {
         return m_name;
     }
-    
+
     inline String GetVersion()
     {
         return m_version;
     }
-    
+
     inline String GetIdentifier()
     {
         return m_identifier;
     }
-    
+
     inline String GetImage()
     {
         return m_image;
     }
-    
+
     inline bool IsDefaultBrowser()
     {
         return m_isDefaultBrowser;
     }
-    
+
     JavaScript::Object CreateJSRepresentation()
     {
         JavaScript::Object obj = JavaScript::CreateObject();
-        
+
         obj->SetString("name", m_name);
         obj->SetString("version", m_version);
         obj->SetString("id", m_identifier);
         obj->SetString("image", m_image);
         obj->SetBool("isDefaultBrowser", m_isDefaultBrowser);
-        
+
         return obj;
     }
 
-    
+
 private:
     String m_name;
     String m_version;

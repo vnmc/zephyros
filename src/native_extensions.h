@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -82,7 +82,7 @@ public:
     // interfering with each other.
     virtual bool OnProcessMessageReceived(
         CefRefPtr<Zephyros::ClientHandler> handler, CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message);
-        
+
     virtual void ReleaseCefObjects() {}
 };
 
@@ -141,7 +141,7 @@ typedef void (*CallbacksCompleteHandler)(
 
 #endif
 
-    
+
 #ifdef USE_WEBVIEW
 
 typedef int (*Function)(Zephyros::JavaScript::Array args, Zephyros::JavaScript::Array ret, JSObjectRef callback);
@@ -163,7 +163,7 @@ class ClientCallback;
 class FileWatcher;
 class CustomURLManager;
 class Browser;
-    
+
 class Path
 {
 public:
@@ -171,45 +171,45 @@ public:
     : m_path(TEXT("")), m_isDirectory(false), m_urlWithSecurityAccessData(TEXT("")), m_hasSecurityAccessData(false)
     {
     }
-        
+
     Path(String path);
-        
+
     Path(String path, String urlWithSecurityAccessData, bool hasSecurityAccessData);
-        
+
     Path(JavaScript::Object jsonObj);
-        
+
     Path& operator=(const Path& path)
     {
         m_path = path.GetPath();
         m_isDirectory = path.IsDirectory();
         m_urlWithSecurityAccessData = path.GetURLWithSecurityAccessData();
         m_hasSecurityAccessData = path.HasSecurityAccessData();
-        
+
         return *this;
     }
-        
+
     inline String GetPath() const
     {
         return m_path;
     }
-        
+
     inline bool IsDirectory() const
     {
         return m_isDirectory;
     }
-        
+
     inline String GetURLWithSecurityAccessData() const
     {
         return m_urlWithSecurityAccessData;
     }
-        
+
     inline bool HasSecurityAccessData() const
     {
         return m_hasSecurityAccessData;
     }
-        
+
     JavaScript::Object CreateJSRepresentation();
-    
+
 private:
     String m_path;
     bool m_isDirectory;
@@ -370,18 +370,18 @@ class NativeFunction
 public:
     NativeFunction(Function fnx, ...);
     ~NativeFunction();
-    
+
     int Call(
         CefRefPtr<ClientHandler> handler, CefRefPtr<CefBrowser> browser,
         CefRefPtr<CefListValue> args, CefRefPtr<CefListValue> ret, int messageId);
     void AddCallback(int messageId, CefBrowser* browser);
     String GetArgList();
-    
+
     int GetNumArgs()
     {
         return (int) m_argNames.size();
     }
-    
+
     void SetAllCallbacksCompletedHandler(CallbacksCompleteHandler fnxAllCallbacksCompleted)
     {
         m_fnxAllCallbacksCompleted = fnxAllCallbacksCompleted;
@@ -390,10 +390,10 @@ public:
 private:
     // A function pointer to the native implementation
     Function m_fnx;
-    
+
     std::vector<int> m_argTypes;
     std::vector<String> m_argNames;
-    
+
 public:
     String m_name;
     bool m_hasPersistentCallback;
@@ -413,42 +413,42 @@ class NativeFunction
 public:
     NativeFunction(Function fnx, ...);
     ~NativeFunction();
-    
+
     int Call(JavaScript::Array args);
     void AddCallback(JSObjectRef objCallback);
-    
+
     int GetNumArgs()
     {
         return (int) m_argNames.size();
     }
-    
+
     String GetArgName(int index)
     {
         return m_argNames.at(index);
     }
-    
+
     void SetAllCallbacksCompletedHandler(CallbacksCompleteHandler fnxAllCallbacksCompleted)
     {
         m_fnxAllCallbacksCompleted = fnxAllCallbacksCompleted;
     }
-    
+
     void SetParamTransform(JSObjectRef paramTransform);
-    
+
 private:
     // A function pointer to the native implementation
     Function m_fnx;
-    
+
     // The argument transformation function (based on the custom JS implementation)
     JSObjectRef m_paramTransform;
-    
+
     std::vector<int> m_argTypes;
     std::vector<String> m_argNames;
-    
+
 public:
     String m_name;
     bool m_hasPersistentCallback;
     std::vector<JSObjectRef> m_callbacks;
-    
+
     // Function to invoke when all JavaScript callbacks have completed
     CallbacksCompleteHandler m_fnxAllCallbacksCompleted;
 };
@@ -463,12 +463,12 @@ public:
     {
         AddNativeJavaScriptFunction(name, fnx, false, false, customJavaScriptImplementation);
     }
-    
+
     inline void AddNativeJavaScriptCallback(String name, NativeFunction* fnx, String customJavaScriptImplementation = TEXT(""))
     {
         AddNativeJavaScriptFunction(name, fnx, false, true, customJavaScriptImplementation);
     }
-    
+
     virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) = 0;
 
 #ifdef USE_CEF
@@ -496,24 +496,24 @@ class ClientExtensionHandler : public NativeJavaScriptFunctionAdder, public Proc
 public:
     ClientExtensionHandler();
     virtual ~ClientExtensionHandler();
-    
+
     virtual void ReleaseCefObjects() override;
-    
+
 	virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) override;
 
 	bool InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args);
 	bool InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args);
-    
-    
+
+
     // ProcessMessageDelegate Implementation
-    
+
     virtual bool OnProcessMessageReceived(CefRefPtr<ClientHandler> handler, CefRefPtr<CefBrowser> browser,
         CefProcessId source_process, CefRefPtr<CefProcessMessage> message) override;
-    
+
 private:
     std::map<String, NativeFunction*> m_mapFunctions;
 	std::map<CallbackId, ClientCallback*> m_mapDelayedCallbacks;
-    
+
     IMPLEMENT_REFCOUNTING(ClientExtensionHandler);
 };
 
@@ -527,13 +527,13 @@ class ClientExtensionHandler : public NativeJavaScriptFunctionAdder
 public:
     ClientExtensionHandler();
     virtual ~ClientExtensionHandler();
-    
+
     virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT(""));
-    
+
     bool InvokeFunction(String functionName, Zephyros::JavaScript::Array args);
     bool InvokeCallbacks(String functionName, Zephyros::JavaScript::Array args);
     void ThrowJavaScriptException(String functionName, int retval);
-    
+
 private:
     std::map<String, NativeFunction*> m_mapFunctions;
 };
@@ -545,11 +545,11 @@ class NativeExtensions
 {
 public:
     virtual ~NativeExtensions() {}
-    
+
     virtual void AddNativeExtensions(NativeJavaScriptFunctionAdder* extensionHandler) = 0;
     virtual void SetClientExtensionHandler(ClientExtensionHandlerPtr e);
     virtual ClientExtensionHandlerPtr GetClientExtensionHandler() { return m_e; }
-    
+
     inline std::vector<Zephyros::Path>& GetDroppedURLs() { return m_droppedURLs; }
     inline CustomURLManager* GetCustomURLManager() { return m_customURLManager; }
 
@@ -564,10 +564,10 @@ class DefaultNativeExtensions : public NativeExtensions
 public:
     DefaultNativeExtensions();
     virtual ~DefaultNativeExtensions();
-    
+
     virtual void AddNativeExtensions(NativeJavaScriptFunctionAdder* extensionHandler);
     virtual void SetClientExtensionHandler(ClientExtensionHandlerPtr e);
-    
+
 public:
     Zephyros::FileWatcher* m_fileWatcher;
     std::vector<Zephyros::Browser*>* m_pBrowsers;

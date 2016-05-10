@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,7 +42,7 @@
 #include "zephyros_strings.h"
 
 
-bool OpenFileDlg(gint action, int titleId, int okId, Path& path)
+bool OpenFileDlg(GtkFileChooserAction action, int titleId, int okId, Zephyros::Path& path)
 {
     bool retVal = false;
 
@@ -60,7 +60,7 @@ bool OpenFileDlg(gint action, int titleId, int okId, Path& path)
     if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     {
         char* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-        path = Path(filename);
+        path = Zephyros::Path(filename);
         retVal = true;
         g_free(filename);
     }
@@ -84,14 +84,14 @@ String checkForBinaryAndImage(String filename, bool& isBinary, bool& isImage)
 
     String guess = Zephyros::OSUtil::Exec(strCmd);
     String mimeType = guess.substr(0, guess.find(";"));
-    
+
     size_t foundBinaryCharset = guess.find("charset=binary");
-    if (foundBinaryCharset == string::npos)
+    if (foundBinaryCharset == String::npos)
         return mimeType;
 
     isBinary = true;
     size_t foundImageMimeType = guess.find("image/");
-    if(foundImageMimeType == string::npos)
+    if(foundImageMimeType == String::npos)
         return mimeType;
 
     isImage = true;
@@ -101,7 +101,7 @@ String checkForBinaryAndImage(String filename, bool& isBinary, bool& isImage)
 /**
  * Get the filename for the preferences file, to use in Load/StorePreferences.
  */
-string getPreferencesFile()
+String getPreferencesFile()
 {
     String strFilename(Zephyros::OSUtil::GetConfigDirectory());
 	strFilename.append(TEXT("/"));
@@ -151,13 +151,13 @@ void ShowInFileManager(String path)
 
 bool ExistsFile(String filename)
 {
-	stat buffer;
+	struct stat buffer;
 	return stat(filename.c_str(), &buffer) == 0;
 }
 
 bool IsDirectory(String path)
 {
-    stat buffer;
+    struct stat buffer;
     stat(path.c_str(), &buffer);
     return S_ISDIR(buffer.st_mode);
 }
@@ -182,14 +182,14 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
     bool isImage;
     String mimeType = checkForBinaryAndImage(filename, isBinary, isImage);
 
-    ifstream fs;
-    fs.open(filename, ios::in);
+    std::ifstream fs;
+    fs.open(filename, std::ios::in);
     if (fs.is_open())
     {
-        fs.seekg(0, ios::end);
+        fs.seekg(0, std::ios::end);
         long size = fs.tellg();
         char* contents = new char[size];
-        fs.seekg(0, ios::beg);
+        fs.seekg(0, std::ios::beg);
         fs.read(contents, size);
 
         if (isImage)
@@ -244,14 +244,13 @@ bool DeleteFiles(String filenames)
 
 void LoadPreferences(String key, String& data)
 {
-    ifstream fs(getPreferencesFile());
+    std::ifstream fs(getPreferencesFile());
     if (!fs.is_open())
         return;
 
-    string line;
+    String line;
     while (getline(fs, line))
     {
-        istringstream iss(line);
         size_t idx = line.find(key);
         if (idx == 0)
         {
@@ -263,34 +262,33 @@ void LoadPreferences(String key, String& data)
 
 void StorePreferences(String key, String data)
 {
-    string prefFile = getPreferencesFile();
-    ifstream fsIn(prefFile);
+    String prefFile = getPreferencesFile();
+    std::ifstream fsIn(prefFile);
 
     StringStream newContents;
     bool alreadyFound = false;
 
     if (fsIn.is_open())
     {
-        string line;
+        String line;
         while (getline(fsIn, line))
         {
-            istringstream iss(line);
             size_t idx = line.find(key + "=");
             if (idx == 0)
             {
                 alreadyFound = true;
-                newContents << key << "=" << data << endl;
+                newContents << key << "=" << data << std::endl;
             }
             else
-                newContents << line << endl;
+                newContents << line << std::endl;
         }
 
         fsIn.close();
         if (!alreadyFound)
-            newContents << key << "=" << data << endl;
+            newContents << key << "=" << data << std::endl;
     }
     else
-        newContents << key << "=" << data << endl;
+        newContents << key << "=" << data << std::endl;
 
     WriteFile(prefFile, newContents.str());
 }

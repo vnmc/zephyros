@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -58,7 +58,7 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////
 // FileWatcher Implementation
 
-bool isFileEmpty(string directory, string filename)
+bool isFileEmpty(String directory, String filename)
 {
     // TODO: implement
     return false;
@@ -88,7 +88,7 @@ void recurseDir(const char *name, int level, std::unordered_map<int, String> *wa
                 continue;
 
             int wd = inotify_add_watch(fd, path, IN_MODIFY | IN_CREATE | IN_DELETE);
-            watchMap->insert(pair<int, String>(wd, String(path)));
+            watchMap->insert(std::pair<int, String>(wd, String(path)));
             recurseDir(path, level + 1, watchMap, fd);
         }
     } while (entry = readdir(dir));
@@ -104,7 +104,7 @@ void processEvent(char* buffer, int len, Zephyros::FileWatcher* watcher, std::un
    while (i < len)
    {
         inotify_event* event = (inotify_event*) &buffer[i];
-        unordered_map<int, String>::const_iterator item = watchMap.find(event->wd);
+        std::unordered_map<int, String>::const_iterator item = watchMap.find(event->wd);
         String fileName = String(event->name);
 
         bool isInExtensions = false;
@@ -155,7 +155,7 @@ void* startWatchingThread(void* arg)
     std::unordered_map<int, String> watchMap;
 
     int wd = inotify_add_watch(fd, data->path->GetPath().c_str(), IN_MODIFY | IN_CREATE | IN_DELETE);
-    watchMap.insert(pair<int, String>(wd, data->path->GetPath()));
+    watchMap.insert(std::pair<int, String>(wd, data->path->GetPath()));
 
     // recursively add all directories below root dir to the watch
     recurseDir(data->path->GetPath().c_str(), 0, &watchMap, fd);
@@ -233,16 +233,16 @@ void FileWatcher::Stop()
 
 bool FileWatcher::ReadFile(String filePath, char** pBuf, size_t* pLen)
 {
-    ifstream fs;
-    fs.open(filePath.c_str(), ios::in);
+    std::ifstream fs;
+    fs.open(filePath.c_str(), std::ios::in);
 
     if (!fs.is_open())
         return false;
 
-    fs.seekg(0, ios::end);
-    *pLen = (size_t) fs.tellg();
-    *pBuf = new char [*pLen];
-    fs.seekg(0, ios::beg);
+    fs.seekg(0, std::ios::end);
+    *pLen = static_cast<size_t>(fs.tellg());
+    *pBuf = new char[*pLen];
+    fs.seekg(0, std::ios::beg);
     fs.read(*pBuf, *pLen);
     fs.close();
     return true;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,7 +34,7 @@
 
 namespace Zephyros {
 namespace PageImage {
-    
+
 static const int ImageWidth = 1024;
 static const int ImageHeight = 768;
 
