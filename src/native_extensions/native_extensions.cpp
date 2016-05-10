@@ -255,9 +255,19 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "userAgent")
     ));
 
-    // openURL: (url: string, browser: IBrowser) => void
+    // openURL: (url: string) => void
     e->AddNativeJavaScriptFunction(
         TEXT("openURL"),
+        FUNC({
+            ret->SetBool(0, Zephyros::BrowserUtil::OpenURLInBrowser(args->GetString(0), NULL));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_STRING, "url")
+    ));
+
+    // openURLWithBrowser: (url: string, browser: IBrowser) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("openURLWithBrowser"),
         FUNC({
             Browser* b = Zephyros::BrowserUtil::GetBrowserFromJSRepresentation(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers, args->GetDictionary(1));
             if (b != NULL)

@@ -28,92 +28,103 @@
 
 #include <vector>
 #include <set>
-
-#include "util/string_util.h"
-#include "native_extensions/file_watcher.h"
-
-#include <sys/inotify.h>
 #include <unordered_map>
-#include <pthread.h>
 
 #include <iostream>
 #include <fstream>
 
-#define EVENT_SIZE  ( sizeof (struct inotify_event) )
-#define BUF_LEN ( 1024 * ( EVENT_SIZE + 16) )
+#include <sys/inotify.h>
+#include <pthread.h>
 
-using namespace std;
+#include "util/string_util.h"
+#include "native_extensions/file_watcher.h"
+
+
+#define EVENT_SIZE (sizeof(inotify_event))
+#define BUF_LEN (1024 * (EVENT_SIZE + 16))
+
+
+//////////////////////////////////////////////////////////////////////////
+// Type Definitions
+
+typedef struct
+{
+    Zephyros::FileWatcher* watcher;
+    Zephyros::Path* path;
+    std::vector<String>* extensions;
+} FileWatchThreadData;
+
 
 //////////////////////////////////////////////////////////////////////////
 // FileWatcher Implementation
 
-struct FileWatchThreadData {
-    Zephyros::FileWatcher *watcher;
-    Zephyros::Path *path;
-    std::vector<string> *extensions;
-};
-
-bool isFileEmpty(string directory, string filename) {
+bool isFileEmpty(string directory, string filename)
+{
+    // TODO: implement
     return false;
 }
 
 
-void recurseDir(const char *name, int level, std::unordered_map<int, String> *watchMap, int m_fd)
+void recurseDir(const char *name, int level, std::unordered_map<int, String> *watchMap, int fd)
 {
-    DIR *dir;
-    struct dirent *entry;
-
-    if (!(dir = opendir(name)))
-        return;
-    if (!(entry = readdir(dir)))
+    DIR* dir = opendir(name);
+    if (!dir)
         return;
 
-    do {
-        if (entry->d_type == DT_DIR) {
-            char path[1024];
-            int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
+    dirent* entry = readdir(dir);
+    if (!entry)
+        return;
+
+    char path[1024];
+
+    do
+    {
+        if (entry->d_type == DT_DIR)
+        {
+            int len = snprintf(path, sizeof(path) - 1, TEXT("%s/%s"), name, entry->d_name);
             path[len] = 0;
-            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+
+            if (strcmp(entry->d_name, TEXT(".")) == 0 || strcmp(entry->d_name, TEXT("..")) == 0)
                 continue;
 
-            int wd = inotify_add_watch(m_fd, path, IN_MODIFY | IN_CREATE | IN_DELETE);
-            watchMap->insert(pair<int,String>(wd, String(path)));
-            recurseDir(path, level + 1, watchMap, m_fd);
+            int wd = inotify_add_watch(fd, path, IN_MODIFY | IN_CREATE | IN_DELETE);
+            watchMap->insert(pair<int, String>(wd, String(path)));
+            recurseDir(path, level + 1, watchMap, fd);
         }
     } while (entry = readdir(dir));
+
     closedir(dir);
 }
 
-void processEvent(char * buffer, int len, Zephyros::FileWatcher * watcher, std::unordered_map<int, String> watchMap, std::vector<string> *extensions) {
-
+void processEvent(char* buffer, int len, Zephyros::FileWatcher* watcher, std::unordered_map<int, String> watchMap, std::vector<String>* extensions)
+{
    int i = 0;
-   std::vector<string> changes;
+   std::vector<String> changes;
 
-   while (i < len) {
-
-        struct inotify_event *event = (struct inotify_event *) &buffer[i];
-        unordered_map<int,String >::const_iterator item = watchMap.find(event->wd);
-        string basePath = string(item->second);
-        string fileName = string(event->name);
+   while (i < len)
+   {
+        inotify_event* event = (inotify_event*) &buffer[i];
+        unordered_map<int, String>::const_iterator item = watchMap.find(event->wd);
+        String fileName = String(event->name);
 
         bool isInExtensions = false;
-        for (std::vector<string>::iterator it = extensions->begin() ; it != extensions->end(); ++it)
+        for (std::vector<String>::iterator it = extensions->begin(); it != extensions->end(); ++it)
         {
-                string ext = string(*it);
-                int pos = fileName.find(ext);
-                int requiredPos = fileName.length() - ext.length();
-                if (requiredPos > 0 && pos == requiredPos)
-                {
-                    isInExtensions = true;
-                    break;
-                }
-        }
+            String ext = String(*it);
+            int pos = fileName.find(ext);
+            int requiredPos = fileName.length() - ext.length();
 
+            if (requiredPos > 0 && pos == requiredPos)
+            {
+                isInExtensions = true;
+                break;
+            }
+        }
 
         if (isInExtensions)
         {
-            String s = basePath;
-            s.append("/");
+            String s = item->second;
+            s.append(TEXT("/"));
             s.append(fileName);
             changes.insert(changes.end(), s);
         }
@@ -126,60 +137,61 @@ void processEvent(char * buffer, int len, Zephyros::FileWatcher * watcher, std::
 }
 
 
-void CleanupThreadData(void *arg)
+void CleanupThreadData(void* arg)
 {
-    FileWatchThreadData *data = (FileWatchThreadData *) arg;
+    FileWatchThreadData* data = (FileWatchThreadData*) arg;
     delete data->path;
     delete data->extensions;
     delete data;
 }
 
 
-void *startWatchingThread(void *arg)
+void* startWatchingThread(void* arg)
 {
-    int length, i = 0;
     char buffer[BUF_LEN];
+    FileWatchThreadData* data = (FileWatchThreadData*) arg;
 
-    struct FileWatchThreadData *data = (struct FileWatchThreadData *) arg;
-
-    int m_fd = inotify_init();
+    int fd = inotify_init();
     std::unordered_map<int, String> watchMap;
 
+    int wd = inotify_add_watch(fd, data->path->GetPath().c_str(), IN_MODIFY | IN_CREATE | IN_DELETE);
+    watchMap.insert(pair<int, String>(wd, data->path->GetPath()));
 
-    int wd = inotify_add_watch(m_fd, data->path->GetPath().c_str(), IN_MODIFY | IN_CREATE | IN_DELETE);
-    watchMap.insert(pair<int,String>(wd, data->path->GetPath()));
+    // recursively add all directories below root dir to the watch
+    recurseDir(data->path->GetPath().c_str(), 0, &watchMap, fd);
 
-    // Recirsively add all directories below root dir to the watch
-    recurseDir(data->path->GetPath().c_str(), 0, &watchMap, m_fd);
-
-    struct timespec time_to_wait;
-    time_to_wait.tv_sec = 60;
-    time_to_wait.tv_nsec = 0;
+    timespec waitTime;
+    waitTime.tv_sec = 60;
+    waitTime.tv_nsec = 0;
 
     fd_set descriptors;
 
-    FD_ZERO( &descriptors );
-    FD_SET(m_fd, &descriptors);
+    FD_ZERO(&descriptors);
+    FD_SET(fd, &descriptors);
     int ret_val;
-
 
     bool doContinue = true;
     pthread_cleanup_push(CleanupThreadData, arg);
-    while( doContinue ) {
 
-        ret_val = pselect (m_fd + 1, &descriptors, NULL, NULL, &time_to_wait, NULL);
+    while (doContinue)
+    {
+        ret_val = pselect(fd + 1, &descriptors, NULL, NULL, &waitTime, NULL);
 
-        if( ret_val < 0) {
+        if( ret_val < 0)
+        {
             //cout << "ERROR: " << ret_val << endl;
         }
-        else if (!ret_val) {
+        else if (!ret_val)
+        {
             //cout << "Timeout occured." << endl;
         }
-        else if (FD_ISSET( m_fd, &descriptors)) {
-            int len = read(m_fd, buffer, BUF_LEN);
+        else if (FD_ISSET(fd, &descriptors))
+        {
+            int len = read(fd, buffer, BUF_LEN);
             processEvent(buffer, len, data->watcher, watchMap, data->extensions);
         }
     }
+
     pthread_cleanup_pop(arg);
 }
 
@@ -191,7 +203,6 @@ FileWatcher::FileWatcher()
 
 }
 
-
 FileWatcher::~FileWatcher()
 {
 	Stop();
@@ -199,8 +210,8 @@ FileWatcher::~FileWatcher()
 
 void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions)
 {
-    // Prepare thread data
-    struct FileWatchThreadData *data = new FileWatchThreadData;
+    // prepare thread data
+    FileWatchThreadData* data = new FileWatchThreadData;
     data->watcher = this;
     data->path = new Path(path);
     data->extensions = new std::vector<String>();
@@ -208,35 +219,33 @@ void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions)
     for (String ext : fileExtensions)
         data->extensions->push_back(ext);
 
-    // Start thread
+    // start thread
     pthread_create(&m_thread, NULL, startWatchingThread, data);
 
 }
 
 void FileWatcher::Stop()
 {
-    // Cancel thread. The thread will clean up after itself.
+    // cancel thread
+    // the thread will clean up after itself
     pthread_cancel(m_thread);
 }
 
 bool FileWatcher::ReadFile(String filePath, char** pBuf, size_t* pLen)
 {
     ifstream fs;
-
     fs.open(filePath.c_str(), ios::in);
 
-    if (fs.is_open()) {
-        fs.seekg(0, ios::end);
-        *pLen = (size_t) fs.tellg();
-        *pBuf = new char [*pLen];
-        fs.seekg(0, ios::beg);
-        fs.read(*pBuf, *pLen);
-        fs.close();
-        return true;
-    }
-    else {
+    if (!fs.is_open())
         return false;
-    }
+
+    fs.seekg(0, ios::end);
+    *pLen = (size_t) fs.tellg();
+    *pBuf = new char [*pLen];
+    fs.seekg(0, ios::beg);
+    fs.read(*pBuf, *pLen);
+    fs.close();
+    return true;
 }
 
 } // namespace Zephyros

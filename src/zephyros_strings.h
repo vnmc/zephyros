@@ -89,6 +89,4 @@
 #define ZS_DIALOG_FILE_SAVE_BUTTON       1906
 
 
-
-
 #endif // Zephyros_ZephyrosStrings_h

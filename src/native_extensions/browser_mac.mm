@@ -103,9 +103,6 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 
 bool OpenURLInBrowser(std::string strUrl, Browser* browser)
 {
-    if (browser == NULL)
-        return false;
-    
     // parse the URL
     NSString *urlStr = [NSString stringWithUTF8String: strUrl.c_str()];
     NSURL *url = [NSURL URLWithString: urlStr];
@@ -125,9 +122,9 @@ bool OpenURLInBrowser(std::string strUrl, Browser* browser)
     }
     
     // get the browser's bundle id
-    NSString *bundleId = [NSString stringWithUTF8String: browser->GetIdentifier().c_str()];
-    if (bundleId == nil)
-        return false;
+    NSString *bundleId = nil;
+    if (browser != NULL)
+        *bundleId = [NSString stringWithUTF8String: browser->GetIdentifier().c_str()];
     
     return [[NSWorkspace sharedWorkspace] openURLs: @[ url ]
                            withAppBundleIdentifier: bundleId

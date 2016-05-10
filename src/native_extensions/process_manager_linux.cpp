@@ -25,8 +25,6 @@
  *******************************************************************************/
 
 
-#include <tchar.h>
-#include <Shlwapi.h>
 #include <algorithm>
 
 #include "base/app.h"

@@ -43,20 +43,54 @@
 namespace Zephyros {
 namespace BrowserUtil {
 
-//
-// Returns the name of the default browser
-//
+/**
+ * Returns the name of the default browser
+ */
 String GetDefaultBrowserKey()
 {
-	bool defaultBrowserKeyFound = false;
-	String defaultBrowserKey;
+	bool bDefaultBrowserKeyFound = false;
+	String strDefaultBrowserKey;
 
-	HKEY hKey1, hKey2;
 	DWORD len;
 	DWORD type;
 	BYTE data[MAX_LEN + 1];
 
+	// Windows 10
+	// cf. http://stackoverflow.com/questions/32354861/how-to-get-default-browser-on-window-10
+
+	HKEY hKeyHttpUserChoice, hKeyDefaultHttpApp;
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Microsoft\\Windows\\Shell\\Associations\\URLAssociations\\http\\UserChoice"), 0, KEY_READ, &hKeyHttpUserChoice) == ERROR_SUCCESS)
+	{
+		if (RegQueryValueEx(hKeyHttpUserChoice, TEXT("ProgId"), NULL, &type, data, &len) == ERROR_SUCCESS)
+		{
+			String appNameKey = ToString(data, len) + TEXT("\\Application");
+			
+			if (RegOpenKeyEx(HKEY_CLASSES_ROOT, appNameKey.c_str(), 0, KEY_READ, &hKeyDefaultHttpApp) == ERROR_SUCCESS)
+			{
+				if (RegQueryValueEx(hKeyDefaultHttpApp, TEXT("ApplicationName"), NULL, &type, data, &len) == ERROR_SUCCESS)
+				{
+					if (type == REG_SZ && len > 0)
+					{
+						strDefaultBrowserKey = ToString(data, len);
+						bDefaultBrowserKeyFound = true;
+					}
+				}
+
+				RegCloseKey(hKeyDefaultHttpApp);
+			}
+		}
+
+		RegCloseKey(hKeyHttpUserChoice);
+	}
+
+	if (bDefaultBrowserKeyFound)
+		return strDefaultBrowserKey;
+
+
+	// older Windows versions
+
 	// first look under HKEY_CURRENT_USER
+	HKEY hKey1, hKey2;
 	if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("SOFTWARE\\Clients\\StartMenuInternet"), 0, KEY_READ, &hKey1) == ERROR_SUCCESS)
 	{
 		DEBUG_LOG(TEXT("Opened HKCU\\SOFTWARE\\Clients\\StartMenuInternet"));
@@ -68,14 +102,14 @@ String GetDefaultBrowserKey()
 
 			if (type == REG_SZ && len > 0)
 			{
-				defaultBrowserKey = String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + len - sizeof(TCHAR)));
-				defaultBrowserKeyFound = true;
+				strDefaultBrowserKey = ToString(data, len);
+				bDefaultBrowserKeyFound = true;
 
-				DEBUG_LOG(TEXT("defaultBrowserKey (1) =") + defaultBrowserKey);
+				DEBUG_LOG(TEXT("defaultBrowserKey (1) =") + strDefaultBrowserKey);
 			}
 		}
 
-		if (!defaultBrowserKeyFound)
+		if (!bDefaultBrowserKeyFound)
 		{
 			DEBUG_LOG(TEXT("default browser not found in HKCU"));
 
@@ -91,10 +125,10 @@ String GetDefaultBrowserKey()
 
 					if (type == REG_SZ && len > 0)
 					{
-						defaultBrowserKey = String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + len - sizeof(TCHAR)));
-						defaultBrowserKeyFound = true;
+						strDefaultBrowserKey = ToString(data, len);
+						bDefaultBrowserKeyFound = true;
 
-						DEBUG_LOG(TEXT("defaultBrowserKey (2) =") + defaultBrowserKey);
+						DEBUG_LOG(TEXT("defaultBrowserKey (2) =") + strDefaultBrowserKey);
 					}
 				}
 
@@ -107,7 +141,7 @@ String GetDefaultBrowserKey()
 		DEBUG_LOG(TEXT("Closed key (1)"));
 	}
 
-	return defaultBrowserKey;
+	return strDefaultBrowserKey;
 }
 
 HICON LoadLibIcon(TCHAR* szLibIcon)
@@ -237,6 +271,7 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 			String strBrowserName;
 			String strBrowserCommand;
 			String strIcon;
+			int nStatusCode = 0;
 			//String strGrayscaleIcon;
 
 			HKEY hKeyBrowser;
@@ -252,7 +287,7 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 
 					if (type == REG_SZ && len > 0)
 					{
-						strBrowserName = String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + len - sizeof(TCHAR)));
+						strBrowserName = ToString(data, len);
 						DEBUG_LOG(TEXT("Found browser ") + strBrowserName);
 					}
 					else
@@ -274,7 +309,7 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 
 						if (type == REG_SZ && len > 0)
 						{
-							strBrowserCommand = String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + len - sizeof(TCHAR)));
+							strBrowserCommand = ToString(data, len);
 							DEBUG_LOG(TEXT("Found browser command ") + strBrowserCommand);
 						}
 						else
@@ -286,6 +321,8 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 					RegCloseKey(hKeyCommand);
 					DEBUG_LOG(TEXT("Closed key (3)"));
 				}
+				else
+					nStatusCode = BROWSER_CODE_NO_EXE_FOUND;
 
 				// get the default icon: the path is contained in the default value of the "DefaultIcon" subkey
 				HKEY hKeyIcon;
@@ -340,7 +377,14 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 						idx == 0;
 
 					DEBUG_LOG(TEXT("Adding browser ") + strBrowserName);
-					(*ppBrowsers)->push_back(new Browser(strBrowserName, GetExeVersion(strBrowserCommand), strBrowserCommand, strIcon, isDefaultBrowser));
+					(*ppBrowsers)->push_back(new Browser(
+						strBrowserName,
+						GetExeVersion(strBrowserCommand),
+						strBrowserCommand,
+						strIcon,
+						isDefaultBrowser,
+						nStatusCode
+					));
 					DEBUG_LOG(TEXT("Added browser"));
 				}
 			}
@@ -349,24 +393,84 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 		RegCloseKey(hKey);
 		DEBUG_LOG(TEXT("Closed key (6)"));
 	}
+
+	// add Microsoft Edge - they don't believe in the power of the registry...
+	TCHAR szWindowsDir[MAX_PATH] = TEXT("");
+	ExpandEnvironmentStrings(TEXT("%windir%"), szWindowsDir, MAX_PATH);
+	String systemAppDir = szWindowsDir;
+	systemAppDir.append(TEXT("\\SystemApps\\"));
+	String edgeSearchString = systemAppDir;
+	edgeSearchString.append(TEXT("Microsoft.MicrosoftEdge*"));
+	
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = FindFirstFile(edgeSearchString.c_str(), &fd);
+
+	if (INVALID_HANDLE_VALUE != hFind)
+	{
+		String edgeExe = systemAppDir;
+		edgeExe.append(fd.cFileName);
+		edgeExe.append(TEXT("\\MicrosoftEdge.exe"));
+		
+		HICON edgeIcon;
+		String strIcon = TEXT("");
+		int nIcons = ExtractIconEx(edgeExe.c_str(), 0, &edgeIcon, NULL, 1);
+
+		if (edgeIcon != NULL)
+		{
+			BYTE* pData = NULL;
+			DWORD length;
+
+			if (ImageUtil::IconToPNG(edgeIcon, &pData, &length))
+			{
+				strIcon = TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length);
+				delete[] pData;
+			}
+
+			DestroyIcon(edgeIcon);
+		}
+
+		String search = TEXT("MicrosoftEdge");
+		bool isEdgeDefault = strDefaultBrowserKey.length() > 0 ?
+			strDefaultBrowserKey.find(search) != String::npos :
+			false;
+
+		browsers.push_back(new Browser(
+			TEXT("Microsoft Edge"),
+			GetExeVersion(edgeExe),
+			TEXT("microsoft-edge:"),
+			strIcon,
+			isEdgeDefault,
+			0
+		));
+	}	
 }
 
 bool OpenURLInBrowser(String url, Browser* browser)
 {
-	if (!browser)
-		return false;
-
 	SHELLEXECUTEINFO execInfo = { 0 };
 
 	execInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 	execInfo.fMask = SEE_MASK_DEFAULT;
 	execInfo.lpVerb = TEXT("open");
-
-	String id = browser->GetIdentifier();
-	execInfo.lpFile = id.c_str();
-
-	execInfo.lpParameters = url.c_str();
 	execInfo.nShow = SW_SHOW;
+
+	if (!browser)
+	{
+		execInfo.lpFile = url.c_str();
+		execInfo.lpParameters = NULL;
+	}
+	else
+	{
+		String id = browser->GetIdentifier();
+
+		// in case we're launching Edge, we do this via microsoft-edge:url,
+		// and microsoft-edge is the browser identifier in that case
+		if (browser->GetName() == TEXT("Microsoft Edge"))
+			id.append(url);
+
+		execInfo.lpFile = id.c_str();
+		execInfo.lpParameters = url.c_str();
+	}
 
 	return ShellExecuteEx(&execInfo) == TRUE;
 }

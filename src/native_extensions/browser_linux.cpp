@@ -71,15 +71,22 @@ using namespace std;
 
 bool OpenURLInBrowser(String url, Browser* browser)
 {
-    if (browser == NULL)
-        return false;
+    String cmd;
 
-    String cmdString = browser->GetIdentifier();
-    cmdString.append(" ");
+    if (!browser)
+        cmd = TEXT("xdg-open ")
+    else
+    {
+        cmd = browser->GetIdentifier();
+        cmd.append(TEXT(" "));
+    }
+
     cmdString.append(url);
-    cmdString.append(" &");
 
-    system( cmdString.c_str() );
+    if (browser)
+        cmdString.append(TEXT(" &"));
+
+    system(cmdString.c_str());
     return true;
 }
 

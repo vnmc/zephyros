@@ -149,3 +149,19 @@ String& Trim(String &s)
 {
     return LTrim(RTrim(s));
 }
+
+String ToString(BYTE* data, const int len)
+{
+    int length = len;
+
+    if (sizeof(TCHAR) == 2)
+    {
+        // make sure that the length is a multiple of 2
+        // length = len - sizeof(TCHAR) = len - 2
+        length = (len - 1) & ~1;
+    }
+    else
+        length -= sizeof(TCHAR);
+
+    return String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + length));
+}
