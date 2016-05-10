@@ -345,10 +345,7 @@ void LoadPreferences(String key, String& data)
 		{
 			BYTE* buf = new BYTE[len];
 			RegQueryValueEx(hKey, key.c_str(), NULL, &type, buf, &len);
-
-			// convert to string; RegQueryValueEx includes the terminating \0, so the last char is one
-			// char before that, hence "- sizeof(TCHAR)"
-			data = String(reinterpret_cast<TCHAR*>(buf), reinterpret_cast<TCHAR*>(buf + len - sizeof(TCHAR)));
+			data = ToString(buf, len);
 
 			delete[] buf;
 		}

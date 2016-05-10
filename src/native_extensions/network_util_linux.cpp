@@ -151,11 +151,10 @@ bool GetProxyForURL(String url, String& proxyType, String& host, int& port, Stri
 	CefParseURL(url, urlParts);
     String urlHost = CefString(&urlParts.host).ToString();
 
-
     char* proxyEnv = NULL;
-    char* noProxy = getenv("NO_PROXY");
-    char* digit = getenv("PATH");
-    String myProxyType = "http";
+    char* noProxy = getenv(TEXT("NO_PROXY"));
+    char* digit = getenv(TEXT("PATH"));
+    String myProxyType = TEXT("http");
 
     if (noProxy != NULL)
     {
@@ -168,18 +167,16 @@ bool GetProxyForURL(String url, String& proxyType, String& host, int& port, Stri
         }
     }
 
-
-    if (url.find("http://") == 0)
+    if (url.find(TEXT("http://")) == 0)
     {
-        proxyEnv = getenv("HTTP_PROXY");
-        myProxyType = "http";
+        proxyEnv = getenv(TEXT("HTTP_PROXY"));
+        myProxyType = TEXT("http");
     }
-    else if (url.find("https://") == 0)
+    else if (url.find(TEXT("https://")) == 0)
     {
-        proxyEnv = getenv("HTTPS_PROXY");
-        myProxyType = "https";
+        proxyEnv = getenv(TEXT("HTTPS_PROXY"));
+        myProxyType = TEXT("https");
     }
-
 
     if (proxyEnv == NULL)
         return false;

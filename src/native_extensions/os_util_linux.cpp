@@ -34,11 +34,13 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#include <spawn.h> // see manpages-posix-dev
+#include <poll.h>
+#include <sys/wait.h>
 
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
-
 
 #include "base/app.h"
 #include "base/types.h"
@@ -50,9 +52,6 @@
 
 #include <iostream>
 
-#include <spawn.h> // see manpages-posix-dev
-#include <poll.h>
-#include <sys/wait.h>
 
 typedef struct
 {
@@ -60,14 +59,14 @@ typedef struct
 	String text;
 } StreamDataEntry;
 
-struct StartProcessThreadData
+typedef struct
 {
     CallbackId callback;
     String executableFileName;
-    std::vector<String> *arguments;
+    std::vector<String>* arguments;
     String cwd;
+} StartProcessThreadData;
 
-};
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
@@ -77,30 +76,29 @@ extern int g_nMinWindowHeight;
 extern GtkWidget* g_pMenuBar;
 
 
-void CleanupStartProcessThreadData(void *arg)
+void CleanupStartProcessThreadData(void* arg)
 {
-    StartProcessThreadData *data = (StartProcessThreadData *) arg;
+    StartProcessThreadData* data = (StartProcessThreadData*) arg;
     delete data->arguments;
     delete data;
 }
 
-using namespace std;
+
 // cf. http://stackoverflow.com/questions/13893085/posix-spawnp-and-piping-child-output-to-a-string
-void *startProcessThread(void *arg)
+void* startProcessThread(void* arg)
 {
-    struct StartProcessThreadData *data = (struct StartProcessThreadData *) arg;
+    struct StartProcessThreadData *data = (struct StartProcessThreadData*) arg;
     int exit_code;
     int cout_pipe[2];
     int cerr_pipe[2];
-    int i;
     posix_spawn_file_actions_t action;
 
     pthread_cleanup_push(CleanupStartProcessThreadData, arg);
 
-    if(pipe(cout_pipe) || pipe(cerr_pipe))
-        cout << "pipe returned an error.\n";
+    if (pipe(cout_pipe) || pipe(cerr_pipe))
+        std::cout << "pipe returned an error.\n";
 
-    /* Prepare spawn pipes */
+    // prepare spawning of pipes
     posix_spawn_file_actions_init(&action);
     posix_spawn_file_actions_addclose(&action, cout_pipe[0]);
     posix_spawn_file_actions_addclose(&action, cerr_pipe[0]);
@@ -110,12 +108,12 @@ void *startProcessThread(void *arg)
     posix_spawn_file_actions_addclose(&action, cout_pipe[1]);
     posix_spawn_file_actions_addclose(&action, cerr_pipe[1]);
 
-
-    /* Build spawn arguments */
+    // build spawn arguments
     char** args = new char*[data->arguments->size() + 2];
     args[0] = new char[data->executableFileName.length() + data->cwd.length() + 1];
     strcpy(args[0], (data->executableFileName).c_str());
-    i = 1;
+    int i = 1;
+
     for (String arg : *(data->arguments))
     {
         args[i] = new char[arg.length() + 1];
@@ -124,59 +122,68 @@ void *startProcessThread(void *arg)
     }
     args[i] = 0;
 
-
-    /* Change to indicated working directory and Spawn process */
+    // change to indicated working directory and spawn process
     if (data->cwd.length() > 0)
         chdir(data->cwd.c_str());
 
     pid_t pid;
-    if(posix_spawnp(&pid, args[0], &action, NULL, &args[0], NULL) != 0)
-        cout << "posix_spawnp failed with error: " << strerror(errno) << "\n";
+    if (posix_spawnp(&pid, args[0], &action, NULL, &args[0], NULL) != 0)
+        std::cout << "posix_spawnp failed with error: " << strerror(errno) << "\n";
 
     close(cout_pipe[1]), close(cerr_pipe[1]); // close child-side of pipes
 
-    /* Read process output until terminated, build JS callback arguments on the go */
+    // Read process output until terminated, build JS callback arguments on the go
     i = 0;
     Zephyros::JavaScript::Array callbackArgs = Zephyros::JavaScript::CreateArray();
     Zephyros::JavaScript::Array stream = Zephyros::JavaScript::CreateArray();
-    string buffer(1024,' ');
-    std::vector<pollfd> plist = { {cout_pipe[0],POLLIN}, {cerr_pipe[0],POLLIN} };
-    for ( int rval; (rval=poll(&plist[0],plist.size(),/*timeout*/-1))>0; ) {
+    String buffer(1024, TEXT(' '));
+
+    std::vector<pollfd> plist = {
+        { cout_pipe[0], POLLIN },
+        { cerr_pipe[0], POLLIN }
+    };
+
+    for (int rval; (rval = poll(&plist[0], plist.size(), -1 /* timeout */)) > 0; )
+    {
         Zephyros::JavaScript::Object streamEntry = Zephyros::JavaScript::CreateObject();
-        if ( plist[0].revents&POLLIN) {
-          int bytes_read = read(cout_pipe[0], &buffer[0], buffer.length());
-          streamEntry->SetString(TEXT("text"), buffer.substr(0, static_cast<size_t>(bytes_read)));
-          streamEntry->SetInt(TEXT("fd"), 0);
-          stream->SetDictionary(i++, streamEntry);
+
+        if (plist[0].revents & POLLIN)
+        {
+            int bytes_read = read(cout_pipe[0], &buffer[0], buffer.length());
+            streamEntry->SetString(TEXT("text"), buffer.substr(0, static_cast<size_t>(bytes_read)));
+            streamEntry->SetInt(TEXT("fd"), 0);
+            stream->SetDictionary(i++, streamEntry);
         }
-        else if ( plist[1].revents&POLLIN ) {
-          int bytes_read = read(cerr_pipe[0], &buffer[0], buffer.length());
-          streamEntry->SetString(TEXT("text"), buffer.substr(0, static_cast<size_t>(bytes_read)));
-          streamEntry->SetInt(TEXT("fd"), 1);
-          stream->SetDictionary(i++, streamEntry);
+        else if (plist[1].revents & POLLIN)
+        {
+            int bytes_read = read(cerr_pipe[0], &buffer[0], buffer.length());
+            streamEntry->SetString(TEXT("text"), buffer.substr(0, static_cast<size_t>(bytes_read)));
+            streamEntry->SetInt(TEXT("fd"), 1);
+            stream->SetDictionary(i++, streamEntry);
         }
-        else break; // nothing left to read
+        else
+        {
+            // nothing left to read
+            break;
+        }
     }
 
-    /* Wait for process to terminate */
-    waitpid(pid,&exit_code,0);
+    // wait for process to terminate
+    waitpid(pid, &exit_code, 0);
 
-
-    /* Fire JS Callback */
+    // fire JavaScript callback
     callbackArgs->SetInt(0, exit_code);
     callbackArgs->SetList(1, stream);
     g_handler->GetClientExtensionHandler()->InvokeCallback(data->callback, callbackArgs);
 
-    /* Clean up */
+    // clean up
     posix_spawn_file_actions_destroy(&action);
     pthread_cleanup_pop(arg);
 }
 
 
-
 namespace Zephyros {
 namespace OSUtil {
-
 
 String GetOSVersion()
 {
@@ -186,11 +193,14 @@ String GetOSVersion()
     StringStream ss;
     ss << info.sysname << TEXT("_") << info.version;
     String retVal = ss.str();
-    size_t space = retVal.find(" ");
-    while(space != std::string::npos) {
-        retVal = retVal.replace(space, 1, "_");
-        space = retVal.find(" ");
+    size_t space = retVal.find(TEXT(" "));
+    
+    while (space != String::npos)
+    {
+        retVal = retVal.replace(space, 1, TEXT("_"));
+        space = retVal.find(TEXT(" "));
     }
+
     return retVal;
 }
 
@@ -271,22 +281,22 @@ String GetConfigDirectory()
 
 String GetComputerName()
 {
-	return OSUtil::Exec("hostname");
+	return OSUtil::Exec(TEXT("hostname"));
 }
 
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
 {
-    pthread_t thread;
     struct StartProcessThreadData *data = new StartProcessThreadData;
     data->callback = callback;
     data->executableFileName = executableFileName;
+    data->cwd = cwd;
     data->arguments = new std::vector<String>();
+
     for (String arg : arguments)
         data->arguments->push_back(arg);
 
-    data->cwd = cwd;
-
-    // Start thread
+    // start thread
+    pthread_t thread;
     pthread_create(&thread, NULL, startProcessThread, data);
 }
 
@@ -300,10 +310,8 @@ String Exec(String command)
     StringStream result;
 
     while (!feof(pipe))
-    {
     	if (fgets(buffer, 128, pipe) != NULL)
     		result << buffer;
-    }
 
     pclose(pipe);
     return result.str();
@@ -411,8 +419,8 @@ void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bo
     // TODO: fullscreen not handled yet
     GdkScreen *screen = gdk_screen_get_default();
     GtkWindow *window = GTK_WINDOW( gtk_widget_get_ancestor (App::GetMainHwnd(), GTK_TYPE_WINDOW) );
-    gint sWidth = gdk_screen_get_width(screen);
-    gint sHeight = gdk_screen_get_height(screen);
+    gint screenWidth = gdk_screen_get_width(screen);
+    gint screenHeight = gdk_screen_get_height(screen);
     gint posX;
     gint posY;
     gtk_window_get_position(window, &posX, &posY);
@@ -427,19 +435,19 @@ void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bo
         // do we need to restore the lastOriginX?
         if ( lastWidth > width  && lastOriginX != INT_MIN)
         {
-            if (!windowMoved) {
+            if (!windowMoved)
                 newPosX = lastOriginX;
-            }
             lastOriginX = INT_MIN;
         }
 
         // adjust the windows x position if, after resizing, the window would fall off the screen
-        if ( (newPosX + width) > sWidth)
+        if ( (newPosX + width) > screenWidth)
         {
-            newPosX = sWidth - width;
+            newPosX = screenWidth - width;
             if (newPosX < 0)
                 newPosX = 0;
         }
+
         lastWidth = width;
     }
     else
@@ -451,19 +459,18 @@ void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bo
         if (lastHeight > height && lastOriginY != INT_MIN)
         {
             if (!windowMoved)
-            {
                 newPosY = lastOriginY;
-            }
             lastOriginY = INT_MIN;
         }
 
         // adjust the windows y position if, after resizing, the window would fall off the screen
-        if ( (newPosY + height) > sHeight)
+        if (newPosY + height > screenHeight)
         {
-            newPosY = sHeight - height;
+            newPosY = screenHeight - height;
             if (newPosY < 0)
                 newPosY = 0;
         }
+
         lastHeight = height;
     }
     else
@@ -471,19 +478,18 @@ void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bo
 
     gtk_window_move(window, newPosX, newPosY);
     gtk_window_resize(window, width, height);
-
 }
 
 
 void SetMinimumWindowSize(int width, int height)
 {
-    GtkWindow *window = GTK_WINDOW( gtk_widget_get_ancestor (App::GetMainHwnd(), GTK_TYPE_WINDOW) );
+    GtkWindow *window = GTK_WINDOW(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
 
     GdkGeometry hints;
     hints.min_width = width;
     hints.min_height = height;
 
-    gtk_window_set_geometry_hints (window, NULL, &hints, GDK_HINT_MIN_SIZE);
+    gtk_window_set_geometry_hints(window, NULL, &hints, GDK_HINT_MIN_SIZE);
 }
 
 
@@ -495,7 +501,7 @@ void DisplayNotification(String title, String details)
 
 void RequestUserAttention()
 {
-    GtkWindow *window = GTK_WINDOW( gtk_widget_get_ancestor (App::GetMainHwnd(), GTK_TYPE_WINDOW) );
+    GtkWindow *window = GTK_WINDOW(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
     gtk_window_set_urgency_hint (window, true);
 }
 

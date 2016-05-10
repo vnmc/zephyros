@@ -490,7 +490,7 @@ void LoadWindowPlacement(Rect* pRectNormal, UINT* pShowCmd)
 			RegQueryValueEx(hKey, TEXT("window"), NULL, &type, buf, &len);
 
 			// parse the string
-			StringStream ss(String(reinterpret_cast<TCHAR*>(buf), reinterpret_cast<TCHAR*>(buf + len - sizeof(TCHAR))));
+			StringStream ss(ToString(buf, len));
 			TCHAR delim;
 			ss >> pRectNormal->x;
 			ss >> delim;
