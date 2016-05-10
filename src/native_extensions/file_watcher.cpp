@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,14 +40,14 @@ void FileWatcher::FireFileChanged(std::vector<String>& files)
 {
     JavaScript::Array listFiles = JavaScript::CreateArray();
     int i = 0;
-    
+
     for (String file : files)
     {
         JavaScript::Object entry = JavaScript::CreateObject();
-        
+
         entry->SetString(TEXT("path"), file);
         entry->SetInt(TEXT("action"), FileUtil::ExistsFile(file) ? 0 : 1);
-        
+
         listFiles->SetDictionary(i++, entry);
     }
 

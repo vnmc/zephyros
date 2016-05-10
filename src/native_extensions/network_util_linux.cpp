@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -147,9 +147,13 @@ bool GetProxyForURL(String url, String& proxyType, String& host, int& port, Stri
 	username = TEXT("");
 	password = TEXT("");
 
-	CefURLParts urlParts;
-	CefParseURL(url, urlParts);
-    String urlHost = CefString(&urlParts.host).ToString();
+    String urlHost = TEXT("");
+    if (url.length() > 0)
+    {
+        CefURLParts urlParts;
+        CefParseURL(url, urlParts);
+        urlHost = CefString(&urlParts.host).ToString();
+    }
 
     char* proxyEnv = NULL;
     char* noProxy = getenv(TEXT("NO_PROXY"));
@@ -189,7 +193,7 @@ bool GetProxyForURL(String url, String& proxyType, String& host, int& port, Stri
     password = CefString(&proxyUrlParts.password).ToString();
     proxyType = myProxyType;
 
-	return false;
+	return true;
 }
 
 } // namespace NetworkUtil

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,7 +45,7 @@ Browser* GetDefaultBrowser(std::vector<Browser*>* pBrowsers)
         if ((*it)->IsDefaultBrowser())
             return *it;
     }
-    
+
     return firstBrowser;
 }
 
@@ -66,20 +66,20 @@ Browser* GetBrowserForUserAgent(std::vector<Browser*>* pBrowsers, JavaScript::Ob
     String strUserAgent = userAgent->GetString("name");
     String strUserAgentLc = String(strUserAgent);
     std::transform(strUserAgentLc.begin(), strUserAgentLc.end(), strUserAgentLc.begin(), ::tolower);
-    
+
     String strUserAgentIdLc = userAgent->GetString("id");
     std::transform(strUserAgentIdLc.begin(), strUserAgentIdLc.end(), strUserAgentIdLc.begin(), ::tolower);
-    
+
     for (std::vector<Browser*>::iterator it = pBrowsers->begin(); it != pBrowsers->end(); ++it)
     {
 		Browser* browser = *it;
-        
+
         String name = browser->GetName();
         std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-        
+
         String identifier = browser->GetIdentifier();
         std::transform(identifier.begin(), identifier.end(), identifier.begin(), ::tolower);
-        
+
         if (name.find(strUserAgentLc) != String::npos || identifier.find(strUserAgentLc) != String::npos ||
             (strUserAgent == TEXT("IE") && (name.find(TEXT("internet explorer")) != String::npos || identifier.find(TEXT("internet explorer")) != String::npos)))
         {
@@ -102,7 +102,7 @@ Browser* GetBrowserForUserAgent(std::vector<Browser*>* pBrowsers, JavaScript::Ob
             return browser;
         }
     }
-    
+
     return NULL;
 }
 
@@ -114,12 +114,12 @@ Browser* GetBrowserFromJSRepresentation(std::vector<Browser*>* pBrowsers, JavaSc
     Browser* browser = GetBrowserForIdentifier(pBrowsers, identifier);
     if (browser != NULL)
         return browser;
-    
+
     String name = obj->GetString("name");
     for (std::vector<Browser*>::iterator it = pBrowsers->begin(); it != pBrowsers->end(); ++it)
         if ((*it)->GetName() == name)
             return *it;
-    
+
     return NULL;
 }
 
@@ -144,7 +144,7 @@ bool IsKnownBrowser(String browserName)
     knownBrowsers.push_back(TEXT("tomeraider"));
     knownBrowsers.push_back(TEXT("ultrabrowser"));
     knownBrowsers.push_back(TEXT("webbie"));
-                               
+
     knownBrowsers.push_back(TEXT("firefox"));
     knownBrowsers.push_back(TEXT("netscape"));
     knownBrowsers.push_back(TEXT("epic"));
@@ -170,7 +170,7 @@ bool IsKnownBrowser(String browserName)
     knownBrowsers.push_back(TEXT("k-ninja"));
     knownBrowsers.push_back(TEXT("microb"));
     knownBrowsers.push_back(TEXT("minimo"));
-                               
+
     knownBrowsers.push_back(TEXT("baidu"));
     knownBrowsers.push_back(TEXT("maxthon"));
     knownBrowsers.push_back(TEXT("sleipnir"));
@@ -180,7 +180,7 @@ bool IsKnownBrowser(String browserName)
     knownBrowsers.push_back(TEXT("internet channel"));
     knownBrowsers.push_back(TEXT("nintendo ds browser"));
     knownBrowsers.push_back(TEXT("opera"));
-                               
+
     knownBrowsers.push_back(TEXT("amazon kindle"));
     knownBrowsers.push_back(TEXT("arora"));
     knownBrowsers.push_back(TEXT("bolt browser"));
@@ -218,7 +218,7 @@ bool IsKnownBrowser(String browserName)
     knownBrowsers.push_back(TEXT("uzard web"));
     knownBrowsers.push_back(TEXT("ucweb"));
     knownBrowsers.push_back(TEXT("htmlunit"));
-                               
+
     knownBrowsers.push_back(TEXT("gollum browser"));
     knownBrowsers.push_back(TEXT("image xplorer"));
     knownBrowsers.push_back(TEXT("kirix strata"));
@@ -230,14 +230,14 @@ bool IsKnownBrowser(String browserName)
     knownBrowsers.push_back(TEXT("epic browser"));
     knownBrowsers.push_back(TEXT("ghostzilla"));
     knownBrowsers.push_back(TEXT("prodigy classic"));
-                               
+
     knownBrowsers.push_back(TEXT("amosaic"));
     knownBrowsers.push_back(TEXT("ibm webexplorer"));
     knownBrowsers.push_back(TEXT("internet in a box"));
     knownBrowsers.push_back(TEXT("mosaic-ck"));
     knownBrowsers.push_back(TEXT("spyglass mosaic"));
     knownBrowsers.push_back(TEXT("vms mosaic"));
-                               
+
     knownBrowsers.push_back(TEXT("abaco"));
     knownBrowsers.push_back(TEXT("amaya"));
     knownBrowsers.push_back(TEXT("arachne"));
@@ -258,13 +258,13 @@ bool IsKnownBrowser(String browserName)
     knownBrowsers.push_back(TEXT("phoenix"));
     knownBrowsers.push_back(TEXT("tkwww"));
     knownBrowsers.push_back(TEXT("voyager"));
-    
+
     std::vector<String> knownNoBrowsers;
     knownNoBrowsers.push_back(TEXT("installer"));
-    
+
     String browserNameLc = browserName;
     std::transform(browserNameLc.begin(), browserNameLc.end(), browserNameLc.begin(), ::tolower);
-    
+
     for (std::vector<String>::iterator it = knownNoBrowsers.begin(); it != knownNoBrowsers.end(); ++it)
         if (browserNameLc.find(*it) != String::npos)
             return false;

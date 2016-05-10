@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,7 +36,7 @@ Path::Path(String path)
 {
 	m_isDirectory = FileUtil::IsDirectory(path);
 }
-    
+
 Path::Path(String path, String urlWithSecurityAccessData, bool hasSecurityAccessData)
     : m_path(path), m_urlWithSecurityAccessData(urlWithSecurityAccessData), m_hasSecurityAccessData(hasSecurityAccessData)
 {
@@ -54,12 +54,12 @@ Path::Path(JavaScript::Object jsonObj)
 JavaScript::Object Path::CreateJSRepresentation()
 {
     JavaScript::Object obj = JavaScript::CreateObject();
-        
+
     obj->SetString("path", m_path);
     obj->SetBool("isDirectory", m_isDirectory);
     obj->SetString("url", m_urlWithSecurityAccessData);
     obj->SetBool("hasSecurityAccessData", m_hasSecurityAccessData);
-        
+
     return obj;
 }
 

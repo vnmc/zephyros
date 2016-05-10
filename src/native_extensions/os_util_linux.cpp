@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -87,7 +87,7 @@ void CleanupStartProcessThreadData(void* arg)
 // cf. http://stackoverflow.com/questions/13893085/posix-spawnp-and-piping-child-output-to-a-string
 void* startProcessThread(void* arg)
 {
-    struct StartProcessThreadData *data = (struct StartProcessThreadData*) arg;
+    StartProcessThreadData* data = (StartProcessThreadData*) arg;
     int exit_code;
     int cout_pipe[2];
     int cerr_pipe[2];
@@ -194,7 +194,7 @@ String GetOSVersion()
     ss << info.sysname << TEXT("_") << info.version;
     String retVal = ss.str();
     size_t space = retVal.find(TEXT(" "));
-    
+
     while (space != String::npos)
     {
         retVal = retVal.replace(space, 1, TEXT("_"));
@@ -286,7 +286,7 @@ String GetComputerName()
 
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
 {
-    struct StartProcessThreadData *data = new StartProcessThreadData;
+    StartProcessThreadData* data = new StartProcessThreadData;
     data->callback = callback;
     data->executableFileName = executableFileName;
     data->cwd = cwd;

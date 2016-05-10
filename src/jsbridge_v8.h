@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,7 +38,7 @@ class CefDictionaryValue;
 namespace Zephyros {
 namespace JavaScript {
 
-    
+
 typedef CefRefPtr<CefDictionaryValue> Object;
 typedef CefRefPtr<CefListValue> Array;
 
@@ -50,16 +50,16 @@ inline Object CreateObject()
 {
     return CefDictionaryValue::Create();
 }
-    
+
 inline Array CreateArray()
 {
     return CefListValue::Create();
 }
-    
+
 inline void FreeObject(Object obj) {}
 inline void FreeArray(Array arr) {}
 
-    
+
 } // namespace JavaScript
 } // namespace Zephyros
 

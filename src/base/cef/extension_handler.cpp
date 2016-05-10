@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -63,7 +63,7 @@ void ClientCallback::Invoke(String functionName, CefRefPtr<CefListValue> args)
     responseArgs->SetString(1, functionName);
     responseArgs->SetInt(2, NO_ERROR);
     CopyList(args, responseArgs, 3);
-        
+
     // send to the renderer process; this will be handled by AppExtensionHandler::OnProcessMessageReceived
     if (m_browser != NULL)
         m_browser->SendProcessMessage(PID_RENDERER, response);
@@ -77,7 +77,7 @@ NativeFunction::NativeFunction(Function fnx, ...)
     : m_fnxAllCallbacksCompleted(NULL)
 {
     m_fnx = fnx;
-    
+
     va_list vl;
     va_start(vl, fnx);
     for (int i = 0; ; i += 2)
@@ -85,7 +85,7 @@ NativeFunction::NativeFunction(Function fnx, ...)
         int nType = va_arg(vl, int);
         if (nType == END_MARKER)
             break;
-        
+
         m_argTypes.push_back(nType);
         m_argNames.push_back(va_arg(vl, TCHAR*));
     }
@@ -108,12 +108,12 @@ int NativeFunction::Call(CefRefPtr<ClientHandler> handler, CefRefPtr<CefBrowser>
     // check the number of arguments (first argument is the messageId)
     if (args->GetSize() != m_argTypes.size() + 1)
         return ERR_INVALID_PARAM_NUM;
-    
+
     // check the argument types
     for (size_t i = 0; i < m_argTypes.size(); ++i)
         if (m_argTypes.at(i) != VTYPE_INVALID && !Zephyros::JavaScript::HasType(args->GetType((int) i + 1), m_argTypes.at(i)))
             return ERR_INVALID_PARAM_TYPES;
-    
+
     CefRefPtr<CefListValue> fnArgs = CefListValue::Create();
     CopyList(args, fnArgs, -1);
     return m_fnx(handler, browser, fnArgs, ret, messageId);
@@ -130,17 +130,17 @@ void NativeFunction::AddCallback(int messageId, CefBrowser* browser)
 String NativeFunction::GetArgList()
 {
     String argList;
-    
+
     bool first = true;
     for (String arg : m_argNames)
     {
         if (!first)
             argList.append(TEXT(", "));
         argList.append(arg);
-        
+
         first = false;
     }
-    
+
     return argList;
 }
 
@@ -176,10 +176,10 @@ void ClientExtensionHandler::AddNativeJavaScriptFunction(String name, NativeFunc
             argList.append(TEXT(","));
         argList.append(TEXT("callback"));
     }
-        
+
     fnx->m_name = name;
     fnx->m_hasPersistentCallback = hasPersistentCallback;
-    
+
     m_mapFunctions[name] = fnx;
 }
 
@@ -193,7 +193,7 @@ bool ClientExtensionHandler::InvokeCallbacks(String functionName, CefRefPtr<CefL
     std::map<String, NativeFunction*>::iterator it = m_mapFunctions.find(functionName);
     if (it == m_mapFunctions.end())
         return false;
-    
+
     // invoke the callbacks
     NativeFunction* fnx = it->second;
     bool isCallbackCalled = false;
@@ -202,7 +202,7 @@ bool ClientExtensionHandler::InvokeCallbacks(String functionName, CefRefPtr<CefL
         pCallback->Invoke(functionName, args);
         isCallbackCalled = true;
     }
-    
+
     return isCallbackCalled;
 }
 
@@ -226,24 +226,24 @@ bool ClientExtensionHandler::InvokeCallback(CallbackId callbackId, CefRefPtr<Cef
 bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> handler, CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
 {
     String name = message->GetName();
-    
+
 	if (name == CALLBACK_COMPLETED)
     {
         // the browser process is notified that a JavaScript callback function has completed
         // (only sent for functions with persistent callbacks)
-        
+
         // arguments:
         // 0: message id
         // 1: function name
-        
+
         CefRefPtr<CefListValue> args = message->GetArgumentList();
         int32 messageId = args->GetInt(0);
-        
+
         // get the native function; nothing to do if there is none
         std::map<String, NativeFunction*>::iterator it = m_mapFunctions.find(args->GetString(1));
         if (it == m_mapFunctions.end())
             return true;
-        
+
         NativeFunction* fnx = it->second;
         int invokeCount = -1;
         for (ClientCallback* pCallback : fnx->m_callbacks)
@@ -252,7 +252,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
                 invokeCount = pCallback->IncrementJavaScriptInvokeCallbackCount();
                 break;
             }
-        
+
         // test if all invocations have completed
         if (invokeCount != -1 && fnx->m_fnxAllCallbacksCompleted != NULL)
         {
@@ -265,7 +265,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
                     break;
                 }
             }
-            
+
             if (allCompleted)
                 fnx->m_fnxAllCallbacksCompleted(handler, browser);
         }
@@ -276,7 +276,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
         std::map<String, NativeFunction*>::iterator it = m_mapFunctions.find(message->GetName());
         if (it == m_mapFunctions.end())
             return false;
-    
+
         // invoke the native function
         NativeFunction* fnx = it->second;
         CefRefPtr<CefListValue> returnValues = CefListValue::Create();
@@ -307,7 +307,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
         {
             // this function doesn't have a persistent callback;
             // call it immediately to send the response
-                
+
 			if (ret != RET_DELAYED_CALLBACK)
 			{
 				// a INVOKE_CALLBACK message is sent to the renderer process; the expected arguments are
@@ -315,7 +315,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
 				// 1: function name
 				// 2: return value of the native function
 				// 3...: parameters to the callback function
-            
+
 				CefRefPtr<CefProcessMessage> responseMsg = CefProcessMessage::Create(INVOKE_CALLBACK);
 				CefRefPtr<CefListValue> responseArgs = responseMsg->GetArgumentList();
 
@@ -323,7 +323,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
 				responseArgs->SetString(1, message->GetName());
 				responseArgs->SetInt(2, ret);
 				CopyList(returnValues, responseArgs, 3);
-        
+
 				// send to the renderer process; this will be handled by AppExtensionHandler::OnProcessMessageReceived
 				browser->SendProcessMessage(PID_RENDERER, responseMsg);
 			}
@@ -335,7 +335,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
 			}
         }
     }
-    
+
     return true;
 }
 
@@ -358,7 +358,7 @@ AppExtensionHandler::~AppExtensionHandler()
 void AppExtensionHandler::AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue, bool hasPersistentCallback, String customJavaScriptImplementation)
 {
     // create the JavaScript extension code
-    
+
     // generate this JavaScript code:
     // app.<fnx> = function(<args>, callback) {
     //     native function <fnx>();
@@ -421,10 +421,10 @@ bool AppExtensionHandler::Execute(const CefString& name, CefRefPtr<CefV8Value> o
         // if we don't have a browser, we can't handle the command
         return false;
     }
-    
+
     CefRefPtr<CefProcessMessage> message = CefProcessMessage::Create(name);
     CefRefPtr<CefListValue> messageArgs = message->GetArgumentList();
-    
+
     // memorize the callback function (callbacks must be the last argument)
     size_t numArgs = arguments.size();
     if (arguments.size() > 0 && arguments[arguments.size() - 1]->IsFunction())
@@ -437,18 +437,18 @@ bool AppExtensionHandler::Execute(const CefString& name, CefRefPtr<CefV8Value> o
 
     // set the first argument: the message id
     messageArgs->SetInt(0, m_messageId);
-    
+
     // Pass the rest of the arguments
     for (size_t i = 0; i < numArgs; i++)
         SetListValue(messageArgs, (int) i + 1, arguments[i]);
-    
+
     // send to the browser process; this will be handled by ClientExtensionHandler::OnProcessMessageReceived
     browser->SendProcessMessage(PID_BROWSER, message);
-    
+
     m_messageId++;
     if (m_messageId > INT32_MAX - 1)
         m_messageId = 0;
-    
+
     return true;
 }
 
@@ -490,27 +490,27 @@ void AppExtensionHandler::OnContextReleased(CefRefPtr<ClientApp> app, CefRefPtr<
 bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
 {
     DCHECK_EQ(source_process, PID_BROWSER);
-    
+
     CefRefPtr<CefListValue> args = message->GetArgumentList();
     String name = message->GetName();
-    
+
     if (name == INVOKE_CALLBACK)
     {
         // invoke a callback function
-        
+
         // arguments:
         // 0: messageId
         // 1: function name
         // 2: return value of the native function
         // 3...: parameters to the callback function
-        
+
         int32 messageId = args->GetInt(0);
         CefString functionName = args->GetString(1);
-        
+
         DEBUG_LOG(TEXT("Invoking callback ") + String(functionName));
-        
+
         std::map<int32, AppCallback*>::iterator it = m_mapCallbacks.find(messageId);
-        
+
         if (it != m_mapCallbacks.end())
         {
             AppCallback* callback = it->second;
@@ -524,7 +524,7 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
             if (context->GetBrowser())
             {
                 context->Enter();
-                
+
                 int retval = args->GetInt(2);
                 if (retval == NO_ERROR)
                 {
@@ -535,10 +535,10 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
                         CefV8ValueList arguments;
                         for (size_t i = 3; i < args->GetSize(); i++)
                             arguments.push_back(ListValueToV8Value(args, (int) i));
-                
+
                         // execute the callback function
                         function->ExecuteFunctionWithContext(context, NULL, arguments);
-                        
+
                         // send a message that the callback has been completed
                         if (HasPersistentCallback(functionName))
                         {
@@ -552,7 +552,7 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
                 }
                 else
                     ThrowJavaScriptException(context, functionName, retval);
-                
+
                 context->Exit();
             }
 
@@ -563,7 +563,7 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
                 m_mapCallbacks.erase(it);
 			}
         }
-        
+
         return true;
     }
     else if (name == THROW_EXCEPTION)
@@ -571,11 +571,11 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
         // throw an exception
         int32 messageId = args->GetInt(0);
         std::map<int32, AppCallback*>::iterator it = m_mapCallbacks.find(messageId);
-        
+
         if (it != m_mapCallbacks.end())
             ThrowJavaScriptException(it->second->GetContext(), args->GetString(1), args->GetInt(2));
     }
-    
+
     return false;
 }
 
@@ -594,10 +594,10 @@ void AppExtensionHandler::ThrowJavaScriptException(CefRefPtr<CefV8Context> conte
         break;
     }
     code.append(TEXT("')"));
-        
+
     CefRefPtr<CefV8Value> rv;
     CefRefPtr<CefV8Exception> exception;
-        
+
     context->Eval(code, rv, exception);
 }
 

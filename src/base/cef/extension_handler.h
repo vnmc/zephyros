@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -56,26 +56,26 @@ public:
         : m_messageId(messageId), m_browser(browser), m_invokeJavaScriptCallbackCount(0)
     {
     }
-    
+
     ~ClientCallback();
-    
+
     void Invoke(String functionName, CefRefPtr<CefListValue> args);
-    
+
     inline int32 GetMessageId()
     {
         return m_messageId;
     }
-    
+
     inline int IncrementJavaScriptInvokeCallbackCount()
     {
         return ++m_invokeJavaScriptCallbackCount;
     }
-    
+
     inline int GetJavaScriptInvokeCallbackCount()
     {
         return m_invokeJavaScriptCallbackCount;
     }
-    
+
 private:
     int32 m_messageId;
     CefRefPtr<CefBrowser> m_browser;
@@ -96,17 +96,17 @@ public:
 		m_context = NULL;
 		m_function = NULL;
 	}
-    
+
     CefRefPtr<CefV8Context> GetContext()
     {
         return m_context;
     }
-    
+
     CefRefPtr<CefV8Value> GetFunction()
     {
         return m_function;
     }
-    
+
 private:
     CefRefPtr<CefV8Context> m_context;
     CefRefPtr<CefV8Value> m_function;
@@ -131,24 +131,24 @@ public:
     virtual void OnBrowserCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser) override;
     virtual void OnContextReleased(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context) override;
     virtual bool OnProcessMessageReceived(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message) override;
-    
+
 private:
     void AddCallback(CefRefPtr<CefV8Value> fnx);
     bool HasPersistentCallback(String functionName);
     void ThrowJavaScriptException(CefRefPtr<CefV8Context> context, CefString functionName, int retval);
-    
+
 private:
     String m_JavaScriptCode;
     std::map<String, bool> m_mapFunctionHasPersistentCallback;
 
     // map of message callbacks
     std::map<int32, AppCallback*> m_mapCallbacks;
-    
+
     int32 m_messageId;
-        
+
     IMPLEMENT_REFCOUNTING(AppExtensionHandler);
 };
-    
+
 } // namespace Zephyros
 
 

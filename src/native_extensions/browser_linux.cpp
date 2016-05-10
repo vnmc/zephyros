@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -74,19 +74,19 @@ bool OpenURLInBrowser(String url, Browser* browser)
     String cmd;
 
     if (!browser)
-        cmd = TEXT("xdg-open ")
+        cmd = TEXT("xdg-open ");
     else
     {
         cmd = browser->GetIdentifier();
         cmd.append(TEXT(" "));
     }
 
-    cmdString.append(url);
+    cmd.append(url);
 
     if (browser)
-        cmdString.append(TEXT(" &"));
+        cmd.append(TEXT(" &"));
 
-    system(cmdString.c_str());
+    system(cmd.c_str());
     return true;
 }
 
