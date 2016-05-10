@@ -344,7 +344,8 @@ app.createMenu([
 				caption: 'A_bout',
 				menuCommandId: 'about',
 				key: '1',
-				keyModifiers: 2
+				keyModifiers: 2,
+				image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAE0AAABNABiiVDWwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADGSURBVDiNrZM9DoJAEIW/2dCY0JtYcQY8ETU3svEQxFsIFl7AigvQQcJYMBg0zJqgL3nNzpvJ/LwVVWUJEcmAAsiBoz03QA2cVfXxlqCqWBEBSqAD1GFnGnnlLZKrSOInq7nIXKB0hFdrfy1WzuNnkbb3wCEyTpbYwlLWcQISJ5YCRWDatoc7cIvEc4DWabEHgrF3NK3XHsCoqiOAiIyeKDAZZCuawHSmrajBP+MA7IzDSrwDsm9Guhh9I/3Fyr98Jvn1Oz8Bubq3fk0YVC8AAAAASUVORK5CYII='
 			},
 			{ caption: '-' },
 			{
