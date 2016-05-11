@@ -56,8 +56,8 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
     {
         NSString *bundleID = (NSString*) CFArrayGetValueAtIndex(handlerApps, i);
             
-        // exclude Ghostlab
-        if ([ownBundleId isEqualToString: bundleID])
+        // exclude this app and the PBLinkHandler
+        if (bundleID == nil || [ownBundleId isEqualToString: bundleID] || [bundleID isEqualToString: @"com.apple.PBLinkHandler"])
             continue;
             
         NSString *bundlePath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier: bundleID];
@@ -124,7 +124,7 @@ bool OpenURLInBrowser(std::string strUrl, Browser* browser)
     // get the browser's bundle id
     NSString *bundleId = nil;
     if (browser != NULL)
-        *bundleId = [NSString stringWithUTF8String: browser->GetIdentifier().c_str()];
+        bundleId = [NSString stringWithUTF8String: browser->GetIdentifier().c_str()];
     
     return [[NSWorkspace sharedWorkspace] openURLs: @[ url ]
                            withAppBundleIdentifier: bundleId

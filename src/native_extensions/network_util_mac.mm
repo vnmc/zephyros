@@ -205,6 +205,8 @@ bool GetProxyForURL(String url, String& type, String& host, int& port, String& u
     DEBUG_LOG(@"GetProxyForURL %s", url.c_str());
     
     bool ret = false;
+    CFTypeRef res = NULL;
+
     NSURL *pUrl = [NSURL URLWithString: [NSString stringWithUTF8String: url.c_str()]];
         
     CFDictionaryRef proxySettings = SCDynamicStoreCopyProxies(NULL);
@@ -233,8 +235,6 @@ bool GetProxyForURL(String url, String& type, String& host, int& port, String& u
                     if (scriptURL != NULL)
                     {
                         DEBUG_LOG(@"GetProxyForURL has script URL %@", scriptURL);
-                        
-                        CFTypeRef res = NULL;
                         CFStreamClientContext context = { 0, &res, NULL, NULL, NULL };
                             
                         // Work around <rdar://problem/5530166>.  This dummy call to
@@ -267,12 +267,6 @@ bool GetProxyForURL(String url, String& type, String& host, int& port, String& u
                                     DEBUG_LOG(@"GetProxyForURL proxyType=%@", proxyType);
                                 }
                             }
-                        }
-                        
-                        if (res != NULL)
-                        {
-                            DEBUG_LOG(@"GetProxyForURL releasing res");
-                            CFRelease(res);
                         }
                     }
                 }
@@ -398,6 +392,12 @@ bool GetProxyForURL(String url, String& type, String& host, int& port, String& u
         CFRelease(proxySettings);
     }
  
+    if (res != NULL)
+    {
+        DEBUG_LOG(@"GetProxyForURL releasing res");
+        CFRelease(res);
+    }
+
     return ret;
 }
 
