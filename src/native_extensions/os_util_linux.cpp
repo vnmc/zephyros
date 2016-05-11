@@ -75,6 +75,8 @@ extern int g_nMinWindowHeight;
 
 extern GtkWidget* g_pMenuBar;
 
+std::vector<char**> g_menuCommands;
+
 
 void CleanupStartProcessThreadData(void* arg)
 {
@@ -179,6 +181,26 @@ void* startProcessThread(void* arg)
     // clean up
     posix_spawn_file_actions_destroy(&action);
     pthread_cleanup_pop(arg);
+}
+
+
+gboolean OnActivateMenuItem(GtkWidget* widget, gpointer data)
+{
+    if (strcmp((char*) data, MENUCOMMAND_TERMINATE))
+        Zephyros::App::Quit();
+    else if (strcmp((char*) data, MENUCOMMAND_CHECK_UPDATE))
+    {
+    }
+    else if (strcmp((char*) data, MENUCOMMAND_ENTER_LICENSE))
+        Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
+    else if (strcmp((char*) data, MENUCOMMAND_PURCHASE_LICENSE))
+        Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
+    else
+    {
+        CefRefPtr<CefListValue> args = CefListValue::Create();
+        args->SetString(0, (char*) data);
+        g_handler->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onMenuCommand"), args);
+    }
 }
 
 
@@ -341,6 +363,9 @@ void CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIs
 		}
 		else
 		{
+            // NOTE: we don't support "systemCommandIds on Linux
+            // AFAIK there are no "default" menu actions that could benefit from this
+
             if (item->HasKey(TEXT("subMenuItems")))
             {
                 pMenuItem = gtk_menu_item_new_with_mnemonic(strCaption.c_str());
@@ -348,28 +373,28 @@ void CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIs
                 gtk_menu_item_set_submenu(GTK_MENU_ITEM(pMenuItem), pSubMenu);
                 CreateMenuRecursive(pSubMenu, item->GetList(TEXT("subMenuItems")), bIsInDemoMode);
             }
-            else
+            else if (item->HasKey(TEXT("menuCommandId")))
             {
-                if (item->HasKey(TEXT("systemCommandId")))
-                {
-                }
-                else if (item->HasKey(TEXT("menuCommandId")))
-                {
-                    String strCommandId = item->GetString(TEXT("menuCommandId"));
+                String strCommandId = item->GetString(TEXT("menuCommandId"));
 
-                    if (!bIsInDemoMode && (strCommandId == TEXT(MENUCOMMAND_ENTER_LICENSE) || strCommandId == TEXT(MENUCOMMAND_PURCHASE_LICENSE)))
-                        continue;
+                if (!bIsInDemoMode && (strCommandId == TEXT(MENUCOMMAND_ENTER_LICENSE) || strCommandId == TEXT(MENUCOMMAND_PURCHASE_LICENSE)))
+                    continue;
 
-                    pMenuItem = gtk_menu_item_new_with_mnemonic(strCaption.c_str());
+                // ignore images on linux (they don't show in GTK 3)
+                pMenuItem = gtk_menu_item_new_with_mnemonic(strCaption.c_str());
 
-                    // special command IDs
+                char* cmd = new char[strCommandId.length() + 1];
+                strcpy(cmd, strCommandId.c_str());
+                g_signal_connect(G_OBJECT(pMenuItem), "activate", G_CALLBACK(OnActivateMenuItem), cmd);
+                g_menuCommands.push_back(&cmd);
 
-                    // TODO: implement handlers, icons, accels
-                }
+                // TODO: accels
             }
 		}
 
         gtk_menu_shell_append(GTK_MENU_SHELL(pMenu), pMenuItem);
+        gtk_widget_show(pMenuItem);
+
         bPrevItemWasSeparator = false;
     }
 }
@@ -513,6 +538,8 @@ void CopyToClipboard(String text)
 
 void CleanUp()
 {
+    for (char** cmd : g_menuCommands)
+        delete[] *cmd;
 }
 
 } // namespace OSUtil
