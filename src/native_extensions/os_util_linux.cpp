@@ -67,6 +67,13 @@ typedef struct
     String cwd;
 } StartProcessThreadData;
 
+typedef struct
+{
+    char* cmd;
+    GtkWidget* pMenuItem;
+    GClosure* pClosure;
+} MenuItemData;
+
 
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
 
@@ -75,7 +82,8 @@ extern int g_nMinWindowHeight;
 
 extern GtkWidget* g_pMenuBar;
 
-std::vector<char**> g_menuCommands;
+GtkAccelGroup* g_pAccelGroup = NULL;
+std::map<String, MenuItemData*> g_mapMenuItems;
 
 
 void CleanupStartProcessThreadData(void* arg)
@@ -184,23 +192,29 @@ void* startProcessThread(void* arg)
 }
 
 
-gboolean OnActivateMenuItem(GtkWidget* widget, gpointer data)
+void OnMenuCommand(char* command)
 {
-    if (strcmp((char*) data, MENUCOMMAND_TERMINATE))
+    if (strcmp(command, MENUCOMMAND_TERMINATE) == 0)
         Zephyros::App::Quit();
-    else if (strcmp((char*) data, MENUCOMMAND_CHECK_UPDATE))
+    else if (strcmp(command, MENUCOMMAND_CHECK_UPDATE) == 0)
     {
     }
-    else if (strcmp((char*) data, MENUCOMMAND_ENTER_LICENSE))
+    else if (strcmp(command, MENUCOMMAND_ENTER_LICENSE) == 0)
         Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
-    else if (strcmp((char*) data, MENUCOMMAND_PURCHASE_LICENSE))
+    else if (strcmp(command, MENUCOMMAND_PURCHASE_LICENSE) == 0)
         Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
     else
     {
         CefRefPtr<CefListValue> args = CefListValue::Create();
-        args->SetString(0, (char*) data);
+        args->SetString(0, command);
         g_handler->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onMenuCommand"), args);
     }
+}
+
+
+void OnActivateMenuItem(GtkWidget* widget, gpointer data)
+{
+    OnMenuCommand((char*) data);
 }
 
 
@@ -303,7 +317,9 @@ String GetConfigDirectory()
 
 String GetComputerName()
 {
-	return OSUtil::Exec(TEXT("hostname"));
+    char name[256 + 1];
+    gethostname(name, 256);
+    return String(name);
 }
 
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
@@ -339,10 +355,11 @@ String Exec(String command)
     return result.str();
 }
 
-void CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsInDemoMode)
+int CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsInDemoMode)
 {
     bool bPrevItemWasSeparator = false;
     int nNumItems = (int) menuItems->GetSize();
+    int nNumItemsAdded = 0;
 
 	for (int i = 0; i < nNumItems; ++i)
 	{
@@ -368,10 +385,18 @@ void CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIs
 
             if (item->HasKey(TEXT("subMenuItems")))
             {
-                pMenuItem = gtk_menu_item_new_with_mnemonic(strCaption.c_str());
                 GtkWidget* pSubMenu = gtk_menu_new();
-                gtk_menu_item_set_submenu(GTK_MENU_ITEM(pMenuItem), pSubMenu);
-                CreateMenuRecursive(pSubMenu, item->GetList(TEXT("subMenuItems")), bIsInDemoMode);
+                if (CreateMenuRecursive(pSubMenu, item->GetList(TEXT("subMenuItems")), bIsInDemoMode) > 0)
+                {
+                    pMenuItem = gtk_menu_item_new_with_mnemonic(strCaption.c_str());
+                    gtk_menu_item_set_submenu(GTK_MENU_ITEM(pMenuItem), pSubMenu);
+                }
+                else
+                {
+                    // no menu items were added to the submenu; don't add this menu
+                    gtk_widget_destroy(GTK_WIDGET(pSubMenu));
+                    continue;
+                }
             }
             else if (item->HasKey(TEXT("menuCommandId")))
             {
@@ -380,41 +405,108 @@ void CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIs
                 if (!bIsInDemoMode && (strCommandId == TEXT(MENUCOMMAND_ENTER_LICENSE) || strCommandId == TEXT(MENUCOMMAND_PURCHASE_LICENSE)))
                     continue;
 
-                // ignore images on linux (they don't show in GTK 3)
+                // create the menu item; ignore images on linux (they don't show in GTK 3)
                 pMenuItem = gtk_menu_item_new_with_mnemonic(strCaption.c_str());
+                MenuItemData* pData = new MenuItemData;
+                pData->pMenuItem = pMenuItem;
 
+                // create the handler
                 char* cmd = new char[strCommandId.length() + 1];
                 strcpy(cmd, strCommandId.c_str());
-                g_signal_connect(G_OBJECT(pMenuItem), "activate", G_CALLBACK(OnActivateMenuItem), cmd);
-                g_menuCommands.push_back(&cmd);
+                pData->cmd = cmd;
+                g_signal_connect(G_OBJECT(pMenuItem), TEXT("activate"), G_CALLBACK(OnActivateMenuItem), cmd);
 
-                // TODO: accels
+                // create the accelerator
+                if (item->HasKey(TEXT("key")))
+                {
+                    String strKey = item->GetString(TEXT("key"));
+                    String strAccelPath = TEXT("<MainWnd>/") + strCommandId;
+
+					int nModifiers = 0;
+					if (item->HasKey(TEXT("keyModifiers")))
+						nModifiers = item->GetInt(TEXT("keyModifiers"));
+
+                    guint key = (guint) strKey.at(0);
+                    GdkModifierType modifier = (GdkModifierType) (((nModifiers & 1) ? GDK_SHIFT_MASK : 0) | ((nModifiers & 2) ? GDK_CONTROL_MASK : 0) | ((nModifiers & 4) ? GDK_MOD1_MASK : 0));
+
+                    gtk_accel_map_add_entry(strAccelPath.c_str(), key, modifier);
+                    gtk_menu_item_set_accel_path(GTK_MENU_ITEM(pMenuItem), strAccelPath.c_str());
+
+                    GClosure* pClosure = g_cclosure_new_swap(G_CALLBACK(OnMenuCommand), cmd, NULL);
+                    gtk_accel_group_connect(g_pAccelGroup, key, modifier, (GtkAccelFlags) 0, pClosure);
+                    pData->pClosure = pClosure;
+                }
+                else
+                    pData->pClosure = NULL;
+
+                g_mapMenuItems[strCommandId] = pData;
             }
+
+            bPrevItemWasSeparator = false;
 		}
 
-        gtk_menu_shell_append(GTK_MENU_SHELL(pMenu), pMenuItem);
-        gtk_widget_show(pMenuItem);
-
-        bPrevItemWasSeparator = false;
+        // add the menu item if it was created
+        if (pMenuItem)
+        {
+            ++nNumItemsAdded;
+            gtk_menu_shell_append(GTK_MENU_SHELL(pMenu), pMenuItem);
+            gtk_widget_show(pMenuItem);
+        }
     }
+
+    return nNumItemsAdded;
+}
+
+void ClearMenuItemData()
+{
+    for (std::map<String, MenuItemData*>::iterator it = g_mapMenuItems.begin(); it != g_mapMenuItems.end(); ++it)
+    {
+        if (it->second->pClosure)
+            g_closure_unref(it->second->pClosure);
+
+        delete[] it->second->cmd;
+        delete it->second;
+    }
+
+    g_mapMenuItems.clear();
 }
 
 void CreateMenu(JavaScript::Array menuItems)
 {
-    // TODO: empty existing menu bar
-    // Round 1
+    GtkWindow* window = GTK_WINDOW(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
+
+    // remove existing menu items
+    for (GList* pList = gtk_container_get_children(GTK_CONTAINER(g_pMenuBar)); pList; pList = pList->next)
+        gtk_widget_destroy(GTK_WIDGET(pList->data));
+    ClearMenuItemData();
+
+    // clear the existing accelerator table
+    if (g_pAccelGroup)
+    {
+        GtkWindow* window = GTK_WINDOW(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
+        gtk_window_remove_accel_group(window, g_pAccelGroup);
+    }
+
+    // create the new accelerator group and create the menu
+    g_pAccelGroup = gtk_accel_group_new();
     CreateMenuRecursive(g_pMenuBar, menuItems, Zephyros::GetLicenseManager() != NULL && Zephyros::GetLicenseManager()->IsInDemoMode());
+    gtk_window_add_accel_group(window, g_pAccelGroup);
 }
 
 void RemoveMenuItem(String strCommandId)
 {
-   /* GList *children = gtk_container_get_children(GTK_CONTAINER(g_pMenuBar));
-    GList *l;
-    for (l = children; l != NULL; l = l->next)
-    {
-        std::cout << "Child " << l << std::endl;
-    }*/
-    // Round 1
+    std::map<String, MenuItemData*>::iterator it = g_mapMenuItems.find(strCommandId.c_str());
+    if (it == g_mapMenuItems.end())
+        return;
+
+    gtk_widget_destroy(GTK_WIDGET(it->second->pMenuItem));
+    if (it->second->pClosure)
+        g_closure_unref(it->second->pClosure);
+
+    delete[] it->second->cmd;
+    delete it->second;
+
+    g_mapMenuItems.erase(it);
 }
 
 MenuHandle CreateContextMenu(JavaScript::Array menuItems)
@@ -442,10 +534,12 @@ int lastHeight = -1;
 void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bool hasHeight, int* pNewWidth, int* pNewHeight)
 {
     // TODO: fullscreen not handled yet
-    GdkScreen *screen = gdk_screen_get_default();
-    GtkWindow *window = GTK_WINDOW( gtk_widget_get_ancestor (App::GetMainHwnd(), GTK_TYPE_WINDOW) );
+    GdkScreen* screen = gdk_screen_get_default();
+    GtkWindow* window = GTK_WINDOW(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
+
     gint screenWidth = gdk_screen_get_width(screen);
     gint screenHeight = gdk_screen_get_height(screen);
+
     gint posX;
     gint posY;
     gtk_window_get_position(window, &posX, &posY);
@@ -458,7 +552,7 @@ void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bo
     if (hasWidth)
     {
         // do we need to restore the lastOriginX?
-        if ( lastWidth > width  && lastOriginX != INT_MIN)
+        if (lastWidth > width && lastOriginX != INT_MIN)
         {
             if (!windowMoved)
                 newPosX = lastOriginX;
@@ -526,8 +620,8 @@ void DisplayNotification(String title, String details)
 
 void RequestUserAttention()
 {
-    GtkWindow *window = GTK_WINDOW(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
-    gtk_window_set_urgency_hint (window, true);
+    GtkWindow* window = GTK_WINDOW(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
+    gtk_window_set_urgency_hint(window, true);
 }
 
 void CopyToClipboard(String text)
@@ -538,8 +632,7 @@ void CopyToClipboard(String text)
 
 void CleanUp()
 {
-    for (char** cmd : g_menuCommands)
-        delete[] *cmd;
+    ClearMenuItemData();
 }
 
 } // namespace OSUtil
