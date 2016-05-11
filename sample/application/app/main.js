@@ -27,8 +27,6 @@ function getParameterAsPath()
 
 $(document).ready(function()
 {
-   
-    
 	// find all the browsers installed on the system
 	app.getBrowsers(function(browsers)
 	{
@@ -38,11 +36,11 @@ $(document).ready(function()
 		browsers.forEach(function(browser)
 		{
 			var $elt = $('<li><img src="' + browser.image + '"/> ' + browser.name + '</li>');
-            alert('browser: ' + JSON.stringify(browser));
+
 			// open a webpage in that browser when the list entry is clicked
 			$elt.click(function()
 			{
-				app.openURL('http://www.vanamco.com', browser);
+				app.openURLWithBrowser('http://www.vanamco.com', browser);
 			});
 
 			$eltBrowsers.append($elt);
@@ -345,7 +343,7 @@ var menu = [
 				menuCommandId: 'about',
 				key: '1',
 				keyModifiers: 2,
-				image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAE0AAABNABiiVDWwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADGSURBVDiNrZM9DoJAEIW/2dCY0JtYcQY8ETU3svEQxFsIFl7AigvQQcJYMBg0zJqgL3nNzpvJ/LwVVWUJEcmAAsiBoz03QA2cVfXxlqCqWBEBSqAD1GFnGnnlLZKrSOInq7nIXKB0hFdrfy1WzuNnkbb3wCEyTpbYwlLWcQISJ5YCRWDatoc7cIvEc4DWabEHgrF3NK3XHsCoqiOAiIyeKDAZZCuawHSmrajBP+MA7IzDSrwDsm9Guhh9I/3Fyr98Jvn1Oz8Bubq3fk0YVC8AAAAASUVORK5CYII='
+				image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAyVBMVEX///8AceMAbfEAbfAAbvEAbfAAbPAAbfAAbfAAbe0AbPAAbu8AbfAAbfAAZv8AbfAAAP8AbPEAbfAAbfAAb/QAbfAAbvAAbfAAbfEAbfAAgP8AbfAAbfAAbfAAbPAAbPAAbvAAbvAAbfAAbe4AbPEAbvAAbPAAavQAcO8AgP8Abf8Abe8Ab/EAbfAAbfEAbfAAa/AAgP8AbvIAbe8AbfAAbfAAbfAAbO8AbfAAbPAAa/IAbPAAbfAAbfAAbu8AYP8AbfAAbfAAAADoM+EfAAAAQXRSTlMACUt3kKnB2vMcaLP2ZwXQAVrc0Re+M+Nb9wKKr/61hIe68D1HZnYYIAYHMTe3wrkyBDrE+PvnYSPdE0Luy0EI+mvg8b0AAAABYktHREIQ1z30AAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4AUKEgMIR5ly2QAAAexJREFUWMOlV+d6wjAMNFlklRD27J50LzYFv/9LtYmBLxROMZ/u7+kusS1bkhAABcO0bKfoukXHtkyjII6C5weh3EEYnHi66pIfyYOI/JKGvBxXJEQlLufpjaokUTVIea0uc1GvYX2jma+XstlA+lZbRy9lu3VQ3unqyRN0Owf0PX29lL19hyO+n/7D3vqP00v5bx8amvuX2cmds6hpnd8umtl8QPnTPz07v0AO9Uz+gpDLq4S9DgG9zeoyyv8bxd8Curq5WTH6yTvF3yM+VnwJ3d/+gwoY9EFARb0PPtzoR2XwBAP8lI8g/6yS/AUGRAnvSYzXt/fBxycR4JErSPD1TdLJGgLJQCBEIeQYhAWYhSmGo/F4NKQiDGES7GSa7PJ0QoSYwiLYmcqDGRFiCRuT7vrd6rg4xhYOJqub20YUG0cUMRltDHCuyqJweQYu34C9BIdn4FDHqGNgU4mkY2BRqaxjYFKXScfAoK6zhsHfdSYeFA2DgHzSNAx88lHVMPBIOt8gogtLvoFPl7Zcg3Vpg8V1vq6+5TkIiPPK+7qLaQB6W95hNi7SXywtAJ1pm1GLE/0slz9oBzItDtFkrVaI2Wmy2G0ev9Hkt7r8Zpvd7gv2wCH4Iw9/6BLssU/wB0/BHn1T8IZvBd3x/xdrydrnZYcmgAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNi0wNS0xMFQxODowMzowOCswMjowMAR5TEIAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTYtMDUtMTBUMTg6MDM6MDgrMDI6MDB1JPT+AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAABJRU5ErkJggg=='
 			},
 			{ caption: '-' },
 			{
