@@ -28,6 +28,7 @@
 #include "lib/cef/include/cef_browser.h"
 #include "lib/cef/include/cef_frame.h"
 
+#include "base/app.h"
 #include "base/cef/client_handler.h"
 
 
@@ -42,7 +43,18 @@ void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 
 bool ClientHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event)
 {
-	return false;
+    guint key = event.unmodified_character;
+    if (event.modifiers & GDK_CONTROL_MASK)
+    {
+        // translate keys
+        if (0 <= key && key < 26)
+            key += (guint) 'a' - 1;
+    }
+
+    printf("OnKeyEvent: %d %d | %d\n", key, event.modifiers, event.native_key_code);
+
+    GObject* window = G_OBJECT(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
+    return gtk_accel_groups_activate(window, key, (GdkModifierType) event.modifiers) ? true : false;
 }
 
 } // namespace Zephyros

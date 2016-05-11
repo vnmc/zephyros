@@ -282,7 +282,7 @@ public:
 	void SetMainHwnd(ClientWindowHandle handle);
 	ClientWindowHandle GetMainHwnd() const;
 
-#if OS_WIN
+#ifdef OS_WIN
 	inline HACCEL GetAccelTable() { return m_hAccelTable; }
 	inline void SetAccelTable(HACCEL hAccelTable) { m_hAccelTable = hAccelTable; }
 #endif
