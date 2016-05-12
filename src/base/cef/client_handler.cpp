@@ -397,8 +397,7 @@ void ClientHandler::OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, Ter
 
 	// load the startup URL if that's not the website that we terminated on
 	CefRefPtr<CefFrame> frame = browser->GetMainFrame();
-	String url = frame->GetURL();
-	std::transform(url.begin(), url.end(), url.begin(), tolower);
+	String url = ToLower(frame->GetURL());
 
 	String startupURL(Zephyros::GetAppURL());
 	if (startupURL != TEXT("chrome://crash") && !url.empty() && url.find(startupURL) != 0)

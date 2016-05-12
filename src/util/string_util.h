@@ -40,5 +40,9 @@ String& RTrim(String &s);
 
 String& Trim(String &s);
 
+String ToLower(String s);
+
+String ToUpper(String s);
+
 
 #endif // Zephyros_StringUtil_h
