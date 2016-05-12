@@ -733,6 +733,12 @@ declare module NativeInterface
 	export interface IMenuItem
 	{
 		caption: string;
+		
+		/**
+		 * A single character or a function key ("F1", "F2", ...) or one of
+		 * "left", "right", "up", "down", "page up", "page down", "home", "end", "insert", "delete".
+		 * The values are not case sensitive.
+		 */
 		key?: string;
 		
 		/**

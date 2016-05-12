@@ -58,14 +58,14 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////
 // FileWatcher Implementation
 
-bool isFileEmpty(String directory, String filename)
+bool IsFileEmpty(String directory, String filename)
 {
     // TODO: implement
     return false;
 }
 
 
-void recurseDir(const char *name, int level, std::unordered_map<int, String> *watchMap, int fd)
+void RecurseDir(const char *name, int level, std::unordered_map<int, String> *watchMap, int fd)
 {
     DIR* dir = opendir(name);
     if (!dir)
@@ -89,14 +89,15 @@ void recurseDir(const char *name, int level, std::unordered_map<int, String> *wa
 
             int wd = inotify_add_watch(fd, path, IN_MODIFY | IN_CREATE | IN_DELETE);
             watchMap->insert(std::pair<int, String>(wd, String(path)));
-            recurseDir(path, level + 1, watchMap, fd);
+            RecurseDir(path, level + 1, watchMap, fd);
         }
     } while (entry = readdir(dir));
 
     closedir(dir);
 }
 
-void processEvent(char* buffer, int len, Zephyros::FileWatcher* watcher, std::unordered_map<int, String> watchMap, std::vector<String>* extensions)
+
+void ProcessEvent(char* buffer, int len, Zephyros::FileWatcher* watcher, std::unordered_map<int, String> watchMap, std::vector<String>* extensions)
 {
    int i = 0;
    std::vector<String> changes;
@@ -146,7 +147,7 @@ void CleanupThreadData(void* arg)
 }
 
 
-void* startWatchingThread(void* arg)
+void* StartWatchingThread(void* arg)
 {
     char buffer[BUF_LEN];
     FileWatchThreadData* data = (FileWatchThreadData*) arg;
@@ -158,7 +159,7 @@ void* startWatchingThread(void* arg)
     watchMap.insert(std::pair<int, String>(wd, data->path->GetPath()));
 
     // recursively add all directories below root dir to the watch
-    recurseDir(data->path->GetPath().c_str(), 0, &watchMap, fd);
+    RecurseDir(data->path->GetPath().c_str(), 0, &watchMap, fd);
 
     timespec waitTime;
     waitTime.tv_sec = 60;
@@ -188,11 +189,13 @@ void* startWatchingThread(void* arg)
         else if (FD_ISSET(fd, &descriptors))
         {
             int len = read(fd, buffer, BUF_LEN);
-            processEvent(buffer, len, data->watcher, watchMap, data->extensions);
+            ProcessEvent(buffer, len, data->watcher, watchMap, data->extensions);
         }
     }
 
     pthread_cleanup_pop(arg);
+
+    return NULL;
 }
 
 
@@ -220,7 +223,7 @@ void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions)
         data->extensions->push_back(ext);
 
     // start thread
-    pthread_create(&m_thread, NULL, startWatchingThread, data);
+    pthread_create(&m_thread, NULL, StartWatchingThread, data);
 
 }
 
@@ -245,6 +248,7 @@ bool FileWatcher::ReadFile(String filePath, char** pBuf, size_t* pLen)
     fs.seekg(0, std::ios::beg);
     fs.read(*pBuf, *pLen);
     fs.close();
+
     return true;
 }
 

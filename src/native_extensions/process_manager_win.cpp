@@ -258,9 +258,8 @@ bool ProcessManager::CreateProcess(
 	// prepare the command line
 	String cmdLine;
 	size_t pos = strExePath.find_last_of(TEXT('.'));
-	String extension = pos == String::npos ? TEXT("") : strExePath.substr(pos);
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-
+	String extension = pos == String::npos ? TEXT("") : ToLower(strExePath.substr(pos));
+	
 	if (extension != TEXT(".exe"))
 	{
 		// if this is no exe file, use "cmd.exe /C <file> <args>"

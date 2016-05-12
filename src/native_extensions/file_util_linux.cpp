@@ -74,7 +74,7 @@ bool OpenFileDlg(GtkFileChooserAction action, int titleId, int okId, Zephyros::P
  * Stores the binary flag in result[0], the image flag in result[1],
  * and returns the mime type for further processing.
  */
-String checkForBinaryAndImage(String filename, bool& isBinary, bool& isImage)
+String CheckForBinaryAndImage(String filename, bool& isBinary, bool& isImage)
 {
     isBinary = false;
     isImage = false;
@@ -101,7 +101,7 @@ String checkForBinaryAndImage(String filename, bool& isBinary, bool& isImage)
 /**
  * Get the filename for the preferences file, to use in Load/StorePreferences.
  */
-String getPreferencesFile()
+String GetPreferencesFile()
 {
     String strFilename(Zephyros::OSUtil::GetConfigDirectory());
 	strFilename.append(TEXT("/"));
@@ -180,7 +180,7 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
 {
     bool isBinary;
     bool isImage;
-    String mimeType = checkForBinaryAndImage(filename, isBinary, isImage);
+    String mimeType = CheckForBinaryAndImage(filename, isBinary, isImage);
 
     std::ifstream fs;
     fs.open(filename, std::ios::in);
@@ -222,6 +222,8 @@ bool WriteFile(String filename, String contents)
 
     file << contents;
     file.close();
+
+    return true;
 }
 
 bool DeleteFiles(String filenames)
@@ -244,7 +246,7 @@ bool DeleteFiles(String filenames)
 
 void LoadPreferences(String key, String& data)
 {
-    std::ifstream fs(getPreferencesFile());
+    std::ifstream fs(GetPreferencesFile());
     if (!fs.is_open())
         return;
 
@@ -262,7 +264,7 @@ void LoadPreferences(String key, String& data)
 
 void StorePreferences(String key, String data)
 {
-    String prefFile = getPreferencesFile();
+    String prefFile = GetPreferencesFile();
     std::ifstream fsIn(prefFile);
 
     StringStream newContents;

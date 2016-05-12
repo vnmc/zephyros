@@ -373,7 +373,8 @@ var menu = [
 				subMenuItems: [
 					{
 						caption: 'Select File',
-						menuCommandId: 'select_file'
+						menuCommandId: 'select_file',
+						key: 'f11'
 					},
 					{
 						caption: 'Open Recent',
