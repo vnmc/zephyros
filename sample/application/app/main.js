@@ -334,7 +334,7 @@ $(document).ready(function()
 });
 
 // create the app menu
-app.createMenu([
+var menu = [
 	{
 		caption: '_App',
 		subMenuItems: [
@@ -364,7 +364,9 @@ app.createMenu([
 		subMenuItems: [
 			{
 				caption: 'New',
-				menuCommandId: 'new'
+				menuCommandId: 'new',
+				key: 'n',
+				keyModifiers: 2
 			},
 			{
 				caption: 'Open',
@@ -398,7 +400,20 @@ app.createMenu([
 			}
 		]
 	}
-]);
+];
+app.createMenu(menu);
+
+setTimeout(function()
+{
+    menu.push({
+        caption: '_New Menu',
+        subMenuItems: [
+            { caption: 'M1', menuCommandId: 'M1' },
+            { caption: 'M2', menuCommandId: 'M2' }
+        ]
+    });
+    app.createMenu(menu);
+}, 50000);
 
 // react to the menu
 app.onMenuCommand(function(commandId)
