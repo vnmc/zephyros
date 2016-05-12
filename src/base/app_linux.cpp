@@ -50,13 +50,18 @@ String GetUserAgent()
 {
     StringStream ssUserAgent;
 
-    ssUserAgent << Zephyros::GetAppName() << " " << Zephyros::GetAppVersion() << "; " << Zephyros::OSUtil::GetOSVersion();
+    ssUserAgent << Zephyros::GetAppName() << TEXT(" ") << Zephyros::GetAppVersion() << TEXT("; ") << Zephyros::OSUtil::GetOSVersion() << TEXT("; ");
 
-    bool isLangAdded = false;
-
-    // TODO: get system language
-
-    if (!isLangAdded)
+    String lang = getenv(TEXT("LANG"));
+    if (lang.length() > 0)
+    {
+        size_t idx = lang.find(TEXT('.'));
+        if (idx != String::npos)
+            ssUserAgent << lang.substr(0, idx);
+        else
+            ssUserAgent << lang;
+    }
+    else
     {
         // default language if no languages are found
         ssUserAgent << "en";
@@ -67,15 +72,10 @@ String GetUserAgent()
 
 void Quit()
 {
-	// close the app's main window
-	// TODO
+    QuitMessageLoop();
 
-	if (g_pLogFile != NULL)
-	{
-        g_pLogFile->close();
-        delete g_pLogFile;
-        g_pLogFile = NULL;
-    }
+    GtkWidget* window = GTK_WIDGET(gtk_widget_get_ancestor(App::GetMainHwnd(), GTK_TYPE_WINDOW));
+    gtk_widget_destroy(window);
 }
 
 void QuitMessageLoop()

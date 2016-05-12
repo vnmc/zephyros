@@ -59,7 +59,7 @@ String GetUserAgent()
 		strOS = strOS.substr(0, strOS.length() - 1);
 
 	StringStream ssUserAgent;
-	ssUserAgent << Zephyros::GetAppName() << " " << Zephyros::GetAppVersion() << TEXT("; Windows NT/") << strOS << TEXT("; ");
+	ssUserAgent << Zephyros::GetAppName() << TEXT(" ") << Zephyros::GetAppVersion() << TEXT("; Windows NT/") << strOS << TEXT("; ");
 
 	bool isLangAdded = false;
 

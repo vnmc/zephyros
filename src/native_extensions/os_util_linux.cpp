@@ -48,6 +48,8 @@
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
 
+#include "util/string_util.h"
+
 #include "native_extensions/os_util.h"
 
 #include <iostream>
@@ -94,8 +96,12 @@ void CleanupStartProcessThreadData(void* arg)
 }
 
 
-// cf. http://stackoverflow.com/questions/13893085/posix-spawnp-and-piping-child-output-to-a-string
-void* startProcessThread(void* arg)
+/**
+ * Starts a new process and reads from its output streams.
+ *
+ * cf. http://stackoverflow.com/questions/13893085/posix-spawnp-and-piping-child-output-to-a-string
+ */
+void* StartProcessThread(void* arg)
 {
     StartProcessThreadData* data = (StartProcessThreadData*) arg;
     int exit_code;
@@ -189,6 +195,8 @@ void* startProcessThread(void* arg)
     // clean up
     posix_spawn_file_actions_destroy(&action);
     pthread_cleanup_pop(arg);
+
+    return NULL;
 }
 
 
@@ -198,6 +206,8 @@ void OnMenuCommand(char* command)
         Zephyros::App::Quit();
     else if (strcmp(command, MENUCOMMAND_CHECK_UPDATE) == 0)
     {
+        // TODO: linux updater; for now just go the download URL
+        Zephyros::GetLicenseManager()->OpenPurchaseLicenseURL();
     }
     else if (strcmp(command, MENUCOMMAND_ENTER_LICENSE) == 0)
         Zephyros::GetLicenseManager()->ShowEnterLicenseDialog();
@@ -335,7 +345,7 @@ void StartProcess(CallbackId callback, String executableFileName, std::vector<St
 
     // start thread
     pthread_t thread;
-    pthread_create(&thread, NULL, startProcessThread, data);
+    pthread_create(&thread, NULL, StartProcessThread, data);
 }
 
 String Exec(String command)
@@ -420,13 +430,39 @@ int CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsI
                 if (item->HasKey(TEXT("key")))
                 {
                     String strKey = item->GetString(TEXT("key"));
+                    String strKeyLc = ToLower(strKey);
                     String strAccelPath = TEXT("<MainWnd>/") + strCommandId;
 
 					int nModifiers = 0;
 					if (item->HasKey(TEXT("keyModifiers")))
 						nModifiers = item->GetInt(TEXT("keyModifiers"));
 
-                    guint key = (guint) strKey.at(0);
+                    guint key = 0;
+                    if (strKeyLc == "left")
+                        key = GDK_KEY_Left;
+                    else if (strKeyLc == "right")
+                        key = GDK_KEY_Right;
+                    else if (strKeyLc == "up")
+                        key = GDK_KEY_Up;
+                    else if (strKeyLc == "down")
+                        key = GDK_KEY_Down;
+                    else if (strKeyLc == "page up" || strKeyLc == "pageup")
+                        key = GDK_KEY_Page_Up;
+                    else if (strKeyLc == "page down" || strKeyLc == "pagedown")
+                        key = GDK_KEY_Page_Down;
+                    else if (strKeyLc == "home")
+                        key = GDK_KEY_Home;
+                    else if (strKeyLc == "end")
+                        key = GDK_KEY_End;
+                    else if (strKeyLc == "insert")
+                        key = GDK_KEY_Insert;
+                    else if (strKeyLc == "delete")
+                        key = GDK_KEY_Delete;
+                    else if (strKeyLc.length() > 0 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
+                        key = GDK_KEY_F1 + atoi(strKey.substr(1).c_str()) - 1;
+                    else
+                        key = (guint) strKey.at(0);
+
                     GdkModifierType modifier = (GdkModifierType) (((nModifiers & 1) ? GDK_SHIFT_MASK : 0) | ((nModifiers & 2) ? GDK_CONTROL_MASK : 0) | ((nModifiers & 4) ? GDK_MOD1_MASK : 0));
 
                     gtk_accel_map_add_entry(strAccelPath.c_str(), key, modifier);
