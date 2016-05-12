@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -37,6 +37,8 @@
 
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
+
+#include "util/string_util.h"
 
 #include "native_extensions/file_util.h"
 #include "native_extensions/image_util_win.h"

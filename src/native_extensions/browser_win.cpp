@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,6 +32,8 @@
 
 #include "base/app.h"
 #include "base/logging.h"
+
+#include "util/string_util.h"
 
 #include "native_extensions/browser.h"
 #include "native_extensions/image_util_win.h"
@@ -434,13 +436,12 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 			strDefaultBrowserKey.find(search) != String::npos :
 			false;
 
-		browsers.push_back(new Browser(
+		(*ppBrowsers)->push_back(new Browser(
 			TEXT("Microsoft Edge"),
 			GetExeVersion(edgeExe),
 			TEXT("microsoft-edge:"),
 			strIcon,
-			isEdgeDefault,
-			0
+			isEdgeDefault
 		));
 	}	
 }

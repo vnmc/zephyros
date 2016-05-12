@@ -40,12 +40,12 @@
 
 #ifdef OS_LINUX
 #include <map>
+#include <pthread.h>
 #endif
 
 #include <vector>
 #include <map>
 #include <string>
-#include <pthread.h>
 
 #include "base/types.h"
 #include "native_extensions/path.h"

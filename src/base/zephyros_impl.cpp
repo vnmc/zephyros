@@ -31,6 +31,10 @@
 #include <tchar.h>
 #endif
 
+#ifdef OS_LINUX
+#include <X11/Xlib.h>
+#endif
+
 #include "base/types.h"
 #include "native_extensions/path.h"
 #include "util/string_util.h"
@@ -148,6 +152,10 @@ void InitDefaultStrings()
 
 int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
 {
+#ifdef OS_LINUX
+	XInitThreads();
+#endif
+
     size_t lenAppName = _tcslen(szAppName);
     g_szAppName = new TCHAR[lenAppName + 1];
     g_szAppVersion = new TCHAR[_tcslen(szAppVersion) + 1];

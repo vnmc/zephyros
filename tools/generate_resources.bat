@@ -10,6 +10,8 @@ if %2.==. goto noArg
 @echo // App Resources >> %1
 
 @echo // App Resources > %2
+@echo void SetResources() >> %2
+@echo { >> %2
 
 rem ### set the start ID for the resources
 set id=10000
@@ -29,11 +31,13 @@ for /R %%f in (*) do (
 	rem ### The resource names have to be relative to the root (we use the current directory, %cd%)
 	rem ### and the backslashes have to be replaced by slashes.
 	set resname=!file:%cd%\=%webappDir%/!
-	@echo Zephyros::SetResourceID(TEXT("!resname:\=/!"^), !id!^); >> %2
+	@echo 	Zephyros::SetResourceID(TEXT("!resname:\=/!"^), !id!^); >> %2
 
 	rem ### Increment the counter.
 	set /a id=id+1
 )
+
+@echo } >> %2
 
 goto done
 :noArg
