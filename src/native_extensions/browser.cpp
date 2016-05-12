@@ -25,8 +25,8 @@
  *******************************************************************************/
 
 
-#include <algorithm>
 #include "native_extensions/browser.h"
+#include "util/string_util.h"
 #include "zephyros.h"
 
 
@@ -64,21 +64,15 @@ Browser* GetBrowserForUserAgent(std::vector<Browser*>* pBrowsers, JavaScript::Ob
 	FindBrowsers(&pBrowsers);
 
     String strUserAgent = userAgent->GetString("name");
-    String strUserAgentLc = String(strUserAgent);
-    std::transform(strUserAgentLc.begin(), strUserAgentLc.end(), strUserAgentLc.begin(), ::tolower);
-
-    String strUserAgentIdLc = userAgent->GetString("id");
-    std::transform(strUserAgentIdLc.begin(), strUserAgentIdLc.end(), strUserAgentIdLc.begin(), ::tolower);
+    String strUserAgentLc = ToLower(strUserAgent);
+    String strUserAgentIdLc = ToLower(userAgent->GetString("id"));
 
     for (std::vector<Browser*>::iterator it = pBrowsers->begin(); it != pBrowsers->end(); ++it)
     {
 		Browser* browser = *it;
 
-        String name = browser->GetName();
-        std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-
-        String identifier = browser->GetIdentifier();
-        std::transform(identifier.begin(), identifier.end(), identifier.begin(), ::tolower);
+        String name = ToLower(browser->GetName());
+        String identifier = ToLower(browser->GetIdentifier());
 
         if (name.find(strUserAgentLc) != String::npos || identifier.find(strUserAgentLc) != String::npos ||
             (strUserAgent == TEXT("IE") && (name.find(TEXT("internet explorer")) != String::npos || identifier.find(TEXT("internet explorer")) != String::npos)))
@@ -262,8 +256,7 @@ bool IsKnownBrowser(String browserName)
     std::vector<String> knownNoBrowsers;
     knownNoBrowsers.push_back(TEXT("installer"));
 
-    String browserNameLc = browserName;
-    std::transform(browserNameLc.begin(), browserNameLc.end(), browserNameLc.begin(), ::tolower);
+    String browserNameLc = ToLower(browserName);
 
     for (std::vector<String>::iterator it = knownNoBrowsers.begin(); it != knownNoBrowsers.end(); ++it)
         if (browserNameLc.find(*it) != String::npos)

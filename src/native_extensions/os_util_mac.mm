@@ -541,7 +541,7 @@ void RequestUserAttention()
 {
     [NSApp requestUserAttention: NSCriticalRequest];
 }
-    
+
 void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMenuHandler* menuHandler, bool bIsInDemoMode)
 {
     int pos = 0;
@@ -612,7 +612,36 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
             
             if (item->HasKey("key"))
             {
-                menuItem.keyEquivalent = [NSString stringWithUTF8String: String(item->GetString("key")).c_str()];
+                String strKey = item->GetString("key");
+                String strKeyLc = ToLower(strKey);
+                
+                unichar ch = 0;
+                if (strKeyLc == "left")
+                    ch = NSLeftArrowFunctionKey;
+                else if (strKeyLc == "right")
+                    ch = NSRightArrowFunctionKey;
+                else if (strKeyLc == "up")
+                    ch = NSUpArrowFunctionKey;
+                else if (strKeyLc == "down")
+                    ch = NSDownArrowFunctionKey;
+                else if (strKeyLc == "page up" || strKeyLc == "pageup")
+                    ch = NSPageUpFunctionKey;
+                else if (strKeyLc == "page down" || strKeyLc == "pagedown")
+                    ch = NSPageDownFunctionKey;
+                else if (strKeyLc == "home")
+                    ch = NSHomeFunctionKey;
+                else if (strKeyLc == "end")
+                    ch = NSEndFunctionKey;
+                else if (strKeyLc == "insert")
+                    ch = NSInsertFunctionKey;
+                else if (strKeyLc == "delete")
+                    ch = NSDeleteFunctionKey;
+                else if (strKeyLc.length() > 0 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
+                    ch = NSF1FunctionKey + atoi(strKey.substr(1).c_str()) - 1;
+
+                menuItem.keyEquivalent = ch ?
+                    [NSString stringWithCharacters: &ch length: 1] :
+                    [NSString stringWithUTF8String: strKey.c_str()];
             
                 if (item->HasKey("keyModifiers"))
                 {

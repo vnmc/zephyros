@@ -164,3 +164,19 @@ String ToString(BYTE* data, const int len)
 
     return String(reinterpret_cast<TCHAR*>(data), reinterpret_cast<TCHAR*>(data + length));
 }
+
+String ToLower(String s)
+{
+    String ret = s;
+    std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
+
+    return ret;
+}
+
+String ToUpper(String s)
+{
+    String ret = s;
+    std::transform(ret.begin(), ret.end(), ret.begin(), ::toupper);
+    
+    return ret;
+}
