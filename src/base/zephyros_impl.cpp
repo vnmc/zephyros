@@ -150,11 +150,15 @@ void InitDefaultStrings()
 
 }
 
-int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
+int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
 {
 #ifdef OS_LINUX
 	XInitThreads();
 #endif
+
+	// set the resources if a function was provided
+	if (fnxSetResources)
+		fnxSetResources();
 
     size_t lenAppName = _tcslen(szAppName);
     g_szAppName = new TCHAR[lenAppName + 1];

@@ -58,6 +58,7 @@ typedef std::string String;
 #define MAIN _tWinMain
 #define MAIN_ARGS HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow
 #define INIT_APPLICATION_ARGS hInstance, hPrevInstance, lpCmdLine, nCmdShow
+#define RUN_APPLICATION_ARGS hInstance, hPrevInstance, lpCmdLine, nCmdShow, SetResources
 
 #else
 
@@ -78,6 +79,12 @@ typedef std::string String;
 #define MAIN main
 #define MAIN_ARGS int argc, char* argv[]
 #define INIT_APPLICATION_ARGS argc, argv
+
+#ifdef OS_MACOSX
+#define RUN_APPLICATION_ARGS argc, argv, NULL
+#else
+#define RUN_APPLICATION_ARGS argc, argv, SetResources
+#endif
 
 #endif  // OS_WIN
 
@@ -155,7 +162,7 @@ enum AlertStyle
 
 namespace Zephyros {
 
-int Run(MAIN_ARGS, const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL);
+int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL);
 int RunApplication(MAIN_ARGS);
 void Shutdown();
 
