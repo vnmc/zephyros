@@ -38,17 +38,21 @@
 #include "jsbridge.h"
 
 
+#define BROWSER_CODE_NO_EXE_FOUND 3001
+
+
 namespace Zephyros {
 
 class Browser
 {
 public:
-    Browser(String name, String version, String identifier, String image, bool isDefaultBrowser)
+    Browser(String name, String version, String identifier, String image, bool isDefaultBrowser, int statusCode = 0)
       : m_name(name),
         m_version(version),
         m_identifier(identifier),
         m_image(image),
-        m_isDefaultBrowser(isDefaultBrowser)
+        m_isDefaultBrowser(isDefaultBrowser),
+		m_statusCode(statusCode)
     {
     }
 
@@ -77,7 +81,12 @@ public:
         return m_isDefaultBrowser;
     }
 
-    JavaScript::Object CreateJSRepresentation()
+    inline int GetStatusCode()
+	{
+		return m_statusCode;
+	}
+	
+	JavaScript::Object CreateJSRepresentation()
     {
         JavaScript::Object obj = JavaScript::CreateObject();
 
@@ -86,6 +95,7 @@ public:
         obj->SetString("id", m_identifier);
         obj->SetString("image", m_image);
         obj->SetBool("isDefaultBrowser", m_isDefaultBrowser);
+		obj->SetInt("statusCode", m_statusCode);
 
         return obj;
     }
@@ -97,6 +107,7 @@ private:
     String m_identifier;
     String m_image;
 	bool m_isDefaultBrowser;
+	int m_statusCode;
 };
 
 

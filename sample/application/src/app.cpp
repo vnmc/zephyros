@@ -33,7 +33,6 @@
 #endif
 
 #ifdef OS_LINUX
-#include <X11/Xlib.h>
 #include "content.h"
 #endif
 
@@ -124,8 +123,5 @@ int MAIN(MAIN_ARGS)
     SetResources();
 #endif
 
-#ifdef OS_LINUX
-    XInitThreads();
-#endif
 	return Zephyros::Run(INIT_APPLICATION_ARGS, TEXT("Zephyros Sample App"), TEXT("1.0.0"), TEXT("app/index.html"));
 }

@@ -44,5 +44,7 @@ String ToLower(String s);
 
 String ToUpper(String s);
 
+String ToString(BYTE* data, const int len);
+
 
 #endif // Zephyros_StringUtil_h
