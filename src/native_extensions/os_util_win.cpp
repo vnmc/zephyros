@@ -164,52 +164,6 @@ void StartProcess(CallbackId callback, String executableFileName, std::vector<St
 	pMgr->Start();
 }
 
-WORD TranslateKeyToVirtKey(TCHAR c)
-{
-	switch (c)
-	{
-	case TEXT('\uf700'): return VK_UP;
-	case TEXT('\uf701'): return VK_DOWN;
-	case TEXT('\uf702'): return VK_LEFT;
-	case TEXT('\uf703'): return VK_RIGHT;
-	case TEXT('\uf704'): return VK_F1;
-	case TEXT('\uf705'): return VK_F2;
-	case TEXT('\uf706'): return VK_F3;
-	case TEXT('\uf707'): return VK_F4;
-	case TEXT('\uf708'): return VK_F5;
-	case TEXT('\uf709'): return VK_F6;
-	case TEXT('\uf70a'): return VK_F7;
-	case TEXT('\uf70b'): return VK_F8;
-	case TEXT('\uf70c'): return VK_F9;
-	case TEXT('\uf70d'): return VK_F10;
-	case TEXT('\uf70e'): return VK_F11;
-	case TEXT('\uf70f'): return VK_F12;
-	case TEXT('\uf710'): return VK_F13;
-	case TEXT('\uf711'): return VK_F14;
-	case TEXT('\uf712'): return VK_F15;
-	case TEXT('\uf713'): return VK_F16;
-	case TEXT('\uf714'): return VK_F17;
-	case TEXT('\uf715'): return VK_F18;
-	case TEXT('\uf716'): return VK_F19;
-	case TEXT('\uf717'): return VK_F20;
-	case TEXT('\uf718'): return VK_F21;
-	case TEXT('\uf719'): return VK_F22;
-	case TEXT('\uf71a'): return VK_F23;
-	case TEXT('\uf71b'): return VK_F24;
-	case TEXT('\uf727'): return VK_INSERT;
-	case TEXT('\uf728'): return VK_DELETE;
-	case TEXT('\uf729'): return VK_HOME;
-	case TEXT('\uf72b'): return VK_END;
-	case TEXT('\uf72c'): return VK_PRIOR;	// page up
-	case TEXT('\uf72d'): return VK_NEXT;	// page down
-	case TEXT('\uf72e'): return VK_PRINT;
-	case TEXT('\uf72f'): return VK_SCROLL;
-	case TEXT('\uf730'): return VK_PAUSE;
-	}
-
-	return (WORD) toupper(c);
-}
-
 String GetKeyName(WORD wVkCode)
 {
 	WORD nFlags = 2;
@@ -322,9 +276,36 @@ void CreateMenuRecursive(
 						nModifiers = item->GetInt(TEXT("keyModifiers"));
 
 					String strKey = item->GetString("key");
+					String strKeyLc = ToLower(strKey);
 
 					pBufAccel[dwNumAccels].fVirt = FVIRTKEY | ((nModifiers & 1) ? FSHIFT : 0) | ((nModifiers & 2) ? FCONTROL : 0) | ((nModifiers & 4) ? FALT : 0);
-					WORD wVkCode = TranslateKeyToVirtKey(strKey.at(0));
+					
+					WORD wVkCode = 0;
+					if (strKeyLc == TEXT("left"))
+						wVkCode = VK_LEFT;
+					else if (strKeyLc == TEXT("right"))
+						wVkCode = VK_RIGHT;
+					else if (strKeyLc == TEXT("up"))
+						wVkCode = VK_UP;
+					else if (strKeyLc == TEXT("down"))
+						wVkCode = VK_DOWN;
+					else if (strKeyLc == TEXT("page up") || strKeyLc == TEXT("pageup"))
+						wVkCode = VK_PRIOR;
+					else if (strKeyLc == TEXT("page down") || strKeyLc == TEXT("pagedown"))
+						wVkCode = VK_NEXT;
+					else if (strKeyLc == TEXT("home"))
+						wVkCode = VK_HOME;
+					else if (strKeyLc == TEXT("end"))
+						wVkCode = VK_END;
+					else if (strKeyLc == TEXT("insert"))
+						wVkCode = VK_INSERT;
+					else if (strKeyLc == TEXT("delete"))
+						wVkCode = VK_DELETE;
+					else if (strKeyLc.length() > 0 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
+						wVkCode = VK_F1 + _ttoi(strKey.substr(1).c_str()) - 1;
+					else
+						wVkCode = (WORD) toupper(strKey.at(0));
+
 					pBufAccel[dwNumAccels].key = wVkCode;
 					pBufAccel[dwNumAccels].cmd = wCmd;
 					++dwNumAccels;
@@ -451,33 +432,8 @@ void CreateMenu(JavaScript::Array menuItems)
 	}
 }
 
-/*
-bool RemoveMenuItemRecursive(HMENU hMenu, UINT nID)
-{
-	if (!hMenu || nID == 0)
-		return false;
-
-	int nNumMenuItems = GetMenuItemCount(hMenu);
-	for (int i = 0; i < nNumMenuItems; ++i)
-	{
-		UINT nMenuItemID = GetMenuItemID(hMenu, i);
-		if (nMenuItemID == nID)
-		{
-			RemoveMenu(hMenu, MF_BYPOSITION, i);
-			return true;
-		}
-
-		if (nMenuItemID == (UINT) -1 && RemoveMenuItemRecursive(GetSubMenu(hMenu, i), nID))
-			return true;
-	}
-
-	return false;
-}*/
-
 void RemoveMenuItem(String strCommandId)
 {
-	//RemoveMenuItemRecursive(GetMenu(g_handler->GetMainHwnd()), (UINT) Zephyros::GetMenuIDForCommand(strCommandId.c_str()));
-
 	int nMenuID = Zephyros::GetMenuIDForCommand(strCommandId.c_str());
 	if (nMenuID != 0)
 		RemoveMenu(GetMenu(g_handler->GetMainHwnd()), nMenuID, MF_BYCOMMAND);
