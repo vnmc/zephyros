@@ -119,9 +119,5 @@ int MAIN(MAIN_ARGS)
 	Zephyros::SetWindowsInfo(TEXT("Software\\Vanamco\\ZephyrosSampleApp"), IDI_ZEPHYROS_SAMPLEAPP);
 #endif
 
-#ifndef OS_MACOSX
-    SetResources();
-#endif
-
-	return Zephyros::Run(INIT_APPLICATION_ARGS, TEXT("Zephyros Sample App"), TEXT("1.0.0"), TEXT("app/index.html"));
+	return Zephyros::Run(RUN_APPLICATION_ARGS, TEXT("Zephyros Sample App"), TEXT("1.0.0"), TEXT("app/index.html"));
 }
