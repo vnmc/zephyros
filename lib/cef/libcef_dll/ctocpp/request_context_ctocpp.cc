@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -12,9 +12,13 @@
 
 #include "libcef_dll/cpptoc/completion_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/request_context_handler_cpptoc.h"
+#include "libcef_dll/cpptoc/resolve_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/scheme_handler_factory_cpptoc.h"
 #include "libcef_dll/ctocpp/cookie_manager_ctocpp.h"
+#include "libcef_dll/ctocpp/dictionary_value_ctocpp.h"
 #include "libcef_dll/ctocpp/request_context_ctocpp.h"
+#include "libcef_dll/ctocpp/value_ctocpp.h"
+#include "libcef_dll/transfer_util.h"
 
 
 // STATIC METHODS - Body may be edited by hand.
@@ -208,6 +212,207 @@ bool CefRequestContextCToCpp::ClearSchemeHandlerFactories() {
 
   // Return type: bool
   return _retval?true:false;
+}
+
+void CefRequestContextCToCpp::PurgePluginListCache(bool reload_pages) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, purge_plugin_list_cache))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  _struct->purge_plugin_list_cache(_struct,
+      reload_pages);
+}
+
+bool CefRequestContextCToCpp::HasPreference(const CefString& name) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, has_preference))
+    return false;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: name; type: string_byref_const
+  DCHECK(!name.empty());
+  if (name.empty())
+    return false;
+
+  // Execute
+  int _retval = _struct->has_preference(_struct,
+      name.GetStruct());
+
+  // Return type: bool
+  return _retval?true:false;
+}
+
+CefRefPtr<CefValue> CefRequestContextCToCpp::GetPreference(
+    const CefString& name) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, get_preference))
+    return NULL;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: name; type: string_byref_const
+  DCHECK(!name.empty());
+  if (name.empty())
+    return NULL;
+
+  // Execute
+  cef_value_t* _retval = _struct->get_preference(_struct,
+      name.GetStruct());
+
+  // Return type: refptr_same
+  return CefValueCToCpp::Wrap(_retval);
+}
+
+CefRefPtr<CefDictionaryValue> CefRequestContextCToCpp::GetAllPreferences(
+    bool include_defaults) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, get_all_preferences))
+    return NULL;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  cef_dictionary_value_t* _retval = _struct->get_all_preferences(_struct,
+      include_defaults);
+
+  // Return type: refptr_same
+  return CefDictionaryValueCToCpp::Wrap(_retval);
+}
+
+bool CefRequestContextCToCpp::CanSetPreference(const CefString& name) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, can_set_preference))
+    return false;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: name; type: string_byref_const
+  DCHECK(!name.empty());
+  if (name.empty())
+    return false;
+
+  // Execute
+  int _retval = _struct->can_set_preference(_struct,
+      name.GetStruct());
+
+  // Return type: bool
+  return _retval?true:false;
+}
+
+bool CefRequestContextCToCpp::SetPreference(const CefString& name,
+    CefRefPtr<CefValue> value, CefString& error) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, set_preference))
+    return false;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: name; type: string_byref_const
+  DCHECK(!name.empty());
+  if (name.empty())
+    return false;
+  // Unverified params: value
+
+  // Execute
+  int _retval = _struct->set_preference(_struct,
+      name.GetStruct(),
+      CefValueCToCpp::Unwrap(value),
+      error.GetWritableStruct());
+
+  // Return type: bool
+  return _retval?true:false;
+}
+
+void CefRequestContextCToCpp::ClearCertificateExceptions(
+    CefRefPtr<CefCompletionCallback> callback) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, clear_certificate_exceptions))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Unverified params: callback
+
+  // Execute
+  _struct->clear_certificate_exceptions(_struct,
+      CefCompletionCallbackCppToC::Wrap(callback));
+}
+
+void CefRequestContextCToCpp::CloseAllConnections(
+    CefRefPtr<CefCompletionCallback> callback) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, close_all_connections))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Unverified params: callback
+
+  // Execute
+  _struct->close_all_connections(_struct,
+      CefCompletionCallbackCppToC::Wrap(callback));
+}
+
+void CefRequestContextCToCpp::ResolveHost(const CefString& origin,
+    CefRefPtr<CefResolveCallback> callback) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, resolve_host))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: origin; type: string_byref_const
+  DCHECK(!origin.empty());
+  if (origin.empty())
+    return;
+  // Verify param: callback; type: refptr_diff
+  DCHECK(callback.get());
+  if (!callback.get())
+    return;
+
+  // Execute
+  _struct->resolve_host(_struct,
+      origin.GetStruct(),
+      CefResolveCallbackCppToC::Wrap(callback));
+}
+
+cef_errorcode_t CefRequestContextCToCpp::ResolveHostCached(
+    const CefString& origin, std::vector<CefString>& resolved_ips) {
+  cef_request_context_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, resolve_host_cached))
+    return ERR_FAILED;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: origin; type: string_byref_const
+  DCHECK(!origin.empty());
+  if (origin.empty())
+    return ERR_FAILED;
+
+  // Translate param: resolved_ips; type: string_vec_byref
+  cef_string_list_t resolved_ipsList = cef_string_list_alloc();
+  DCHECK(resolved_ipsList);
+  if (resolved_ipsList)
+    transfer_string_list_contents(resolved_ips, resolved_ipsList);
+
+  // Execute
+  cef_errorcode_t _retval = _struct->resolve_host_cached(_struct,
+      origin.GetStruct(),
+      resolved_ipsList);
+
+  // Restore param:resolved_ips; type: string_vec_byref
+  if (resolved_ipsList) {
+    resolved_ips.clear();
+    transfer_string_list_contents(resolved_ipsList, resolved_ips);
+    cef_string_list_free(resolved_ipsList);
+  }
+
+  // Return type: simple
+  return _retval;
 }
 
 

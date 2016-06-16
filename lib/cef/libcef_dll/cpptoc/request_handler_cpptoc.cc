@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -12,6 +12,7 @@
 
 #include "libcef_dll/cpptoc/request_handler_cpptoc.h"
 #include "libcef_dll/cpptoc/resource_handler_cpptoc.h"
+#include "libcef_dll/cpptoc/response_filter_cpptoc.h"
 #include "libcef_dll/ctocpp/auth_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/browser_ctocpp.h"
 #include "libcef_dll/ctocpp/frame_ctocpp.h"
@@ -19,7 +20,6 @@
 #include "libcef_dll/ctocpp/request_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/response_ctocpp.h"
 #include "libcef_dll/ctocpp/sslinfo_ctocpp.h"
-#include "libcef_dll/ctocpp/web_plugin_info_ctocpp.h"
 
 
 namespace {
@@ -235,6 +235,81 @@ int CEF_CALLBACK request_handler_on_resource_response(
   return _retval;
 }
 
+struct _cef_response_filter_t* CEF_CALLBACK request_handler_get_resource_response_filter(
+    struct _cef_request_handler_t* self, cef_browser_t* browser,
+    cef_frame_t* frame, cef_request_t* request,
+    struct _cef_response_t* response) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  DCHECK(self);
+  if (!self)
+    return NULL;
+  // Verify param: browser; type: refptr_diff
+  DCHECK(browser);
+  if (!browser)
+    return NULL;
+  // Verify param: frame; type: refptr_diff
+  DCHECK(frame);
+  if (!frame)
+    return NULL;
+  // Verify param: request; type: refptr_diff
+  DCHECK(request);
+  if (!request)
+    return NULL;
+  // Verify param: response; type: refptr_diff
+  DCHECK(response);
+  if (!response)
+    return NULL;
+
+  // Execute
+  CefRefPtr<CefResponseFilter> _retval = CefRequestHandlerCppToC::Get(
+      self)->GetResourceResponseFilter(
+      CefBrowserCToCpp::Wrap(browser),
+      CefFrameCToCpp::Wrap(frame),
+      CefRequestCToCpp::Wrap(request),
+      CefResponseCToCpp::Wrap(response));
+
+  // Return type: refptr_same
+  return CefResponseFilterCppToC::Wrap(_retval);
+}
+
+void CEF_CALLBACK request_handler_on_resource_load_complete(
+    struct _cef_request_handler_t* self, cef_browser_t* browser,
+    cef_frame_t* frame, cef_request_t* request,
+    struct _cef_response_t* response, cef_urlrequest_status_t status,
+    int64 received_content_length) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  DCHECK(self);
+  if (!self)
+    return;
+  // Verify param: browser; type: refptr_diff
+  DCHECK(browser);
+  if (!browser)
+    return;
+  // Verify param: frame; type: refptr_diff
+  DCHECK(frame);
+  if (!frame)
+    return;
+  // Verify param: request; type: refptr_diff
+  DCHECK(request);
+  if (!request)
+    return;
+  // Verify param: response; type: refptr_diff
+  DCHECK(response);
+  if (!response)
+    return;
+
+  // Execute
+  CefRequestHandlerCppToC::Get(self)->OnResourceLoadComplete(
+      CefBrowserCToCpp::Wrap(browser),
+      CefFrameCToCpp::Wrap(frame),
+      CefRequestCToCpp::Wrap(request),
+      CefResponseCToCpp::Wrap(response),
+      status,
+      received_content_length);
+}
+
 int CEF_CALLBACK request_handler_get_auth_credentials(
     struct _cef_request_handler_t* self, cef_browser_t* browser,
     cef_frame_t* frame, int isProxy, const cef_string_t* host, int port,
@@ -257,15 +332,11 @@ int CEF_CALLBACK request_handler_get_auth_credentials(
   DCHECK(host);
   if (!host)
     return 0;
-  // Verify param: scheme; type: string_byref_const
-  DCHECK(scheme);
-  if (!scheme)
-    return 0;
   // Verify param: callback; type: refptr_diff
   DCHECK(callback);
   if (!callback)
     return 0;
-  // Unverified params: realm
+  // Unverified params: realm, scheme
 
   // Execute
   bool _retval = CefRequestHandlerCppToC::Get(self)->GetAuthCredentials(
@@ -389,36 +460,6 @@ int CEF_CALLBACK request_handler_on_certificate_error(
   return _retval;
 }
 
-int CEF_CALLBACK request_handler_on_before_plugin_load(
-    struct _cef_request_handler_t* self, cef_browser_t* browser,
-    const cef_string_t* url, const cef_string_t* policy_url,
-    struct _cef_web_plugin_info_t* info) {
-  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
-
-  DCHECK(self);
-  if (!self)
-    return 0;
-  // Verify param: browser; type: refptr_diff
-  DCHECK(browser);
-  if (!browser)
-    return 0;
-  // Verify param: info; type: refptr_diff
-  DCHECK(info);
-  if (!info)
-    return 0;
-  // Unverified params: url, policy_url
-
-  // Execute
-  bool _retval = CefRequestHandlerCppToC::Get(self)->OnBeforePluginLoad(
-      CefBrowserCToCpp::Wrap(browser),
-      CefString(url),
-      CefString(policy_url),
-      CefWebPluginInfoCToCpp::Wrap(info));
-
-  // Return type: bool
-  return _retval;
-}
-
 void CEF_CALLBACK request_handler_on_plugin_crashed(
     struct _cef_request_handler_t* self, cef_browser_t* browser,
     const cef_string_t* plugin_path) {
@@ -491,11 +532,14 @@ CefRequestHandlerCppToC::CefRequestHandlerCppToC() {
   GetStruct()->get_resource_handler = request_handler_get_resource_handler;
   GetStruct()->on_resource_redirect = request_handler_on_resource_redirect;
   GetStruct()->on_resource_response = request_handler_on_resource_response;
+  GetStruct()->get_resource_response_filter =
+      request_handler_get_resource_response_filter;
+  GetStruct()->on_resource_load_complete =
+      request_handler_on_resource_load_complete;
   GetStruct()->get_auth_credentials = request_handler_get_auth_credentials;
   GetStruct()->on_quota_request = request_handler_on_quota_request;
   GetStruct()->on_protocol_execution = request_handler_on_protocol_execution;
   GetStruct()->on_certificate_error = request_handler_on_certificate_error;
-  GetStruct()->on_before_plugin_load = request_handler_on_before_plugin_load;
   GetStruct()->on_plugin_crashed = request_handler_on_plugin_crashed;
   GetStruct()->on_render_view_ready = request_handler_on_render_view_ready;
   GetStruct()->on_render_process_terminated =

@@ -102,10 +102,14 @@ set(LIBCEF_CPPTOC_SRCS
   cpptoc/request_context_handler_cpptoc.h
   cpptoc/request_handler_cpptoc.cc
   cpptoc/request_handler_cpptoc.h
+  cpptoc/resolve_callback_cpptoc.cc
+  cpptoc/resolve_callback_cpptoc.h
   cpptoc/resource_bundle_handler_cpptoc.cc
   cpptoc/resource_bundle_handler_cpptoc.h
   cpptoc/resource_handler_cpptoc.cc
   cpptoc/resource_handler_cpptoc.h
+  cpptoc/response_filter_cpptoc.cc
+  cpptoc/response_filter_cpptoc.h
   cpptoc/run_file_dialog_callback_cpptoc.cc
   cpptoc/run_file_dialog_callback_cpptoc.h
   cpptoc/scheme_handler_factory_cpptoc.cc
@@ -195,8 +199,12 @@ set(LIBCEF_CTOCPP_SRCS
   ctocpp/request_context_ctocpp.h
   ctocpp/request_ctocpp.cc
   ctocpp/request_ctocpp.h
+  ctocpp/resource_bundle_ctocpp.cc
+  ctocpp/resource_bundle_ctocpp.h
   ctocpp/response_ctocpp.cc
   ctocpp/response_ctocpp.h
+  ctocpp/run_context_menu_callback_ctocpp.cc
+  ctocpp/run_context_menu_callback_ctocpp.h
   ctocpp/scheme_registrar_ctocpp.cc
   ctocpp/scheme_registrar_ctocpp.h
   ctocpp/sslcert_principal_ctocpp.cc
@@ -276,9 +284,11 @@ set(LIBCEF_INCLUDE_SRCS
   ../include/cef_request_context.h
   ../include/cef_request_context_handler.h
   ../include/cef_request_handler.h
+  ../include/cef_resource_bundle.h
   ../include/cef_resource_bundle_handler.h
   ../include/cef_resource_handler.h
   ../include/cef_response.h
+  ../include/cef_response_filter.h
   ../include/cef_runnable.h
   ../include/cef_scheme.h
   ../include/cef_ssl_info.h
@@ -396,9 +406,11 @@ set(LIBCEF_INCLUDE_CAPI_SRCS
   ../include/capi/cef_request_context_capi.h
   ../include/capi/cef_request_context_handler_capi.h
   ../include/capi/cef_request_handler_capi.h
+  ../include/capi/cef_resource_bundle_capi.h
   ../include/capi/cef_resource_bundle_handler_capi.h
   ../include/capi/cef_resource_handler_capi.h
   ../include/capi/cef_response_capi.h
+  ../include/capi/cef_response_filter_capi.h
   ../include/capi/cef_scheme_capi.h
   ../include/capi/cef_ssl_info_capi.h
   ../include/capi/cef_stream_capi.h
