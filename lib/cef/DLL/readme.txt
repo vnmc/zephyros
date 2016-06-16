@@ -1,6 +1,6 @@
 The "Win32" and "x64" subfolders in the folder "libcef" each contain the following subfolders
 of the Windows 32bit and Windows 64bit builds, respectively, of the CEF project
-(https://cefbuilds.com/, currently branch 2454):
+(https://cefbuilds.com/, currently branch 2623):
 
 - Debug
 - Release
