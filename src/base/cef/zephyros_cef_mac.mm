@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -83,8 +83,11 @@ bool g_isWindowBeingLoaded = true;
     [delegate tryToTerminateApplication: self];
     
     // return, don't exit; the application is responsible for exiting on its own
-    if (g_handler.get() && g_handler->IsClosing())
+
+    // kill the process if it still running after one second
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         kill([NSProcessInfo processInfo].processIdentifier, SIGTERM);
+    });
 }
 
 @end
@@ -132,6 +135,7 @@ int RunApplication(int argc, char* argv[])
         // create the application window
         [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: YES];
         [g_appDelegate.window orderFrontRegardless];
+
         // run the application message loop
         g_isMessageLoopRunning = true;
         CefRunMessageLoop();

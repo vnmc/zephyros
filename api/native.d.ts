@@ -269,7 +269,7 @@ declare module NativeInterface
 		 *   "userAgent" or null if no locally installed browser for that
 		 *   user agent could be found.
 		 */ 
-		getBrowserForUserAgent: (userAgent: IUserAgent, ca llback: (browser: IBrowser) => void) => void;
+		getBrowserForUserAgent: (userAgent: IUserAgent, callback: (browser: IBrowser) => void) => void;
 
 
 		///////////////////////////////////////////////////////////////////////
