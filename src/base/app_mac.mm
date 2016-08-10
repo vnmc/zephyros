@@ -29,7 +29,9 @@
 #import "base/ZPYAppDelegate.h"
 
 
+#ifdef USE_CEF
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
+#endif
 
 
 namespace Zephyros {
@@ -56,6 +58,7 @@ String GetUserAgent()
     
 void CloseWindow()
 {
+#ifdef USE_CEF
     // initiate closing the browser windows
     g_handler->CloseAllBrowsers(false);
 
@@ -63,6 +66,7 @@ void CloseWindow()
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         kill([NSProcessInfo processInfo].processIdentifier, SIGTERM);
     });
+#endif
 }
 
 void Quit()

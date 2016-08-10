@@ -146,7 +146,7 @@ typedef void (*CallbacksCompleteHandler)(
 #ifdef USE_WEBVIEW
 
 typedef int (*Function)(Zephyros::JavaScript::Array args, Zephyros::JavaScript::Array ret, JSObjectRef callback);
-typedef void (*CallbacksCompleteHandler)();
+typedef void (*CallbacksCompleteHandler)(bool retVal);
 
 #endif
 
@@ -502,8 +502,8 @@ public:
 
 	virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) override;
 
-	bool InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args);
-	bool InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args);
+	void InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args);
+	void InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args);
 
 
     // ProcessMessageDelegate Implementation

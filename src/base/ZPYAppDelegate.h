@@ -63,8 +63,6 @@
 
 - (void) setMenuItemStatuses: (Zephyros::App::MenuItemStatuses&) statuses;
 
-- (ClientExtensionHandlerPtr) extensionHandler;
-
 @end
 
 #endif // Zephyros_ZPYAggDelegate_h

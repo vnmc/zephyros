@@ -187,7 +187,7 @@ void ClientExtensionHandler::AddNativeJavaScriptFunction(String name, NativeFunc
 // Invokes the registred callback functions of the function named functionName
 // with arguments args.
 //
-bool ClientExtensionHandler::InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args)
+void ClientExtensionHandler::InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args)
 {
     // try to find the function object for the message name
     std::map<String, NativeFunction*>::iterator it = m_mapFunctions.find(functionName);
@@ -207,21 +207,17 @@ bool ClientExtensionHandler::InvokeCallbacks(String functionName, CefRefPtr<CefL
     // TODO: pass references to the handler and browser
     if (!isCallbackCalled && fnx->m_fnxAllCallbacksCompleted != NULL)
         fnx->m_fnxAllCallbacksCompleted(NULL, NULL, true);
-    
-    return isCallbackCalled;
 }
 
-bool ClientExtensionHandler::InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args)
+void ClientExtensionHandler::InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args)
 {
 	std::map<CallbackId, ClientCallback*>::iterator it = m_mapDelayedCallbacks.find(callbackId);
 	if (it == m_mapDelayedCallbacks.end())
-		return false;
+		return;
 
 	ClientCallback* pCallback = it->second;
 	pCallback->Invoke(TEXT(""), args);
 	delete pCallback;
-
-	return true;
 }
 
 //

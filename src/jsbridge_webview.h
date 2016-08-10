@@ -100,6 +100,7 @@ static JSObjectRef g_fnxIsArray = NULL;
 Type GetType(JSValueRef value);
 bool IsArray(JSObjectRef obj);
 String JSStringToString(JSStringRef str);
+bool GetTruthValue(JSValueRef value);
 
     
 class ObjectWrapper
