@@ -29,6 +29,9 @@
 #import "base/ZPYAppDelegate.h"
 
 
+extern CefRefPtr<Zephyros::ClientHandler> g_handler;
+
+
 namespace Zephyros {
 namespace App {
     
@@ -49,6 +52,17 @@ String GetUserAgent()
         [[NSLocale preferredLanguages] objectAtIndex: 0]];
     
     return String([userAgent UTF8String]);
+}
+    
+void CloseWindow()
+{
+    // initiate closing the browser windows
+    g_handler->CloseAllBrowsers(false);
+
+    // kill the process if it still running after one second
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        kill([NSProcessInfo processInfo].processIdentifier, SIGTERM);
+    });
 }
 
 void Quit()
