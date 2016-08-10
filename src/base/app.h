@@ -87,6 +87,11 @@ void GetSettings(CefSettings& settings);
 String GetUserAgent();
 
 /**
+ * Initiates closing the application window.
+ */
+void CloseWindow();
+
+/**
  * Quits the app.
  */
 void Quit();

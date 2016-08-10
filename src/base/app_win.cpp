@@ -34,6 +34,7 @@
 #include "zephyros.h"
 #include "base/app.h"
 #include "base/cef/client_handler.h"
+#include "base/cef/zephyros_cef_win.h"
 #include "native_extensions/os_util.h"
 
 #include "res/windows/resource.h"
@@ -87,6 +88,29 @@ String GetUserAgent()
 	}
 
 	return ssUserAgent.str();
+}
+
+void CloseWindow()
+{
+	// save the window position
+	WINDOWPLACEMENT wpl;
+	wpl.length = sizeof(WINDOWPLACEMENT);
+	GetWindowPlacement(App::GetMainHwnd(), &wpl);
+	Rect r;
+	r.x = wpl.rcNormalPosition.left;
+	r.y = wpl.rcNormalPosition.top;
+	r.w = wpl.rcNormalPosition.right - wpl.rcNormalPosition.left;
+	r.h = wpl.rcNormalPosition.bottom - wpl.rcNormalPosition.top;
+	SaveWindowPlacement(&r, wpl.showCmd);
+
+	CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
+	if (browser.get())
+	{
+		// notify the browser window that we would like to close it
+		// this will result in a call to ClientHandler::DoClose() if the
+		// JavaScript 'onbeforeunload' event handler allows it
+		browser->GetHost()->CloseBrowser(false);
+	}
 }
 
 void Quit()
