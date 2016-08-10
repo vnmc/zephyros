@@ -79,15 +79,9 @@ bool g_isWindowBeingLoaded = true;
 
 - (void) terminate: (id) sender
 {
-    ZPYCEFAppDelegate* delegate = static_cast<ZPYCEFAppDelegate*>([NSApp delegate]);
-    [delegate tryToTerminateApplication: self];
-    
-    // return, don't exit; the application is responsible for exiting on its own
-
-    // kill the process if it still running after one second
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        kill([NSProcessInfo processInfo].processIdentifier, SIGTERM);
-    });
+    // invoke the "onAppTerminating" callbacks and cancel the close
+    if (g_handler.get() && !g_handler->IsClosing())
+        g_handler->GetClientExtensionHandler()->InvokeCallbacks("onAppTerminating", CefListValue::Create());
 }
 
 @end

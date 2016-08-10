@@ -90,6 +90,9 @@ declare module NativeInterface
 		 * @param callback
 		 *   Function called when the app is about to terminate. It doesn't
 		 *   receive any arguments.
+		 *   If a callback added via "onAppTerminating" returns "false" (or
+		 *   some falsy value other than "undefined") the termination process
+		 *   of the app is canceled.
 		 */
 		onAppTerminating: (callback: () => void|boolean) => void;
 
