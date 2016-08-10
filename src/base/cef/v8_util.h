@@ -50,5 +50,7 @@ CefRefPtr<CefV8Value> DictionaryValueToV8Value(CefRefPtr<CefDictionaryValue> val
 void CopyList(CefRefPtr<CefListValue> source, CefRefPtr<CefListValue> dest, int offset = 0);
 void CopyDictionary(CefRefPtr<CefDictionaryValue> source, CefRefPtr<CefDictionaryValue> dest);
 
+bool GetTruthValue(CefRefPtr<CefV8Value> value);
+
 
 #endif // Zephyros_V8Util_h

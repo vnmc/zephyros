@@ -47,6 +47,11 @@ $(document).ready(function()
 		});
 	});
 
+	app.onAppTerminating(function()
+	{
+		return false;
+	});
+
 	$('.compute-fib').click(function()
 	{
 	    var n = parseInt($('.fib-number').val(), 10);
@@ -104,7 +109,7 @@ $(document).ready(function()
 
 	$('.open-file').click(function()
 	{
-	setMessage('opening file...');
+		setMessage('opening file...');
 		app.showOpenFileDialog(function(path)
 		{
 			setMessage('Path: ' + path.path);
@@ -141,7 +146,8 @@ $(document).ready(function()
 	{
 	    var path = getParameterAsPath();
 	    setMessage('Checking if ' + path.path + ' exists...');
-	    app.existsFile(path, function(response) {
+	    app.existsFile(path, function(response)
+	    {
     	    setMessage('File ' + path.path + ' exists: ' + response);	    
 	    });
 	});
@@ -150,7 +156,8 @@ $(document).ready(function()
 	{
 	    var path = getParameterAsPath();
 	    setMessage('Checking if ' + path.path + ' is a directory...');
-	    app.isDirectory(path, function(response) {
+	    app.isDirectory(path, function(response)
+	    {
     	    setMessage('File ' + path.path + ' is a directory: ' + response);	    
 	    });
 	});
@@ -159,7 +166,8 @@ $(document).ready(function()
 	{
 	    var path = getParameterAsPath();
 	    setMessage('Trying to create directory ' + path.path + '...');
-	    app.makeDirectory(path, function(response) {
+	    app.makeDirectory(path, function(response)
+	    {
     	    setMessage('File ' + path.path + ' has been created: ' + response);	    
 	    });
 	});
@@ -187,7 +195,8 @@ $(document).ready(function()
 	$('#showOpenFileDialog').click(function()
 	{
 		setMessage('Trying to select file via dialog...');
-		app.showOpenFileDialog(function(path) {
+		app.showOpenFileDialog(function(path)
+		{
 			setMessage('File selected: ' + path.path);	
 		});
 	});
@@ -195,7 +204,8 @@ $(document).ready(function()
 	$('#showOpenDirectoryDialog').click(function()
 	{
 		setMessage('Trying to select folder via dialog...');
-		app.showOpenDirectoryDialog(function(path) {
+		app.showOpenDirectoryDialog(function(path)
+		{
 			setMessage('Folder selected: ' + path.path);	
 		});
 	});
@@ -205,16 +215,16 @@ $(document).ready(function()
 	{
 		setMessage('Trying to store preferences');
 		var keyValueArray = getParameter().split("=");
-		if(keyValueArray.length !== 2)
+		if (keyValueArray.length !== 2)
 		{
 			setMessage('Make sure to type key=value in the paramter field to try out storing preferences...');
 			return;
 		}
 
-		app.storePreferences(keyValueArray[0], keyValueArray[1], function(data){
+		app.storePreferences(keyValueArray[0], keyValueArray[1], function(data)
+		{
 			setMessage('I have been called back from storePreferences, data: ' + data);
 		});
-		
 	});
 
 	$('#loadPreferences').click(function()
@@ -222,10 +232,10 @@ $(document).ready(function()
 		var key = getParameter();
 		setMessage('Trying to load preferences for key ' + key);
 		
-		app.loadPreferences(key, function(data){
+		app.loadPreferences(key, function(data)
+		{
 			setMessage('I have been called back from loadPreferences, data: ' + data);
 		});
-		
 	});
 
 	$('#startWatchingFiles').click(function()
@@ -243,31 +253,31 @@ $(document).ready(function()
 	{
 		setMessage('Telling app to stop watching files');
 		app.stopWatchingFiles();
-		
 	});
 
 	$('#resizeMainWindow').click(function()
 	{
 		var sizeArr = getParameter().split('x');
-		if(sizeArr.length !== 2)
-		{
+		if (sizeArr.length !== 2)
 			setMessage('To resize windows, specify parameter as 123x123 (e.g.)');
-		}
 		else
 		{
 			setMessage('Resizing window to ' + sizeArr[0] + ' by ' + sizeArr[1]);
-			app.setWindowSize({width: parseInt(sizeArr[0]), 
-				height: parseInt(sizeArr[1])
-			}, function(data) {
-				setMessage('Callback was called with data: ' + JSON.stringify(data));
-			})	;
+			app.setWindowSize(
+				{
+					width: parseInt(sizeArr[0]), 
+					height: parseInt(sizeArr[1])
+				},
+				function(data)
+				{
+					setMessage('Callback was called with data: ' + JSON.stringify(data));
+				}
+			);
 		}
-		
 	});
 
 	$('#setMinimumWindowWidth').click(function()
 	{
-
 		setMessage('Setting minimum window dimensions to 400x400');
 		app.setMinimumWindowSize({width: 400, height: 400});
 		setMessage('+DONE setting minimum window dimensions to 400x400.');
@@ -284,14 +294,14 @@ $(document).ready(function()
 		var t = getParameter();
 		app.copyToClipboard(t);
 		setMessage('Copied to clipboard: "' + t + '"');
-
 	});
 
 	$('#getProxyForUrl').click(function()
 	{
 		var url = getParameter();
 		setMessage('proxy for url ' + url);
-		app.getProxyForURL(url, function(data){
+		app.getProxyForURL(url, function(data)
+		{
 			setMessage('Proxy: ' + JSON.stringify(data));
 		});
 	});	
@@ -301,36 +311,25 @@ $(document).ready(function()
 	{
 		setMessage('Starting process...');
 		var t = getParameter();
-		app.startProcess("/usr/bin/node", ["xx.js", "__111___"], "/home/administrator/tmp/stderrout", function(exitCode, data){
+		app.startProcess("/usr/bin/node", ["xx.js", "__111___"], "/home/administrator/tmp/stderrout", function(exitCode, data)
+		{
 			var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
-			for(var i = 0; i < data.length; i++) {
+			for (var i = 0; i < data.length; i++)
 				msg += data[i].text.replace('\n', '<br>');
-			}
-			 appendMessage(msg);
-		} );
+			appendMessage(msg);
+		});
 
-		setTimeout(function(){
-			app.startProcess("/usr/bin/node", ["xx.js", "__222___"], "/home/administrator/tmp/stderrout", function(exitCode, data){
-			var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
-			for(var i = 0; i < data.length; i++) {
-				msg += data[i].text.replace('\n', '<br>');
-			}
-			 appendMessage(msg);
-		} );
-		}, 2);
-
+		setTimeout(function()
+		{
+			app.startProcess("/usr/bin/node", ["xx.js", "__222___"], "/home/administrator/tmp/stderrout", function(exitCode, data)
+			{
+				var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
+				for (var i = 0; i < data.length; i++)
+					msg += data[i].text.replace('\n', '<br>');
+				appendMessage(msg);
+			});
+		}, 0);
 	});
-	
-
-
-
-	
-
-	
-
-	
-
-
 });
 
 // create the app menu
@@ -424,7 +423,7 @@ app.onMenuCommand(function(commandId)
 
 
 // onFileChanged: (callback: (paths: string[]) => void) => void
-app.onFileChanged(function(paths){
+app.onFileChanged(function(paths)
+{
 	setMessage('File(s) was/were changed...paths = ' + JSON.stringify(paths));
-
 });

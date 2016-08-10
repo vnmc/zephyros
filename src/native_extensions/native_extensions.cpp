@@ -63,6 +63,11 @@
 
 namespace Zephyros {
 
+NativeExtensions::NativeExtensions()
+    : m_bIsNativeExtensionsAdded(false)
+{
+}
+
 void NativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
 {
     m_e = e;
@@ -144,7 +149,10 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 
     // onAppTerminating(callback: () => void) => void
     NativeFunction* fnxOnAppTerminating = FUNC({ return NO_ERROR; });
-    fnxOnAppTerminating->SetAllCallbacksCompletedHandler(PROC({ App::QuitMessageLoop(); }));
+    fnxOnAppTerminating->SetAllCallbacksCompletedHandler(CALLBACK_HANDLER({
+        if (retVal)
+            App::QuitMessageLoop();
+    }));
     e->AddNativeJavaScriptCallback(TEXT("onAppTerminating"), fnxOnAppTerminating);
 
 

@@ -103,7 +103,7 @@ typedef JSObjectRef CallbackId;
     [](CefRefPtr<Zephyros::ClientHandler> handler, CefRefPtr<CefBrowser> browser, CefRefPtr<CefListValue> args, CefRefPtr<CefListValue> ret, CallbackId callback) -> int \
     code __VA_ARGS__, END_MARKER)
 
-#define PROC(code) [](CefRefPtr<Zephyros::ClientHandler> handler, CefRefPtr<CefBrowser> browser) code
+#define CALLBACK_HANDLER(code) [](CefRefPtr<Zephyros::ClientHandler> handler, CefRefPtr<CefBrowser> browser, bool retVal) code
 
 #endif
 
@@ -114,7 +114,7 @@ typedef JSObjectRef CallbackId;
     [](Zephyros::JavaScript::Array args, Zephyros::JavaScript::Array ret, CallbackId callback) -> int \
     code __VA_ARGS__, END_MARKER)
 
-#define PROC(code) []() code
+#define CALLBACK_HANDLER(code) [](bool retVal) code
 
 #endif
 
@@ -136,7 +136,8 @@ typedef int (*Function)(
 
 typedef void (*CallbacksCompleteHandler)(
     CefRefPtr<ClientHandler> handler,
-    CefRefPtr<CefBrowser> browser
+    CefRefPtr<CefBrowser> browser,
+    bool retVal
 );
 
 #endif
@@ -544,11 +545,15 @@ private:
 class NativeExtensions
 {
 public:
+    NativeExtensions();
     virtual ~NativeExtensions() {}
 
     virtual void AddNativeExtensions(NativeJavaScriptFunctionAdder* extensionHandler) = 0;
     virtual void SetClientExtensionHandler(ClientExtensionHandlerPtr e);
     virtual ClientExtensionHandlerPtr GetClientExtensionHandler() { return m_e; }
+
+    inline void SetNativeExtensionsAdded() { m_bIsNativeExtensionsAdded = true; }
+    inline bool GetNativeExtensionsAdded() { return m_bIsNativeExtensionsAdded; }
 
     inline std::vector<Zephyros::Path>& GetDroppedURLs() { return m_droppedURLs; }
     inline CustomURLManager* GetCustomURLManager() { return m_customURLManager; }
@@ -557,6 +562,9 @@ protected:
     ClientExtensionHandlerPtr m_e;
     std::vector<Zephyros::Path> m_droppedURLs;
     CustomURLManager* m_customURLManager;
+    
+private:
+    bool m_bIsNativeExtensionsAdded;
 };
 
 class DefaultNativeExtensions : public NativeExtensions

@@ -203,6 +203,11 @@ bool ClientExtensionHandler::InvokeCallbacks(String functionName, CefRefPtr<CefL
         isCallbackCalled = true;
     }
 
+    // if there are no registered callbacks, but there is an "all callbacks completed" handler, invoke it
+    // TODO: pass references to the handler and browser
+    if (!isCallbackCalled && fnx->m_fnxAllCallbacksCompleted != NULL)
+        fnx->m_fnxAllCallbacksCompleted(NULL, NULL, true);
+    
     return isCallbackCalled;
 }
 
@@ -247,18 +252,25 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
         NativeFunction* fnx = it->second;
         int invokeCount = -1;
         for (ClientCallback* pCallback : fnx->m_callbacks)
+        {
             if (pCallback->GetMessageId() == messageId)
             {
-                invokeCount = pCallback->IncrementJavaScriptInvokeCallbackCount();
+                invokeCount = pCallback->IncrementJavaScriptInvokeCallbackCount(args->GetBool(2));
                 break;
             }
+        }
 
         // test if all invocations have completed
         if (invokeCount != -1 && fnx->m_fnxAllCallbacksCompleted != NULL)
         {
             bool allCompleted = true;
+            bool retVal = true;
+
             for (ClientCallback* pCallback : fnx->m_callbacks)
             {
+                if (!pCallback->GetReturnValue())
+                    retVal = false;
+
                 if (pCallback->GetJavaScriptInvokeCallbackCount() < invokeCount)
                 {
                     allCompleted = false;
@@ -267,7 +279,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
             }
 
             if (allCompleted)
-                fnx->m_fnxAllCallbacksCompleted(handler, browser);
+                fnx->m_fnxAllCallbacksCompleted(handler, browser, retVal);
         }
     }
     else
@@ -537,7 +549,7 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
                             arguments.push_back(ListValueToV8Value(args, (int) i));
 
                         // execute the callback function
-                        function->ExecuteFunctionWithContext(context, NULL, arguments);
+                        CefRefPtr<CefV8Value> retVal = function->ExecuteFunctionWithContext(context, NULL, arguments);
 
                         // send a message that the callback has been completed
                         if (HasPersistentCallback(functionName))
@@ -546,6 +558,10 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
                             CefRefPtr<CefListValue> cbCompletedArgs = cbCompletedMsg->GetArgumentList();
                             cbCompletedArgs->SetInt(0, messageId);
                             cbCompletedArgs->SetString(1, functionName);
+
+                            // set the return value; treat "undefined" as "true" (no return value should mean successful callback execution)
+                            cbCompletedArgs->SetBool(2, retVal->IsUndefined() || GetTruthValue(retVal));
+
                             browser->SendProcessMessage(PID_BROWSER, cbCompletedMsg);
                         }
                     }

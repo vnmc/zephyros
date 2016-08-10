@@ -78,6 +78,7 @@ ClientHandler::ClientHandler()
 
 	m_processMessageDelegates.insert(static_cast< CefRefPtr<ProcessMessageDelegate> >(m_clientExtensionHandler));
     Zephyros::GetNativeExtensions()->AddNativeExtensions(m_clientExtensionHandler.get());
+    Zephyros::GetNativeExtensions()->SetNativeExtensionsAdded();
 	InitializeMIMETypes();
 }
 

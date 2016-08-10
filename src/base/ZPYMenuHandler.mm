@@ -63,7 +63,7 @@
     {
         Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
         args->SetString(0, String([commandId UTF8String]));
-        [(ZPYAppDelegate*) [NSApp delegate] extensionHandler]->InvokeCallbacks("onMenuCommand", args);
+        Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onMenuCommand"), args);
     }
 }
 
