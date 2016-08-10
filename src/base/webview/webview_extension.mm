@@ -289,19 +289,25 @@ bool ClientExtensionHandler::InvokeCallbacks(String functionName, JavaScript::Ar
     // invoke the callbacks
     NativeFunction* fnx = it->second;
     bool isCallbackCalled = false;
+    bool retVal = true;
     JSValueRef* callbackArgs = args->AsArray();
+
     for (JSObjectRef pCallback : fnx->m_callbacks)
     {
-        JSObjectCallAsFunction(g_ctx, pCallback, NULL, args->GetSize(), callbackArgs, NULL);
+        JSValueRef ret = JSObjectCallAsFunction(g_ctx, pCallback, NULL, args->GetSize(), callbackArgs, NULL);
+        if (!JSValueIsUndefined(g_ctx, ret) && !JavaScript::GetTruthValue(ret))
+            retVal = false;
+
         isCallbackCalled = true;
     }
+
     args->FreeArray(callbackArgs);
     
     // all callbacks have been called
     if (fnx->m_fnxAllCallbacksCompleted != NULL)
-        fnx->m_fnxAllCallbacksCompleted();
+        fnx->m_fnxAllCallbacksCompleted(retVal);
     
-    return isCallbackCalled;
+    return retVal;
 }
 
 void ClientExtensionHandler::ThrowJavaScriptException(String functionName, int retval)

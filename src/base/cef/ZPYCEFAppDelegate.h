@@ -41,7 +41,6 @@
 
 - (void) createApp: (id) object;
 - (void) createMainWindow;
-- (void) tryToTerminateApplication: (NSApplication*) app;
 
 @end
 

@@ -39,6 +39,10 @@
 
 
 @interface ZPYWebViewAppDelegate : ZPYAppDelegate <WebFrameLoadDelegate, WebUIDelegate>
+{
+@protected
+    ClientExtensionHandlerPtr m_extension;
+}
 
 @property (assign) IBOutlet ZPYWebView *view;
 

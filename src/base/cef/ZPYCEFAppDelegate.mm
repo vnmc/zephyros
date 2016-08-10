@@ -179,15 +179,6 @@ extern bool g_isWindowLoaded;
     [self.window setFrame: [self.window frameRectForContentRect: r] display: YES];
 }
 
-- (void) tryToTerminateApplication: (NSApplication*) app
-{
-    if (g_handler.get() && !g_handler->IsClosing())
-    {
-        g_handler->CloseAllBrowsers(false);
-        g_handler->GetClientExtensionHandler()->InvokeCallbacks("onAppTerminating", CefListValue::Create());
-    }
-}
-
 //
 // Restore the window when the dock icon is clicked.
 //

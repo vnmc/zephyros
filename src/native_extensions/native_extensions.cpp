@@ -149,11 +149,27 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 
     // onAppTerminating(callback: () => void) => void
     NativeFunction* fnxOnAppTerminating = FUNC({ return NO_ERROR; });
+
+#ifdef USE_CEF
     fnxOnAppTerminating->SetAllCallbacksCompletedHandler(CALLBACK_HANDLER({
         if (retVal)
             App::CloseWindow();
     }));
+#endif
+
     e->AddNativeJavaScriptCallback(TEXT("onAppTerminating"), fnxOnAppTerminating);
+
+
+    //////////////////////////////////////////////////////////////////////
+    // App Life Cycle
+
+    e->AddNativeJavaScriptProcedure(
+        TEXT("quit"),
+        FUNC({
+            App::Quit();
+            return NO_ERROR;
+        }
+    ));
 
 
     //////////////////////////////////////////////////////////////////////

@@ -59,6 +59,18 @@ JSContextRef g_ctx = NULL;
 
 @implementation ZPYWebViewAppDelegate
 
+- (id) init
+{
+    self = [super init];
+    m_extension = new Zephyros::ClientExtensionHandler();    
+    return self;
+}
+
+- (void) dealloc
+{
+    delete m_extension;
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification*) notification
 {
     _view.extension = m_extension;
@@ -116,18 +128,25 @@ JSContextRef g_ctx = NULL;
     }
 }
 
+- (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication*) sender
+{
+    return m_extension->InvokeCallbacks(TEXT("onAppTerminating"), Zephyros::JavaScript::CreateArray()) ?
+        NSTerminateNow :
+        NSTerminateCancel;
+}
+
 //
 // This is called as soon as the script environment is ready in the webview
 //
 - (void) webView: (WebView*) sender didClearWindowObject: (WebScriptObject*) windowScriptObject forFrame: (WebFrame*) frame
 {
-    if (!m_nativeExtensionsAdded)
+    if (!Zephyros::GetNativeExtensions()->GetNativeExtensionsAdded())
     {
         g_ctx = _view.mainFrame.globalContext;
         if (Zephyros::GetNativeExtensions())
             Zephyros::GetNativeExtensions()->AddNativeExtensions(m_extension);
-        
-        m_nativeExtensionsAdded = true;
+
+        Zephyros::GetNativeExtensions()->SetNativeExtensionsAdded();
         
         // add paths/URLs that have been dragged onto the dock icon
         ZPYAppDelegate* me = self;
@@ -164,7 +183,7 @@ JSContextRef g_ctx = NULL;
           line,
           [[webFrame windowObject] evaluateWebScript: @"____frame_exception____.toString()"],
           [[webFrame windowObject] evaluateWebScript: @"____frame_exception____.stack"]
-          );
+    );
     
     [[webFrame windowObject] setValue: nil forKey:@"____frame_exception____"];
 }

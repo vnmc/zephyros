@@ -382,8 +382,29 @@ String JSStringToString(JSStringRef str)
     
     return result;
 }
-    
-    
+
+bool GetTruthValue(JSValueRef value)
+{
+    if (JSValueIsBoolean(g_ctx, value))
+        return JSValueToBoolean(g_ctx, value);
+
+    if (JSValueIsNumber(g_ctx, value))
+        return JSValueToNumber(g_ctx, value, NULL) != 0;
+
+    if (JSValueIsString(g_ctx, value))
+    {
+        JSStringRef str = JSValueToStringCopy(g_ctx, value, NULL);
+        bool ret = JSStringToString(str).length() > 0;
+        JSStringRelease(str);
+        return ret;
+    }
+
+    if (JSValueIsNull(g_ctx, value) || JSValueIsUndefined(g_ctx, value))
+        return false;
+
+    return true;
+}
+
 } // namespace JavaScript
 } // namespace Zephyros
 
