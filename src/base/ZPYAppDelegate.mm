@@ -44,21 +44,6 @@
 
 @implementation ZPYAppDelegate
 
-- (id) init
-{
-    self = [super init];
-    
-    m_nativeExtensionsAdded = false;
-    m_extension = new Zephyros::ClientExtensionHandler();
-    
-    return self;
-}
-
-- (void) dealloc
-{
-    delete m_extension;
-}
-
 - (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication*) sender
 {
     return NSTerminateNow;
@@ -127,8 +112,8 @@
         Zephyros::CustomURLManager* pMgr = Zephyros::GetNativeExtensions()->GetCustomURLManager();
         
         pMgr->AddURL([url UTF8String]);
-        
-        if (m_nativeExtensionsAdded)
+
+        if (Zephyros::GetNativeExtensions()->GetNativeExtensionsAdded())
             pMgr->FireCustomURLs();
     }
 }
@@ -188,7 +173,7 @@
 
 - (void) addLaunchPaths
 {
-    if (!m_nativeExtensionsAdded || m_launchPaths.size() == 0)
+    if (!Zephyros::GetNativeExtensions()->GetNativeExtensionsAdded() || m_launchPaths.size() == 0)
         return;
     
     Zephyros::JavaScript::Array listFilenames = Zephyros::JavaScript::CreateArray();
@@ -202,7 +187,7 @@
     
     Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
     args->SetList(0, listFilenames);
-    m_extension->InvokeCallbacks("onAddURLs", args);
+    Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks("onAddURLs", args);
     
     m_launchPaths.clear();
 }
@@ -234,16 +219,6 @@
                     item.state = (status & 0x02) ? NSOnState : NSOffState;
                 }
             }
-            
-            /*
-            NSNumber *newStatus = [statuses objectForKey: [(ZPYMenuItem*) item commandId]];
-            if (newStatus != nil)
-            {
-                int status = [newStatus intValue];
-                
-                [item setEnabled: (status & 0x01) ? YES : NO];
-                item.state = (status & 0x02) ? NSOnState : NSOffState;
-            }*/
         }
         
         if (item.hasSubmenu)
@@ -254,11 +229,6 @@
 - (BOOL) userNotificationCenter: (NSUserNotificationCenter*) center shouldPresentNotification: (NSUserNotification*) notification
 {
     return YES;
-}
-
-- (ClientExtensionHandlerPtr) extensionHandler
-{
-    return m_extension;
 }
 
 @end

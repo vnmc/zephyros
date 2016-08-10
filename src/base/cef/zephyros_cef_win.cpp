@@ -813,7 +813,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
       }
 
-      // Allow the close.
+      // allow the close
       break;
 
     case WM_DESTROY:

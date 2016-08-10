@@ -348,3 +348,20 @@ void CopyDictionary(CefRefPtr<CefDictionaryValue> source, CefRefPtr<CefDictionar
         }
     }
 }
+
+bool GetTruthValue(CefRefPtr<CefV8Value> value)
+{
+    if (value->IsBool())
+        return value->GetBoolValue();
+    if (value->IsInt())
+        return value->GetIntValue() != 0;
+    if (value->IsUInt())
+        return value->GetUIntValue() != 0;
+    if (value->IsDouble())
+        return value->GetDoubleValue() != 0;
+    if (value->IsString())
+        return String(value->GetStringValue()).length() > 0;
+    if (value->IsNull() || value->IsUndefined() || !value->IsValid())
+        return false;
+    return true;
+}

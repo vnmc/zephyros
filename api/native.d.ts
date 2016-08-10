@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Vanamco 
+ * Copyright (c) 2015-2016 Vanamco 
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -91,7 +91,7 @@ declare module NativeInterface
 		 *   Function called when the app is about to terminate. It doesn't
 		 *   receive any arguments.
 		 */
-		onAppTerminating: (callback: () => void) => void;
+		onAppTerminating: (callback: () => void|boolean) => void;
 
 
 		///////////////////////////////////////////////////////////////////////

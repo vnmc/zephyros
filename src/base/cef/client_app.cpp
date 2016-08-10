@@ -85,6 +85,7 @@ void ClientApp::OnWebKitInitialized()
 {
 	// generate the JavaScript code for the extension and register it
     Zephyros::GetNativeExtensions()->AddNativeExtensions(m_pAppExtensionHandler.get());
+    Zephyros::GetNativeExtensions()->SetNativeExtensionsAdded();
 	CefRegisterExtension("v8/app", m_pAppExtensionHandler->GetJavaScriptCode(), m_pAppExtensionHandler.get());
 
     for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)

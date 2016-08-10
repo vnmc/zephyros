@@ -49,9 +49,6 @@
 {
 @protected
     std::vector<Zephyros::Path*> m_launchPaths;
-    
-    bool m_nativeExtensionsAdded;
-    ClientExtensionHandlerPtr m_extension;
 }
 
 

@@ -53,7 +53,7 @@ class ClientCallback
 {
 public:
     ClientCallback(int32 messageId, CefRefPtr<CefBrowser> browser)
-        : m_messageId(messageId), m_browser(browser), m_invokeJavaScriptCallbackCount(0)
+        : m_messageId(messageId), m_returnValue(true), m_invokeJavaScriptCallbackCount(0), m_browser(browser)
     {
     }
 
@@ -65,9 +65,15 @@ public:
     {
         return m_messageId;
     }
-
-    inline int IncrementJavaScriptInvokeCallbackCount()
+    
+    inline bool GetReturnValue()
     {
+        return m_returnValue;
+    }
+
+    inline int IncrementJavaScriptInvokeCallbackCount(bool retVal)
+    {
+        m_returnValue = retVal;
         return ++m_invokeJavaScriptCallbackCount;
     }
 
@@ -78,8 +84,9 @@ public:
 
 private:
     int32 m_messageId;
-    CefRefPtr<CefBrowser> m_browser;
+    bool m_returnValue;
     int m_invokeJavaScriptCallbackCount;
+    CefRefPtr<CefBrowser> m_browser;
 };
 
 
