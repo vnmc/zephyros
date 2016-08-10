@@ -52,6 +52,7 @@
 #include "base/cef/client_app.h"
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
+#include "base/cef/zephyros_cef_win.h"
 
 #include "util/string_util.h"
 
@@ -68,18 +69,6 @@
 // Add Common Controls to the application manifest because it's required to
 // support the default tooltip implementation.
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")  // NOLINT(whitespace/line_length)
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-// Structures
-
-typedef struct
-{
-	int x;
-	int y;
-	int w;
-	int h;
-} Rect;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,10 +110,6 @@ void InstallCrashReporting();
 
 void SetUserAgentString(CefSettings& settings);
 bool HandleOpenCustomURL(LPTSTR lpCommandLine, bool bOtherInstanceRunning);
-
-void LoadWindowPlacement(Rect* pRectNormal, UINT* pCmdShow);
-void SaveWindowPlacement(Rect* pRectNormal, UINT cmdShow);
-void AdjustWindowPlacementToMonitor(Rect* pRect);
 
 HWND CreateMessageWindow(HINSTANCE hInstance);
 LRESULT CALLBACK MessageWndProc(HWND, UINT, WPARAM, LPARAM);
@@ -243,6 +228,93 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	return nResult;
 }
 
+void LoadWindowPlacement(Rect* pRectNormal, UINT* pShowCmd)
+{
+	pRectNormal->x = CW_USEDEFAULT;
+	pRectNormal->y = CW_USEDEFAULT;
+	pRectNormal->w = Zephyros::GetDefaultWindowSize().nWidth;
+	pRectNormal->h = Zephyros::GetDefaultWindowSize().nHeight;
+	*pShowCmd = SW_SHOWDEFAULT;
+
+	HKEY hKey;
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+	{
+		DWORD type = 0;
+		DWORD len = 0;
+		if (RegQueryValueEx(hKey, TEXT("window"), NULL, &type, NULL, &len) == ERROR_SUCCESS)
+		{
+			// read the data from the registry
+			BYTE* buf = new BYTE[len];
+			RegQueryValueEx(hKey, TEXT("window"), NULL, &type, buf, &len);
+
+			// parse the string
+			StringStream ss(ToString(buf, len));
+			TCHAR delim;
+			ss >> pRectNormal->x;
+			ss >> delim;
+			ss >> pRectNormal->y;
+			ss >> delim;
+			ss >> pRectNormal->w;
+			ss >> delim;
+			ss >> pRectNormal->h;
+			ss >> delim;
+			ss >> *pShowCmd;
+
+			delete[] buf;
+		}
+
+		RegCloseKey(hKey);
+	}
+}
+
+void SaveWindowPlacement(Rect* pRectNormal, UINT showCmd)
+{
+	HKEY hKey;
+	if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
+	{
+		StringStream ss;
+		ss << pRectNormal->x << TEXT(',') << pRectNormal->y << TEXT(',') << pRectNormal->w << TEXT(',') << pRectNormal->h << TEXT(',') << showCmd;
+		String data = ss.str();
+
+		RegSetValueEx(hKey, TEXT("window"), 0, REG_SZ, reinterpret_cast<const BYTE*>(data.c_str()), (DWORD) ((data.length() + 1) * sizeof(TCHAR)));
+		RegCloseKey(hKey);
+	}
+}
+
+void AdjustWindowPlacementToMonitor(Rect* pRect)
+{
+	POINT pt;
+	pt.x = pRect->x;
+	pt.y = pRect->y;
+	HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+
+	// get the monitor info
+	MONITORINFO info;
+	info.cbSize = sizeof(MONITORINFO);
+	if (!GetMonitorInfo(hMonitor, &info))
+		return;
+
+	// adjust for work area
+	pRect->x += info.rcWork.left - info.rcMonitor.left;
+	pRect->y += info.rcWork.top - info.rcMonitor.top;
+
+	// adjust width and height
+	if (pRect->w > info.rcWork.right - info.rcWork.left)
+		pRect->w = info.rcWork.right - info.rcWork.left;
+	if (pRect->h > info.rcWork.bottom - info.rcWork.top)
+		pRect->h = info.rcWork.bottom - info.rcWork.top;
+
+	// adjust position
+	if (pRect->x < info.rcWork.left)
+		pRect->x = info.rcWork.left;
+	if (pRect->x + pRect->w > info.rcWork.right)
+		pRect->x = info.rcWork.right - pRect->w;
+	if (pRect->y < info.rcWork.top)
+		pRect->y = info.rcWork.top;
+	if (pRect->y + pRect->h > info.rcWork.bottom)
+		pRect->y = info.rcWork.bottom - pRect->h;
+}
+
 } // namespace Zephyros
 
 
@@ -290,8 +362,8 @@ int CreateMainWindow()
 
 	// create the main window
 	Rect rectWindow;
-	LoadWindowPlacement(&rectWindow, &g_nCmdShow);
-	AdjustWindowPlacementToMonitor(&rectWindow);
+	Zephyros::LoadWindowPlacement(&rectWindow, &g_nCmdShow);
+	Zephyros::AdjustWindowPlacementToMonitor(&rectWindow);
 
 	HWND hWndMain = CreateWindow(
 		szWindowClass, Zephyros::GetAppName(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
@@ -469,94 +541,6 @@ bool HandleOpenCustomURL(LPTSTR lpCommandLine, bool bOtherInstanceRunning)
 
 	return false;
 }
-
-void LoadWindowPlacement(Rect* pRectNormal, UINT* pShowCmd)
-{
-	pRectNormal->x = CW_USEDEFAULT;
-	pRectNormal->y = CW_USEDEFAULT;
-	pRectNormal->w = Zephyros::GetDefaultWindowSize().nWidth;
-	pRectNormal->h = Zephyros::GetDefaultWindowSize().nHeight;
-	*pShowCmd = SW_SHOWDEFAULT;
-
-	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
-	{
-		DWORD type = 0;
-		DWORD len = 0;
-		if (RegQueryValueEx(hKey, TEXT("window"), NULL, &type, NULL, &len) == ERROR_SUCCESS)
-		{
-			// read the data from the registry
-			BYTE* buf = new BYTE[len];
-			RegQueryValueEx(hKey, TEXT("window"), NULL, &type, buf, &len);
-
-			// parse the string
-			StringStream ss(ToString(buf, len));
-			TCHAR delim;
-			ss >> pRectNormal->x;
-			ss >> delim;
-			ss >> pRectNormal->y;
-			ss >> delim;
-			ss >> pRectNormal->w;
-			ss >> delim;
-			ss >> pRectNormal->h;
-			ss >> delim;
-			ss >> *pShowCmd;
-
-			delete[] buf;
-		}
-
-		RegCloseKey(hKey);
-	}
-}
-
-void SaveWindowPlacement(Rect* pRectNormal, UINT showCmd)
-{
-	HKEY hKey;
-	if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
-	{
-		StringStream ss;
-		ss << pRectNormal->x << TEXT(',') << pRectNormal->y << TEXT(',') << pRectNormal->w << TEXT(',') << pRectNormal->h << TEXT(',') << showCmd;
-		String data = ss.str();
-
-		RegSetValueEx(hKey, TEXT("window"), 0, REG_SZ, reinterpret_cast<const BYTE*>(data.c_str()), (DWORD) ((data.length() + 1) * sizeof(TCHAR)));
-		RegCloseKey(hKey);
-	}
-}
-
-void AdjustWindowPlacementToMonitor(Rect* pRect)
-{
-	POINT pt;
-	pt.x = pRect->x;
-	pt.y = pRect->y;
-	HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
-
-	// get the monitor info
-	MONITORINFO info;
-	info.cbSize = sizeof(MONITORINFO);
-	if (!GetMonitorInfo(hMonitor, &info))
-		return;
-
-	// adjust for work area
-	pRect->x += info.rcWork.left - info.rcMonitor.left;
-	pRect->y += info.rcWork.top - info.rcMonitor.top;
-
-	// adjust width and height
-	if (pRect->w > info.rcWork.right - info.rcWork.left)
-		pRect->w = info.rcWork.right - info.rcWork.left;
-	if (pRect->h > info.rcWork.bottom - info.rcWork.top)
-		pRect->h = info.rcWork.bottom - info.rcWork.top;
-
-	// adjust position
-	if (pRect->x < info.rcWork.left)
-		pRect->x = info.rcWork.left;
-	if (pRect->x + pRect->w > info.rcWork.right)
-		pRect->x = info.rcWork.right - pRect->w;
-	if (pRect->y < info.rcWork.top)
-		pRect->y = info.rcWork.top;
-	if (pRect->y + pRect->h > info.rcWork.bottom)
-		pRect->y = info.rcWork.bottom - pRect->h;
-}
-
 
 /**
  * Processes messages for the main window.
@@ -788,33 +772,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CLOSE:
 		if (g_handler.get() && !g_handler->IsClosing())
 		{
-			WINDOWPLACEMENT wpl;
-			wpl.length = sizeof(WINDOWPLACEMENT);
-			GetWindowPlacement(Zephyros::App::GetMainHwnd(), &wpl);
-			Rect r;
-			r.x = wpl.rcNormalPosition.left;
-			r.y = wpl.rcNormalPosition.top;
-			r.w = wpl.rcNormalPosition.right - wpl.rcNormalPosition.left;
-			r.h = wpl.rcNormalPosition.bottom - wpl.rcNormalPosition.top;
-			SaveWindowPlacement(&r, wpl.showCmd);
-
+			// invoke the "onAppTerminating" callbacks and cancel the close
 			g_handler->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onAppTerminating"), CefListValue::Create());
+			return 0;
+		}
 
-			CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-			if (browser.get())
-			{
-				// Notify the browser window that we would like to close it. This
-				// will result in a call to ClientHandler::DoClose() if the
-				// JavaScript 'onbeforeunload' event handler allows it.
-				browser->GetHost()->CloseBrowser(false);
-
-				// cancel the close
-				return 0;
-			}
-      }
-
-      // allow the close
-      break;
+        // allow the close
+        break;
 
     case WM_DESTROY:
 		// quitting CEF is handled in ClientHandler::OnBeforeClose()

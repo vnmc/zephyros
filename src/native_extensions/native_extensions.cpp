@@ -151,7 +151,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     NativeFunction* fnxOnAppTerminating = FUNC({ return NO_ERROR; });
     fnxOnAppTerminating->SetAllCallbacksCompletedHandler(CALLBACK_HANDLER({
         if (retVal)
-            App::QuitMessageLoop();
+            App::CloseWindow();
     }));
     e->AddNativeJavaScriptCallback(TEXT("onAppTerminating"), fnxOnAppTerminating);
 

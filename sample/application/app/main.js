@@ -49,7 +49,7 @@ $(document).ready(function()
 
 	app.onAppTerminating(function()
 	{
-		return false;
+		return true;
 	});
 
 	$('.compute-fib').click(function()

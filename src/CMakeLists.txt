@@ -225,6 +225,7 @@ set(ZEPHYROS_CEF_BASE_IMPL_SRCS_MACOSX
   base/cef/ZPYWindowDelegate.mm
 )
 set(ZEPHYROS_CEF_BASE_IMPL_SRCS_WINDOWS
+  base/cef/zephyros_cef_win.h
   base/cef/zephyros_cef_win.cpp
   base/cef/client_handler_win.cpp
 )
