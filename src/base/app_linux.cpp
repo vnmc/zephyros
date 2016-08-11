@@ -70,6 +70,18 @@ String GetUserAgent()
     return ssUserAgent.str();
 }
 
+void CloseWindow()
+{
+    CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
+    if (browser.get())
+    {
+        // notify the browser window that we would like to close it
+        // this will result in a call to ClientHandler::DoClose() if the
+        // JavaScript 'onbeforeunload' event handler allows it.
+        browser->GetHost()->CloseBrowser(false);
+    }
+}
+
 void Quit()
 {
     QuitMessageLoop();

@@ -158,8 +158,8 @@ else()
     set(LIB_ZEPHYROS_CEF "${ZEPHYROS_BUILD_DIR}/Zephyros.lib")
     set(LIB_DLL_WRAPPER "${ZEPHYROS_BUILD_DIR}/libcef_dll_wrapper.lib")
   elseif(OS_LINUX)
-    set(LIB_ZEPHYROS_CEF "${ZEPHYROS_BUILD_DIR}/Zephyros.a")
-    set(LIB_DLL_WRAPPER "${ZEPHYROS_BUILD_DIR}/libcef_dll_wrapper.a")
+    set(LIB_ZEPHYROS_CEF "${ZEPHYROS_BUILD_DIR}/src/libZephyros.a")
+    set(LIB_DLL_WRAPPER "${ZEPHYROS_BUILD_DIR}/lib/cef/libcef_dll/libcef_dll_wrapper.a")
   endif()
 endif()
 
@@ -218,8 +218,9 @@ if(OS_MACOSX)
     EMBED_FRAMEWORK("${APP_NAME_CEF}" "${LIB_CEF}")
     EMBED_HELPERS("${APP_NAME_CEF}" "${APP_NAME_CEFHELPER}")
     FIX_MACOSX_MAIN_FRAMEWORK_LINK("${APP_NAME_CEF}" "${CEF_TARGET_OUT_DIR}" NO)
+
     if(USE_CODESIGNING)
-      CODESIGN("${APP_NAME_CEF}" "${CEF_TARGET_OUT_DIR}" Babayaga.app ${CODESIGNING_ID})
+      CODESIGN("${APP_NAME_CEF}" "${CEF_TARGET_OUT_DIR}" "${APP_NAME_CEF}.app" ${CODESIGNING_ID})
     endif()
   endif()
 
@@ -241,6 +242,10 @@ if(OS_MACOSX)
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${APP_WEBVIEW_PLIST}"
     )
     EMBED_FRAMEWORK("${APP_NAME_WEBVIEW}" "${LIB_ZEPHYROS_WEBVIEW_PATH}")
+
+    if(USE_CODESIGNING)
+      CODESIGN("${APP_NAME_WEBVIEW}" "${CEF_TARGET_OUT_DIR}" "${APP_NAME_WEBVIEW}.app" ${CODESIGNING_ID})
+    endif()
   endif()
 
   # AppStore App
@@ -262,6 +267,10 @@ if(OS_MACOSX)
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${APP_APPSTORE_PLIST}"
     )
     EMBED_FRAMEWORK("${APP_NAME_APPSTORE}" "${LIB_ZEPHYROS_APPSTORE_PATH}")
+
+    if(USE_CODESIGNING)
+      CODESIGN("${APP_NAME_APPSTORE}" "${CEF_TARGET_OUT_DIR}" "${APP_NAME_APPSTORE}.app" ${CODESIGNING_ID})
+    endif()
   endif()
 elseif(OS_WINDOWS)
   add_executable(${APP_NAME} WIN32 ${APP_ALL_SRCS})
@@ -348,6 +357,11 @@ elseif(OS_WINDOWS)
 elseif(OS_LINUX)
   enable_language(ASM-ATT)
 
+  set(COMPILER_FLAGS "-fno-strict-aliasing -fstack-protector -funwind-tables --param=ssp-buffer-size=4 -pipe -pthread -Wall -Wno-missing-field-initializers -Wno-unused-parameter -fno-exceptions -fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -std=gnu++11 -Wsign-compare")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILER_FLAGS}")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COMPILER_FLAGS} -O0 -g")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMPILER_FLAGS} -O3 -fdata-sections -ffunction-sections -fno-ident -DNDEBUG -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2")
+
   # find required libraries and update compiler/linker variables
   set(CEF_STANDARD_LIBS X11)
   FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-3.0 gthread-2.0 openssl libcurl")
@@ -356,6 +370,7 @@ elseif(OS_LINUX)
   set(CEF_BINARY_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/linux/x86_64/Release/")
 
   add_executable(${APP_NAME} ${APP_ALL_SRCS})
+  target_compile_definitions(${APP_NAME} PRIVATE -DUSE_CEF ${PLATFORM})
 
   if(DEFINED IS_ZEPHYROS_BUILD)
     add_dependencies(${APP_NAME} Zephyros)
@@ -376,9 +391,10 @@ elseif(OS_LINUX)
     RUNTIME_OUTPUT_DIRECTORY ${CEF_TARGET_OUT_DIR}
   )
 
-  # build resource files (res/linux/content.S and res/linux/content.h)
-  add_custom_command(TARGET ${APP_NAME}
+  # build resource files (res/linux/content.s and res/linux/content.h)
+  add_custom_command(
     PRE_BUILD
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/res/linux/content.s" "${CMAKE_CURRENT_SOURCE_DIR}/res/linux/content.h"
     COMMAND "${ZEPHYROS_DIR}/tools/generate_resources.sh" "${CMAKE_CURRENT_SOURCE_DIR}/res/linux/content.s" "${CMAKE_CURRENT_SOURCE_DIR}/res/linux/content.h"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${WEBAPP}"
     VERBATIM

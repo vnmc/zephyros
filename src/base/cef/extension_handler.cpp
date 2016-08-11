@@ -192,7 +192,7 @@ void ClientExtensionHandler::InvokeCallbacks(String functionName, CefRefPtr<CefL
     // try to find the function object for the message name
     std::map<String, NativeFunction*>::iterator it = m_mapFunctions.find(functionName);
     if (it == m_mapFunctions.end())
-        return false;
+        return;
 
     // invoke the callbacks
     NativeFunction* fnx = it->second;
