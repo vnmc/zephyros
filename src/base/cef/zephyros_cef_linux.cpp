@@ -261,17 +261,9 @@ gboolean OnDeleteEvent(GtkWidget* widget, GdkEvent* event, GtkWindow* window)
 {
     if (g_handler.get() && !g_handler->IsClosing())
     {
-        CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-        if (browser.get())
-        {
-            // notify the browser window that we would like to close it
-            // this will result in a call to ClientHandler::DoClose() if the
-            // JavaScript 'onbeforeunload' event handler allows it.
-            browser->GetHost()->CloseBrowser(false);
-
-            // cancel the close
-            return TRUE;
-        }
+        // invoke the "onAppTerminating" callbacks and cancel the close
+		g_handler->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onAppTerminating"), CefListValue::Create());
+		return TRUE;
     }
 
     // allow the close
