@@ -36,7 +36,11 @@ echo "" >> $C_FILE
 
 i=0
 pwd=`pwd`
-webappdir=$(basename $pwd)
+
+# create the webapp directory name; Chromium lowercases the first part of the path ("domain");
+# use sed to lowercase (\L) the characters until the first slash
+webappdir=$(basename $pwd | sed 's/^[^\/]*/\L\0/')
+
 for f in $(find . -type f)
 do
     path=`readlink -f $f`

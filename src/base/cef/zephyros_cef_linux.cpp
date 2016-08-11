@@ -192,6 +192,7 @@ void CreateMainWindow(int argc, char** argv)
 {
     g_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(g_window), 800, 600);
+    gtk_window_set_title(GTK_WINDOW(g_window), Zephyros::GetAppName());
 
     g_signal_connect(g_window, "focus-in-event", G_CALLBACK(OnWindowFocusIn), NULL);
     g_signal_connect(g_window, "window-state-event", G_CALLBACK(OnWindowState), NULL);
