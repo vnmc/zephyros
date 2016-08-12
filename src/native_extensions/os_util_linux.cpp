@@ -31,11 +31,13 @@
 
 #include <unistd.h>
 #include <pwd.h>
+#include <spawn.h> // see manpages-posix-dev
+#include <poll.h>
+#include <glob.h>
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
-#include <spawn.h> // see manpages-posix-dev
-#include <poll.h>
 #include <sys/wait.h>
 
 #include <gdk/gdk.h>
@@ -53,6 +55,9 @@
 #include "native_extensions/os_util.h"
 
 #include <iostream>
+
+
+#define BUFSIZE 1024
 
 
 typedef struct
@@ -104,95 +109,119 @@ void CleanupStartProcessThreadData(void* arg)
 void* StartProcessThread(void* arg)
 {
     StartProcessThreadData* data = (StartProcessThreadData*) arg;
-    int exit_code;
-    int cout_pipe[2];
-    int cerr_pipe[2];
-    posix_spawn_file_actions_t action;
-
     pthread_cleanup_push(CleanupStartProcessThreadData, arg);
 
-    if (pipe(cout_pipe) || pipe(cerr_pipe))
+    int outPipe[2];
+    int errPipe[2];
+    if (pipe(outPipe) || pipe(errPipe))
         std::cout << "pipe returned an error.\n";
 
     // prepare spawning of pipes
+    posix_spawn_file_actions_t action;
     posix_spawn_file_actions_init(&action);
-    posix_spawn_file_actions_addclose(&action, cout_pipe[0]);
-    posix_spawn_file_actions_addclose(&action, cerr_pipe[0]);
-    posix_spawn_file_actions_adddup2(&action, cout_pipe[1], 1);
-    posix_spawn_file_actions_adddup2(&action, cerr_pipe[1], 2);
+    posix_spawn_file_actions_addclose(&action, outPipe[0]);
+    posix_spawn_file_actions_addclose(&action, errPipe[0]);
+    posix_spawn_file_actions_adddup2(&action, outPipe[1], 1);
+    posix_spawn_file_actions_adddup2(&action, errPipe[1], 2);
 
-    posix_spawn_file_actions_addclose(&action, cout_pipe[1]);
-    posix_spawn_file_actions_addclose(&action, cerr_pipe[1]);
+    posix_spawn_file_actions_addclose(&action, outPipe[1]);
+    posix_spawn_file_actions_addclose(&action, errPipe[1]);
 
     // build spawn arguments
     char** args = new char*[data->arguments->size() + 2];
-    args[0] = new char[data->executableFileName.length() + data->cwd.length() + 1];
-    strcpy(args[0], (data->executableFileName).c_str());
-    int i = 1;
 
+    // the first argument is the path to the executable
+    // glob the executable path
+    // (e.g., '~/.gem/ruby/*/bin/sass' will be resolved to something like '/Users/christen/.gem/ruby/2.0.0/bin/sass')
+    glob_t g;
+    const char* executablePath = data->executableFileName.c_str();
+    if (glob(executablePath, GLOB_TILDE, NULL, &g) == 0 && g.gl_pathc > 0)
+        executablePath = g.gl_pathv[0];
+    args[0] = new char[strlen(executablePath) + 1];
+    strcpy(args[0], executablePath);
+    globfree(&g);
+
+    int i = 1;
     for (String arg : *(data->arguments))
     {
         args[i] = new char[arg.length() + 1];
         strcpy(args[i], arg.c_str());
         ++i;
     }
+
     args[i] = 0;
 
     // change to indicated working directory and spawn process
     if (data->cwd.length() > 0)
-        chdir(data->cwd.c_str());
+    {
+        const char* cwd = data->cwd.c_str();
+        if (glob(cwd, GLOB_TILDE, NULL, &g) == 0 && g.gl_pathc > 0)
+            cwd = g.gl_pathv[0];
+
+        chdir(cwd);
+
+        globfree(&g);
+    }
 
     pid_t pid;
     if (posix_spawnp(&pid, args[0], &action, NULL, &args[0], NULL) != 0)
         std::cout << "posix_spawnp failed with error: " << strerror(errno) << "\n";
 
-    close(cout_pipe[1]), close(cerr_pipe[1]); // close child-side of pipes
+    // close child-side of pipes
+    close(outPipe[1]);
+    close(errPipe[1]);
 
-    // Read process output until terminated, build JS callback arguments on the go
-    i = 0;
-    Zephyros::JavaScript::Array callbackArgs = Zephyros::JavaScript::CreateArray();
+    // read process output until terminated, build JS callback arguments on the go
     Zephyros::JavaScript::Array stream = Zephyros::JavaScript::CreateArray();
-    String buffer(1024, TEXT(' '));
+    char buffer[BUFSIZE];
 
     std::vector<pollfd> plist = {
-        { cout_pipe[0], POLLIN },
-        { cerr_pipe[0], POLLIN }
+        { outPipe[0], POLLIN },
+        { errPipe[0], POLLIN }
     };
 
-    for (int rval; (rval = poll(&plist[0], plist.size(), -1 /* timeout */)) > 0; )
+    for (i = 0; poll(&plist[0], plist.size(), -1 /* infinite timeout */) > 0; )
     {
-        Zephyros::JavaScript::Object streamEntry = Zephyros::JavaScript::CreateObject();
+        int j = 0;
+        bool somethingRead = false;
 
-        if (plist[0].revents & POLLIN)
+        for (pollfd p : plist)
         {
-            int bytes_read = read(cout_pipe[0], &buffer[0], buffer.length());
-            streamEntry->SetString(TEXT("text"), buffer.substr(0, static_cast<size_t>(bytes_read)));
-            streamEntry->SetInt(TEXT("fd"), 0);
-            stream->SetDictionary(i++, streamEntry);
+            if (p.revents & POLLIN)
+            {
+                int bytesRead = read(p.fd, buffer, BUFSIZE);
+
+                Zephyros::JavaScript::Object streamEntry = Zephyros::JavaScript::CreateObject();
+                streamEntry->SetString(TEXT("text"), String(buffer, static_cast<size_t>(bytesRead)));
+                streamEntry->SetInt(TEXT("fd"), j);
+                stream->SetDictionary(i++, streamEntry);
+
+                somethingRead = true;
+                break;
+            }
+
+            ++j;
         }
-        else if (plist[1].revents & POLLIN)
-        {
-            int bytes_read = read(cerr_pipe[0], &buffer[0], buffer.length());
-            streamEntry->SetString(TEXT("text"), buffer.substr(0, static_cast<size_t>(bytes_read)));
-            streamEntry->SetInt(TEXT("fd"), 1);
-            stream->SetDictionary(i++, streamEntry);
-        }
-        else
-        {
-            // nothing left to read
+
+        if (!somethingRead)
             break;
-        }
     }
 
     // wait for process to terminate
-    waitpid(pid, &exit_code, 0);
+    int exitCode;
+    waitpid(pid, &exitCode, 0);
 
     // fire JavaScript callback
-    callbackArgs->SetInt(0, exit_code);
+    Zephyros::JavaScript::Array callbackArgs = Zephyros::JavaScript::CreateArray();
+    callbackArgs->SetInt(0, exitCode);
     callbackArgs->SetList(1, stream);
     g_handler->GetClientExtensionHandler()->InvokeCallback(data->callback, callbackArgs);
 
     // clean up
+    for (i = 0; i < data->arguments->size() + 1; ++i)
+        delete[] args[i];
+    delete[] args;
+
     posix_spawn_file_actions_destroy(&action);
     pthread_cleanup_pop(arg);
 

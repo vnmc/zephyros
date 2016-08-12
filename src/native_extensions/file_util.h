@@ -74,6 +74,7 @@ bool StartAccessingPath(Path& path);
 void StopAccessingPath(Path& path);
 
 void GetTempDir(Path& path);
+String GetApplicationPath();
 void GetApplicationResourcesPath(Path& path);
 
 } // namespace FileUtil

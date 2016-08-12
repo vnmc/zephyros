@@ -31,6 +31,8 @@
 
 #include <glob.h>
 #include <pwd.h>
+#include <libgen.h>
+
 #include <sys/stat.h>
 #include <gtk/gtk.h>
 
@@ -311,9 +313,22 @@ void GetTempDir(Path& path)
     path = Path(P_tmpdir);
 }
 
+String GetApplicationPath()
+{
+    char path[PATH_MAX];
+    if (readlink("/proc/self/exe", path, PATH_MAX) != -1)
+    {
+        dirname(path);
+        strcat(path, "/");
+        return String(path);
+    }
+
+    return "";
+}
+
 void GetApplicationResourcesPath(Path& path)
 {
-    // TODO: implement
+	path = Path(FileUtil::GetApplicationPath() + TEXT("/res"));
 }
 
 } // namespace FileUtil

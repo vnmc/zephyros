@@ -67,7 +67,7 @@ void GetPathFromNSURL(NSURL* url, Path& path, BOOL useParentDirForSecurityBookma
     }
     else
         urlWithBookmark = url;
-    
+
     path = Path([url.path UTF8String], [[urlWithBookmark absoluteString] UTF8String], bookmarkData != nil);
 }
 
@@ -124,7 +124,7 @@ void ShowOpenDialog(CallbackId callback, BOOL canChooseFiles, BOOL useParentDirF
 #endif
     }];
 }
-    
+
 void ShowSaveFileDialog(CallbackId callback)
 {
     // create and configure a save panel
@@ -177,12 +177,12 @@ void ShowOpenFileDialog(CallbackId callback)
 {
     ShowOpenDialog(callback, YES, NO);
 }
-    
+
 void ShowOpenDirectoryDialog(CallbackId callback)
 {
     ShowOpenDialog(callback, NO, NO);
 }
-    
+
 void ShowOpenFileOrDirectoryDialog(CallbackId callback)
 {
     ShowOpenDialog(callback, YES, YES);
@@ -218,12 +218,12 @@ void ShowInFileManager(String path)
     if (url != nil)
         [[NSWorkspace sharedWorkspace] openURL: url];
 }
-    
+
 bool ExistsFile(String filename)
 {
     return [[NSFileManager defaultManager] fileExistsAtPath: [NSString stringWithUTF8String: filename.c_str()]] == YES;
 }
-    
+
 bool IsDirectory(String path)
 {
     NSString *filename = [NSString stringWithUTF8String: path.c_str()];
@@ -287,7 +287,7 @@ bool WriteFile(String filename, String contents)
                                                                  encoding: NSUTF8StringEncoding
                                                                     error: NULL] == YES;
 }
-    
+
 bool DeleteFiles(String filenames)
 {
     NSFileManager *mgr = [NSFileManager defaultManager];
@@ -320,7 +320,7 @@ bool DeleteFiles(String filenames)
         
     return false;
 }
-    
+
 bool GetDirectory(String& path)
 {
     NSString *filename = [NSString stringWithUTF8String: path.c_str()];
@@ -375,10 +375,15 @@ void GetTempDir(Path& path)
     NSString *tempDir = NSTemporaryDirectory();
     if (tempDir == nil)
         tempDir = @"/tmp";
-        
+
     path = Path(String([tempDir UTF8String]), TEXT(""), false);
 }
-    
+
+String GetApplicationPath()
+{
+    return "";
+}
+
 void GetApplicationResourcesPath(Path& path)
 {
     path = Path(String([[[NSBundle mainBundle] resourcePath] UTF8String]), TEXT(""), false);
