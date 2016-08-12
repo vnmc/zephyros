@@ -386,15 +386,20 @@ void GetTempDir(Path& path)
 	delete[] pTempPath;
 }
 
-void GetApplicationResourcesPath(Path& path)
+String GetApplicationPath()
 {
 	TCHAR* pModuleFilename = new TCHAR[MAX_PATH + 1];
 	GetModuleFileName(NULL, pModuleFilename, MAX_PATH);
 	TCHAR* pLastSep = _tcsrchr(pModuleFilename, TEXT('\\'));
-	String strModulePath(pModuleFilename, pLastSep);
+	String path(pModuleFilename, pLastSep);
 	delete[] pModuleFilename;
 
-	path = Path(strModulePath + TEXT("\\res"));
+	return path;
+}
+
+void GetApplicationResourcesPath(Path& path)
+{
+    path = Path(FileUtil::GetApplicationPath() + TEXT("\\res"));
 }
 
 } // namespace FileUtil

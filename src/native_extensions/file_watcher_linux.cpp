@@ -33,8 +33,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <sys/inotify.h>
 #include <pthread.h>
+#include <sys/inotify.h>
 
 #include "util/string_util.h"
 #include "native_extensions/file_watcher.h"
@@ -75,7 +75,7 @@ void RecurseDir(const char *name, int level, std::unordered_map<int, String> *wa
     if (!entry)
         return;
 
-    char path[1024];
+    char path[PATH_MAX];
 
     do
     {
@@ -109,9 +109,8 @@ void ProcessEvent(char* buffer, int len, Zephyros::FileWatcher* watcher, std::un
         String fileName = String(event->name);
 
         bool isInExtensions = false;
-        for (std::vector<String>::iterator it = extensions->begin(); it != extensions->end(); ++it)
+        for (String ext : *extensions)
         {
-            String ext = String(*it);
             int pos = fileName.find(ext);
             int requiredPos = fileName.length() - ext.length();
 
@@ -127,7 +126,7 @@ void ProcessEvent(char* buffer, int len, Zephyros::FileWatcher* watcher, std::un
             String s = item->second;
             s.append(TEXT("/"));
             s.append(fileName);
-            changes.insert(changes.end(), s);
+            changes.push_back(s);
         }
 
         i += EVENT_SIZE + event->len;
@@ -141,6 +140,7 @@ void ProcessEvent(char* buffer, int len, Zephyros::FileWatcher* watcher, std::un
 void CleanupThreadData(void* arg)
 {
     FileWatchThreadData* data = (FileWatchThreadData*) arg;
+
     delete data->path;
     delete data->extensions;
     delete data;
@@ -149,6 +149,9 @@ void CleanupThreadData(void* arg)
 
 void* StartWatchingThread(void* arg)
 {
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
     char buffer[BUF_LEN];
     FileWatchThreadData* data = (FileWatchThreadData*) arg;
 
@@ -171,10 +174,9 @@ void* StartWatchingThread(void* arg)
     FD_SET(fd, &descriptors);
     int ret_val;
 
-    bool doContinue = true;
     pthread_cleanup_push(CleanupThreadData, arg);
 
-    while (doContinue)
+    while (true)
     {
         ret_val = pselect(fd + 1, &descriptors, NULL, NULL, &waitTime, NULL);
 

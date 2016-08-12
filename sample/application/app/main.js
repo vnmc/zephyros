@@ -310,6 +310,17 @@ $(document).ready(function()
 	$('#startProcess').click(function()
 	{
 		setMessage('Starting process...');
+
+		/*
+		app.startProcess("~/a.out", [], '~', function(exitCode, data)
+		{
+			var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
+			for (var i = 0; i < data.length; i++)
+				msg += data[i].text.replace('\n', '<br>');
+			appendMessage(msg);
+		});*/
+
+	    //*
 		var t = getParameter();
 		app.startProcess("/usr/bin/node", ["xx.js", "__111___"], "/home/administrator/tmp/stderrout", function(exitCode, data)
 		{
@@ -329,6 +340,7 @@ $(document).ready(function()
 				appendMessage(msg);
 			});
 		}, 0);
+		//*/
 	});
 });
 
