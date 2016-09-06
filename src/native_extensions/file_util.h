@@ -30,6 +30,8 @@
 #pragma once
 
 
+#include <vector>
+
 #include "base/types.h"
 #include "native_extensions/path.h"
 
@@ -55,6 +57,7 @@ bool ExistsFile(String filename);
 bool IsDirectory(String path);
 
 bool MakeDirectory(String path, bool recursive);
+bool ReadDirectory(String path, std::vector<String>& files);
 
 /**
  * Returns true if the path exists.

@@ -32,13 +32,12 @@
 
 #include <vector>
 #include "base/types.h"
-#include "jsbridge.h"
 
 
 namespace Zephyros {
 namespace NetworkUtil {
 
-JavaScript::Array GetNetworkIPs();
+std::vector<String> GetNetworkIPs();
 
 String GetPrimaryMACAddress();
 

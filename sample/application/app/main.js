@@ -129,6 +129,14 @@ $(document).ready(function()
            setMessage('Computer Name: ' +  computerName); 
         });
 	});
+
+	$('#getNetworkIPs').click(function()
+	{
+		app.getNetworkIPs(function(ips)
+		{
+			setMessage(JSON.stringify(ips));
+		});
+	});
 	
 	$('#showInFileManager').click(function()
 	{
@@ -171,7 +179,15 @@ $(document).ready(function()
     	    setMessage('File ' + path.path + ' has been created: ' + response);	    
 	    });
 	});
-	
+
+	$('#readDirectory').click(function()
+	{
+		app.readDirectory(getParameterAsPath(), function(files)
+		{
+			setMessage(JSON.stringify(files));
+		});
+	});
+
 	$('#readFile').click(function()
 	{
 	    var path = getParameterAsPath();
