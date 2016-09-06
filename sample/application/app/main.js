@@ -195,13 +195,13 @@ $(document).ready(function()
 	$('#moveFile').click(function()
 	{
 		var oldPath = {
-	        path: '/tmp/a',
+	        path: 'a.txt',
 	        urlWithSecurityAccessData: '',
 	        hasSecurityAccessData: false
 	    };
 
 		var newPath = {
-	        path: '/tmp/b',
+	        path: 'b.txt',
 	        urlWithSecurityAccessData: '',
 	        hasSecurityAccessData: false
 	    };
