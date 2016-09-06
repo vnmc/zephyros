@@ -439,7 +439,7 @@ declare module NativeInterface
          * @param callback
          *   The callback invoked with the array of file paths matching the query.
          */
-        readDirectory: (path: IPath, callback: (files: IPath[])) => void;
+        readDirectory: (path: IPath, callback: (files: IPath[]) => void) => void;
 
 		/**
 		 * Reads the contents of the file at "path".
