@@ -282,7 +282,7 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
 
 bool WriteFile(String filename, String contents)
 {
-	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 		return false;
 
@@ -299,6 +299,11 @@ bool WriteFile(String filename, String contents)
 	CloseHandle(hFile);
 
 	return true;
+}
+
+bool MoveFile(String oldFilename, String newFilename)
+{
+	return ::MoveFile(oldFilename.c_str(), newFilename.c_str()) != FALSE;
 }
 
 bool DeleteFiles(String filenames)
