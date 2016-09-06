@@ -228,6 +228,11 @@ bool WriteFile(String filename, String contents)
     return true;
 }
 
+bool MoveFile(String oldFilename, String newFilename)
+{
+    return rename(oldFilename.c_str(), newFilename.c_str()) != 0;
+}
+
 bool DeleteFiles(String filenames)
 {
     glob_t glob_result;
