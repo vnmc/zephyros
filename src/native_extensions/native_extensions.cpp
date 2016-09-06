@@ -499,11 +499,16 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     ));
 
     // writeFile: (path: IPath, contents: String)
-    e->AddNativeJavaScriptFunction(
+    e->AddNativeJavaScriptProcedure(
         TEXT("writeFile"),
         FUNC({
             Path path(args->GetDictionary(0));
-            FileUtil::WriteFile(path.GetPath(), args->GetString(1));
+            if (FileUtil::StartAccessingPath(path))
+            {
+                FileUtil::WriteFile(path.GetPath(), args->GetString(1));
+                FileUtil::StopAccessingPath(path);
+            }
+
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "path")
@@ -526,6 +531,24 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "path")
+    ));
+
+    // moveFile: (oldPath: IPath, newPath: IPath) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("moveFile"),
+        FUNC({
+            Path oldPath(args->GetDictionary(0));
+            Path newPath(args->GetDictionary(1));
+        
+            // TODO: macOS: sandboxing stuff; need access to the directory the file is moved to
+            // e.g., cf. http://stackoverflow.com/questions/13950476/application-sandbox-renaming-a-file-doesnt-work
+        
+            ret->SetBool(0, FileUtil::MoveFile(oldPath.GetPath(), newPath.GetPath()));
+
+            return NO_ERROR;
+        },
+        ARG(VTYPE_DICTIONARY, "oldPath")
+        ARG(VTYPE_DICTIONARY, "newPath")
     ));
 
 	// isDirectory: (path: IPath, callback(isDir: boolean) => void) => void

@@ -287,6 +287,13 @@ bool WriteFile(String filename, String contents)
                                                                  encoding: NSUTF8StringEncoding
                                                                     error: NULL] == YES;
 }
+    
+bool MoveFile(String oldFilename, String newFilename)
+{
+    return [[NSFileManager defaultManager] moveItemAtPath: [NSString stringWithUTF8String: oldFilename.c_str()]
+                                                   toPath: [NSString stringWithUTF8String: newFilename.c_str()]
+                                                    error: nil] == YES;
+}
 
 bool DeleteFiles(String filenames)
 {

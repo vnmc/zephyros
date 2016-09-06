@@ -189,7 +189,28 @@ $(document).ready(function()
 	{
 	    var path = getParameterAsPath();
 	    setMessage('Trying to write to file  ' + path.path + '...');
-	    app.writeFile(path, "Hey this is the file contents");
+	    app.writeFile(path, 'Hey this is the file contents');
+	});
+
+	$('#moveFile').click(function()
+	{
+		var oldPath = {
+	        path: '/tmp/a',
+	        urlWithSecurityAccessData: '',
+	        hasSecurityAccessData: false
+	    };
+
+		var newPath = {
+	        path: '/tmp/b',
+	        urlWithSecurityAccessData: '',
+	        hasSecurityAccessData: false
+	    };
+
+	    app.writeFile(oldPath, '42');
+		app.moveFile(oldPath, newPath, function(success)
+		{
+			setMessage('Moving the file ' + (success ? 'succeeded' : 'failed'));
+		});
 	});
 
 	$('#showOpenFileDialog').click(function()
