@@ -135,12 +135,11 @@ namespace NetworkUtil {
 // Returns an array of network IP addresses.
 // http://stackoverflow.com/a/14697468
 //
-JavaScript::Array GetNetworkIPs()
+std::vector<String> GetNetworkIPs()
 {
-    JavaScript::Array addrs = JavaScript::CreateArray();
-    int idx = 0;
-    
-    addrs->SetString(idx++, "127.0.0.1");
+    std::vector<String> ips;
+
+    ips.push_back("127.0.0.1");
     
     struct ifaddrs *interfaces;
     if (getifaddrs(&interfaces) == 0)
@@ -157,15 +156,15 @@ JavaScript::Array GetNetworkIPs()
                 {
                     char ipAddress[INET6_ADDRSTRLEN];
                     inet_ntop(addr->sin_family, &(addr->sin_addr), ipAddress, INET6_ADDRSTRLEN);
-                    addrs->SetString(idx++, ipAddress);
+                    ips.push_back(ipAddress);
                 }
             }
         }
         
         freeifaddrs(interfaces);
     }
-    
-    return addrs;
+
+    return ips;
 }
     
 String GetPrimaryMACAddress()

@@ -53,9 +53,9 @@ namespace NetworkUtil {
 /**
  * Returns an array of network IP addresses.
  */
-JavaScript::Array GetNetworkIPs()
+std::vector<String> GetNetworkIPs()
 {
-    JavaScript::Array addrs = JavaScript::CreateArray();
+    std::vector<String> addrs;
 
     struct ifaddrs* ifaddr;
     if (getifaddrs(&ifaddr) != -1)
@@ -69,7 +69,7 @@ JavaScript::Array GetNetworkIPs()
                 continue;
 
             if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
-                addrs->SetString(i++, host);
+                addrs.push_back(String(host));
         }
 
         freeifaddrs(ifaddr);

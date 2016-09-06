@@ -429,6 +429,18 @@ declare module NativeInterface
          */
         makeDirectory: (path: IPath, callback: (success: boolean) => void) => void;
 
+        /**
+         * Lists all the files in the directory "path".
+         * "path" can contain wildcards to match specific files only.
+         *
+         * @param path
+         *   The path to the directory; can contain wildcards.
+         *
+         * @param callback
+         *   The callback invoked with the array of file paths matching the query.
+         */
+        readDirectory: (path: IPath, callback: (files: IPath[])) => void;
+
 		/**
 		 * Reads the contents of the file at "path".
 		 *

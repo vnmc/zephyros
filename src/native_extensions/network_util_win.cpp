@@ -81,7 +81,7 @@ String GetIPAddress(LPSOCKADDR pAddr)
 /**
  * Returns an array of network IP addresses.
  */
-JavaScript::Array GetNetworkIPs()
+std::vector<String> GetNetworkIPs()
 {
 	std::set<String> setAddrs;
     JavaScript::Array addrs = JavaScript::CreateArray();
@@ -134,11 +134,11 @@ JavaScript::Array GetNetworkIPs()
 	}
 
 	// add the IP addresses to the result list
-	int i = 0;
+	std::vector vecAddrs;
 	for (String ip : setAddrs)
-		addrs->SetString(i++, ip);
+		vecAddrs.push_back(ip);
 
-    return addrs;
+    return vecAddrs;
 }
 
 String GetPrimaryMACAddress()

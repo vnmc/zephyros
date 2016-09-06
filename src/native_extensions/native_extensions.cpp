@@ -586,6 +586,38 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         },
         ARG(VTYPE_DICTIONARY, "path")
     ));
+    
+    // readDirectory: (path: IPath, callback(files: IPath[]) => void) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("readDirectory"),
+        FUNC({
+            Path path(args->GetDictionary(0));
+            if (FileUtil::StartAccessingPath(path))
+            {
+                std::vector<String> files;
+                FileUtil::ReadDirectory(path.GetPath(), files);
+
+                JavaScript::Array listFiles = JavaScript::CreateArray();
+                int i = 0;
+
+                for (String file : files)
+                {
+                    Path p(file, path.GetURLWithSecurityAccessData(), path.HasSecurityAccessData());
+                    listFiles->SetDictionary(i, p.CreateJSRepresentation());
+                    ++i;
+                }
+                
+                ret->SetList(0, listFiles);
+
+                FileUtil::StopAccessingPath(path);
+            }
+            else
+                ret->SetNull(0);
+
+            return NO_ERROR;
+        },
+        ARG(VTYPE_DICTIONARY, "path")
+    ));
 
 
     // startWatchingFiles: (path: string, fileExtensions: string[]) => void
@@ -702,7 +734,14 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptFunction(
         TEXT("getNetworkIPs"),
         FUNC({
-            ret->SetList(0, NetworkUtil::GetNetworkIPs());
+            JavaScript::Array ips = JavaScript::CreateArray();
+            int idx = 0;
+        
+            for (String ip : NetworkUtil::GetNetworkIPs())
+                ips->SetString(idx++, ip);
+            
+            ret->SetList(0, ips);
+        
             return NO_ERROR;
         }
     ));

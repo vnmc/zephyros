@@ -241,6 +241,31 @@ bool MakeDirectory(String path, bool recursive)
         return false;
     return true;
 }
+    
+bool ReadDirectory(String path, std::vector<String>& files)
+{
+    bool hasWildcard = path.find_first_of(TEXT("*?")) != String::npos;
+
+    NSFileManager *mgr = [NSFileManager defaultManager];
+
+    NSString *strPath = [NSString stringWithUTF8String: path.c_str()];
+    NSString *strBasePath = hasWildcard ? [strPath stringByDeletingLastPathComponent] : strPath;
+    
+    // list all the files in the directory
+    NSError *err;
+    NSArray *arrFiles = [mgr contentsOfDirectoryAtPath: strBasePath error: &err];
+    
+    if (!arrFiles || err)
+        return false;
+
+    NSPredicate *predicate = hasWildcard ? [NSPredicate predicateWithFormat: @"SELF LIKE %@", [strPath lastPathComponent]] : nil;
+
+    for (NSString *filename in arrFiles)
+        if (!predicate || [predicate evaluateWithObject: filename])
+            files.push_back(String([filename UTF8String]));
+        
+    return true;
+}
 
 bool ReadFile(String filename, JavaScript::Object options, String& result)
 {
