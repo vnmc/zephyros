@@ -164,18 +164,76 @@ bool IsDirectory(String path)
     return S_ISDIR(buffer.st_mode);
 }
 
+// cf. http://stackoverflow.com/questions/675039/how-can-i-create-directory-tree-in-c-linux
+int MakeDirectoryInternal(const char* path, mode_t mode)
+{
+    struct stat st;
+    int status = 0;
+
+    if (stat(path, &st) != 0)
+    {
+        // directory does not exist. EEXIST for race condition
+        if (mkdir(path, mode) != 0 && errno != EEXIST)
+            status = -1;
+    }
+    else if (!S_ISDIR(st.st_mode))
+    {
+        errno = ENOTDIR;
+        status = -1;
+    }
+
+    return status;
+}
+
 bool MakeDirectory(String path, bool recursive)
 {
-	String strWhichCmd = "which mkdir";
-    String strCommand = OSUtil::Exec(strWhichCmd);
-    Trim(strCommand);
-    if (recursive)
-        strCommand.append(" -p");
-    strCommand.append(" ");
-    strCommand.append(path);
+    int status = 0;
+    char* pathTmp = strdup(path.c_str());
+    char* pp = pathTmp;
+    char* sp;
 
-    int exitCode = system(strCommand.c_str());
-    return exitCode == 0;
+    while (status == 0 && (sp = strchr(pp, '/')) != 0)
+    {
+        if (sp != pp)
+        {
+            // neither root nor double slash in path
+            *sp = '\0';
+            status = MakeDirectoryInternal(pathTmp, 0777);
+            *sp = '/';
+        }
+
+        pp = sp + 1;
+    }
+
+    if (status == 0)
+        status = MakeDirectoryInternal(path.c_str(), 0777);
+
+    free(pathTmp);
+
+    return status == 0;
+}
+
+bool ReadDirectory(String path, std::vector<String>& files)
+{
+    if (path.find_first_of(TEXT("*?")) == String::npos)
+    {
+        if (path.back() == TEXT('/'))
+            path.append(TEXT("*"));
+        else
+            path.append(TEXT("/*"));
+    }
+
+    glob_t glob_result;
+    glob(path.c_str(), GLOB_TILDE, NULL, &glob_result);
+
+    // no match
+    if (glob_result.gl_pathc == 0)
+        return true;
+
+    for (unsigned int i = 0; i < glob_result.gl_pathc; i++)
+        files.push_back(String(glob_result.gl_pathv[i]));
+
+    return true;
 }
 
 bool ReadFile(String filename, JavaScript::Object options, String& result)
