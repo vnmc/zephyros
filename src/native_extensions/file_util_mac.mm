@@ -237,9 +237,10 @@ bool IsDirectory(String path)
 
 bool MakeDirectory(String path, bool recursive)
 {
-    if (![[NSFileManager defaultManager] createDirectoryAtPath: [NSString stringWithUTF8String: path.c_str()] withIntermediateDirectories:recursive attributes:nil error:nil] )
-        return false;
-    return true;
+    return [[NSFileManager defaultManager] createDirectoryAtPath: [NSString stringWithUTF8String: path.c_str()]
+                                     withIntermediateDirectories: recursive
+                                                      attributes: nil
+                                                           error: nil] == YES;
 }
     
 bool ReadDirectory(String path, std::vector<String>& files)
