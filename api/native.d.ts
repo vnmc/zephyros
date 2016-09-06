@@ -459,6 +459,21 @@ declare module NativeInterface
 		writeFile: (path: IPath, contents: string) => void;
 
 		/**
+		 * Moves the file at "oldPath" to "newPath".
+		 *
+		 * @param oldPath
+		 *   The path of the file to move.
+		 *
+		 * @param newPath
+		 *   The destination path of the file.
+		 *
+		 * @param callback
+		 *   Callback invoked with the result of the move operation (true means that
+		 *   moving the file was successful).
+		 */
+		moveFile: (oldPath: IPath, newPath: IPath, callback: (success: boolean) => void) => void;
+
+		/**
 		 * Deletes all the files described by "path". The file part of "path"
 		 * can contain wildcards (*, ?).
 		 * 

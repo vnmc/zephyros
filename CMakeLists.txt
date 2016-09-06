@@ -307,7 +307,7 @@ if(OS_MACOSX)
   # -Wl,-ObjC                       = Support creation of creation of ObjC static libraries
   # -Wl,-pie                        = Generate position-independent code suitable for executables only
   #set(CEF_LINKER_FLAGS            "-Wl,-search_paths_first -Wl,-ObjC -Wl,-pie")
-  set(CEF_LINKER_FLAGS            "-Xlinker -rpath -Xlinker @executable_path/../Frameworks -fobjc-arc -fobjc-link-runtime")
+  set(CEF_LINKER_FLAGS            "-Xlinker -rpath -Xlinker @executable_path/../Frameworks -fobjc-arc -fobjc-link-runtime -headerpad_max_install_names")
   # -Wl,-dead_strip                 = Strip dead code
   set(CEF_LINKER_FLAGS_RELEASE    "-Wl,-dead_strip")
 

@@ -65,6 +65,7 @@ bool GetDirectory(String& path);
 
 bool ReadFile(String filename, JavaScript::Object options, String& result);
 bool WriteFile(String filename, String contents);
+bool MoveFile(String oldFilename, String newFilename);
 bool DeleteFiles(String filenames);
 
 void LoadPreferences(String key, String& data);
