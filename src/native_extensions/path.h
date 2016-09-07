@@ -40,8 +40,10 @@
 
 #ifdef OS_WIN
 #define PATH_SEPARATOR TEXT('\\')
+#define PATH_SEPARATOR_STRING TEXT("\\")
 #else
 #define PATH_SEPARATOR TEXT('/')
+#define PATH_SEPARATOR_STRING TEXT("/")
 #endif
 
 // the class "Path" is declared in native_extensions.h
