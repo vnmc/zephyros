@@ -160,8 +160,31 @@ bool ExistsFile(String filename)
 bool IsDirectory(String path)
 {
     struct stat buffer;
-    stat(path.c_str(), &buffer);
+    if (stat(path.c_str(), &buffer) != 0)
+        return false;
     return S_ISDIR(buffer.st_mode);
+}
+
+bool Stat(String path, StatInfo* info)
+{
+    info->isFile = false;
+    info->isDirectory = false;
+    info->fileSize = 0;
+    info->creationDate = 0;
+    info->modificationDate = 0;
+
+    struct stat buffer;
+    if (stat(path.c_str(), &buffer) != 0)
+        return false;
+
+    info->isFile = S_ISREG(buffer.st_mode);
+    info->isDirectory = S_ISDIR(buffer.st_mode);
+    info->fileSize = buffer.st_size;
+    info->modificationDate = buffer.st_mtime * 1000;
+
+    // note: linux doesn't support reading the creating time of a file
+
+    return true;
 }
 
 // cf. http://stackoverflow.com/questions/675039/how-can-i-create-directory-tree-in-c-linux
