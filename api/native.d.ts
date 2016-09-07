@@ -441,6 +441,11 @@ declare module NativeInterface
          */
         readDirectory: (path: IPath, callback: (files: IPath[]) => void) => void;
 
+        /**
+         * 
+         */
+        stat: (path: IPath, callback: (info: IStat)) => void;
+
 		/**
 		 * Reads the contents of the file at "path".
 		 *
@@ -747,6 +752,15 @@ declare module NativeInterface
 		url: string;
 
 		hasSecurityAccessData: boolean;
+	}
+
+	export interface IStat
+	{
+		isFile: boolean;
+		isDirectory: boolean;
+		fileSize: number;
+		creationDate: Date;
+		modificationDate: Date;
 	}
 
 	export interface IFileChange
