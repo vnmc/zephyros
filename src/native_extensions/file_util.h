@@ -38,6 +38,15 @@
 
 namespace Zephyros {
 namespace FileUtil {
+    
+typedef struct
+{
+    bool isFile;
+    bool isDirectory;
+    unsigned long fileSize;
+    unsigned long creationDate;
+    unsigned long modificationDate;
+} StatInfo;
 
 #ifdef OS_MACOSX
 void ShowOpenFileDialog(CallbackId callback);
@@ -55,6 +64,7 @@ void ShowInFileManager(String path);
 
 bool ExistsFile(String filename);
 bool IsDirectory(String path);
+bool Stat(String path, StatInfo* stat);
 
 bool MakeDirectory(String path, bool recursive);
 bool ReadDirectory(String path, std::vector<String>& files);

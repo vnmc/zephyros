@@ -169,7 +169,15 @@ $(document).ready(function()
     	    setMessage('File ' + path.path + ' is a directory: ' + response);	    
 	    });
 	});
-	
+
+	$('#stat').click(function()
+	{
+		app.stat(getParameterAsPath(), function(info)
+		{
+			setMessage(JSON.stringify(info));
+		});
+	});
+
 	$('#makeDirectory').click(function()
 	{
 	    var path = getParameterAsPath();

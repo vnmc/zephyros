@@ -234,6 +234,31 @@ bool IsDirectory(String path)
     
     return isDirectory == YES;
 }
+    
+bool Stat(String path, StatInfo* stat)
+{
+    stat->isFile = false;
+    stat->isDirectory = false;
+    stat->fileSize = 0;
+    stat->creationDate = 0;
+    stat->modificationDate = 0;
+    
+    NSError *err = nil;
+    NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath: [NSString stringWithUTF8String: path.c_str()]
+                                                                           error: &err];
+    
+    if (err)
+        return false;
+    
+    NSString *fileType = [attrs objectForKey: NSFileType];
+    stat->isFile = [fileType isEqualToString: NSFileTypeRegular] || [fileType isEqualToString: NSFileTypeSymbolicLink];
+    stat->isDirectory = [fileType isEqualToString: NSFileTypeDirectory];
+    stat->fileSize = [[attrs objectForKey: NSFileSize] longValue];
+    stat->creationDate = [[attrs objectForKey: NSFileCreationDate] timeIntervalSince1970] * 1000;
+    stat->modificationDate = [[attrs objectForKey: NSFileModificationDate] timeIntervalSince1970] * 1000;
+    
+    return true;
+}
 
 bool MakeDirectory(String path, bool recursive)
 {

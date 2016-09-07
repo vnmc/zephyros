@@ -568,6 +568,37 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         },
         ARG(VTYPE_DICTIONARY, "path")
     ));
+    
+    // stat: (path: IPath, callback(info: IStat) => void) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("stat"),
+        FUNC({
+            Path path(args->GetDictionary(0));
+            if (FileUtil::StartAccessingPath(path))
+            {
+                FileUtil::StatInfo stat;
+                FileUtil::Stat(path.GetPath(), &stat);
+                
+                JavaScript::Object info = JavaScript::CreateObject();
+                info->SetBool(TEXT("isFile"), stat.isFile);
+                info->SetBool(TEXT("isDictionary"), stat.isDirectory);
+                info->SetDouble(TEXT("fileSize"), stat.fileSize);
+                info->SetDouble(TEXT("creationDate"), stat.creationDate);
+                info->SetDouble(TEXT("modificationDate"), stat.modificationDate);
+                
+                ret->SetDictionary(0, info);
+
+                FileUtil::StopAccessingPath(path);
+            }
+            else
+                ret->SetNull(0);
+
+            return NO_ERROR;
+        },
+        ARG(VTYPE_DICTIONARY, "path")),
+        true, false,
+        TEXT("return stat(path, function(info) { info.creationDate = new Date(info.creationDate); info.modificationDate = new Date(info.modificationDate); callback(info); });")
+    );
 
     // makeDirectory: (path: IPath, callback(success: boolean) => void) => void
     e->AddNativeJavaScriptFunction(
