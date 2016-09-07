@@ -134,7 +134,7 @@ std::vector<String> GetNetworkIPs()
 	}
 
 	// add the IP addresses to the result list
-	std::vector vecAddrs;
+	std::vector<String> vecAddrs;
 	for (String ip : setAddrs)
 		vecAddrs.push_back(ip);
 
