@@ -43,9 +43,9 @@ typedef struct
 {
     bool isFile;
     bool isDirectory;
-    unsigned long fileSize;
-    unsigned long creationDate;
-    unsigned long modificationDate;
+    uint64_t fileSize;
+	uint64_t creationDate;
+	uint64_t modificationDate;
 } StatInfo;
 
 #ifdef OS_MACOSX
