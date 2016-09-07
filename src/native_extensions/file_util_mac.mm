@@ -263,8 +263,8 @@ bool ReadDirectory(String path, std::vector<String>& files)
 
     for (NSString *filename in arrFiles)
         if (!predicate || [predicate evaluateWithObject: filename])
-            files.push_back(String([filename UTF8String]));
-        
+            files.push_back(String([[strBasePath stringByAppendingPathComponent: filename] UTF8String]));
+
     return true;
 }
 
