@@ -227,6 +227,43 @@ bool GetDirectory(String& path)
 	return true;
 }
 
+bool ReadDirectory(String path, std::vector<String>& files)
+{
+	if (path.find_first_of(TEXT("*?")) == String::npos)
+	{
+		// no wildcards, add a "*" at the end
+		if (path.back() != TEXT('/') && path.back() != TEXT('\\'))
+			path.append(PATH_SEPARATOR_STRING);
+		path.append(TEXT("*"));
+	}
+
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = FindFirstFile(path.c_str(), &fd);
+	if (hFind == INVALID_HANDLE_VALUE)
+		return false;
+
+	TCHAR* pBasePath = new TCHAR[path.length() + 1];
+	_tcscpy(pBasePath, path.c_str());
+	PathRemoveFileSpec(pBasePath);
+	size_t idx = _tcslen(pBasePath);
+	pBasePath[idx] = PATH_SEPARATOR;
+	pBasePath[idx + 1] = TEXT('\0');
+
+	do
+	{
+		if (_tcscmp(fd.cFileName, TEXT(".")) == 0 || _tcscmp(fd.cFileName, TEXT("..")) == 0)
+			continue;
+
+		String filename(pBasePath);
+		filename.append(fd.cFileName);
+		files.push_back(filename);
+	} while (FindNextFile(hFind, &fd));
+
+	FindClose(hFind);
+	delete[] pBasePath;
+	return true;
+}
+
 bool ReadFile(String filename, JavaScript::Object options, String& result)
 {
 	String encoding = TEXT("");
@@ -326,16 +363,21 @@ bool DeleteFiles(String filenames)
     
 	do
     {
+		if (_tcscmp(fd.cFileName, TEXT(".")) == 0 || _tcscmp(fd.cFileName, TEXT("..")) == 0)
+			continue;
+
 		String filename(pDir);
 		filename.append(fd.cFileName);
         if (!DeleteFile(filename.c_str()))
 		{
 			FindClose(hFind);
+			delete[] pDir;
 			return false;
 		}
 	} while (FindNextFile(hFind, &fd));
 
 	FindClose(hFind);
+	delete[] pDir;
 	return true;
 }
 
