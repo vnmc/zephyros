@@ -194,6 +194,54 @@ bool IsDirectory(String path)
 	return (dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
+bool Stat(String path, StatInfo* stat)
+{
+	if (path.substr(0, 7) == TEXT("http://") || path.substr(0, 8) == TEXT("https://"))
+		return false;
+
+	DWORD dwFileAttrs = GetFileAttributes(path.c_str());
+	if (dwFileAttrs != INVALID_FILE_ATTRIBUTES)
+	{
+		stat->isFile = dwFileAttrs & ~FILE_ATTRIBUTE_DIRECTORY & (FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_ARCHIVE | FILE_ATTRIBUTE_READONLY);
+		stat->isDirectory = dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY;
+	}
+	else
+	{
+		stat->isFile = false;
+		stat->isDirectory = false;
+	}
+
+	HANDLE hnd = CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hnd == INVALID_HANDLE_VALUE)
+	{
+		stat->fileSize = 0;
+		stat->creationDate = 0;
+		stat->modificationDate = 0;
+
+		return false;
+	}
+
+	LARGE_INTEGER size;
+	GetFileSizeEx(hnd, &size);
+	stat->fileSize = size.QuadPart;
+
+	FILETIME createTime, writeTime;
+	GetFileTime(hnd, &createTime, NULL, &writeTime);
+
+	ULARGE_INTEGER ullCreateTime, ullWriteTime;
+	ullCreateTime.LowPart = createTime.dwLowDateTime;
+	ullCreateTime.HighPart = createTime.dwHighDateTime;
+	ullWriteTime.LowPart = writeTime.dwLowDateTime;
+	ullWriteTime.HighPart = writeTime.dwHighDateTime;
+
+	stat->creationDate = static_cast<uint64_t>(ullCreateTime.QuadPart / 10000ULL - 11644473600000ULL);
+	stat->modificationDate = static_cast<uint64_t>(ullWriteTime.QuadPart / 10000ULL - 11644473600000ULL);
+
+	CloseHandle(hnd);
+
+	return true;
+}
+
 bool MakeDirectory(String path, bool recursive)
 {
 	// TODO: revise: according to MSDN:
