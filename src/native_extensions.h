@@ -28,6 +28,7 @@
 #ifndef NativeExtensions_h
 #define NativeExtensions_h
 
+
 #include <string>
 #include <vector>
 #include <list>
@@ -36,6 +37,10 @@
 
 #include "zephyros.h"
 #include "jsbridge.h"
+
+#ifdef OS_MACOSX
+#include <objc/objc.h>
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -164,6 +169,41 @@ class ClientCallback;
 class FileWatcher;
 class CustomURLManager;
 class Browser;
+
+class Error
+{
+public:
+    Error()
+    : m_code(0), m_message(TEXT(""))
+    {
+    }
+
+    Error(int code, String message);
+
+    inline void SetError(int code, String message = TEXT(""))
+    {
+        m_code = code;
+        m_message = message;
+    }
+
+#ifdef OS_WIN
+    void FromLastError();
+#endif
+
+#ifdef OS_MACOSX
+    void FromError(id error);
+#endif
+
+#ifdef OS_LINUX
+    void FromErrno();
+#endif
+
+    JavaScript::Object CreateJSRepresentation();
+
+private:
+    int m_code;
+    String m_message;
+};
 
 class Path
 {

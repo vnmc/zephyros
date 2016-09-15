@@ -381,7 +381,7 @@ declare module NativeInterface
 		 *   Callback invoked when it is safe to access the file specified in
 		 *   "path" or if an error occurred granting access rights.
 		 */
-		startAccessingPath: (path: IPath, callback: (success: boolean) => void) => void;
+		startAccessingPath: (path: IPath, callback: (err: Error) => void) => void;
 
 		/**
 		 * Call this function to stop accessing a file resource (a "security
@@ -427,7 +427,7 @@ declare module NativeInterface
          *   Callback called when the directory was created or an error
          *   occurred during creation.
          */
-        makeDirectory: (path: IPath, callback: (success: boolean) => void) => void;
+        makeDirectory: (path: IPath, callback: (err: Error) => void) => void;
 
         /**
          * Lists all the files in the directory "path".
@@ -437,12 +437,19 @@ declare module NativeInterface
          *   The path to the directory; can contain wildcards.
          *
          * @param callback
-         *   The callback invoked with the array of file paths matching the query.
+         *   The callback invoked with an error object and the array of file paths matching the query.
          */
-        readDirectory: (path: IPath, callback: (files: IPath[]) => void) => void;
+        readDirectory: (path: IPath, callback: (err: Error, files: IPath[]) => void) => void;
 
         /**
-         * 
+         * Retrieves information about the file or directory at "path".
+         *
+         * @param path
+         *   The path of the file or directory about which to retrieve information.
+         *
+         * @param callback
+         *   The callback invoked with an IStat object holding information
+         *   (if "path" is a file or directory, file size, creation and modification time).
          */
         stat: (path: IPath, callback: (info: IStat)) => void;
 
@@ -460,9 +467,9 @@ declare module NativeInterface
 		 *   Read options.
 		 *
 		 * @param callback
-		 *   Callback invoked with the contents of the file as a string.
+		 *   Callback invoked with an error object and the contents of the file as a string.
 		 */
-		readFile: (path: IPath, options: IReadFileOptions, callback: (contents: string) => void) => void;
+		readFile: (path: IPath, options: IReadFileOptions, callback: (err: Error, contents: string) => void) => void;
 
 		/**
 		 * Writes "contents" to a file located at "path".
@@ -472,8 +479,12 @@ declare module NativeInterface
 		 *
 		 * @param contents
 		 *   The contents to write to the file.
+		 *
+		 * @param cb
+		 *   Callback invoked when the operation has completed and providing
+		 *   an error object in case an error occurred.
 		 */
-		writeFile: (path: IPath, contents: string) => void;
+		writeFile: (path: IPath, contents: string, callback: (err: Error) => void) => void;
 
 		/**
 		 * Moves the file at "oldPath" to "newPath".
@@ -488,7 +499,7 @@ declare module NativeInterface
 		 *   Callback invoked with the result of the move operation (true means that
 		 *   moving the file was successful).
 		 */
-		moveFile: (oldPath: IPath, newPath: IPath, callback: (success: boolean) => void) => void;
+		moveFile: (oldPath: IPath, newPath: IPath, callback: (err: Error) => void) => void;
 
 		/**
 		 * Deletes all the files described by "path". The file part of "path"
@@ -501,8 +512,12 @@ declare module NativeInterface
 		 * @param relativeFilenames
 		 *   Optionally, you can specify the file name(s), which are treated
 		 *   relatively to "path". Can contain wildcard characters (*, ?).
+		 *
+		 * @param cb
+		 *   Callback invoked when the operation has completed and providing
+		 *   an error object in case an error occurred.
 		 */
-		deleteFiles: (path: IPath, relativeFilenames?: string) => void;
+		deleteFiles: (path: IPath, relativeFilenames?: string, cb?: (err: Error) => void) => void;
 
 		/**
 		 * Starts watching the files in the directory at "path" and its sub-

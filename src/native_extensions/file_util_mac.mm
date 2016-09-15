@@ -260,15 +260,20 @@ bool Stat(String path, StatInfo* stat)
     return true;
 }
 
-bool MakeDirectory(String path, bool recursive)
+bool MakeDirectory(String path, bool recursive, Error& err)
 {
-    return [[NSFileManager defaultManager] createDirectoryAtPath: [NSString stringWithUTF8String: path.c_str()]
-                                     withIntermediateDirectories: recursive
-                                                      attributes: nil
-                                                           error: nil] == YES;
+    NSError* error = nil;
+    BOOL ret = [[NSFileManager defaultManager] createDirectoryAtPath: [NSString stringWithUTF8String: path.c_str()]
+                                         withIntermediateDirectories: recursive
+                                                          attributes: nil
+                                                               error: &error];
+    if (error)
+        err.FromError(error);
+
+    return ret == YES;
 }
     
-bool ReadDirectory(String path, std::vector<String>& files)
+bool ReadDirectory(String path, std::vector<String>& files, Error& err)
 {
     bool hasWildcard = path.find_first_of(TEXT("*?")) != String::npos;
 
@@ -278,11 +283,14 @@ bool ReadDirectory(String path, std::vector<String>& files)
     NSString *strBasePath = hasWildcard ? [strPath stringByDeletingLastPathComponent] : strPath;
     
     // list all the files in the directory
-    NSError *err;
-    NSArray *arrFiles = [mgr contentsOfDirectoryAtPath: strBasePath error: &err];
+    NSError *error = nil;
+    NSArray *arrFiles = [mgr contentsOfDirectoryAtPath: strBasePath error: &error];
     
-    if (!arrFiles || err)
+    if (!arrFiles || error)
+    {
+        err.FromError(error);
         return false;
+    }
 
     NSPredicate *predicate = hasWildcard ? [NSPredicate predicateWithFormat: @"SELF LIKE %@", [strPath lastPathComponent]] : nil;
 
@@ -293,90 +301,128 @@ bool ReadDirectory(String path, std::vector<String>& files)
     return true;
 }
 
-bool ReadFile(String filename, JavaScript::Object options, String& result)
+bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err)
 {
-    NSData *data = [[NSData alloc] initWithContentsOfFile: [NSString stringWithUTF8String: filename.c_str()]];
-    bool ret = false;
-    if (data != nil)
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile: [NSString stringWithUTF8String: filename.c_str()]
+                                          options: 0
+                                            error: &error];
+    
+    if (data == nil || error != nil)
     {
-        std::string encoding = "";
-        if (options->HasKey("encoding"))
-            encoding = options->GetString("encoding");
-        
-        if (encoding == "" || encoding == "utf-8" || encoding == "text/plain;utf-8")
-        {
-            // plain text
-            NSString *text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-            if (text == nil)
-                text = [[NSString alloc] initWithData: data encoding: NSASCIIStringEncoding];
-
-            if (text != nil)
-            {
-                result = [text UTF8String];
-                ret = true;
-            }
-        }
-        else if (encoding == "image/png;base64")
-        {
-            // base64-encoded PNG image
-            NSImage *image = [[NSImage alloc] initWithData: data];
-            if (image)
-            {
-                result = ImageUtil::NSImageToBase64EncodedPNG(image);
-                ret = true;
-            }
-        }
+        err.FromError(error);
+        return false;
     }
 
-    return ret;
+    String encoding = "";
+    if (options->HasKey("encoding"))
+        encoding = options->GetString("encoding");
+        
+    if (encoding == "" || encoding == "utf-8" || encoding == "text/plain;utf-8")
+    {
+        // plain text
+        NSString *text = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+        if (text == nil)
+            text = [[NSString alloc] initWithData: data encoding: NSASCIIStringEncoding];
+
+        if (text != nil)
+        {
+            result = [text UTF8String];
+            return true;
+        }
+        
+        // couldn't decode text
+        err.SetError(ERR_DECODING_FAILED, "Failed to decode data");
+        return false;
+    }
+
+    if (encoding == "image/png;base64")
+    {
+        // base64-encoded PNG image
+        NSImage *image = [[NSImage alloc] initWithData: data];
+        if (image)
+        {
+            result = ImageUtil::NSImageToBase64EncodedPNG(image);
+            return true;
+        }
+        
+        // couldn't decode image
+        err.SetError(ERR_DECODING_FAILED, "Failed to decode data");
+        return false;
+    }
+    
+    // unsupported encoding
+    err.SetError(ERR_UNKNOWN_ENCODING, "The encoding \"" + encoding + "\" is not supported.");
+    return false;
 }
 
-bool WriteFile(String filename, String contents)
+bool WriteFile(String filename, String contents, Error& err)
 {
-    return [[NSString stringWithUTF8String: contents.c_str()] writeToFile: [NSString stringWithUTF8String: filename.c_str()]
-                                                               atomically: NO
-                                                                 encoding: NSUTF8StringEncoding
-                                                                    error: NULL] == YES;
+    NSError* error;
+    BOOL ret = [[NSString stringWithUTF8String: contents.c_str()] writeToFile: [NSString stringWithUTF8String: filename.c_str()]
+                                                                   atomically: NO
+                                                                     encoding: NSUTF8StringEncoding
+                                                                        error: &error];
+    if (error != nil)
+        err.FromError(error);
+
+    return ret == YES;
 }
     
-bool MoveFile(String oldFilename, String newFilename)
+bool MoveFile(String oldFilename, String newFilename, Error& err)
 {
-    return [[NSFileManager defaultManager] moveItemAtPath: [NSString stringWithUTF8String: oldFilename.c_str()]
+    NSError* error = nil;
+    BOOL ret = [[NSFileManager defaultManager] moveItemAtPath: [NSString stringWithUTF8String: oldFilename.c_str()]
                                                    toPath: [NSString stringWithUTF8String: newFilename.c_str()]
-                                                    error: nil] == YES;
+                                                    error: &error];
+    
+    if (error != nil)
+        err.FromError(error);
+    
+    return ret == YES;
 }
 
-bool DeleteFiles(String filenames)
+bool DeleteFiles(String filenames, Error& err)
 {
     NSFileManager *mgr = [NSFileManager defaultManager];
-        
+    NSError *error = nil;
+    
     if (filenames.find_first_of(TEXT("*?")) == String::npos)
-        return [mgr removeItemAtPath: [NSString stringWithUTF8String: filenames.c_str()] error: nil] == YES;
+    {
+        BOOL ret = [mgr removeItemAtPath: [NSString stringWithUTF8String: filenames.c_str()] error: &error];
+        if (error != nil)
+            err.FromError(error);
+        return ret == YES;
+    }
         
     NSString *strFilenames = [NSString stringWithUTF8String: filenames.c_str()];
     NSString *path = [strFilenames stringByDeletingLastPathComponent];
         
     // list all the files in the directory
-    NSError *err;
-    NSArray *files = [mgr contentsOfDirectoryAtPath: path error: &err];
-        
-    if (files && !err)
+    error = nil;
+    NSArray *files = [mgr contentsOfDirectoryAtPath: path error: &error];
+    
+    if (files == nil || error != nil)
     {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat: @"SELF LIKE %@", [strFilenames lastPathComponent]];
-        for (NSString *filename in files)
-        {
-            if ([predicate evaluateWithObject: filename])
-            {
-                // the filename matches the predicate; try to delete the file
-                if ([mgr removeItemAtPath: [path stringByAppendingPathComponent: filename] error: nil] == NO)
-                    return false;
-            }
-        }
-            
-        return true;
+        err.FromError(error);
+        return false;
     }
         
-    return false;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat: @"SELF LIKE %@", [strFilenames lastPathComponent]];
+    for (NSString *filename in files)
+    {
+        if ([predicate evaluateWithObject: filename])
+        {
+            // the filename matches the predicate; try to delete the file
+            if ([mgr removeItemAtPath: [path stringByAppendingPathComponent: filename] error: &error] == NO)
+            {
+                err.FromError(error);
+                return false;
+            }
+        }
+    }
+            
+    return true;
 }
 
 bool GetDirectory(String& path)
@@ -415,10 +461,15 @@ void StorePreferences(String key, String data)
     [settings synchronize];
 }
 
-bool StartAccessingPath(Path& path)
+bool StartAccessingPath(Path& path, Error& err)
 {
     if (path.HasSecurityAccessData())
-        return [[NSURL URLWithString: [NSString stringWithUTF8String: path.GetURLWithSecurityAccessData().c_str()]] startAccessingSecurityScopedResource];
+    {
+        BOOL ret = [[NSURL URLWithString: [NSString stringWithUTF8String: path.GetURLWithSecurityAccessData().c_str()]] startAccessingSecurityScopedResource];
+        err.SetError(ERR_UNKNOWN);
+        return ret == YES;
+    }
+
     return true;
 }
 
