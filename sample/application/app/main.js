@@ -284,6 +284,14 @@ $(document).ready(function()
 		});
 	});
 
+	$('#getApplicationResourcesDirectory').click(function()
+	{
+		app.getApplicationResourcesDirectory(function(path)
+		{
+			setMessage(path.path);
+		});
+	});
+
 	$('#loadPreferences').click(function()
 	{
 		var key = getParameter();

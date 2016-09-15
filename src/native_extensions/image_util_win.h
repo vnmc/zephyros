@@ -37,12 +37,21 @@
 #include "include/cef_base.h"
 #include "base/types.h"
 
+#include "lib/cef/include/base/cef_lock.h"
+#include "lib/cef/include/cef_client.h"
+#include "lib/cef/include/wrapper/cef_helpers.h"
 
+#include "native_extensions.h"
+#include "native_extensions/error.h"
+
+
+namespace Zephyros {
 namespace ImageUtil {
+
 
 bool IconToPNG(HICON hIcon, BYTE** pData, DWORD* pLength);
 bool IconToGrayscalePNG(HICON hIcon, BYTE** pData, DWORD* pLength);
-bool ImageFileToPNG(String filename, BYTE** pData, DWORD* pLength);
+bool ImageFileToPNG(String filename, BYTE** pData, DWORD* pLength, Error& err);
 
 bool BitmapToPNGData(Gdiplus::Bitmap* pBitmap, BYTE** pData, DWORD* pLength);
 String Base64Encode(BYTE* data, DWORD length);
@@ -52,7 +61,9 @@ HBITMAP Base64PNGDataToBitmap(String strData, SIZE size);
 
 bool GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 
+
 } // namespace ImageUtil
+} // namespace Zephyros
 
 
 #endif // Zephyros_ImageUtilWin_h

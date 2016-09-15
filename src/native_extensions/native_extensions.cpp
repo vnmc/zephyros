@@ -652,7 +652,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 
             if (FileUtil::StartAccessingPath(path, err))
             {
-                FileUtil::StatInfo stat;
+				FileUtil::StatInfo stat = { 0 };
                 FileUtil::Stat(path.GetPath(), &stat);
                 
                 JavaScript::Object info = JavaScript::CreateObject();
