@@ -452,12 +452,18 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 		}
 	));
 
-    // startAccessingPath: (path: IPath) => void
+    // startAccessingPath: (path: IPath, callback: (err: Error) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("startAccessingPath"),
         FUNC({
             Path path(args->GetDictionary(0));
-            ret->SetBool(0, FileUtil::StartAccessingPath(path));
+            Error err;
+        
+            if (FileUtil::StartAccessingPath(path, err))
+                ret->SetNull(0);
+            else
+                ret->SetDictionary(0, err.CreateJSRepresentation());
+
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "path")
@@ -474,23 +480,36 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "path")
     ));
 
-    // readFile: (path: IPath, options: IReadFileOptions, callback: (contents: string) => void) => void
+    // readFile: (path: IPath, options: IReadFileOptions, callback: (err: Error, contents: string) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("readFile"),
         FUNC({
             Path path(args->GetDictionary(0));
-            if (FileUtil::StartAccessingPath(path))
+            Error errStartAccessingPath;
+        
+            if (FileUtil::StartAccessingPath(path, errStartAccessingPath))
             {
                 String result;
-                if (FileUtil::ReadFile(path.GetPath(), args->GetDictionary(1), result))
-                    ret->SetString(0, result);
-                else
+                Error errReadFile;
+                
+                if (FileUtil::ReadFile(path.GetPath(), args->GetDictionary(1), result, errReadFile))
+                {
                     ret->SetNull(0);
+                    ret->SetString(1, result);
+                }
+                else
+                {
+                    ret->SetDictionary(0, errReadFile.CreateJSRepresentation());
+                    ret->SetNull(1);
+                }
 
                 FileUtil::StopAccessingPath(path);
             }
             else
-                ret->SetNull(0);
+            {
+                ret->SetDictionary(0, errStartAccessingPath.CreateJSRepresentation());
+                ret->SetNull(1);
+            }
 
             return NO_ERROR;
         },
@@ -498,16 +517,26 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "options")
     ));
 
-    // writeFile: (path: IPath, contents: String)
-    e->AddNativeJavaScriptProcedure(
+    // writeFile: (path: IPath, contents: String, callback(err: Error) => void) => void
+    e->AddNativeJavaScriptFunction(
         TEXT("writeFile"),
         FUNC({
             Path path(args->GetDictionary(0));
-            if (FileUtil::StartAccessingPath(path))
+            Error errStartAccessingPath;
+
+            if (FileUtil::StartAccessingPath(path, errStartAccessingPath))
             {
-                FileUtil::WriteFile(path.GetPath(), args->GetString(1));
+                Error errWriteFile;
+
+                if (FileUtil::WriteFile(path.GetPath(), args->GetString(1), errWriteFile))
+                    ret->SetNull(0);
+                else
+                    ret->SetDictionary(0, errWriteFile.CreateJSRepresentation());
+
                 FileUtil::StopAccessingPath(path);
             }
+            else
+                ret->SetDictionary(0, errStartAccessingPath.CreateJSRepresentation());
 
             return NO_ERROR;
         },
@@ -520,7 +549,9 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         TEXT("existsFile"),
         FUNC({
             Path path(args->GetDictionary(0));
-            if (FileUtil::StartAccessingPath(path))
+            Error err;
+        
+            if (FileUtil::StartAccessingPath(path, err))
             {
                 ret->SetBool(0, FileUtil::ExistsFile(path.GetPath()));
                 FileUtil::StopAccessingPath(path);
@@ -533,22 +564,63 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "path")
     ));
 
-    // moveFile: (oldPath: IPath, newPath: IPath) => void
+    // moveFile: (oldPath: IPath, newPath: IPath, callback: (err: Error) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("moveFile"),
         FUNC({
             Path oldPath(args->GetDictionary(0));
             Path newPath(args->GetDictionary(1));
+            Error err;
         
             // TODO: macOS: sandboxing stuff; need access to the directory the file is moved to
             // e.g., cf. http://stackoverflow.com/questions/13950476/application-sandbox-renaming-a-file-doesnt-work
         
-            ret->SetBool(0, FileUtil::MoveFile(oldPath.GetPath(), newPath.GetPath()));
+            if (FileUtil::MoveFile(oldPath.GetPath(), newPath.GetPath(), err))
+                ret->SetNull(0);
+            else
+                ret->SetDictionary(0, err.CreateJSRepresentation());
 
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "oldPath")
         ARG(VTYPE_DICTIONARY, "newPath")
+    ));
+    
+    // deleteFiles: (path: IPath, relativeFilenames: string, cb: (err: Error) => void) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("deleteFiles"),
+        FUNC({
+            Path path(args->GetDictionary(0));
+            Error errStartAccessingPath;
+        
+            if (FileUtil::StartAccessingPath(path, errStartAccessingPath))
+            {
+                String strPath(path.GetPath());
+                String strRelative = args->GetString(1);
+                
+                if (strRelative.size() > 0)
+                {
+                    if (strPath[strPath.length() - 1] != PATH_SEPARATOR)
+                        strPath += PATH_SEPARATOR;
+                    strPath += strRelative;
+                }
+                
+                Error errDeleteFiles;
+                                           
+                if (FileUtil::DeleteFiles(strPath, errDeleteFiles))
+                    ret->SetNull(0);
+                else
+                    ret->SetDictionary(0, errDeleteFiles.CreateJSRepresentation());
+
+                FileUtil::StopAccessingPath(path);
+            }
+            else
+                ret->SetDictionary(0, errStartAccessingPath.CreateJSRepresentation());
+                                       
+            return NO_ERROR;
+        },
+        ARG(VTYPE_DICTIONARY, "path")
+        ARG(VTYPE_STRING, "relativeFilenames")
     ));
 
 	// isDirectory: (path: IPath, callback(isDir: boolean) => void) => void
@@ -556,7 +628,9 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         TEXT("isDirectory"),
         FUNC({
             Path path(args->GetDictionary(0));
-            if (FileUtil::StartAccessingPath(path))
+            Error err;
+
+            if (FileUtil::StartAccessingPath(path, err))
             {
                 ret->SetBool(0, path.IsDirectory());
                 FileUtil::StopAccessingPath(path);
@@ -574,7 +648,9 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         TEXT("stat"),
         FUNC({
             Path path(args->GetDictionary(0));
-            if (FileUtil::StartAccessingPath(path))
+            Error err;
+
+            if (FileUtil::StartAccessingPath(path, err))
             {
                 FileUtil::StatInfo stat;
                 FileUtil::Stat(path.GetPath(), &stat);
@@ -600,50 +676,72 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         TEXT("return stat(path, function(info) { info.creationDate = new Date(info.creationDate); info.modificationDate = new Date(info.modificationDate); callback(info); });")
     );
 
-    // makeDirectory: (path: IPath, callback(success: boolean) => void) => void
+    // makeDirectory: (path: IPath, callback(err: Error) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("makeDirectory"),
         FUNC({
             Path path(args->GetDictionary(0));
-            if (FileUtil::StartAccessingPath(path))
+            Error errStartAccessingPath;
+        
+            if (FileUtil::StartAccessingPath(path, errStartAccessingPath))
             {
-                ret->SetBool(0, FileUtil::MakeDirectory(path.GetPath(), true));
+                Error errMakeDirectory;
+
+                if (FileUtil::MakeDirectory(path.GetPath(), true, errMakeDirectory))
+                    ret->SetNull(0);
+                else
+                    ret->SetDictionary(0, errMakeDirectory.CreateJSRepresentation());
+
                 FileUtil::StopAccessingPath(path);
             }
             else
-                ret->SetBool(0, false);
+                ret->SetDictionary(0, errStartAccessingPath.CreateJSRepresentation());
 
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "path")
     ));
     
-    // readDirectory: (path: IPath, callback(files: IPath[]) => void) => void
+    // readDirectory: (path: IPath, callback(err: Error, files: IPath[]) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("readDirectory"),
         FUNC({
             Path path(args->GetDictionary(0));
-            if (FileUtil::StartAccessingPath(path))
+            Error errStartAccessingPath;
+        
+            if (FileUtil::StartAccessingPath(path, errStartAccessingPath))
             {
                 std::vector<String> files;
-                FileUtil::ReadDirectory(path.GetPath(), files);
+                Error errReadDirectory;
 
-                JavaScript::Array listFiles = JavaScript::CreateArray();
-                int i = 0;
-
-                for (String file : files)
+                if (FileUtil::ReadDirectory(path.GetPath(), files, errReadDirectory))
                 {
-                    Path p(file, path.GetURLWithSecurityAccessData(), path.HasSecurityAccessData());
-                    listFiles->SetDictionary(i, p.CreateJSRepresentation());
-                    ++i;
+                    JavaScript::Array listFiles = JavaScript::CreateArray();
+                    int i = 0;
+
+                    for (String file : files)
+                    {
+                        Path p(file, path.GetURLWithSecurityAccessData(), path.HasSecurityAccessData());
+                        listFiles->SetDictionary(i, p.CreateJSRepresentation());
+                        ++i;
+                    }
+
+                    ret->SetNull(0);
+                    ret->SetList(1, listFiles);
                 }
-                
-                ret->SetList(0, listFiles);
+                else
+                {
+                    ret->SetDictionary(0, errReadDirectory.CreateJSRepresentation());
+                    ret->SetNull(1);
+                }
 
                 FileUtil::StopAccessingPath(path);
             }
             else
-                ret->SetNull(0);
+            {
+                ret->SetDictionary(0, errStartAccessingPath.CreateJSRepresentation());
+                ret->SetNull(1);
+            }
 
             return NO_ERROR;
         },

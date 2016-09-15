@@ -182,17 +182,23 @@ $(document).ready(function()
 	{
 	    var path = getParameterAsPath();
 	    setMessage('Trying to create directory ' + path.path + '...');
-	    app.makeDirectory(path, function(response)
+	    app.makeDirectory(path, function(err)
 	    {
-    	    setMessage('File ' + path.path + ' has been created: ' + response);	    
+	    	if (err === null)
+    	    	setMessage('File ' + path.path + ' has been created.');
+    	    else
+    	    	setMessage('Error: ' + JSON.stringify(err));
 	    });
 	});
 
 	$('#readDirectory').click(function()
 	{
-		app.readDirectory(getParameterAsPath(), function(files)
+		app.readDirectory(getParameterAsPath(), function(err, files)
 		{
-			setMessage(JSON.stringify(files));
+			if (err === null)
+				setMessage(JSON.stringify(files));
+			else
+    	    	setMessage('Error: ' + JSON.stringify(err));
 		});
 	});
 
@@ -200,12 +206,12 @@ $(document).ready(function()
 	{
 	    var path = getParameterAsPath();
 	    setMessage('Trying to read file  ' + path.path + '...');
-	    app.readFile(path, { encoding: '' }, function(data)
+	    app.readFile(path, { encoding: '' }, function(err, data)
         {
-            if (data !== null)
+            if (err === null)
         	    setMessage(data);	    
         	else
-        	    setMessage('Could not read file ' + path.path);
+        	    setMessage('Could not read file. Error: ' + JSON.stringify(err));
     	 });
 	});
 	
@@ -213,7 +219,13 @@ $(document).ready(function()
 	{
 	    var path = getParameterAsPath();
 	    setMessage('Trying to write to file  ' + path.path + '...');
-	    app.writeFile(path, 'Hey this is the file contents');
+	    app.writeFile(path, 'Hey this is the file contents', function(err)
+	    {
+	    	if (err === null)
+    	    	setMessage('File ' + path.path + ' was written.');
+    	    else
+    	    	setMessage('Error: ' + JSON.stringify(err));
+	    });
 	});
 
 	$('#moveFile').click(function()
@@ -231,9 +243,9 @@ $(document).ready(function()
 	    };
 
 	    app.writeFile(oldPath, '42');
-		app.moveFile(oldPath, newPath, function(success)
+		app.moveFile(oldPath, newPath, function(err)
 		{
-			setMessage('Moving the file ' + (success ? 'succeeded' : 'failed'));
+			setMessage('Moving the file ' + (err === null ? 'succeeded' : 'failed with error ' + JSON.stringify(err)));
 		});
 	});
 

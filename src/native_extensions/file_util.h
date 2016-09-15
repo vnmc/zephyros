@@ -33,6 +33,8 @@
 #include <vector>
 
 #include "base/types.h"
+
+#include "native_extensions/error.h"
 #include "native_extensions/path.h"
 
 
@@ -66,8 +68,8 @@ bool ExistsFile(String filename);
 bool IsDirectory(String path);
 bool Stat(String path, StatInfo* stat);
 
-bool MakeDirectory(String path, bool recursive);
-bool ReadDirectory(String path, std::vector<String>& files);
+bool MakeDirectory(String path, bool recursive, Error& err);
+bool ReadDirectory(String path, std::vector<String>& files, Error& err);
 
 /**
  * Returns true if the path exists.
@@ -76,15 +78,15 @@ bool ReadDirectory(String path, std::vector<String>& files);
  */
 bool GetDirectory(String& path);
 
-bool ReadFile(String filename, JavaScript::Object options, String& result);
-bool WriteFile(String filename, String contents);
-bool MoveFile(String oldFilename, String newFilename);
-bool DeleteFiles(String filenames);
+bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err);
+bool WriteFile(String filename, String contents, Error& err);
+bool MoveFile(String oldFilename, String newFilename, Error& err);
+bool DeleteFiles(String filenames, Error& err);
 
 void LoadPreferences(String key, String& data);
 void StorePreferences(String key, String data);
 
-bool StartAccessingPath(Path& path);
+bool StartAccessingPath(Path& path, Error& err);
 void StopAccessingPath(Path& path);
 
 void GetTempDir(Path& path);

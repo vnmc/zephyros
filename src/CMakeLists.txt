@@ -68,6 +68,8 @@ set(ZEPHYROS__NATIVEEXT_SRCS
   native_extensions/browser.h
   native_extensions/custom_url_manager.cpp
   native_extensions/custom_url_manager.h
+  native_extensions/error.cpp
+  native_extensions/error.h
   native_extensions/file_util.h
   native_extensions/file_watcher.cpp
   native_extensions/file_watcher.h
@@ -80,6 +82,7 @@ set(ZEPHYROS__NATIVEEXT_SRCS
 )
 set(ZEPHYROS__NATIVEEXT_SRCS_MACOSX
   native_extensions/browser_mac.mm
+  native_extensions/error_mac.mm
   native_extensions/file_util_mac.mm
   native_extensions/file_watcher_mac.mm
   native_extensions/image_util_mac.h
@@ -88,6 +91,7 @@ set(ZEPHYROS__NATIVEEXT_SRCS_MACOSX
 )
 set(ZEPHYROS__NATIVEEXT_SRCS_WINDOWS
   native_extensions/browser_win.cpp
+  native_extensions/error_win.cpp
   native_extensions/file_util_win.cpp
   native_extensions/file_watcher_win.cpp
   native_extensions/image_util_win.h
@@ -101,6 +105,7 @@ set(ZEPHYROS__NATIVEEXT_SRCS_WINDOWS
 )
 set(ZEPHYROS__NATIVEEXT_SRCS_LINUX
   native_extensions/browser_linux.cpp
+  native_extensions/error_linux.cpp
   native_extensions/file_util_linux.cpp
   native_extensions/file_watcher_linux.cpp
   native_extensions/image_util_linux.h
@@ -108,7 +113,6 @@ set(ZEPHYROS__NATIVEEXT_SRCS_LINUX
   native_extensions/network_util_linux.cpp
   native_extensions/os_util_linux.cpp
   native_extensions/pageimage_linux.cpp
-#  native_extensions/process_manager_linux.cpp
   native_extensions/updater_linux.cpp
 )
 set(ZEPHYROS__NATIVEEXT_IMPL_SRCS)
