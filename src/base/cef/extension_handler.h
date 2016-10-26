@@ -98,11 +98,11 @@ public:
     {
     }
 
-	~AppCallback()
-	{
-		m_context = NULL;
-		m_function = NULL;
-	}
+    ~AppCallback()
+    {
+        m_context = NULL;
+        m_function = NULL;
+    }
 
     CefRefPtr<CefV8Context> GetContext()
     {
@@ -125,11 +125,11 @@ class AppExtensionHandler : public NativeJavaScriptFunctionAdder, public CefV8Ha
 {
 public:
     AppExtensionHandler();
-	~AppExtensionHandler();
+    ~AppExtensionHandler();
 
     // NativeJavaScriptFunctionAdder Implementation
-	virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) override;
-	String GetJavaScriptCode();
+    virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) override;
+    String GetJavaScriptCode();
 
     // CefV8Handler Implementation
     virtual bool Execute(const CefString& name, CefRefPtr<CefV8Value> object, const CefV8ValueList& arguments, CefRefPtr<CefV8Value>& retval, CefString& exception) override;

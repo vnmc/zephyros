@@ -32,30 +32,30 @@
 extern "C"
 {
 #ifdef NO_SPARKLE
-	// stubs for WinSparkle (if a Zephyros app isn't linked with WinSparkle)
+    // stubs for WinSparkle (if a Zephyros app isn't linked with WinSparkle)
 
-	void __cdecl win_sparkle_init() {}
-	void __cdecl win_sparkle_cleanup() {}
-	void __cdecl win_sparkle_set_appcast_url(const char *url) {}
-	void __cdecl win_sparkle_check_update_with_ui() {}
-	void __cdecl win_sparkle_set_automatic_check_for_updates(int state) {}
-	int __cdecl win_sparkle_get_automatic_check_for_updates() { return 0; }
-	void __cdecl win_sparkle_set_update_check_interval(int interval) {}
-	int __cdecl win_sparkle_get_update_check_interval() { return 0; }
+    void __cdecl win_sparkle_init() {}
+    void __cdecl win_sparkle_cleanup() {}
+    void __cdecl win_sparkle_set_appcast_url(const char *url) {}
+    void __cdecl win_sparkle_check_update_with_ui() {}
+    void __cdecl win_sparkle_set_automatic_check_for_updates(int state) {}
+    int __cdecl win_sparkle_get_automatic_check_for_updates() { return 0; }
+    void __cdecl win_sparkle_set_update_check_interval(int interval) {}
+    int __cdecl win_sparkle_get_update_check_interval() { return 0; }
 #endif
 
 #ifdef NO_CRASHRPT
-	// stubs for CrashRpt (if a Zephyros app isn't linked with CrashRpt)
+    // stubs for CrashRpt (if a Zephyros app isn't linked with CrashRpt)
 
-	int _stdcall crInstallA(PCR_INSTALL_INFOA pInfo) { return 0; }
-	int _stdcall crInstallW(__in PCR_INSTALL_INFOW pInfo) { return 0; }
-	int _stdcall crSetCrashCallbackW(PFNCRASHCALLBACKW pfnCallbackFunc, LPVOID lpParam) { return 0; }
-	int _stdcall crUninstall() { return 0; }
-	int _stdcall crAddFile2A(LPCSTR pszFile, LPCSTR pszDestFile, LPCSTR pszDesc, DWORD dwFlags) { return 0; }
-	int _stdcall crAddFile2W(LPCWSTR pszFile, LPCWSTR pszDestFile, LPCWSTR pszDesc, DWORD dwFlags) { return 0; }
-	int _stdcall crGetLastErrorMsgA(LPSTR pszBuffer, UINT uBuffSize) { return 0; }
-	int _stdcall crGetLastErrorMsgW(LPWSTR pszBuffer, UINT uBuffSize) { return 0; }
-	int _stdcall crInstallToCurrentThread2(DWORD dwFlags) { return 0; }
-	int _stdcall crUninstallFromCurrentThread() { return 0; }
+    int _stdcall crInstallA(PCR_INSTALL_INFOA pInfo) { return 0; }
+    int _stdcall crInstallW(__in PCR_INSTALL_INFOW pInfo) { return 0; }
+    int _stdcall crSetCrashCallbackW(PFNCRASHCALLBACKW pfnCallbackFunc, LPVOID lpParam) { return 0; }
+    int _stdcall crUninstall() { return 0; }
+    int _stdcall crAddFile2A(LPCSTR pszFile, LPCSTR pszDestFile, LPCSTR pszDesc, DWORD dwFlags) { return 0; }
+    int _stdcall crAddFile2W(LPCWSTR pszFile, LPCWSTR pszDestFile, LPCWSTR pszDesc, DWORD dwFlags) { return 0; }
+    int _stdcall crGetLastErrorMsgA(LPSTR pszBuffer, UINT uBuffSize) { return 0; }
+    int _stdcall crGetLastErrorMsgW(LPWSTR pszBuffer, UINT uBuffSize) { return 0; }
+    int _stdcall crInstallToCurrentThread2(DWORD dwFlags) { return 0; }
+    int _stdcall crUninstallFromCurrentThread() { return 0; }
 #endif
 }

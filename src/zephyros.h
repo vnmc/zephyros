@@ -129,10 +129,10 @@ typedef struct
 
 typedef struct
 {
-	TCHAR* szRegistryKey;
-	int nIconID;
-	int nMenuID;
-	int nAccelID;
+    TCHAR* szRegistryKey;
+    int nIconID;
+    int nMenuID;
+    int nAccelID;
 } WindowsInfo;
 
 typedef struct

@@ -47,19 +47,19 @@ void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
     if (m_nBrowserId == browser->GetIdentifier() && frame->IsMain())
     {
         // we've just finished loading a page
-		if (!IsWindowVisible(m_mainHwnd))
-		{
-			ShowWindow(m_mainHwnd, g_nCmdShow);
-			UpdateWindow(m_mainHwnd);
-		}
+        if (!IsWindowVisible(m_mainHwnd))
+        {
+            ShowWindow(m_mainHwnd, g_nCmdShow);
+            UpdateWindow(m_mainHwnd);
+        }
     }
 }
 
 bool ClientHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event)
 {
-	if (!os_event || !m_hAccelTable)
-		return false;
-	return TranslateAccelerator(m_mainHwnd, m_hAccelTable, os_event) ? true : false;
+    if (!os_event || !m_hAccelTable)
+        return false;
+    return TranslateAccelerator(m_mainHwnd, m_hAccelTable, os_event) ? true : false;
 }
 
 } // namespace Zephyros

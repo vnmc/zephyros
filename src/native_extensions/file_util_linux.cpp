@@ -106,8 +106,8 @@ String CheckForBinaryAndImage(String filename, bool& isBinary, bool& isImage)
 String GetPreferencesFile()
 {
     String strFilename(Zephyros::OSUtil::GetConfigDirectory());
-	strFilename.append(TEXT("/"));
-	strFilename.append("preferences.ini");
+    strFilename.append(TEXT("/"));
+    strFilename.append("preferences.ini");
     return strFilename;
 }
 
@@ -133,12 +133,12 @@ bool ShowOpenDirectoryDialog(Path& path)
 bool ShowOpenFileOrDirectoryDialog(Path& path)
 {
     // TODO: not available in GTK? Seems only either file or folder is possible.
-	return false;
+    return false;
 }
 
 void ShowInFileManager(String path)
 {
-	String strWhichCmd = TEXT("which xdg-open");
+    String strWhichCmd = TEXT("which xdg-open");
     String strCommand = OSUtil::Exec(strWhichCmd);
     Trim(strCommand);
 
@@ -153,8 +153,8 @@ void ShowInFileManager(String path)
 
 bool ExistsFile(String filename)
 {
-	struct stat buffer;
-	return stat(filename.c_str(), &buffer) == 0;
+    struct stat buffer;
+    return stat(filename.c_str(), &buffer) == 0;
 }
 
 bool IsDirectory(String path)
@@ -266,12 +266,8 @@ bool ReadDirectory(String path, std::vector<String>& files, Error& err)
     return true;
 }
 
-bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err)
+bool ReadFileBinary(String filename, uint8_t** ppData, int& size, Error& err)
 {
-    bool isBinary;
-    bool isImage;
-    String mimeType = CheckForBinaryAndImage(filename, isBinary, isImage);
-
     std::ifstream fs;
     fs.open(filename, std::ios::in);
     if (fs.is_open())
@@ -279,38 +275,56 @@ bool ReadFile(String filename, JavaScript::Object options, String& result, Error
         fs.seekg(0, std::ios::end);
         if (!fs.fail())
         {
-            long size = fs.tellg();
+            size = (int) fs.tellg();
             if (size >= 0)
             {
-                char* contents = new char[size];
+                *ppData = new uint8_t[size];
                 fs.seekg(0, std::ios::beg);
                 if (!fs.fail())
                 {
-                    fs.read(contents, size);
+                    fs.read((char*) *ppData, size);
                     if (!fs.fail())
                     {
-                        if (isImage)
-                        {
-                            // TODO: convert .ico to .png
-                            // http://fossies.org/linux/xpaint/util/ico2png/create_icon.c ?
-                            result = "data:";
-                            result.append(mimeType);
-                            result.append(";base64,");
-                            result.append(ImageUtil::Base64Encode(contents, size));
-                        }
-                        else
-                            result = String(contents);
-
-                        delete[] contents;
                         fs.close();
                         return true;
                     }
                 }
             }
         }
+
+        fs.close();
     }
 
     err.FromErrno();
+    return false;
+}
+
+bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err)
+{
+    bool isBinary;
+    bool isImage;
+    String mimeType = CheckForBinaryAndImage(filename, isBinary, isImage);
+
+    uint8_t* contents = NULL;
+    int size = 0;
+    if (ReadFileBinary(filename, &contents, size, err))
+    {
+        if (isImage)
+        {
+            // TODO: convert .ico to .png
+            // http://fossies.org/linux/xpaint/util/ico2png/create_icon.c ?
+            result = "data:";
+            result.append(mimeType);
+            result.append(";base64,");
+            result.append(ImageUtil::Base64Encode((char*) contents, size));
+        }
+        else
+            result = String((char*) contents);
+
+        delete[] contents;
+        return true;
+    }
+
     return false;
 }
 
@@ -422,13 +436,13 @@ void StorePreferences(String key, String data)
 
 bool StartAccessingPath(Path& path, Error& err)
 {
-	// not supported on Linux
-	return true;
+    // not supported on Linux
+    return true;
 }
 
 void StopAccessingPath(Path& path)
 {
-	// not supported on Linux
+    // not supported on Linux
 }
 
 void GetTempDir(Path& path)
@@ -451,7 +465,7 @@ String GetApplicationPath()
 
 void GetApplicationResourcesPath(Path& path)
 {
-	path = Path(FileUtil::GetApplicationPath() + TEXT("/res"));
+    path = Path(FileUtil::GetApplicationPath() + TEXT("/res"));
 }
 
 } // namespace FileUtil

@@ -336,10 +336,10 @@ bool LicenseManagerImpl::SendRequest(String url, String postData, StringStream& 
     if (error == nil)
     {
         NSString *ret = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-		out << [ret UTF8String];
+        out << [ret UTF8String];
     }
 
-	return error == nil;
+    return error == nil;
 }
 
 void LicenseManagerImpl::ShowDemoDialog()
@@ -361,8 +361,8 @@ void LicenseManagerImpl::ShowDemoDialog()
     if (m_canStartApp && !IsActivated())
         [NSTimer scheduledTimerWithTimeInterval: 6 * 3600 target: m_timerDelegate selector: @selector(onTimeout:) userInfo: nil repeats: NO];
     
-	// terminate if the app can't be started and the main window is open
-	if (!m_canStartApp)
+    // terminate if the app can't be started and the main window is open
+    if (!m_canStartApp)
         Zephyros::App::QuitMessageLoop();
 }
 

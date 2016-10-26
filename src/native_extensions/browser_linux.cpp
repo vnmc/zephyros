@@ -41,10 +41,10 @@ namespace BrowserUtil {
  */
 void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 {
-	if (*ppBrowsers != NULL)
-		return;
+    if (*ppBrowsers != NULL)
+        return;
 
-	*ppBrowsers = new std::vector<Browser*>();
+    *ppBrowsers = new std::vector<Browser*>();
 
     String strRet = OSUtil::Exec(TEXT("apropos \"web browser\""));
     std::vector<String> vecRet = Split(strRet, TEXT('\n'));

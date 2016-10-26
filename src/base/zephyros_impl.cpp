@@ -154,12 +154,12 @@ void InitDefaultStrings()
 int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHAR* szAppVersion, const TCHAR* szAppURL)
 {
 #ifdef OS_LINUX
-	XInitThreads();
+    XInitThreads();
 #endif
 
-	// set the resources if a function was provided
-	if (fnxSetResources)
-		fnxSetResources();
+    // set the resources if a function was provided
+    if (fnxSetResources)
+        fnxSetResources();
 
     size_t lenAppName = _tcslen(szAppName);
     g_szAppName = new TCHAR[lenAppName + 1];
@@ -186,7 +186,7 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
 
 #ifdef OS_WIN
     // - set the registry key to "Software\<AppName>"
-	if (g_windowsInfo.szRegistryKey == NULL)
+    if (g_windowsInfo.szRegistryKey == NULL)
     {
         g_windowsInfo.szRegistryKey = new TCHAR[9 + lenAppName + 1];
         _tcscpy(g_windowsInfo.szRegistryKey, TEXT("Software\\"));
@@ -203,8 +203,8 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
 
 void Shutdown()
 {
-	if (g_szCompanyName != NULL)
-		delete[] g_szCompanyName;
+    if (g_szCompanyName != NULL)
+        delete[] g_szCompanyName;
 
     if (g_szAppName != NULL)
         delete[] g_szAppName;
@@ -224,29 +224,29 @@ void Shutdown()
     if (g_szUpdaterURL != NULL)
         delete[] g_szUpdaterURL;
 
-	if (g_szCrashReportingURL != NULL)
-		delete[] g_szCrashReportingURL;
+    if (g_szCrashReportingURL != NULL)
+        delete[] g_szCrashReportingURL;
 
-	if (g_szCrashReportingPrivacyPolicyURL != NULL)
-		delete[] g_szCrashReportingPrivacyPolicyURL;
+    if (g_szCrashReportingPrivacyPolicyURL != NULL)
+        delete[] g_szCrashReportingPrivacyPolicyURL;
 
     if (g_pLicenseManager != NULL)
         delete g_pLicenseManager;
 
-	if (g_pNativeExtensions != NULL)
+    if (g_pNativeExtensions != NULL)
         delete g_pNativeExtensions;
 
-	g_szCompanyName = NULL;
-	g_szAppName = NULL;
-	g_szAppVersion = NULL;
-	g_szAppURL = NULL;
-	g_windowsInfo.szRegistryKey = NULL;
+    g_szCompanyName = NULL;
+    g_szAppName = NULL;
+    g_szAppVersion = NULL;
+    g_szAppURL = NULL;
+    g_windowsInfo.szRegistryKey = NULL;
     g_osxInfo.szMainNibName = NULL;
-	g_szUpdaterURL = NULL;
-	g_szCrashReportingURL = NULL;
-	g_szCrashReportingPrivacyPolicyURL = NULL;
-	g_pLicenseManager = NULL;
-	g_pNativeExtensions = NULL;
+    g_szUpdaterURL = NULL;
+    g_szCrashReportingURL = NULL;
+    g_szCrashReportingPrivacyPolicyURL = NULL;
+    g_pLicenseManager = NULL;
+    g_pNativeExtensions = NULL;
 }
 
 const TCHAR* GetAppName()
@@ -266,33 +266,33 @@ const TCHAR* GetAppURL()
 
 const TCHAR* GetCompanyName()
 {
-	return g_szCompanyName;
+    return g_szCompanyName;
 }
 
 void SetCompanyName(const TCHAR* szCompanyName)
 {
-	if (g_szCompanyName)
-		delete[] g_szCompanyName;
-	g_szCompanyName = new TCHAR[_tcslen(szCompanyName) + 1];
-	_tcscpy(g_szCompanyName, szCompanyName);
+    if (g_szCompanyName)
+        delete[] g_szCompanyName;
+    g_szCompanyName = new TCHAR[_tcslen(szCompanyName) + 1];
+    _tcscpy(g_szCompanyName, szCompanyName);
 }
 
 int GetMenuIDForCommand(const TCHAR* szCommand)
 {
-	std::map<String, int>::iterator it = g_mapMenuIDs.find(szCommand);
-	return it == g_mapMenuIDs.end() ? 0 : it->second;
+    std::map<String, int>::iterator it = g_mapMenuIDs.find(szCommand);
+    return it == g_mapMenuIDs.end() ? 0 : it->second;
 }
 
 const TCHAR* GetMenuCommandForID(int nMenuID)
 {
-	std::map<int, String>::iterator it = g_mapMenuCommands.find(nMenuID);
-	return it == g_mapMenuCommands.end() ? NULL : it->second.c_str();
+    std::map<int, String>::iterator it = g_mapMenuCommands.find(nMenuID);
+    return it == g_mapMenuCommands.end() ? NULL : it->second.c_str();
 }
 
 void SetMenuIDForCommand(const TCHAR* szCommand, int nMenuID)
 {
-	g_mapMenuCommands[nMenuID] = szCommand;
-	g_mapMenuIDs[szCommand] = nMenuID;
+    g_mapMenuCommands[nMenuID] = szCommand;
+    g_mapMenuIDs[szCommand] = nMenuID;
 }
 
 Size GetDefaultWindowSize()
@@ -318,9 +318,9 @@ void SetWindowsInfo(const TCHAR* szRegistryKey, int nIconID, int nMenuID, int nA
     g_windowsInfo.szRegistryKey = new TCHAR[_tcslen(szRegistryKey) + 1];
     _tcscpy(g_windowsInfo.szRegistryKey, szRegistryKey);
 
-	g_windowsInfo.nIconID = nIconID;
-	g_windowsInfo.nMenuID = nMenuID;
-	g_windowsInfo.nAccelID = nAccelID;
+    g_windowsInfo.nIconID = nIconID;
+    g_windowsInfo.nMenuID = nMenuID;
+    g_windowsInfo.nAccelID = nAccelID;
 }
 
 OSXInfo GetOSXInfo()
@@ -338,31 +338,31 @@ void SetOSXInfo(const TCHAR* szMainNibName)
 
 const TCHAR* GetCrashReportingURL()
 {
-	return g_szCrashReportingURL;
+    return g_szCrashReportingURL;
 }
 
 const TCHAR* GetCrashReportingPrivacyPolicyURL()
 {
-	return g_szCrashReportingPrivacyPolicyURL;
+    return g_szCrashReportingPrivacyPolicyURL;
 }
 
 void SetCrashReportingURL(const TCHAR* szReportingURL, const TCHAR* szPrivacyPolicyURL)
 {
-	if (g_szCrashReportingURL)
-		delete[] g_szCrashReportingURL;
-	if (g_szCrashReportingPrivacyPolicyURL)
-		delete[] g_szCrashReportingPrivacyPolicyURL;
+    if (g_szCrashReportingURL)
+        delete[] g_szCrashReportingURL;
+    if (g_szCrashReportingPrivacyPolicyURL)
+        delete[] g_szCrashReportingPrivacyPolicyURL;
 
-	g_szCrashReportingURL = new TCHAR[_tcslen(szReportingURL) + 1];
-	_tcscpy(g_szCrashReportingURL, szReportingURL);
+    g_szCrashReportingURL = new TCHAR[_tcslen(szReportingURL) + 1];
+    _tcscpy(g_szCrashReportingURL, szReportingURL);
 
-	if (szPrivacyPolicyURL)
-	{
-		g_szCrashReportingPrivacyPolicyURL = new TCHAR[_tcslen(szPrivacyPolicyURL) + 1];
-		_tcscpy(g_szCrashReportingPrivacyPolicyURL, szPrivacyPolicyURL);
-	}
-	else
-		g_szCrashReportingPrivacyPolicyURL = NULL;
+    if (szPrivacyPolicyURL)
+    {
+        g_szCrashReportingPrivacyPolicyURL = new TCHAR[_tcslen(szPrivacyPolicyURL) + 1];
+        _tcscpy(g_szCrashReportingPrivacyPolicyURL, szPrivacyPolicyURL);
+    }
+    else
+        g_szCrashReportingPrivacyPolicyURL = NULL;
 }
 
 const TCHAR* GetUpdaterURL()
@@ -423,13 +423,13 @@ void SetString(int stringId, String str)
 #ifdef OS_WIN
 int GetResourceID(const TCHAR* szResourceName)
 {
-	std::map<String, int>::iterator it = g_mapResourceIDs.find(szResourceName);
+    std::map<String, int>::iterator it = g_mapResourceIDs.find(szResourceName);
     return it == g_mapResourceIDs.end() ? -1 : it->second;
 }
 
 void SetResourceID(const TCHAR* szResourceName, int nID)
 {
-	g_mapResourceIDs[szResourceName] = nID;
+    g_mapResourceIDs[szResourceName] = nID;
 }
 #endif // OS_WIN
 

@@ -49,106 +49,106 @@ CefRefPtr<OffscreenClientHandler> g_offscreenHandler = NULL;
 
 typedef struct
 {
-	CallbackId callbackId;
-	String url;
-	int width;
+    CallbackId callbackId;
+    String url;
+    int width;
 } QueueItem;
 
 
 class OffscreenClientHandler : public CefClient, public CefLifeSpanHandler, public CefRenderHandler
 {
 private:
-	std::queue<QueueItem*> m_queue;
-//	Gdiplus::Bitmap* m_image;
-//	UINT_PTR m_timerId;
-	int m_numPainted;
-	CefRefPtr<CefBrowser> m_browser;
+    std::queue<QueueItem*> m_queue;
+//  Gdiplus::Bitmap* m_image;
+//  UINT_PTR m_timerId;
+    int m_numPainted;
+    CefRefPtr<CefBrowser> m_browser;
 
 public:
-	OffscreenClientHandler()
-//		: m_timerId(0), m_numPainted(0), m_browser(NULL)
-		: m_numPainted(0), m_browser(NULL)
-	{
-//		m_image = new Gdiplus::Bitmap(Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight, PixelFormat32bppARGB);
-	}
+    OffscreenClientHandler()
+//      : m_timerId(0), m_numPainted(0), m_browser(NULL)
+        : m_numPainted(0), m_browser(NULL)
+    {
+//      m_image = new Gdiplus::Bitmap(Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight, PixelFormat32bppARGB);
+    }
 
-	~OffscreenClientHandler()
-	{
-	}
+    ~OffscreenClientHandler()
+    {
+    }
 
-	void AddToQueue(String url, int width, CallbackId callbackId)
-	{
-		QueueItem* item = new QueueItem;
+    void AddToQueue(String url, int width, CallbackId callbackId)
+    {
+        QueueItem* item = new QueueItem;
 
-		item->callbackId = callbackId;
-		item->url = url;
-		item->width = std::min(width, Zephyros::PageImage::ImageWidth);
+        item->callbackId = callbackId;
+        item->url = url;
+        item->width = std::min(width, Zephyros::PageImage::ImageWidth);
 
-		m_queue.push(item);
+        m_queue.push(item);
 
-		if (m_queue.size() == 1)
-		{
-//			m_timerId = 0;
-			m_numPainted = 0;
+        if (m_queue.size() == 1)
+        {
+//          m_timerId = 0;
+            m_numPainted = 0;
 
-			if (m_browser && m_browser.get())
-				m_browser->GetMainFrame()->LoadURL(url);
-		}
-	}
+            if (m_browser && m_browser.get())
+                m_browser->GetMainFrame()->LoadURL(url);
+        }
+    }
 
-	void ReturnResult()
-	{
+    void ReturnResult()
+    {
 /*
-		if (m_timerId != 0)
-			KillTimer(NULL, m_timerId);
+        if (m_timerId != 0)
+            KillTimer(NULL, m_timerId);
 */
 
-		if (m_queue.size() == 0)
-			return;
+        if (m_queue.size() == 0)
+            return;
 
-		QueueItem* item = m_queue.front();
-		m_queue.pop();
-
-/*
-		// resize the image if needed
-		Gdiplus::Bitmap* pImage = m_image;
-		if (item->width < Zephyros::PageImage::ImageWidth)
-		{
-			int imageHeight = (int) (((long) item->width * Zephyros::PageImage::ImageHeight) / Zephyros::PageImage::ImageWidth);
-			pImage = new Gdiplus::Bitmap(item->width, imageHeight, PixelFormat32bppARGB);
-
-			Gdiplus::Graphics g(pImage);
-			g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeHighQuality);
-			g.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQualityBicubic);
-			g.DrawImage(m_image, 0, 0, item->width, imageHeight);
-		}
-*/
-
-		// create a PNG and base64-encode it
-/*
-		BYTE* pData = NULL;
-		DWORD length = 0;
-		ImageUtil::BitmapToPNGData(pImage, &pData, &length);
-*/
-		Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-/*
-		args->SetString(0, TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length));
-*/
-		g_handler->GetClientExtensionHandler()->InvokeCallback(item->callbackId, args);
+        QueueItem* item = m_queue.front();
+        m_queue.pop();
 
 /*
-		delete[] pData;
-		if (pImage != m_image)
-			delete pImage;
-*/
-		delete item;
+        // resize the image if needed
+        Gdiplus::Bitmap* pImage = m_image;
+        if (item->width < Zephyros::PageImage::ImageWidth)
+        {
+            int imageHeight = (int) (((long) item->width * Zephyros::PageImage::ImageHeight) / Zephyros::PageImage::ImageWidth);
+            pImage = new Gdiplus::Bitmap(item->width, imageHeight, PixelFormat32bppARGB);
 
-		// process the next item in the queue
-		m_numPainted = 0;
-//		m_timerId = 0;
-		if (m_queue.size() > 0)
-			m_browser->GetMainFrame()->LoadURL(m_queue.front()->url);
-	}
+            Gdiplus::Graphics g(pImage);
+            g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeHighQuality);
+            g.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQualityBicubic);
+            g.DrawImage(m_image, 0, 0, item->width, imageHeight);
+        }
+*/
+
+        // create a PNG and base64-encode it
+/*
+        BYTE* pData = NULL;
+        DWORD length = 0;
+        ImageUtil::BitmapToPNGData(pImage, &pData, &length);
+*/
+        Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
+/*
+        args->SetString(0, TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length));
+*/
+        g_handler->GetClientExtensionHandler()->InvokeCallback(item->callbackId, args);
+
+/*
+        delete[] pData;
+        if (pImage != m_image)
+            delete pImage;
+*/
+        delete item;
+
+        // process the next item in the queue
+        m_numPainted = 0;
+//      m_timerId = 0;
+        if (m_queue.size() > 0)
+            m_browser->GetMainFrame()->LoadURL(m_queue.front()->url);
+    }
 
     virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE
     {
@@ -156,24 +156,24 @@ public:
     }
 
     virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser)
-	{
-		m_browser = browser;
-	}
+    {
+        m_browser = browser;
+    }
 
     virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser)
-	{
-		m_browser = NULL;
+    {
+        m_browser = NULL;
 /*
-		if (m_image != NULL)
-		{
-			delete m_image;
-			m_image = NULL;
-		}
+        if (m_image != NULL)
+        {
+            delete m_image;
+            m_image = NULL;
+        }
 */
-	}
+    }
 
-	virtual CefRefPtr<CefRenderHandler> GetRenderHandler()
-	{
+    virtual CefRefPtr<CefRenderHandler> GetRenderHandler()
+    {
         return this;
     }
 
@@ -185,25 +185,25 @@ public:
 
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void *buffer, int width, int height)
     {
-		if (/*m_image == NULL ||*/ m_queue.size() == 0)
-			return;
+        if (/*m_image == NULL ||*/ m_queue.size() == 0)
+            return;
 
 /*
-		// copy the buffer into the bitmap
-		Gdiplus::BitmapData data;
-		Gdiplus::Rect rect(0, 0, Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight);
-		m_image->LockBits(&rect, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &data);
-		int w = min(Zephyros::PageImage::ImageWidth, width);
-		int h = min(Zephyros::PageImage::ImageHeight, height);
-		for (int y = 0; y < h; ++y)
-			memcpy((BYTE*) data.Scan0 + y * data.Stride, (BYTE*) buffer + y * 4 * w, 4 * w);
-		m_image->UnlockBits(&data);
+        // copy the buffer into the bitmap
+        Gdiplus::BitmapData data;
+        Gdiplus::Rect rect(0, 0, Zephyros::PageImage::ImageWidth, Zephyros::PageImage::ImageHeight);
+        m_image->LockBits(&rect, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &data);
+        int w = min(Zephyros::PageImage::ImageWidth, width);
+        int h = min(Zephyros::PageImage::ImageHeight, height);
+        for (int y = 0; y < h; ++y)
+            memcpy((BYTE*) data.Scan0 + y * data.Stride, (BYTE*) buffer + y * 4 * w, 4 * w);
+        m_image->UnlockBits(&data);
 */
-		m_numPainted++;
-		if (m_numPainted >= 100)
-			ReturnResult();
-//		else
-//			m_timerId = SetTimer(NULL, m_timerId, 3000, PaintComplete);
+        m_numPainted++;
+        if (m_numPainted >= 100)
+            ReturnResult();
+//      else
+//          m_timerId = SetTimer(NULL, m_timerId, 3000, PaintComplete);
     }
 
 public:
@@ -213,8 +213,8 @@ public:
 /*
 void CALLBACK PaintComplete(HWND hWnd, UINT uMsg, UINT_PTR timerId, DWORD dwTime)
 {
-	if (g_offscreenHandler && g_offscreenHandler.get())
-		g_offscreenHandler->ReturnResult();
+    if (g_offscreenHandler && g_offscreenHandler.get())
+        g_offscreenHandler->ReturnResult();
 }
 */
 
@@ -224,19 +224,19 @@ namespace PageImage {
 
 void GetPageImageForURL(CallbackId callback, String url, int width)
 {
-	if (g_offscreenHandler == NULL)
-	{
-		g_offscreenHandler = new OffscreenClientHandler();
+    if (g_offscreenHandler == NULL)
+    {
+        g_offscreenHandler = new OffscreenClientHandler();
 
-		CefWindowInfo info;
-		info.SetAsWindowless(NULL, false);
+        CefWindowInfo info;
+        info.SetAsWindowless(NULL, false);
 
-		CefBrowserSettings settings;
+        CefBrowserSettings settings;
 
-		CefBrowserHost::CreateBrowser(info, g_offscreenHandler.get(), url, settings, NULL);
-	}
+        CefBrowserHost::CreateBrowser(info, g_offscreenHandler.get(), url, settings, NULL);
+    }
 
-	g_offscreenHandler->AddToQueue(url, width, callback);
+    g_offscreenHandler->AddToQueue(url, width, callback);
 }
 
 } // namespace PageImage

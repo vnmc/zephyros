@@ -81,7 +81,7 @@ std::vector<String> GetNetworkIPs()
 String GetPrimaryMACAddress()
 {
     std::vector<String> addresses = GetAllMACAddresses();
-	return addresses.at(0);
+    return addresses.at(0);
 }
 
 String GetMACAddressForIFName(String strIFName)
@@ -94,7 +94,7 @@ String GetMACAddressForIFName(String strIFName)
     if (ioctl(fd, SIOCGIFHWADDR, &s) == 0)
     {
         StringStream ss;
-		ss << std::hex << std::setfill(TEXT('0'));
+        ss << std::hex << std::setfill(TEXT('0'));
         for (int i = 0; i < 6; ++i)
         {
             if (i > 0)
@@ -114,7 +114,7 @@ String GetMACAddressForIFName(String strIFName)
 
 std::vector<String> GetAllMACAddresses()
 {
-	std::vector<String> vecResult;
+    std::vector<String> vecResult;
 
     struct ifaddrs *ifaddr;
     if (getifaddrs(&ifaddr) != -1)
@@ -136,16 +136,16 @@ std::vector<String> GetAllMACAddresses()
     if (vecResult.empty())
         vecResult.push_back(TEXT("00:00:00:00:00:00"));
 
-	return vecResult;
+    return vecResult;
 }
 
 bool GetProxyForURL(String url, String& proxyType, String& host, int& port, String& username, String& password)
 {
     proxyType = TEXT("");
-	host = TEXT("");
-	port = -1;
-	username = TEXT("");
-	password = TEXT("");
+    host = TEXT("");
+    port = -1;
+    username = TEXT("");
+    password = TEXT("");
 
     String urlHost = TEXT("");
     if (url.length() > 0)
@@ -193,7 +193,7 @@ bool GetProxyForURL(String url, String& proxyType, String& host, int& port, Stri
     password = CefString(&proxyUrlParts.password).ToString();
     proxyType = myProxyType;
 
-	return true;
+    return true;
 }
 
 } // namespace NetworkUtil

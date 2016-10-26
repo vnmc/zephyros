@@ -41,20 +41,20 @@ namespace Zephyros {
 
 ClientApp::ClientApp()
 {
-	m_pAppExtensionHandler = new AppExtensionHandler();
+    m_pAppExtensionHandler = new AppExtensionHandler();
     m_renderDelegates.insert(m_pAppExtensionHandler.get());
 }
 
 ClientApp::~ClientApp()
 {
-	m_browserDelegates.clear();
-	m_renderDelegates.clear();
+    m_browserDelegates.clear();
+    m_renderDelegates.clear();
 }
 
 void ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line)
 {
-	// disable proxy resolution (we only want to contact the Ghostlab server from the UI)
-	command_line->AppendSwitch(TEXT("no-proxy-server"));
+    // disable proxy resolution (we only want to contact the Ghostlab server from the UI)
+    command_line->AppendSwitch(TEXT("no-proxy-server"));
 }
 
 void ClientApp::OnContextInitialized()
@@ -83,10 +83,10 @@ void ClientApp::OnRenderThreadCreated(CefRefPtr<CefListValue> extra_info)
 
 void ClientApp::OnWebKitInitialized()
 {
-	// generate the JavaScript code for the extension and register it
+    // generate the JavaScript code for the extension and register it
     Zephyros::GetNativeExtensions()->AddNativeExtensions(m_pAppExtensionHandler.get());
     Zephyros::GetNativeExtensions()->SetNativeExtensionsAdded();
-	CefRegisterExtension("v8/app", m_pAppExtensionHandler->GetJavaScriptCode(), m_pAppExtensionHandler.get());
+    CefRegisterExtension("v8/app", m_pAppExtensionHandler->GetJavaScriptCode(), m_pAppExtensionHandler.get());
 
     for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
         delegate->OnWebKitInitialized(this);
@@ -106,15 +106,15 @@ void ClientApp::OnBrowserDestroyed(CefRefPtr<CefBrowser> browser)
 
 CefRefPtr<CefLoadHandler> ClientApp::GetLoadHandler()
 {
-	CefRefPtr<CefLoadHandler> loadHandler;
-	for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
-	{
-		loadHandler = delegate->GetLoadHandler(this);
-		if (loadHandler.get())
-			return loadHandler;
-	}
+    CefRefPtr<CefLoadHandler> loadHandler;
+    for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
+    {
+        loadHandler = delegate->GetLoadHandler(this);
+        if (loadHandler.get())
+            return loadHandler;
+    }
 
-	return NULL;
+    return NULL;
 }
 
 bool ClientApp::OnBeforeNavigation(
@@ -141,11 +141,11 @@ void ClientApp::OnContextReleased(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFr
 }
 
 void ClientApp::OnUncaughtException(
-	CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context,
-	CefRefPtr<CefV8Exception> exception, CefRefPtr<CefV8StackTrace> stackTrace)
+    CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context,
+    CefRefPtr<CefV8Exception> exception, CefRefPtr<CefV8StackTrace> stackTrace)
 {
-	for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
-		delegate->OnUncaughtException(this, browser, frame, context, exception, stackTrace);
+    for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
+        delegate->OnUncaughtException(this, browser, frame, context, exception, stackTrace);
 }
 
 void ClientApp::OnFocusedNodeChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefDOMNode> node)
@@ -156,7 +156,7 @@ void ClientApp::OnFocusedNodeChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<Ce
 
 bool ClientApp::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
 {
-	DCHECK_EQ(source_process, PID_BROWSER);
+    DCHECK_EQ(source_process, PID_BROWSER);
 
     for (CefRefPtr<RenderDelegate> delegate : m_renderDelegates)
         if (delegate->OnProcessMessageReceived(this, browser, source_process, message))

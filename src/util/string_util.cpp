@@ -97,12 +97,12 @@ String StringReplace(const String& str, const String& from, const String& to)
 
 bool StringEndsWith(const String& str, const String& suffix)
 {
-	String::size_type lenStr = str.length();
-	String::size_type lenSuffix = suffix.length();
+    String::size_type lenStr = str.length();
+    String::size_type lenSuffix = suffix.length();
 
-	if (lenSuffix > lenStr)
-		return false;
-	return str.compare(lenStr - lenSuffix, lenSuffix, suffix) == 0;
+    if (lenSuffix > lenStr)
+        return false;
+    return str.compare(lenStr - lenSuffix, lenSuffix, suffix) == 0;
 }
 
 std::vector<String>& Split(const String &s, TCHAR delim, std::vector<String> &elems)

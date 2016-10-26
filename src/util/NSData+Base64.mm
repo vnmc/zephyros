@@ -43,12 +43,12 @@
 //
 + (NSData *)dataFromBase64String:(NSString *)aString
 {
-	NSData *data = [aString dataUsingEncoding:NSASCIIStringEncoding];
-	size_t outputLength;
-	void *outputBuffer = NewBase64Decode(reinterpret_cast<const char*>([data bytes]), [data length], &outputLength);
-	NSData *result = [NSData dataWithBytes:outputBuffer length:outputLength];
-	free(outputBuffer);
-	return result;
+    NSData *data = [aString dataUsingEncoding:NSASCIIStringEncoding];
+    size_t outputLength;
+    void *outputBuffer = NewBase64Decode(reinterpret_cast<const char*>([data bytes]), [data length], &outputLength);
+    NSData *result = [NSData dataWithBytes:outputBuffer length:outputLength];
+    free(outputBuffer);
+    return result;
 }
 
 //
@@ -58,17 +58,17 @@
 // receiver's data. Lines are broken at 64 characters long.
 //
 // returns an autoreleased NSString being the base 64 representation of the
-//	receiver.
+//  receiver.
 //
 - (NSString *)base64EncodedString
 {
-	size_t outputLength;
-	char *outputBuffer = NewBase64Encode([self bytes], [self length], false, &outputLength);
-	
-	NSString *result = [[NSString alloc] initWithBytes: outputBuffer length: outputLength encoding: NSASCIIStringEncoding];
+    size_t outputLength;
+    char *outputBuffer = NewBase64Encode([self bytes], [self length], false, &outputLength);
     
-	free(outputBuffer);
-	return result;
+    NSString *result = [[NSString alloc] initWithBytes: outputBuffer length: outputLength encoding: NSASCIIStringEncoding];
+    
+    free(outputBuffer);
+    return result;
 }
 
 @end

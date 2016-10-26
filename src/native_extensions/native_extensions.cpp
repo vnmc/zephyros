@@ -75,7 +75,7 @@ void NativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
 
 
 DefaultNativeExtensions::DefaultNativeExtensions()
-	: m_pBrowsers(NULL)
+    : m_pBrowsers(NULL)
 {
     m_fileWatcher = new FileWatcher();
     m_customURLManager = new CustomURLManager();
@@ -86,8 +86,8 @@ DefaultNativeExtensions::~DefaultNativeExtensions()
     delete m_fileWatcher;
     delete m_customURLManager;
 
-	if (m_pBrowsers)
-		BrowserUtil::CleanUp(m_pBrowsers);
+    if (m_pBrowsers)
+        BrowserUtil::CleanUp(m_pBrowsers);
 }
 
 void DefaultNativeExtensions::SetClientExtensionHandler(ClientExtensionHandlerPtr e)
@@ -120,14 +120,14 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
-	// onMenuCommand: (callback: (commandId: string) => void) => void
-	e->AddNativeJavaScriptCallback(
-		TEXT("onMenuCommand"),
-		FUNC({
-			// only register callback
-			return NO_ERROR;
-		}
-	));
+    // onMenuCommand: (callback: (commandId: string) => void) => void
+    e->AddNativeJavaScriptCallback(
+        TEXT("onMenuCommand"),
+        FUNC({
+            // only register callback
+            return NO_ERROR;
+        }
+    ));
 
     // onFileChanged: (callback: (paths: string[]) => void) => void
     e->AddNativeJavaScriptCallback(
@@ -142,8 +142,8 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     e->AddNativeJavaScriptCallback(
         TEXT("onCustomURL"),
         FUNC({
-			// only register callback
-			return NO_ERROR;
+            // only register callback
+            return NO_ERROR;
         }
     ));
 
@@ -185,16 +185,16 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_LIST, "menu")
     ));
 
-	e->AddNativeJavaScriptProcedure(
-		TEXT("removeMenuItem"),
-		FUNC({
-			OSUtil::RemoveMenuItem(args->GetString(0));
-			return NO_ERROR;
-		},
-		ARG(VTYPE_STRING, "commandId")
-	));
+    e->AddNativeJavaScriptProcedure(
+        TEXT("removeMenuItem"),
+        FUNC({
+            OSUtil::RemoveMenuItem(args->GetString(0));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_STRING, "commandId")
+    ));
 
-	// setMenuItemStatuses: (items: IMenuItemFlags) => void
+    // setMenuItemStatuses: (items: IMenuItemFlags) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("setMenuItemStatuses"),
         FUNC({
@@ -212,27 +212,27 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "items")
     ));
 
-	// createContextMenu: (menuItems: IMenuItem[], callback: (menuHandle: string) => void) => void
-	e->AddNativeJavaScriptFunction(
-		TEXT("createContextMenu"),
-		FUNC({
-			ret->SetString(0, std::to_string(OSUtil::CreateContextMenu(args->GetList(0))));
-			return NO_ERROR;
-		},
-		ARG(VTYPE_LIST, "menuItems")
-	));
+    // createContextMenu: (menuItems: IMenuItem[], callback: (menuHandle: string) => void) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("createContextMenu"),
+        FUNC({
+            ret->SetString(0, std::to_string(OSUtil::CreateContextMenu(args->GetList(0))));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_LIST, "menuItems")
+    ));
 
-	// showContextMenu: (menuHandle: string, x: number, y: number, callback: (menuCommandId: string) => void) => void
-	e->AddNativeJavaScriptFunction(
-		TEXT("showContextMenu"),
-		FUNC({
-			ret->SetString(0, OSUtil::ShowContextMenu(_wtoi64(String(args->GetString(0)).c_str()), (int) args->GetDouble(1), (int) args->GetDouble(2)));
-			return NO_ERROR;
-		},
-		ARG(VTYPE_STRING, "menuHandle")
-		ARG(VTYPE_INT, "x")
-		ARG(VTYPE_INT, "y")
-	));
+    // showContextMenu: (menuHandle: string, x: number, y: number, callback: (menuCommandId: string) => void) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("showContextMenu"),
+        FUNC({
+            ret->SetString(0, OSUtil::ShowContextMenu(_wtoi64(String(args->GetString(0)).c_str()), (int) args->GetDouble(1), (int) args->GetDouble(2)));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_STRING, "menuHandle")
+        ARG(VTYPE_INT, "x")
+        ARG(VTYPE_INT, "y")
+    ));
 
 
     //////////////////////////////////////////////////////////////////////
@@ -244,7 +244,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         FUNC({
             JavaScript::Array browsers = JavaScript::CreateArray();
             int i = 0;
-			Zephyros::BrowserUtil::FindBrowsers(&((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers);
+            Zephyros::BrowserUtil::FindBrowsers(&((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers);
             for (Browser* pBrowser : *(((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_pBrowsers))
                 browsers->SetDictionary(i++, pBrowser->CreateJSRepresentation());
             ret->SetList(0, browsers);
@@ -317,12 +317,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
-	// getHomeDirectory: (callback: (path: IPath) => void) => void
+    // getHomeDirectory: (callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("getHomeDirectory"),
         FUNC({
             Path path(OSUtil::GetHomeDirectory());
-			ret->SetDictionary(0, path.CreateJSRepresentation());
+            ret->SetDictionary(0, path.CreateJSRepresentation());
             return NO_ERROR;
         }
     ));
@@ -374,7 +374,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             else
                 ret->SetNull(0);
             return NO_ERROR;
-		})
+        })
 #endif
     );
 
@@ -394,7 +394,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             else
                 ret->SetNull(0);
             return NO_ERROR;
-		})
+        })
 #endif
     );
 
@@ -443,14 +443,14 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
-	// getCustomURLs: () => void
-	e->AddNativeJavaScriptProcedure(
-		TEXT("getCustomURLs"),
-		FUNC({
-			Zephyros::GetNativeExtensions()->GetCustomURLManager()->FireCustomURLs();
-			return NO_ERROR;
-		}
-	));
+    // getCustomURLs: () => void
+    e->AddNativeJavaScriptProcedure(
+        TEXT("getCustomURLs"),
+        FUNC({
+            Zephyros::GetNativeExtensions()->GetCustomURLManager()->FireCustomURLs();
+            return NO_ERROR;
+        }
+    ));
 
     // startAccessingPath: (path: IPath, callback: (err: Error) => void) => void
     e->AddNativeJavaScriptFunction(
@@ -544,7 +544,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_STRING, "contents")
     ));
 
-	// existsFile: (path: IPath, callback(exists: boolean) => void) => void
+    // existsFile: (path: IPath, callback(exists: boolean) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("existsFile"),
         FUNC({
@@ -623,7 +623,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_STRING, "relativeFilenames")
     ));
 
-	// isDirectory: (path: IPath, callback(isDir: boolean) => void) => void
+    // isDirectory: (path: IPath, callback(isDir: boolean) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("isDirectory"),
         FUNC({
@@ -652,7 +652,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 
             if (FileUtil::StartAccessingPath(path, err))
             {
-				FileUtil::StatInfo stat = { 0 };
+                FileUtil::StatInfo stat = { 0 };
                 FileUtil::Stat(path.GetPath(), &stat);
                 
                 JavaScript::Object info = JavaScript::CreateObject();
@@ -785,7 +785,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
-	// startProcess: (executablePath: string, arguments: string[], cwd: string, callback: (exitCode: number, output: IOutputStreamData[]) => void) => void
+    // startProcess: (executablePath: string, arguments: string[], cwd: string, callback: (exitCode: number, output: IOutputStreamData[]) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("startProcess"),
         FUNC({
@@ -844,7 +844,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         })
     );
 
-	// setUpdaterSettings: (settings: IUpdaterSettings) => void
+    // setUpdaterSettings: (settings: IUpdaterSettings) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("setUpdaterSettings"),
         FUNC({
@@ -852,7 +852,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "updaterSettings")
-	));
+    ));
 #endif
 
 
@@ -953,7 +953,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 #endif
 
 #ifdef USE_WEBVIEW
-	// convertImage: (base64ImageData: string, callback: (base64PNG: string) => void) => void
+    // convertImage: (base64ImageData: string, callback: (base64PNG: string) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("convertImage"),
         FUNC({
@@ -979,11 +979,11 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     // Windows, Notifications
 
 #ifdef OS_WIN
-#	define SET_WINDOW_SIZE_RETVAL NO_ERROR
+#   define SET_WINDOW_SIZE_RETVAL NO_ERROR
 #else
-#	define SET_WINDOW_SIZE_RETVAL RET_DELAYED_CALLBACK
+#   define SET_WINDOW_SIZE_RETVAL RET_DELAYED_CALLBACK
 #endif
-	// setWindowSize: (size: ISize, callback?: (newSize: ISize) => void) => void
+    // setWindowSize: (size: ISize, callback?: (newSize: ISize) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("setWindowSize"),
         FUNC({
@@ -1015,12 +1015,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             newSize->SetInt(TEXT("height"), newHeight);
             ret->SetDictionary(0, newSize);
 
-			return SET_WINDOW_SIZE_RETVAL;
+            return SET_WINDOW_SIZE_RETVAL;
         },
         ARG(VTYPE_DICTIONARY, "size")
     ));
 
-	// setMinimumWindowSize: (size: ISize) => void
+    // setMinimumWindowSize: (size: ISize) => void
     e->AddNativeJavaScriptProcedure(
         TEXT("setMinimumWindowSize"),
         FUNC({

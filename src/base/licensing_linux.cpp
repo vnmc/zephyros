@@ -69,13 +69,13 @@ namespace Zephyros {
 // LicenseData Implementation
 
 LicenseData::LicenseData(const TCHAR* szLicenseInformationFilename)
-	: m_szLicenseInfoFilename(szLicenseInformationFilename)
+    : m_szLicenseInfoFilename(szLicenseInformationFilename)
 {
-	// read the license data from the file
+    // read the license data from the file
 
-	String strFilename(OSUtil::GetConfigDirectory());
-	strFilename.append(TEXT("/"));
-	strFilename.append(m_szLicenseInfoFilename);
+    String strFilename(OSUtil::GetConfigDirectory());
+    strFilename.append(TEXT("/"));
+    strFilename.append(m_szLicenseInfoFilename);
 
     std::ifstream file;
     file.open(strFilename, std::ios::in | std::ios::binary);
@@ -165,11 +165,11 @@ LicenseData::LicenseData(const TCHAR* szLicenseInformationFilename)
 
 void LicenseData::Save()
 {
-	// save the license data to the file
+    // save the license data to the file
 
     String strFilename(OSUtil::GetConfigDirectory());
-	strFilename.append(TEXT("/"));
-	strFilename.append(m_szLicenseInfoFilename);
+    strFilename.append(TEXT("/"));
+    strFilename.append(m_szLicenseInfoFilename);
 
     std::ofstream file;
     file.open(strFilename, std::ios::out | std::ios::binary);
@@ -234,10 +234,10 @@ String LicenseData::Now()
     // format the hash
     StringStream ssResult;
     ssResult << std::hex << std::setfill(TEXT('0'));
-	for (int i = 0; i < 20; ++i)
+    for (int i = 0; i < 20; ++i)
         ssResult << std::setw(2) << (int) md[i];
 
-	return ssResult.str();
+    return ssResult.str();
 }
 
 
@@ -257,31 +257,31 @@ void SetTimeout(int nSeconds, void (*pFnx)(int nSigNum))
 
 void DemoTimeout(int nSigNum)
 {
-   	if (!Zephyros::GetLicenseManager()->CheckDemoValidity())
+    if (!Zephyros::GetLicenseManager()->CheckDemoValidity())
         SetTimeout(6 * 3600, DemoTimeout);
 }
 
 LicenseManagerImpl::LicenseManagerImpl()
     : m_pDemoDlg(NULL)
 {
-	InitConfig();
+    InitConfig();
 
-	// initialize OpenSSL
-	OpenSSL_add_all_algorithms();
-	ERR_load_crypto_strings();
+    // initialize OpenSSL
+    OpenSSL_add_all_algorithms();
+    ERR_load_crypto_strings();
 
-	// initialize cURL
-	curl_global_init(CURL_GLOBAL_ALL);
+    // initialize cURL
+    curl_global_init(CURL_GLOBAL_ALL);
 }
 
 LicenseManagerImpl::~LicenseManagerImpl()
 {
     // shut down OpenSSL
     EVP_cleanup();
-	ERR_free_strings();
+    ERR_free_strings();
 
-	// shut down cURL
-	curl_global_cleanup();
+    // shut down cURL
+    curl_global_cleanup();
 }
 
 bool LicenseManagerImpl::VerifyKey(String key, String info, const TCHAR* szPubkey)
@@ -324,7 +324,7 @@ void LicenseManagerImpl::ShowDemoDialog()
     if (g_bIsDemoDialogShown)
         return;
 
-	// create the demo dialog
+    // create the demo dialog
     m_pDemoDlg = gtk_dialog_new_with_buttons(
         Zephyros::GetString(ZS_DEMODLG_WNDTITLE).c_str(),
         NULL,
@@ -415,13 +415,13 @@ void LicenseManagerImpl::ShowDemoDialog()
     g_bIsDemoDialogShown = false;
     m_pDemoDlg = NULL;
 
-	// check the validity of the demo after 6 hours
-	if (m_canStartApp && !IsActivated())
+    // check the validity of the demo after 6 hours
+    if (m_canStartApp && !IsActivated())
         SetTimeout(6 * 3600, DemoTimeout);
 
-	// if the message loop is already running, post a quit message
-	if (!m_canStartApp)
-		App::QuitMessageLoop();
+    // if the message loop is already running, post a quit message
+    if (!m_canStartApp)
+        App::QuitMessageLoop();
 }
 
 typedef struct {
@@ -584,7 +584,7 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
     bool bRet = curl_easy_perform(curl) == CURLE_OK;
     curl_easy_cleanup(curl);
 
-	return bRet;
+    return bRet;
 }
 
 void LicenseManagerImpl::OnActivate(bool isSuccess)
@@ -596,7 +596,7 @@ void LicenseManagerImpl::OnActivate(bool isSuccess)
 
 void LicenseManagerImpl::OnReceiveDemoTokens(bool isSuccess)
 {
-	// nothing needs to be done here...
+    // nothing needs to be done here...
 }
 
 inline TCHAR toHex(TCHAR c)

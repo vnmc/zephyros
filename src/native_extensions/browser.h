@@ -52,7 +52,7 @@ public:
         m_identifier(identifier),
         m_image(image),
         m_isDefaultBrowser(isDefaultBrowser),
-		m_statusCode(statusCode)
+        m_statusCode(statusCode)
     {
     }
 
@@ -82,11 +82,11 @@ public:
     }
 
     inline int GetStatusCode()
-	{
-		return m_statusCode;
-	}
-	
-	JavaScript::Object CreateJSRepresentation()
+    {
+        return m_statusCode;
+    }
+    
+    JavaScript::Object CreateJSRepresentation()
     {
         JavaScript::Object obj = JavaScript::CreateObject();
 
@@ -95,7 +95,7 @@ public:
         obj->SetString("id", m_identifier);
         obj->SetString("image", m_image);
         obj->SetBool("isDefaultBrowser", m_isDefaultBrowser);
-		obj->SetInt("statusCode", m_statusCode);
+        obj->SetInt("statusCode", m_statusCode);
 
         return obj;
     }
@@ -106,8 +106,8 @@ private:
     String m_version;
     String m_identifier;
     String m_image;
-	bool m_isDefaultBrowser;
-	int m_statusCode;
+    bool m_isDefaultBrowser;
+    int m_statusCode;
 };
 
 

@@ -50,9 +50,9 @@ namespace FileUtil {
 
 bool ShowOpenFileDialog(Path& path)
 {
-	OPENFILENAME ofn;
-	TCHAR szFile[MAX_PATH];
-	szFile[0] = 0;
+    OPENFILENAME ofn;
+    TCHAR szFile[MAX_PATH];
+    szFile[0] = 0;
 
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.hwndOwner = GetActiveWindow();
@@ -60,24 +60,24 @@ bool ShowOpenFileDialog(Path& path)
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = MAX_PATH;
     ofn.lpstrTitle = NULL;
-	ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
-	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
+    ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
 
     if (GetOpenFileName(&ofn))
-	{
-		path = Path(szFile);
-		return true;
-	}
+    {
+        path = Path(szFile);
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 bool ShowSaveFileDialog(Path& path)
 {
-	OPENFILENAME ofn;
-	TCHAR szFile[MAX_PATH];
-	szFile[0] = 0;
+    OPENFILENAME ofn;
+    TCHAR szFile[MAX_PATH];
+    szFile[0] = 0;
 
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.hwndOwner = GetActiveWindow();
@@ -85,71 +85,71 @@ bool ShowSaveFileDialog(Path& path)
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = MAX_PATH;
     ofn.lpstrTitle = NULL;
-	ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
-	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_EXPLORER;
+    ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_EXPLORER;
 
-	if (GetSaveFileName(&ofn))
-	{
-		path = Path();
-		return true;
-	}
+    if (GetSaveFileName(&ofn))
+    {
+        path = Path();
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 bool ShowOpenDirectoryDialog(Path& path)
 {
-	bool pathSelected = false;
+    bool pathSelected = false;
 
-	// check current OS version
-	OSVERSIONINFO osvi;
-	memset(&osvi, 0, sizeof(OSVERSIONINFO));
-	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	
-	IFileDialog *pfd;
-	if (SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd))))
-	{
-		// configure the dialog to Select Folders only
-		DWORD dwOptions;
-		if (SUCCEEDED(pfd->GetOptions(&dwOptions)))
-		{
-			pfd->SetOptions(dwOptions | FOS_PICKFOLDERS | FOS_DONTADDTORECENT);
+    // check current OS version
+    OSVERSIONINFO osvi;
+    memset(&osvi, 0, sizeof(OSVERSIONINFO));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    
+    IFileDialog *pfd;
+    if (SUCCEEDED(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd))))
+    {
+        // configure the dialog to Select Folders only
+        DWORD dwOptions;
+        if (SUCCEEDED(pfd->GetOptions(&dwOptions)))
+        {
+            pfd->SetOptions(dwOptions | FOS_PICKFOLDERS | FOS_DONTADDTORECENT);
 
-			if (SUCCEEDED(pfd->Show(GetActiveWindow())))
-			{
-				IShellItem *psi;
-				if (SUCCEEDED(pfd->GetResult(&psi)))
-				{
-					LPWSTR lpwszName = NULL;
-					if (SUCCEEDED(psi->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, (LPWSTR*) &lpwszName)))
-					{
-						// Add directory path to the result
-						//ConvertToUnixPath(pathName);
-						path = Path(lpwszName);
-						pathSelected = true;
+            if (SUCCEEDED(pfd->Show(GetActiveWindow())))
+            {
+                IShellItem *psi;
+                if (SUCCEEDED(pfd->GetResult(&psi)))
+                {
+                    LPWSTR lpwszName = NULL;
+                    if (SUCCEEDED(psi->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, (LPWSTR*) &lpwszName)))
+                    {
+                        // Add directory path to the result
+                        //ConvertToUnixPath(pathName);
+                        path = Path(lpwszName);
+                        pathSelected = true;
 
-						::CoTaskMemFree(lpwszName);
-					}
+                        ::CoTaskMemFree(lpwszName);
+                    }
 
-					psi->Release();
-				}
-			}
-		}
+                    psi->Release();
+                }
+            }
+        }
 
-		pfd->Release();
-	}
+        pfd->Release();
+    }
 
-	return pathSelected;
+    return pathSelected;
 }
 
 #define FOLDERSELECTION TEXT("Folder Selection.")
 
 bool ShowOpenFileOrDirectoryDialog(Path& path)
 {
-	OPENFILENAME ofn;
-	TCHAR szFile[MAX_PATH];
-	_tcscpy(szFile, FOLDERSELECTION);
+    OPENFILENAME ofn;
+    TCHAR szFile[MAX_PATH];
+    _tcscpy(szFile, FOLDERSELECTION);
 
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.hwndOwner = GetActiveWindow();
@@ -157,413 +157,413 @@ bool ShowOpenFileOrDirectoryDialog(Path& path)
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = MAX_PATH;
     ofn.lpstrTitle = NULL;
-	ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
-	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOTESTFILECREATE | OFN_EXPLORER;
+    ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOTESTFILECREATE | OFN_EXPLORER;
 
     if (GetOpenFileName(&ofn))
-	{
-		if (_tcscmp(szFile + _tcslen(szFile) - _tcslen(FOLDERSELECTION), FOLDERSELECTION) == 0)
-			PathRemoveFileSpec(szFile);
+    {
+        if (_tcscmp(szFile + _tcslen(szFile) - _tcslen(FOLDERSELECTION), FOLDERSELECTION) == 0)
+            PathRemoveFileSpec(szFile);
 
-		path = Path(szFile);
-		return true;
-	}
+        path = Path(szFile);
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 void ShowInFileManager(String path)
 {
-	ShellExecute(NULL, TEXT("open"), path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+    ShellExecute(NULL, TEXT("open"), path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
 }
 
 bool ExistsFile(String filename)
 {
-	return PathFileExists(filename.c_str()) == TRUE;
+    return PathFileExists(filename.c_str()) == TRUE;
 }
 
 bool IsDirectory(String path)
 {
-	if (path.substr(0, 7) == TEXT("http://") || path.substr(0, 8) == TEXT("https://"))
-		return false;
+    if (path.substr(0, 7) == TEXT("http://") || path.substr(0, 8) == TEXT("https://"))
+        return false;
 
-	DWORD dwFileAttrs = GetFileAttributes(path.c_str());
-	if (dwFileAttrs == INVALID_FILE_ATTRIBUTES)
-		return false;
+    DWORD dwFileAttrs = GetFileAttributes(path.c_str());
+    if (dwFileAttrs == INVALID_FILE_ATTRIBUTES)
+        return false;
 
-	return (dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    return (dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
 bool Stat(String path, StatInfo* stat)
 {
-	if (path.substr(0, 7) == TEXT("http://") || path.substr(0, 8) == TEXT("https://"))
-		return false;
+    if (path.substr(0, 7) == TEXT("http://") || path.substr(0, 8) == TEXT("https://"))
+        return false;
 
-	DWORD dwFileAttrs = GetFileAttributes(path.c_str());
-	if (dwFileAttrs != INVALID_FILE_ATTRIBUTES)
-	{
-		stat->isFile = (dwFileAttrs & ~FILE_ATTRIBUTE_DIRECTORY & (FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_ARCHIVE | FILE_ATTRIBUTE_READONLY)) != 0;
-		stat->isDirectory = (dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY) != 0;
-	}
-	else
-	{
-		stat->isFile = false;
-		stat->isDirectory = false;
-	}
+    DWORD dwFileAttrs = GetFileAttributes(path.c_str());
+    if (dwFileAttrs != INVALID_FILE_ATTRIBUTES)
+    {
+        stat->isFile = (dwFileAttrs & ~FILE_ATTRIBUTE_DIRECTORY & (FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_ARCHIVE | FILE_ATTRIBUTE_READONLY)) != 0;
+        stat->isDirectory = (dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    }
+    else
+    {
+        stat->isFile = false;
+        stat->isDirectory = false;
+    }
 
-	HANDLE hnd = CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hnd == INVALID_HANDLE_VALUE)
-	{
-		stat->fileSize = 0;
-		stat->creationDate = 0;
-		stat->modificationDate = 0;
+    HANDLE hnd = CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hnd == INVALID_HANDLE_VALUE)
+    {
+        stat->fileSize = 0;
+        stat->creationDate = 0;
+        stat->modificationDate = 0;
 
-		return false;
-	}
+        return false;
+    }
 
-	LARGE_INTEGER size;
-	GetFileSizeEx(hnd, &size);
-	stat->fileSize = size.QuadPart;
+    LARGE_INTEGER size;
+    GetFileSizeEx(hnd, &size);
+    stat->fileSize = size.QuadPart;
 
-	FILETIME createTime, writeTime;
-	GetFileTime(hnd, &createTime, NULL, &writeTime);
+    FILETIME createTime, writeTime;
+    GetFileTime(hnd, &createTime, NULL, &writeTime);
 
-	ULARGE_INTEGER ullCreateTime, ullWriteTime;
-	ullCreateTime.LowPart = createTime.dwLowDateTime;
-	ullCreateTime.HighPart = createTime.dwHighDateTime;
-	ullWriteTime.LowPart = writeTime.dwLowDateTime;
-	ullWriteTime.HighPart = writeTime.dwHighDateTime;
+    ULARGE_INTEGER ullCreateTime, ullWriteTime;
+    ullCreateTime.LowPart = createTime.dwLowDateTime;
+    ullCreateTime.HighPart = createTime.dwHighDateTime;
+    ullWriteTime.LowPart = writeTime.dwLowDateTime;
+    ullWriteTime.HighPart = writeTime.dwHighDateTime;
 
-	stat->creationDate = static_cast<uint64_t>(ullCreateTime.QuadPart / 10000ULL - 11644473600000ULL);
-	stat->modificationDate = static_cast<uint64_t>(ullWriteTime.QuadPart / 10000ULL - 11644473600000ULL);
+    stat->creationDate = static_cast<uint64_t>(ullCreateTime.QuadPart / 10000ULL - 11644473600000ULL);
+    stat->modificationDate = static_cast<uint64_t>(ullWriteTime.QuadPart / 10000ULL - 11644473600000ULL);
 
-	CloseHandle(hnd);
+    CloseHandle(hnd);
 
-	return true;
+    return true;
 }
 
 bool MakeDirectory(String path, bool recursive, Error& err)
 {
-	// TODO: revise: according to MSDN:
-	// "[SHCreateDirectory is available for use in the operating systems
-	// specified in the Requirements section. It may be altered or unavailable
-	// in subsequent versions.]"
+    // TODO: revise: according to MSDN:
+    // "[SHCreateDirectory is available for use in the operating systems
+    // specified in the Requirements section. It may be altered or unavailable
+    // in subsequent versions.]"
 
-	int ret = SHCreateDirectory(GetActiveWindow(), PCWSTR(path.c_str()));
-	if (ret == ERROR_SUCCESS)
-		return true;
+    int ret = SHCreateDirectory(GetActiveWindow(), PCWSTR(path.c_str()));
+    if (ret == ERROR_SUCCESS)
+        return true;
 
-	err.FromError(ret);
-	return false;
+    err.FromError(ret);
+    return false;
 }
 
 
 bool GetDirectory(String& path)
 {
-	DWORD dwFileAttrs = GetFileAttributes(path.c_str());
-	if (dwFileAttrs == INVALID_FILE_ATTRIBUTES)
-		return false;
+    DWORD dwFileAttrs = GetFileAttributes(path.c_str());
+    if (dwFileAttrs == INVALID_FILE_ATTRIBUTES)
+        return false;
 
-	// if path is not a directory, take its parent directory
-	if ((dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY) == 0)
-	{
-		TCHAR* pszPath = new TCHAR[path.length() + 1];
-		_tcscpy(pszPath, path.c_str());
-		PathRemoveFileSpec(pszPath);
-		path = String(pszPath);
-		delete pszPath;
-	}
+    // if path is not a directory, take its parent directory
+    if ((dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY) == 0)
+    {
+        TCHAR* pszPath = new TCHAR[path.length() + 1];
+        _tcscpy(pszPath, path.c_str());
+        PathRemoveFileSpec(pszPath);
+        path = String(pszPath);
+        delete pszPath;
+    }
 
-	return true;
+    return true;
 }
 
 bool ReadDirectory(String path, std::vector<String>& files, Error& err)
 {
-	if (path.find_first_of(TEXT("*?")) == String::npos)
-	{
-		// no wildcards, add a "*" at the end
-		if (path.back() != TEXT('/') && path.back() != TEXT('\\'))
-			path.append(PATH_SEPARATOR_STRING);
-		path.append(TEXT("*"));
-	}
+    if (path.find_first_of(TEXT("*?")) == String::npos)
+    {
+        // no wildcards, add a "*" at the end
+        if (path.back() != TEXT('/') && path.back() != TEXT('\\'))
+            path.append(PATH_SEPARATOR_STRING);
+        path.append(TEXT("*"));
+    }
 
-	WIN32_FIND_DATA fd;
-	HANDLE hFind = FindFirstFile(path.c_str(), &fd);
-	if (hFind == INVALID_HANDLE_VALUE)
-	{
-		err.FromLastError();
-		return false;
-	}
+    WIN32_FIND_DATA fd;
+    HANDLE hFind = FindFirstFile(path.c_str(), &fd);
+    if (hFind == INVALID_HANDLE_VALUE)
+    {
+        err.FromLastError();
+        return false;
+    }
 
-	TCHAR* pBasePath = new TCHAR[path.length() + 1];
-	_tcscpy(pBasePath, path.c_str());
-	PathRemoveFileSpec(pBasePath);
-	size_t idx = _tcslen(pBasePath);
-	pBasePath[idx] = PATH_SEPARATOR;
-	pBasePath[idx + 1] = TEXT('\0');
+    TCHAR* pBasePath = new TCHAR[path.length() + 1];
+    _tcscpy(pBasePath, path.c_str());
+    PathRemoveFileSpec(pBasePath);
+    size_t idx = _tcslen(pBasePath);
+    pBasePath[idx] = PATH_SEPARATOR;
+    pBasePath[idx + 1] = TEXT('\0');
 
-	do
-	{
-		if (_tcscmp(fd.cFileName, TEXT(".")) == 0 || _tcscmp(fd.cFileName, TEXT("..")) == 0)
-			continue;
+    do
+    {
+        if (_tcscmp(fd.cFileName, TEXT(".")) == 0 || _tcscmp(fd.cFileName, TEXT("..")) == 0)
+            continue;
 
-		String filename(pBasePath);
-		filename.append(fd.cFileName);
-		files.push_back(filename);
-	} while (FindNextFile(hFind, &fd));
+        String filename(pBasePath);
+        filename.append(fd.cFileName);
+        files.push_back(filename);
+    } while (FindNextFile(hFind, &fd));
 
-	FindClose(hFind);
-	delete[] pBasePath;
-	return true;
+    FindClose(hFind);
+    delete[] pBasePath;
+    return true;
 }
 
 bool ReadFileBinary(String filename, uint8_t** ppData, int& size, Error& err)
 {
-	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		err.FromLastError();
-		return false;
-	}
+    HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+        err.FromLastError();
+        return false;
+    }
 
-	DWORD numBytesRead = 0;
-	LARGE_INTEGER fileSize;
-	if (!GetFileSizeEx(hFile, &fileSize))
-	{
-		CloseHandle(hFile);
-		err.FromLastError();
-		return false;
-	}
+    DWORD numBytesRead = 0;
+    LARGE_INTEGER fileSize;
+    if (!GetFileSizeEx(hFile, &fileSize))
+    {
+        CloseHandle(hFile);
+        err.FromLastError();
+        return false;
+    }
 
-	// we don't want to read too large files
-	_ASSERT(fileSize.HighPart == 0);
+    // we don't want to read too large files
+    _ASSERT(fileSize.HighPart == 0);
 
-	// allocate buffer and read file
-	**ppData = new BYTE[fileSize.LowPart];
-	if (!::ReadFile(hFile, (LPVOID) data, (DWORD) fileSize.LowPart, &numBytesRead, NULL))
-	{
-		delete[] *ppData;
-		CloseHandle(hFile);
-		err.FromLastError();
-		return false;
-	}
+    // allocate buffer and read file
+    **ppData = new BYTE[fileSize.LowPart];
+    if (!::ReadFile(hFile, (LPVOID) data, (DWORD) fileSize.LowPart, &numBytesRead, NULL))
+    {
+        delete[] *ppData;
+        CloseHandle(hFile);
+        err.FromLastError();
+        return false;
+    }
 
-	size = numBytesRead;
-	CloseHandle(hFile);
+    size = numBytesRead;
+    CloseHandle(hFile);
 
-	return true;
+    return true;
 }
 
 bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err)
 {
-	String encoding = TEXT("");
-	if (options->HasKey("encoding"))
-		encoding = options->GetString("encoding");
+    String encoding = TEXT("");
+    if (options->HasKey("encoding"))
+        encoding = options->GetString("encoding");
 
-	// text file
-	if (encoding == TEXT("") || encoding == TEXT("utf-8") || encoding == TEXT("text/plain;utf-8"))
-	{
-		uint8_t* data = NULL;
-		int numBytesRead = 0;
+    // text file
+    if (encoding == TEXT("") || encoding == TEXT("utf-8") || encoding == TEXT("text/plain;utf-8"))
+    {
+        uint8_t* data = NULL;
+        int numBytesRead = 0;
 
-		if (ReadFileBinary(filename, &data, numBytesRead, err))
-		{
-			// convert the buffer
-			int wcLen = MultiByteToWideChar(CP_UTF8, 0, (LPCCH) data, numBytesRead, NULL, 0);
-			TCHAR* buf = new TCHAR[wcLen + 1];
+        if (ReadFileBinary(filename, &data, numBytesRead, err))
+        {
+            // convert the buffer
+            int wcLen = MultiByteToWideChar(CP_UTF8, 0, (LPCCH) data, numBytesRead, NULL, 0);
+            TCHAR* buf = new TCHAR[wcLen + 1];
 
-			if (MultiByteToWideChar(CP_UTF8, 0, (LPCCH) data, numBytesRead, buf, wcLen) == 0)
-			{
-				delete[] data;
-				delete[] buf;
-				err.FromLastError();
-				return false;
-			}
+            if (MultiByteToWideChar(CP_UTF8, 0, (LPCCH) data, numBytesRead, buf, wcLen) == 0)
+            {
+                delete[] data;
+                delete[] buf;
+                err.FromLastError();
+                return false;
+            }
 
-			buf[wcLen] = 0;
-			result = String(buf, buf + wcLen);
+            buf[wcLen] = 0;
+            result = String(buf, buf + wcLen);
 
-			delete[] buf;
-			delete[] data;
+            delete[] buf;
+            delete[] data;
 
-			return true;
-		}
+            return true;
+        }
 
-		// reading the file failed
-		return false;
-	}
+        // reading the file failed
+        return false;
+    }
 
-	// image file; return as base64-encoded PNG
-	if (encoding == TEXT("image/png;base64"))
-	{
-		BYTE* pData;
-		DWORD length;
-		if (!ImageUtil::ImageFileToPNG(filename, &pData, &length, err))
-			return false;
+    // image file; return as base64-encoded PNG
+    if (encoding == TEXT("image/png;base64"))
+    {
+        BYTE* pData;
+        DWORD length;
+        if (!ImageUtil::ImageFileToPNG(filename, &pData, &length, err))
+            return false;
 
-		result = TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length);
-		delete[] pData;
-		return true;
-	}
+        result = TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length);
+        delete[] pData;
+        return true;
+    }
 
-	// unknown encoding
-	err.SetError(ERR_UNKNOWN_ENCODING, TEXT("The encoding \"") + encoding + TEXT("\" is not supported."));
+    // unknown encoding
+    err.SetError(ERR_UNKNOWN_ENCODING, TEXT("The encoding \"") + encoding + TEXT("\" is not supported."));
 
-	return false;
+    return false;
 }
 
 bool WriteFile(String filename, String contents, Error& err)
 {
-	bool ret = false;
+    bool ret = false;
 
-	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile != INVALID_HANDLE_VALUE)
-	{
-		int mbLen = WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), NULL, 0, NULL, NULL);
-		BYTE* buf = new BYTE[mbLen + 1];
-		if (WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), (LPSTR) buf, mbLen, NULL, NULL))
-		{
-			buf[mbLen] = 0;
+    HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE)
+    {
+        int mbLen = WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), NULL, 0, NULL, NULL);
+        BYTE* buf = new BYTE[mbLen + 1];
+        if (WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), (LPSTR) buf, mbLen, NULL, NULL))
+        {
+            buf[mbLen] = 0;
 
-			DWORD dwBytesWritten = 0;
-			ret = ::WriteFile(hFile, buf, mbLen, &dwBytesWritten, NULL) == TRUE;
-			FlushFileBuffers(hFile);
-		}
+            DWORD dwBytesWritten = 0;
+            ret = ::WriteFile(hFile, buf, mbLen, &dwBytesWritten, NULL) == TRUE;
+            FlushFileBuffers(hFile);
+        }
 
-		delete[] buf;
-		CloseHandle(hFile);
-	}
+        delete[] buf;
+        CloseHandle(hFile);
+    }
 
-	if (!ret)
-		err.FromLastError();
+    if (!ret)
+        err.FromLastError();
 
-	return ret;
+    return ret;
 }
 
 bool MoveFile(String oldFilename, String newFilename, Error& err)
 {
-	if (!::MoveFile(oldFilename.c_str(), newFilename.c_str()))
-	{
-		err.FromLastError();
-		return false;
-	}
+    if (!::MoveFile(oldFilename.c_str(), newFilename.c_str()))
+    {
+        err.FromLastError();
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 bool DeleteFiles(String filenames, Error& err)
 {
-	// no wildcards in the filename; simply delete the file
-	if (filenames.find_first_of(TEXT("*?")) == String::npos)
-	{
-		if (!DeleteFile(filenames.c_str()))
-		{
-			err.FromLastError();
-			return false;
-		}
-
-		return true;
-	}
-		
-
-	WIN32_FIND_DATA fd;
-    HANDLE hFind = FindFirstFile(filenames.c_str(), &fd);
-	if (hFind == INVALID_HANDLE_VALUE)
-	{
-		err.FromLastError();
-		return false;
-	}
-
-	TCHAR* pDir = new TCHAR[filenames.length() + 1];
-	_tcscpy(pDir, filenames.c_str());
-	PathRemoveFileSpec(pDir);
-	size_t idx = _tcslen(pDir);
-	pDir[idx] = PATH_SEPARATOR;
-	pDir[idx + 1] = TEXT('\0');
-    
-	do
+    // no wildcards in the filename; simply delete the file
+    if (filenames.find_first_of(TEXT("*?")) == String::npos)
     {
-		if (_tcscmp(fd.cFileName, TEXT(".")) == 0 || _tcscmp(fd.cFileName, TEXT("..")) == 0)
-			continue;
+        if (!DeleteFile(filenames.c_str()))
+        {
+            err.FromLastError();
+            return false;
+        }
 
-		String filename(pDir);
-		filename.append(fd.cFileName);
+        return true;
+    }
+        
+
+    WIN32_FIND_DATA fd;
+    HANDLE hFind = FindFirstFile(filenames.c_str(), &fd);
+    if (hFind == INVALID_HANDLE_VALUE)
+    {
+        err.FromLastError();
+        return false;
+    }
+
+    TCHAR* pDir = new TCHAR[filenames.length() + 1];
+    _tcscpy(pDir, filenames.c_str());
+    PathRemoveFileSpec(pDir);
+    size_t idx = _tcslen(pDir);
+    pDir[idx] = PATH_SEPARATOR;
+    pDir[idx + 1] = TEXT('\0');
+    
+    do
+    {
+        if (_tcscmp(fd.cFileName, TEXT(".")) == 0 || _tcscmp(fd.cFileName, TEXT("..")) == 0)
+            continue;
+
+        String filename(pDir);
+        filename.append(fd.cFileName);
         if (!DeleteFile(filename.c_str()))
-		{
-			FindClose(hFind);
-			delete[] pDir;
-			err.FromLastError();
-			return false;
-		}
-	} while (FindNextFile(hFind, &fd));
+        {
+            FindClose(hFind);
+            delete[] pDir;
+            err.FromLastError();
+            return false;
+        }
+    } while (FindNextFile(hFind, &fd));
 
-	FindClose(hFind);
-	delete[] pDir;
-	return true;
+    FindClose(hFind);
+    delete[] pDir;
+    return true;
 }
 
 void LoadPreferences(String key, String& data)
 {
-	data = TEXT("");
+    data = TEXT("");
 
-	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
-	{
-		DWORD type = 0;
-		DWORD len = 0;
-		if (RegQueryValueEx(hKey, key.c_str(), NULL, &type, NULL, &len) == ERROR_SUCCESS)
-		{
-			BYTE* buf = new BYTE[len];
-			RegQueryValueEx(hKey, key.c_str(), NULL, &type, buf, &len);
-			data = ToString(buf, len);
+    HKEY hKey;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        DWORD type = 0;
+        DWORD len = 0;
+        if (RegQueryValueEx(hKey, key.c_str(), NULL, &type, NULL, &len) == ERROR_SUCCESS)
+        {
+            BYTE* buf = new BYTE[len];
+            RegQueryValueEx(hKey, key.c_str(), NULL, &type, buf, &len);
+            data = ToString(buf, len);
 
-			delete[] buf;
-		}
+            delete[] buf;
+        }
 
-		RegCloseKey(hKey);
-	}
+        RegCloseKey(hKey);
+    }
 }
 
 void StorePreferences(String key, String data)
 {
-	HKEY hKey;
-	if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
-	{
-		RegSetValueEx(hKey, key.c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(data.c_str()), (DWORD) ((data.length() + 1) * sizeof(TCHAR)));
-		RegCloseKey(hKey);
-	}
+    HKEY hKey;
+    if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
+    {
+        RegSetValueEx(hKey, key.c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(data.c_str()), (DWORD) ((data.length() + 1) * sizeof(TCHAR)));
+        RegCloseKey(hKey);
+    }
 }
 
 bool StartAccessingPath(Path& path, Error& err)
 {
-	// not supported on Windows
-	return true;
+    // not supported on Windows
+    return true;
 }
 
 void StopAccessingPath(Path& path)
 {
-	// not supported on Windows
+    // not supported on Windows
 }
 
 void GetTempDir(Path& path)
 {
-	TCHAR* pTempPath = new TCHAR[MAX_PATH + 1];
-	GetTempPath(MAX_PATH, pTempPath);
+    TCHAR* pTempPath = new TCHAR[MAX_PATH + 1];
+    GetTempPath(MAX_PATH, pTempPath);
 
-	path = Path(pTempPath);
-	delete[] pTempPath;
+    path = Path(pTempPath);
+    delete[] pTempPath;
 }
 
 String GetApplicationPath()
 {
-	TCHAR* pModuleFilename = new TCHAR[MAX_PATH + 1];
-	GetModuleFileName(NULL, pModuleFilename, MAX_PATH);
-	TCHAR* pLastSep = _tcsrchr(pModuleFilename, TEXT('\\'));
-	String path(pModuleFilename, pLastSep);
-	delete[] pModuleFilename;
+    TCHAR* pModuleFilename = new TCHAR[MAX_PATH + 1];
+    GetModuleFileName(NULL, pModuleFilename, MAX_PATH);
+    TCHAR* pLastSep = _tcsrchr(pModuleFilename, TEXT('\\'));
+    String path(pModuleFilename, pLastSep);
+    delete[] pModuleFilename;
 
-	return path;
+    return path;
 }
 
 void GetApplicationResourcesPath(Path& path)

@@ -41,12 +41,12 @@ namespace Zephyros {
 class CustomURLManager
 {
 public:
-	CustomURLManager();
-	void AddURL(String url);
-	void FireCustomURLs();
+    CustomURLManager();
+    void AddURL(String url);
+    void FireCustomURLs();
 
 private:
-	std::vector<String> m_urls;
+    std::vector<String> m_urls;
 };
 
 } // namespace Zephyros

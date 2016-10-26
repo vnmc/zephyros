@@ -59,7 +59,7 @@ void ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>
 
 bool ClientHandler::OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event)
 {
-	return false;
+    return false;
 }
 
 } // namespace Zephyros

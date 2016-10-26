@@ -46,6 +46,7 @@
 #include "base/cef/client_app.h"
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
+#include "base/cef/local_scheme_handler.h"
 
 #include "util/string_util.h"
 
@@ -59,10 +60,10 @@
 
 typedef struct
 {
-	int x;
-	int y;
-	int w;
-	int h;
+    int x;
+    int y;
+    int w;
+    int h;
 } Rect;
 
 
@@ -125,64 +126,65 @@ namespace Zephyros {
 
 int RunApplication(int argc, char* argv[])
 {
-	// open the log file for writing
-	g_pLogFile = Zephyros::App::OpenLogFile();
+    // open the log file for writing
+    g_pLogFile = Zephyros::App::OpenLogFile();
 
     // create a copy of "argv" on Linux because Chromium mangles the value internally (see issue #620)
     CefScopedArgArray scoped_arg_array(argc, argv);
     char** argv_copy = scoped_arg_array.array();
 
-	CefMainArgs main_args(argc, argv);
-	CefRefPtr<ClientApp> app(new ClientApp());
+    CefMainArgs main_args(argc, argv);
+    CefRefPtr<ClientApp> app(new ClientApp());
 
-	// execute the secondary process, if any
-	int nExitCode = CefExecuteProcess(main_args, app.get(), NULL);
-	if (nExitCode >= 0)
-	{
-		Zephyros::Shutdown();
-		return nExitCode;
-	}
+    // execute the secondary process, if any
+    int nExitCode = CefExecuteProcess(main_args, app.get(), NULL);
+    if (nExitCode >= 0)
+    {
+        Zephyros::Shutdown();
+        return nExitCode;
+    }
 
-	// parse command line arguments
-	Zephyros::App::InitCommandLine(argc, argv_copy);
+    // parse command line arguments
+    Zephyros::App::InitCommandLine(argc, argv_copy);
 
-	// populate the settings based on command line arguments
-	CefSettings settings;
-	Zephyros::App::GetSettings(settings);
+    // populate the settings based on command line arguments
+    CefSettings settings;
+    Zephyros::App::GetSettings(settings);
 
-	// set the user agent
+    // set the user agent
     CefString(&settings.user_agent).FromASCII(Zephyros::App::GetUserAgent().c_str());
 
     // install xlib error handlers so that the application won't be terminated on non-fatal errors
     XSetErrorHandler(XErrorHandlerImpl);
     XSetIOErrorHandler(XIOErrorHandlerImpl);
 
-	// initialize CEF
-	CefInitialize(main_args, settings, app.get(), NULL);
+    // initialize CEF
+    CefInitialize(main_args, settings, app.get(), NULL);
+    CefRegisterSchemeHandlerFactory("local", "", new LocalSchemeHandlerFactory());
 
     gtk_init(&argc, &argv);
 
-	// check the license
-	Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
-	if (pMgr)
-	{
-		if (pMgr->IsLicensingLink(g_strCustomUrlToAdd))
-		{
-			pMgr->ActivateFromURL(g_strCustomUrlToAdd);
-			g_strCustomUrlToAdd = TEXT("");
-		}
-		pMgr->Start();
-	}
+    // check the license
+    Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
+    if (pMgr)
+    {
+        if (pMgr->IsLicensingLink(g_strCustomUrlToAdd))
+        {
+            pMgr->ActivateFromURL(g_strCustomUrlToAdd);
+            g_strCustomUrlToAdd = TEXT("");
+        }
+        pMgr->Start();
+    }
 
-	// create the main window and run
-	if (pMgr == NULL || pMgr->CanStartApp())
-		CreateMainWindow(argc, argv_copy);
+    // create the main window and run
+    if (pMgr == NULL || pMgr->CanStartApp())
+        CreateMainWindow(argc, argv_copy);
 
-	// shut down CEF
-	CefShutdown();
-	Zephyros::Shutdown();
+    // shut down CEF
+    CefShutdown();
+    Zephyros::Shutdown();
 
-	return 0;
+    return 0;
 }
 
 } // namespace Zephyros
@@ -233,7 +235,7 @@ void CreateMainWindow(int argc, char** argv)
 
     CefRunMessageLoop();
 
-	Zephyros::OSUtil::CleanUp();
+    Zephyros::OSUtil::CleanUp();
 }
 
 int XErrorHandlerImpl(Display *display, XErrorEvent *event)
@@ -263,8 +265,8 @@ gboolean OnDeleteEvent(GtkWidget* widget, GdkEvent* event, GtkWindow* window)
     if (g_handler.get() && !g_handler->IsClosing())
     {
         // invoke the "onAppTerminating" callbacks and cancel the close
-		g_handler->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onAppTerminating"), CefListValue::Create());
-		return TRUE;
+        g_handler->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onAppTerminating"), CefListValue::Create());
+        return TRUE;
     }
 
     // allow the close
@@ -419,41 +421,41 @@ void LoadWindowPlacement(Rect* pRectNormal, bool* pbIsMaximized)
     // TODO
 
 /*
-	pRectNormal->x = CW_USEDEFAULT;
-	pRectNormal->y = CW_USEDEFAULT;
-	pRectNormal->w = Zephyros::GetDefaultWindowSize().nWidth;
-	pRectNormal->h = Zephyros::GetDefaultWindowSize().nHeight;
-	*pShowCmd = SW_SHOWDEFAULT;
+    pRectNormal->x = CW_USEDEFAULT;
+    pRectNormal->y = CW_USEDEFAULT;
+    pRectNormal->w = Zephyros::GetDefaultWindowSize().nWidth;
+    pRectNormal->h = Zephyros::GetDefaultWindowSize().nHeight;
+    *pShowCmd = SW_SHOWDEFAULT;
 
-	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
-	{
-		DWORD type = 0;
-		DWORD len = 0;
-		if (RegQueryValueEx(hKey, TEXT("window"), NULL, &type, NULL, &len) == ERROR_SUCCESS)
-		{
-			// read the data from the registry
-			BYTE* buf = new BYTE[len];
-			RegQueryValueEx(hKey, TEXT("window"), NULL, &type, buf, &len);
+    HKEY hKey;
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        DWORD type = 0;
+        DWORD len = 0;
+        if (RegQueryValueEx(hKey, TEXT("window"), NULL, &type, NULL, &len) == ERROR_SUCCESS)
+        {
+            // read the data from the registry
+            BYTE* buf = new BYTE[len];
+            RegQueryValueEx(hKey, TEXT("window"), NULL, &type, buf, &len);
 
-			// parse the string
-			StringStream ss(String(reinterpret_cast<TCHAR*>(buf), reinterpret_cast<TCHAR*>(buf + len - sizeof(TCHAR))));
-			TCHAR delim;
-			ss >> pRectNormal->x;
-			ss >> delim;
-			ss >> pRectNormal->y;
-			ss >> delim;
-			ss >> pRectNormal->w;
-			ss >> delim;
-			ss >> pRectNormal->h;
-			ss >> delim;
-			ss >> *pShowCmd;
+            // parse the string
+            StringStream ss(String(reinterpret_cast<TCHAR*>(buf), reinterpret_cast<TCHAR*>(buf + len - sizeof(TCHAR))));
+            TCHAR delim;
+            ss >> pRectNormal->x;
+            ss >> delim;
+            ss >> pRectNormal->y;
+            ss >> delim;
+            ss >> pRectNormal->w;
+            ss >> delim;
+            ss >> pRectNormal->h;
+            ss >> delim;
+            ss >> *pShowCmd;
 
-			delete[] buf;
-		}
+            delete[] buf;
+        }
 
-		RegCloseKey(hKey);
-	}*/
+        RegCloseKey(hKey);
+    }*/
 }
 
 void SaveWindowPlacement(Rect* pRectNormal, bool bIsMaximized)
@@ -461,16 +463,16 @@ void SaveWindowPlacement(Rect* pRectNormal, bool bIsMaximized)
     // TODO
 
 /*
-	HKEY hKey;
-	if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
-	{
-		StringStream ss;
-		ss << pRectNormal->x << TEXT(',') << pRectNormal->y << TEXT(',') << pRectNormal->w << TEXT(',') << pRectNormal->h << TEXT(',') << showCmd;
-		String data = ss.str();
+    HKEY hKey;
+    if (RegCreateKeyEx(HKEY_CURRENT_USER, Zephyros::GetWindowsInfo().szRegistryKey, 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
+    {
+        StringStream ss;
+        ss << pRectNormal->x << TEXT(',') << pRectNormal->y << TEXT(',') << pRectNormal->w << TEXT(',') << pRectNormal->h << TEXT(',') << showCmd;
+        String data = ss.str();
 
-		RegSetValueEx(hKey, TEXT("window"), 0, REG_SZ, reinterpret_cast<const BYTE*>(data.c_str()), (DWORD) ((data.length() + 1) * sizeof(TCHAR)));
-		RegCloseKey(hKey);
-	}*/
+        RegSetValueEx(hKey, TEXT("window"), 0, REG_SZ, reinterpret_cast<const BYTE*>(data.c_str()), (DWORD) ((data.length() + 1) * sizeof(TCHAR)));
+        RegCloseKey(hKey);
+    }*/
 }
 
 void AdjustWindowPlacementToMonitor(Rect* pRect)
@@ -478,36 +480,36 @@ void AdjustWindowPlacementToMonitor(Rect* pRect)
     // TODO
 
 /*
-	POINT pt;
-	pt.x = pRect->x;
-	pt.y = pRect->y;
-	HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+    POINT pt;
+    pt.x = pRect->x;
+    pt.y = pRect->y;
+    HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
 
-	// get the monitor info
-	MONITORINFO info;
-	info.cbSize = sizeof(MONITORINFO);
-	if (!GetMonitorInfo(hMonitor, &info))
-		return;
+    // get the monitor info
+    MONITORINFO info;
+    info.cbSize = sizeof(MONITORINFO);
+    if (!GetMonitorInfo(hMonitor, &info))
+        return;
 
-	// adjust for work area
-	pRect->x += info.rcWork.left - info.rcMonitor.left;
-	pRect->y += info.rcWork.top - info.rcMonitor.top;
+    // adjust for work area
+    pRect->x += info.rcWork.left - info.rcMonitor.left;
+    pRect->y += info.rcWork.top - info.rcMonitor.top;
 
-	// adjust width and height
-	if (pRect->w > info.rcWork.right - info.rcWork.left)
-		pRect->w = info.rcWork.right - info.rcWork.left;
-	if (pRect->h > info.rcWork.bottom - info.rcWork.top)
-		pRect->h = info.rcWork.bottom - info.rcWork.top;
+    // adjust width and height
+    if (pRect->w > info.rcWork.right - info.rcWork.left)
+        pRect->w = info.rcWork.right - info.rcWork.left;
+    if (pRect->h > info.rcWork.bottom - info.rcWork.top)
+        pRect->h = info.rcWork.bottom - info.rcWork.top;
 
-	// adjust position
-	if (pRect->x < info.rcWork.left)
-		pRect->x = info.rcWork.left;
-	if (pRect->x + pRect->w > info.rcWork.right)
-		pRect->x = info.rcWork.right - pRect->w;
-	if (pRect->y < info.rcWork.top)
-		pRect->y = info.rcWork.top;
-	if (pRect->y + pRect->h > info.rcWork.bottom)
-		pRect->y = info.rcWork.bottom - pRect->h;*/
+    // adjust position
+    if (pRect->x < info.rcWork.left)
+        pRect->x = info.rcWork.left;
+    if (pRect->x + pRect->w > info.rcWork.right)
+        pRect->x = info.rcWork.right - pRect->w;
+    if (pRect->y < info.rcWork.top)
+        pRect->y = info.rcWork.top;
+    if (pRect->y + pRect->h > info.rcWork.bottom)
+        pRect->y = info.rcWork.bottom - pRect->h;*/
 }
 
 

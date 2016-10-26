@@ -211,13 +211,13 @@ void ClientExtensionHandler::InvokeCallbacks(String functionName, CefRefPtr<CefL
 
 void ClientExtensionHandler::InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args)
 {
-	std::map<CallbackId, ClientCallback*>::iterator it = m_mapDelayedCallbacks.find(callbackId);
-	if (it == m_mapDelayedCallbacks.end())
-		return;
+    std::map<CallbackId, ClientCallback*>::iterator it = m_mapDelayedCallbacks.find(callbackId);
+    if (it == m_mapDelayedCallbacks.end())
+        return;
 
-	ClientCallback* pCallback = it->second;
-	pCallback->Invoke(TEXT(""), args);
-	delete pCallback;
+    ClientCallback* pCallback = it->second;
+    pCallback->Invoke(TEXT(""), args);
+    delete pCallback;
 }
 
 //
@@ -228,7 +228,7 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
 {
     String name = message->GetName();
 
-	if (name == CALLBACK_COMPLETED)
+    if (name == CALLBACK_COMPLETED)
     {
         // the browser process is notified that a JavaScript callback function has completed
         // (only sent for functions with persistent callbacks)
@@ -316,31 +316,31 @@ bool ClientExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientHandler> h
             // this function doesn't have a persistent callback;
             // call it immediately to send the response
 
-			if (ret != RET_DELAYED_CALLBACK)
-			{
-				// a INVOKE_CALLBACK message is sent to the renderer process; the expected arguments are
-				// 0: messageId
-				// 1: function name
-				// 2: return value of the native function
-				// 3...: parameters to the callback function
+            if (ret != RET_DELAYED_CALLBACK)
+            {
+                // a INVOKE_CALLBACK message is sent to the renderer process; the expected arguments are
+                // 0: messageId
+                // 1: function name
+                // 2: return value of the native function
+                // 3...: parameters to the callback function
 
-				CefRefPtr<CefProcessMessage> responseMsg = CefProcessMessage::Create(INVOKE_CALLBACK);
-				CefRefPtr<CefListValue> responseArgs = responseMsg->GetArgumentList();
+                CefRefPtr<CefProcessMessage> responseMsg = CefProcessMessage::Create(INVOKE_CALLBACK);
+                CefRefPtr<CefListValue> responseArgs = responseMsg->GetArgumentList();
 
-				responseArgs->SetInt(0, messageId);
-				responseArgs->SetString(1, message->GetName());
-				responseArgs->SetInt(2, ret);
-				CopyList(returnValues, responseArgs, 3);
+                responseArgs->SetInt(0, messageId);
+                responseArgs->SetString(1, message->GetName());
+                responseArgs->SetInt(2, ret);
+                CopyList(returnValues, responseArgs, 3);
 
-				// send to the renderer process; this will be handled by AppExtensionHandler::OnProcessMessageReceived
-				browser->SendProcessMessage(PID_RENDERER, responseMsg);
-			}
-			else
-			{
-				// delayed callback; the callback will be called asynchronously
-				// use InvokeCallback(CallbackId, CefRefPtr<CefListValue>) to invoke the callback
-				m_mapDelayedCallbacks[messageId] = new ClientCallback(messageId, browser);
-			}
+                // send to the renderer process; this will be handled by AppExtensionHandler::OnProcessMessageReceived
+                browser->SendProcessMessage(PID_RENDERER, responseMsg);
+            }
+            else
+            {
+                // delayed callback; the callback will be called asynchronously
+                // use InvokeCallback(CallbackId, CefRefPtr<CefListValue>) to invoke the callback
+                m_mapDelayedCallbacks[messageId] = new ClientCallback(messageId, browser);
+            }
         }
     }
 
@@ -358,9 +358,9 @@ AppExtensionHandler::AppExtensionHandler()
 
 AppExtensionHandler::~AppExtensionHandler()
 {
-	for (std::map<int32, AppCallback*>::iterator it = m_mapCallbacks.begin(); it != m_mapCallbacks.end(); ++it)
-		delete it->second;
-	m_mapCallbacks.clear();
+    for (std::map<int32, AppCallback*>::iterator it = m_mapCallbacks.begin(); it != m_mapCallbacks.end(); ++it)
+        delete it->second;
+    m_mapCallbacks.clear();
 }
 
 void AppExtensionHandler::AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue, bool hasPersistentCallback, String customJavaScriptImplementation)
@@ -398,8 +398,8 @@ void AppExtensionHandler::AddNativeJavaScriptFunction(String name, NativeFunctio
 
     m_JavaScriptCode.append(TEXT("\n};\n"));
 
-	if (hasPersistentCallback)
-		m_mapFunctionHasPersistentCallback[name] = true;
+    if (hasPersistentCallback)
+        m_mapFunctionHasPersistentCallback[name] = true;
 }
 
 //
@@ -484,10 +484,10 @@ void AppExtensionHandler::OnContextReleased(CefRefPtr<ClientApp> app, CefRefPtr<
     {
         for (std::map<int32, AppCallback*>::iterator it = m_mapCallbacks.begin(); it != m_mapCallbacks.end(); ++it)
             if (it->second->GetContext()->IsSame(context))
-			{
-				delete it->second;
+            {
+                delete it->second;
                 m_mapCallbacks.erase(it);
-			}
+            }
     }
 }
 
@@ -570,10 +570,10 @@ bool AppExtensionHandler::OnProcessMessageReceived(CefRefPtr<ClientApp> app, Cef
 
             // remove the callback if it isn't set to be persistent
             if (!HasPersistentCallback(functionName))
-			{
-				delete it->second;
+            {
+                delete it->second;
                 m_mapCallbacks.erase(it);
-			}
+            }
         }
 
         return true;

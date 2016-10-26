@@ -55,20 +55,20 @@
 //
 bool isFileEmpty(String directory, String filename)
 {
-	String path = directory;
-	path.append(TEXT("\\"));
-	path.append(filename);
+    String path = directory;
+    path.append(TEXT("\\"));
+    path.append(filename);
 
-	HANDLE hFile = CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE)
-		return true;
+    HANDLE hFile = CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile == INVALID_HANDLE_VALUE)
+        return true;
 
-	DWORD sizeHi;
-	DWORD sizeLo = GetFileSize(hFile, &sizeHi);
-	bool isEmpty = sizeLo == INVALID_FILE_SIZE || (sizeLo == 0 && sizeHi == 0);
-	CloseHandle(hFile);
+    DWORD sizeHi;
+    DWORD sizeLo = GetFileSize(hFile, &sizeHi);
+    bool isEmpty = sizeLo == INVALID_FILE_SIZE || (sizeLo == 0 && sizeHi == 0);
+    CloseHandle(hFile);
 
-	return isEmpty;
+    return isEmpty;
 }
 
 //
@@ -83,91 +83,91 @@ bool isFileEmpty(String directory, String filename)
 //
 void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<String>& allChangedFilenames, HANDLE hTimerEmptyFile, HANDLE hTimerNonemptyFile)
 {
-	DWORD numBytesReturned;
-	std::vector<String> changedFilenames;
-	std::vector<String> checkAgainLaterFilenames;
+    DWORD numBytesReturned;
+    std::vector<String> changedFilenames;
+    std::vector<String> checkAgainLaterFilenames;
 
-	if (!GetOverlappedResult(pWatcher->m_hDirectory, &(pWatcher->m_overlapped), &numBytesReturned, FALSE))
-		return;
+    if (!GetOverlappedResult(pWatcher->m_hDirectory, &(pWatcher->m_overlapped), &numBytesReturned, FALSE))
+        return;
 
-	for (FILE_NOTIFY_INFORMATION* pInfo = (FILE_NOTIFY_INFORMATION*) buf; ; )
-	{
-		if (pInfo->Action != 0)
-		{
-			String filename = String(pInfo->FileName, (String::size_type) pInfo->FileNameLength / sizeof(TCHAR));
+    for (FILE_NOTIFY_INFORMATION* pInfo = (FILE_NOTIFY_INFORMATION*) buf; ; )
+    {
+        if (pInfo->Action != 0)
+        {
+            String filename = String(pInfo->FileName, (String::size_type) pInfo->FileNameLength / sizeof(TCHAR));
 
-			if (pWatcher->m_fileExtensions.empty())
-			{
-				// if no file extensions have been defined, send the event to the delegate every time
-				if (isFileEmpty(pWatcher->m_path.GetPath(), filename))
-					checkAgainLaterFilenames.push_back(filename);
-				else
-					changedFilenames.push_back(filename);
-			}
-			else
-			{
-				// otherwise check for the file extension
-				for (String fileext : pWatcher->m_fileExtensions)
-				{
-					if (StringEndsWith(filename, fileext))
-					{
-						if (isFileEmpty(pWatcher->m_path.GetPath(), filename))
-							checkAgainLaterFilenames.push_back(filename);
-						else
-							changedFilenames.push_back(filename);
+            if (pWatcher->m_fileExtensions.empty())
+            {
+                // if no file extensions have been defined, send the event to the delegate every time
+                if (isFileEmpty(pWatcher->m_path.GetPath(), filename))
+                    checkAgainLaterFilenames.push_back(filename);
+                else
+                    changedFilenames.push_back(filename);
+            }
+            else
+            {
+                // otherwise check for the file extension
+                for (String fileext : pWatcher->m_fileExtensions)
+                {
+                    if (StringEndsWith(filename, fileext))
+                    {
+                        if (isFileEmpty(pWatcher->m_path.GetPath(), filename))
+                            checkAgainLaterFilenames.push_back(filename);
+                        else
+                            changedFilenames.push_back(filename);
 
-						break;
-					}
-				}
-			}
-		}
+                        break;
+                    }
+                }
+            }
+        }
 
-		if (pInfo->NextEntryOffset == 0)
-			break;
-		pInfo = (FILE_NOTIFY_INFORMATION*) (((BYTE*) pInfo) + pInfo->NextEntryOffset);
-	}
+        if (pInfo->NextEntryOffset == 0)
+            break;
+        pInfo = (FILE_NOTIFY_INFORMATION*) (((BYTE*) pInfo) + pInfo->NextEntryOffset);
+    }
 
-	// create the vector containing all the modified files
-	allChangedFilenames.insert(checkAgainLaterFilenames.begin(), checkAgainLaterFilenames.end());
-	allChangedFilenames.insert(changedFilenames.begin(), changedFilenames.end());
+    // create the vector containing all the modified files
+    allChangedFilenames.insert(checkAgainLaterFilenames.begin(), checkAgainLaterFilenames.end());
+    allChangedFilenames.insert(changedFilenames.begin(), changedFilenames.end());
     
-	// find the right timer to start, depending on the file changes
-	HANDLE hTimer = INVALID_HANDLE_VALUE;
-	int waitTimeMilliseconds = 0;
-	if (checkAgainLaterFilenames.size() > 0)
-	{
-		hTimer = hTimerEmptyFile;
-		waitTimeMilliseconds = (int) (WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS * 1000);
-	}
-	else if (changedFilenames.size() > 0)
-	{
-		hTimer = hTimerNonemptyFile;
-		waitTimeMilliseconds = (int) (WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS * 1000);
-	}
+    // find the right timer to start, depending on the file changes
+    HANDLE hTimer = INVALID_HANDLE_VALUE;
+    int waitTimeMilliseconds = 0;
+    if (checkAgainLaterFilenames.size() > 0)
+    {
+        hTimer = hTimerEmptyFile;
+        waitTimeMilliseconds = (int) (WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS * 1000);
+    }
+    else if (changedFilenames.size() > 0)
+    {
+        hTimer = hTimerNonemptyFile;
+        waitTimeMilliseconds = (int) (WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS * 1000);
+    }
 
-	// start the timer
-	if (hTimer != INVALID_HANDLE_VALUE)
-	{
-		// cancel both existing timers (if they are running)
-		CancelWaitableTimer(hTimerEmptyFile);
-		CancelWaitableTimer(hTimerNonemptyFile);
+    // start the timer
+    if (hTimer != INVALID_HANDLE_VALUE)
+    {
+        // cancel both existing timers (if they are running)
+        CancelWaitableTimer(hTimerEmptyFile);
+        CancelWaitableTimer(hTimerNonemptyFile);
 
-		// set the time
-		SYSTEMTIME time;
-		GetSystemTime(&time);
-		time.wMilliseconds += waitTimeMilliseconds;
-		if (time.wMilliseconds > 1000)
-		{
-			time.wSecond += time.wMilliseconds / 1000;
-			time.wMilliseconds %= 1000;
-		}
+        // set the time
+        SYSTEMTIME time;
+        GetSystemTime(&time);
+        time.wMilliseconds += waitTimeMilliseconds;
+        if (time.wMilliseconds > 1000)
+        {
+            time.wSecond += time.wMilliseconds / 1000;
+            time.wMilliseconds %= 1000;
+        }
 
-		FILETIME ftime;
-		SystemTimeToFileTime(&time, &ftime);
+        FILETIME ftime;
+        SystemTimeToFileTime(&time, &ftime);
 
-		// start the timer
-		SetWaitableTimer(hTimer, reinterpret_cast<LARGE_INTEGER*>(&ftime), 0L, NULL, NULL, FALSE);
-	}
+        // start the timer
+        SetWaitableTimer(hTimer, reinterpret_cast<LARGE_INTEGER*>(&ftime), 0L, NULL, NULL, FALSE);
+    }
 }
 
 
@@ -179,121 +179,121 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
 //
 DWORD WINAPI WatchDirectory(LPVOID param)
 {
-	// install exception handlers for this thread
-	const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
-	if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
-		crInstallToCurrentThread2(0);
+    // install exception handlers for this thread
+    const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();
+    if (szCrashReportingURL != NULL && szCrashReportingURL[0] != TCHAR('\0'))
+        crInstallToCurrentThread2(0);
 
-	Zephyros::FileWatcher* pWatcher = (Zephyros::FileWatcher*) param;
+    Zephyros::FileWatcher* pWatcher = (Zephyros::FileWatcher*) param;
 
-	// create timers to schedule firing file changes
-	HANDLE hTimerEmptyFile = CreateWaitableTimer(NULL, FALSE, NULL);
-	HANDLE hTimerNonemptyFile = CreateWaitableTimer(NULL, FALSE, NULL);
+    // create timers to schedule firing file changes
+    HANDLE hTimerEmptyFile = CreateWaitableTimer(NULL, FALSE, NULL);
+    HANDLE hTimerNonemptyFile = CreateWaitableTimer(NULL, FALSE, NULL);
 
-	HANDLE handles[] = { pWatcher->m_overlapped.hEvent, hTimerEmptyFile, hTimerNonemptyFile, pWatcher->m_hEventTerminate };
-	std::set<String> changedFilenames;
-	std::vector<String> changedFilenamesCopy;
+    HANDLE handles[] = { pWatcher->m_overlapped.hEvent, hTimerEmptyFile, hTimerNonemptyFile, pWatcher->m_hEventTerminate };
+    std::set<String> changedFilenames;
+    std::vector<String> changedFilenamesCopy;
 
-	// monitor the first directory/file change
-	BYTE* buf = new BYTE[MAX_BUF_LEN];
-	DWORD numBytesReturned;
-	BOOL success = false;
-	success = ReadDirectoryChangesW(
-		pWatcher->m_hDirectory,
-		buf,
-		MAX_BUF_LEN,
-		TRUE,
-		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION,
-		&numBytesReturned,
-		&(pWatcher->m_overlapped),
-		NULL
-	);
+    // monitor the first directory/file change
+    BYTE* buf = new BYTE[MAX_BUF_LEN];
+    DWORD numBytesReturned;
+    BOOL success = false;
+    success = ReadDirectoryChangesW(
+        pWatcher->m_hDirectory,
+        buf,
+        MAX_BUF_LEN,
+        TRUE,
+        FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION,
+        &numBytesReturned,
+        &(pWatcher->m_overlapped),
+        NULL
+    );
 
-	while (true)
-	{
-		// wait for a change to occur or for the termination event
-		DWORD ret = WaitForMultipleObjects(_countof(handles), handles, FALSE, INFINITE);
-		switch (ret)
-		{
-		case WAIT_OBJECT_0:
-			// the overlapped event has signaled
-			if (success)
-				ProcessChangedFiles(pWatcher, buf, changedFilenames, hTimerEmptyFile, hTimerNonemptyFile);
+    while (true)
+    {
+        // wait for a change to occur or for the termination event
+        DWORD ret = WaitForMultipleObjects(_countof(handles), handles, FALSE, INFINITE);
+        switch (ret)
+        {
+        case WAIT_OBJECT_0:
+            // the overlapped event has signaled
+            if (success)
+                ProcessChangedFiles(pWatcher, buf, changedFilenames, hTimerEmptyFile, hTimerNonemptyFile);
 
-			// monitor the next directory/file change
-			success = ReadDirectoryChangesW(
-				pWatcher->m_hDirectory,
-				buf,
-				MAX_BUF_LEN,
-				TRUE,
-				FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION,
-				&numBytesReturned,
-				&(pWatcher->m_overlapped),
-				NULL
-			);
-			break;
+            // monitor the next directory/file change
+            success = ReadDirectoryChangesW(
+                pWatcher->m_hDirectory,
+                buf,
+                MAX_BUF_LEN,
+                TRUE,
+                FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION,
+                &numBytesReturned,
+                &(pWatcher->m_overlapped),
+                NULL
+            );
+            break;
 
-		case WAIT_OBJECT_0 + 1:
-			// the empty file timer has signaled
-			{
-				changedFilenamesCopy.clear();
+        case WAIT_OBJECT_0 + 1:
+            // the empty file timer has signaled
+            {
+                changedFilenamesCopy.clear();
 
-				for (String filename : changedFilenames)
-				{
-					String absoluteFilename = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
-					if (pWatcher->HasFileChanged(absoluteFilename))
-						changedFilenamesCopy.push_back(absoluteFilename);
-				}
-				
-				changedFilenames.clear();
+                for (String filename : changedFilenames)
+                {
+                    String absoluteFilename = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
+                    if (pWatcher->HasFileChanged(absoluteFilename))
+                        changedFilenamesCopy.push_back(absoluteFilename);
+                }
+                
+                changedFilenames.clear();
 
-				if (changedFilenamesCopy.size() > 0)
-					pWatcher->FireFileChanged(changedFilenamesCopy);
-			}
-			break;
+                if (changedFilenamesCopy.size() > 0)
+                    pWatcher->FireFileChanged(changedFilenamesCopy);
+            }
+            break;
 
-		case WAIT_OBJECT_0 + 2:
-			// the non-empty file timer has signaled
-			{
-				CancelWaitableTimer(hTimerEmptyFile);
-				changedFilenamesCopy.clear();
+        case WAIT_OBJECT_0 + 2:
+            // the non-empty file timer has signaled
+            {
+                CancelWaitableTimer(hTimerEmptyFile);
+                changedFilenamesCopy.clear();
 
-				for (String filename : changedFilenames)
-				{
-					String absoluteFilename = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
-					if (pWatcher->HasFileChanged(absoluteFilename))
-						changedFilenamesCopy.push_back(absoluteFilename);
-				}
+                for (String filename : changedFilenames)
+                {
+                    String absoluteFilename = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
+                    if (pWatcher->HasFileChanged(absoluteFilename))
+                        changedFilenamesCopy.push_back(absoluteFilename);
+                }
 
-				changedFilenames.clear();
+                changedFilenames.clear();
 
-				if (changedFilenamesCopy.size() > 0)
-					pWatcher->FireFileChanged(changedFilenamesCopy);
-			}
-			break;
+                if (changedFilenamesCopy.size() > 0)
+                    pWatcher->FireFileChanged(changedFilenamesCopy);
+            }
+            break;
 
-		case WAIT_OBJECT_0 + 3:
-			// the terminate event was signaled; terminate this thread
-			CloseHandle(hTimerEmptyFile);
-			CloseHandle(hTimerNonemptyFile);
-			delete[] buf;
+        case WAIT_OBJECT_0 + 3:
+            // the terminate event was signaled; terminate this thread
+            CloseHandle(hTimerEmptyFile);
+            CloseHandle(hTimerNonemptyFile);
+            delete[] buf;
 
-			// unset exception handlers before exiting the thread
-			crUninstallFromCurrentThread();
+            // unset exception handlers before exiting the thread
+            crUninstallFromCurrentThread();
 
-			ExitThread(0);
-			return 0;
+            ExitThread(0);
+            return 0;
 
-		case WAIT_FAILED:
-			Zephyros::App::ShowErrorMessage();
-			break;
-		}
-	}
+        case WAIT_FAILED:
+            Zephyros::App::ShowErrorMessage();
+            break;
+        }
+    }
 
-	// unset exception handlers before exiting the thread
-	crUninstallFromCurrentThread();
+    // unset exception handlers before exiting the thread
+    crUninstallFromCurrentThread();
 
-	return 0;
+    return 0;
 }
 
 
@@ -304,103 +304,103 @@ namespace Zephyros {
 
 FileWatcher::FileWatcher()
   : m_hDirectory(INVALID_HANDLE_VALUE),
-	m_hFileWatcherThread(INVALID_HANDLE_VALUE)
+    m_hFileWatcherThread(INVALID_HANDLE_VALUE)
 {
-	m_hEventTerminate = CreateEvent(NULL, FALSE, FALSE, NULL);
+    m_hEventTerminate = CreateEvent(NULL, FALSE, FALSE, NULL);
 }
 
 FileWatcher::~FileWatcher()
 {
-	Stop();
-	CloseHandle(m_hEventTerminate);
+    Stop();
+    CloseHandle(m_hEventTerminate);
 }
 
 void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions)
 {
-	// if watching is already running, turn it off first
-	if (m_hDirectory != INVALID_HANDLE_VALUE)
-		Stop();
+    // if watching is already running, turn it off first
+    if (m_hDirectory != INVALID_HANDLE_VALUE)
+        Stop();
 
-	// set new configuration
+    // set new configuration
     m_path = path;
     m_fileExtensions.clear();
     m_fileExtensions.insert(m_fileExtensions.end(), fileExtensions.begin(), fileExtensions.end());
         
-	m_hDirectory = CreateFile(
-		m_path.GetPath().c_str(),
-		FILE_LIST_DIRECTORY,
-		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-		NULL,
-		OPEN_EXISTING,
-		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-		NULL
-	);
+    m_hDirectory = CreateFile(
+        m_path.GetPath().c_str(),
+        FILE_LIST_DIRECTORY,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        NULL,
+        OPEN_EXISTING,
+        FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+        NULL
+    );
 
-	if (m_hDirectory == INVALID_HANDLE_VALUE)
-	{
-		String msg = TEXT("Could not start watching the directory ");
-		msg.append(m_path.GetPath());
+    if (m_hDirectory == INVALID_HANDLE_VALUE)
+    {
+        String msg = TEXT("Could not start watching the directory ");
+        msg.append(m_path.GetPath());
 
-		DWORD errCode = GetLastError();
-		bool hasOwnErrorMsg = true;
-		if (errCode == ERROR_PATH_NOT_FOUND)
-			msg.append(TEXT(" because it doesn't exist."));
-		else if (errCode = ERROR_ACCESS_DENIED)
-			msg.append(TEXT(" because the access to it was denied."));
-		else
-		{
-			hasOwnErrorMsg = false;
-			App::ShowErrorMessage();
-		}
+        DWORD errCode = GetLastError();
+        bool hasOwnErrorMsg = true;
+        if (errCode == ERROR_PATH_NOT_FOUND)
+            msg.append(TEXT(" because it doesn't exist."));
+        else if (errCode = ERROR_ACCESS_DENIED)
+            msg.append(TEXT(" because the access to it was denied."));
+        else
+        {
+            hasOwnErrorMsg = false;
+            App::ShowErrorMessage();
+        }
 
-		if (hasOwnErrorMsg)
-			App::Alert(TEXT("File Watching Error"), msg, App::AlertStyle::AlertWarning);
+        if (hasOwnErrorMsg)
+            App::Alert(TEXT("File Watching Error"), msg, App::AlertStyle::AlertWarning);
 
-		return;
-	}
+        return;
+    }
 
     // start watching
-	ZeroMemory(&m_overlapped, sizeof(OVERLAPPED));
-	m_overlapped.hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    ZeroMemory(&m_overlapped, sizeof(OVERLAPPED));
+    m_overlapped.hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-	// create the thread waiting for changes
-	m_hFileWatcherThread = CreateThread(NULL, 0, WatchDirectory, this, 0, NULL);
+    // create the thread waiting for changes
+    m_hFileWatcherThread = CreateThread(NULL, 0, WatchDirectory, this, 0, NULL);
 }
 
 void FileWatcher::Stop()
 {
-	if (m_hDirectory == INVALID_HANDLE_VALUE)
-		return;
+    if (m_hDirectory == INVALID_HANDLE_VALUE)
+        return;
 
-	SetEvent(m_hEventTerminate);
-	WaitForSingleObject(m_hFileWatcherThread, INFINITE);
+    SetEvent(m_hEventTerminate);
+    WaitForSingleObject(m_hFileWatcherThread, INFINITE);
 
-	CloseHandle(m_hDirectory);
-	m_hDirectory = INVALID_HANDLE_VALUE;
+    CloseHandle(m_hDirectory);
+    m_hDirectory = INVALID_HANDLE_VALUE;
 
-	CloseHandle(m_overlapped.hEvent);
+    CloseHandle(m_overlapped.hEvent);
 }
 
 bool FileWatcher::ReadFile(String filePath, char** pBuf, size_t* pLen)
 {
-	HANDLE hFile = CreateFile(filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE)
-		return false;
+    HANDLE hFile = CreateFile(filePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile == INVALID_HANDLE_VALUE)
+        return false;
 
-	DWORD numBytesRead = 0;
-	LARGE_INTEGER fileSize;
-	GetFileSizeEx(hFile, &fileSize);
+    DWORD numBytesRead = 0;
+    LARGE_INTEGER fileSize;
+    GetFileSizeEx(hFile, &fileSize);
 
-	// we don't want to read too large files
-	_ASSERT(fileSize.HighPart == 0);
+    // we don't want to read too large files
+    _ASSERT(fileSize.HighPart == 0);
 
-	// allocate buffer and read file
-	*pLen = fileSize.LowPart;
-	*pBuf = new char[fileSize.LowPart];
-	::ReadFile(hFile, (LPVOID) *pBuf, (DWORD) fileSize.LowPart, &numBytesRead, NULL);
+    // allocate buffer and read file
+    *pLen = fileSize.LowPart;
+    *pBuf = new char[fileSize.LowPart];
+    ::ReadFile(hFile, (LPVOID) *pBuf, (DWORD) fileSize.LowPart, &numBytesRead, NULL);
 
-	CloseHandle(hFile);
-	return true;
+    CloseHandle(hFile);
+    return true;
 }
 
 } // namespace Zephyros
