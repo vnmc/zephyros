@@ -62,8 +62,8 @@
 
 typedef struct
 {
-	int type;
-	String text;
+    int type;
+    String text;
 } StreamDataEntry;
 
 typedef struct
@@ -297,7 +297,7 @@ String GetUserName()
 
     delete[] buf;
 
-	return ret;
+    return ret;
 }
 
 String GetHomeDirectory()
@@ -318,7 +318,7 @@ String GetHomeDirectory()
 
     delete[] buf;
 
-	return ret;
+    return ret;
 }
 
 String GetConfigDirectory()
@@ -381,14 +381,14 @@ String Exec(String command)
 {
     FILE* pipe = popen(command.c_str(), TEXT("r"));
     if (!pipe)
-    	return TEXT("");
+        return TEXT("");
 
     char buffer[128];
     StringStream result;
 
     while (!feof(pipe))
-    	if (fgets(buffer, 128, pipe) != NULL)
-    		result << buffer;
+        if (fgets(buffer, 128, pipe) != NULL)
+            result << buffer;
 
     pclose(pipe);
     return result.str();
@@ -400,15 +400,15 @@ int CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsI
     int nNumItems = (int) menuItems->GetSize();
     int nNumItemsAdded = 0;
 
-	for (int i = 0; i < nNumItems; ++i)
-	{
-		JavaScript::Object item = menuItems->GetDictionary(i);
+    for (int i = 0; i < nNumItems; ++i)
+    {
+        JavaScript::Object item = menuItems->GetDictionary(i);
 
-		GtkWidget* pMenuItem = NULL;
+        GtkWidget* pMenuItem = NULL;
 
-		String strCaption = item->GetString(TEXT("caption"));
-		if (strCaption == TEXT("-"))
-		{
+        String strCaption = item->GetString(TEXT("caption"));
+        if (strCaption == TEXT("-"))
+        {
             // this menu item is a separator
 
             if (bPrevItemWasSeparator)
@@ -416,9 +416,9 @@ int CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsI
 
             pMenuItem = gtk_separator_menu_item_new();
             bPrevItemWasSeparator = true;
-		}
-		else
-		{
+        }
+        else
+        {
             // NOTE: we don't support "systemCommandIds on Linux
             // AFAIK there are no "default" menu actions that could benefit from this
 
@@ -462,9 +462,9 @@ int CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsI
                     String strKeyLc = ToLower(strKey);
                     String strAccelPath = TEXT("<MainWnd>/") + strCommandId;
 
-					int nModifiers = 0;
-					if (item->HasKey(TEXT("keyModifiers")))
-						nModifiers = item->GetInt(TEXT("keyModifiers"));
+                    int nModifiers = 0;
+                    if (item->HasKey(TEXT("keyModifiers")))
+                        nModifiers = item->GetInt(TEXT("keyModifiers"));
 
                     guint key = 0;
                     if (strKeyLc == "left")
@@ -508,7 +508,7 @@ int CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsI
             }
 
             bPrevItemWasSeparator = false;
-		}
+        }
 
         // add the menu item if it was created
         if (pMenuItem)
@@ -578,7 +578,7 @@ MenuHandle CreateContextMenu(JavaScript::Array menuItems)
 {
     // TODO: implement
     // Round 2
-	return (MenuHandle) 0;
+    return (MenuHandle) 0;
 }
 
 String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)

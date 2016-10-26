@@ -100,11 +100,11 @@ namespace Zephyros {
 
 class LicenseData
 {
-	friend class LicenseManagerImpl;
+    friend class LicenseManagerImpl;
 
 public:
-	LicenseData(const TCHAR* szLicenseInfoFilename);
-	inline bool GetDemoToken()
+    LicenseData(const TCHAR* szLicenseInfoFilename);
+    inline bool GetDemoToken()
     {
         if (m_demoTokens.size() == 0)
             return false;
@@ -120,19 +120,19 @@ public:
         return true;
     }
 
-	static String Now();
+    static String Now();
 
 private:
-	void Save();
+    void Save();
 
     static String Encrypt(String s);
     static String Decrypt(String s);
 
     const TCHAR* m_szLicenseInfoFilename;
 
-	std::vector<String> m_demoTokens;
-	String m_timestampLastDemoTokenUsed;
-	String m_activationCookie;
+    std::vector<String> m_demoTokens;
+    String m_timestampLastDemoTokenUsed;
+    String m_activationCookie;
     String m_licenseKey;
     String m_name;
     String m_company;
@@ -181,57 +181,57 @@ namespace Zephyros {
 class LicenseManagerImpl : public AbstractLicenseManager
 {
 public:
-	LicenseManagerImpl();
-	virtual ~LicenseManagerImpl();
+    LicenseManagerImpl();
+    virtual ~LicenseManagerImpl();
 
     inline void SetLicenseInfo(int productId, const TCHAR* szPublicKey)
-	{
-		m_config.currentLicenseInfo.productId = productId;
-		m_config.currentLicenseInfo.pubkey = szPublicKey;
-	}
+    {
+        m_config.currentLicenseInfo.productId = productId;
+        m_config.currentLicenseInfo.pubkey = szPublicKey;
+    }
 
     inline void AddObsoleteLicenseInfo(int productId, const TCHAR* szPublicKey)
-	{
-		 LicenseInfo info;
-		info.productId = productId;
-		info.pubkey = szPublicKey;
+    {
+         LicenseInfo info;
+        info.productId = productId;
+        info.pubkey = szPublicKey;
 
-		m_config.prevLicenseInfo.push_back(info);
-	}
+        m_config.prevLicenseInfo.push_back(info);
+    }
 
-	inline int GetNumberOfDemoDays() { return m_config.numDemoDays; }
-	inline void SetNumberOfDemoDays(int numDemoDays) { m_config.numDemoDays = numDemoDays; }
+    inline int GetNumberOfDemoDays() { return m_config.numDemoDays; }
+    inline void SetNumberOfDemoDays(int numDemoDays) { m_config.numDemoDays = numDemoDays; }
 
     inline void SetAPIURLs(const TCHAR* demoTokensURL, const TCHAR* activationURL, const TCHAR* deactivationURL)
-	{
-		m_config.demoTokensURL = demoTokensURL;
-		m_config.activationURL = activationURL;
-		m_config.deactivationURL = deactivationURL;
-	}
+    {
+        m_config.demoTokensURL = demoTokensURL;
+        m_config.activationURL = activationURL;
+        m_config.deactivationURL = deactivationURL;
+    }
 
-	inline const TCHAR* GetShopURL() { return m_config.shopURL; }
-	inline void SetShopURL(const TCHAR* shopURL) { m_config.shopURL = shopURL; }
+    inline const TCHAR* GetShopURL() { return m_config.shopURL; }
+    inline void SetShopURL(const TCHAR* shopURL) { m_config.shopURL = shopURL; }
 
-	inline const TCHAR* GetUpgradeURL() { return m_config.upgradeURL; }
-	inline void SetUpgradeURL(const TCHAR* upgradeURL) { m_config.upgradeURL = upgradeURL; }
+    inline const TCHAR* GetUpgradeURL() { return m_config.upgradeURL; }
+    inline void SetUpgradeURL(const TCHAR* upgradeURL) { m_config.upgradeURL = upgradeURL; }
 
-	inline void SetActivationLinkPrefix(const TCHAR* activationLinkPrefix) { m_config.activationLinkPrefix = activationLinkPrefix; }
+    inline void SetActivationLinkPrefix(const TCHAR* activationLinkPrefix) { m_config.activationLinkPrefix = activationLinkPrefix; }
 
-	inline void SetLicenseInfoFilename(const TCHAR* licenseInfoFilename) { m_config.licenseInfoFilename = licenseInfoFilename; }
+    inline void SetLicenseInfoFilename(const TCHAR* licenseInfoFilename) { m_config.licenseInfoFilename = licenseInfoFilename; }
 
-	inline ReceiptChecker* GetReceiptChecker() { return m_config.pReceiptChecker; }
-	inline void SetReceiptChecker(ReceiptChecker* pReceiptChecker) { m_config.pReceiptChecker = pReceiptChecker; }
+    inline ReceiptChecker* GetReceiptChecker() { return m_config.pReceiptChecker; }
+    inline void SetReceiptChecker(ReceiptChecker* pReceiptChecker) { m_config.pReceiptChecker = pReceiptChecker; }
 
     /**
      * Starts the license manager.
      */
     virtual void Start();
 
-	bool RequestDemoTokens(String strMACAddr = TEXT(""));
+    bool RequestDemoTokens(String strMACAddr = TEXT(""));
 
     String DecodeURI(String uri);
 
-	int Activate(String name, String company, String licenseKey);
+    int Activate(String name, String company, String licenseKey);
     virtual int ActivateFromURL(String url);
     virtual bool Deactivate();
 
@@ -272,7 +272,7 @@ public:
      * If the product hasn't been activated, the demo dialog is shown.
      * Returns true iff the product has been activated.
      */
-	inline virtual bool CheckDemoValidity() final
+    inline virtual bool CheckDemoValidity() final
     {
 #ifdef OS_WIN
         // prevent showing too many demo dialogs when WM_TIMECHANGE is sent multiple times
@@ -308,7 +308,7 @@ public:
      * Tests whether the product has been activated.
      * Returns true if the product was activated.
      */
-	inline bool IsActivated()
+    inline bool IsActivated()
     {
         bool ret =
             m_pLicenseData->m_activationCookie.length() > 0 &&
@@ -343,8 +343,8 @@ public:
 
     bool CheckReceipt();
 
-	String GetDemoButtonCaption();
-	String GetDaysCountLabelText();
+    String GetDemoButtonCaption();
+    String GetDaysCountLabelText();
 
 private:
     inline void InitConfig()
@@ -370,26 +370,26 @@ private:
         m_config.pReceiptChecker = NULL;
     }
 
-	inline int GetNumDaysLeft()
-	{
-		int numDaysLeft = (int) m_pLicenseData->m_demoTokens.size();
-		if (m_pLicenseData->m_timestampLastDemoTokenUsed == TEXT("") || m_pLicenseData->m_timestampLastDemoTokenUsed != LicenseData::Now())
-			numDaysLeft--;
-		if (numDaysLeft < 0)
-			numDaysLeft = m_pLicenseData->m_timestampLastDemoTokenUsed == TEXT("") ? m_config.numDemoDays : 0;
+    inline int GetNumDaysLeft()
+    {
+        int numDaysLeft = (int) m_pLicenseData->m_demoTokens.size();
+        if (m_pLicenseData->m_timestampLastDemoTokenUsed == TEXT("") || m_pLicenseData->m_timestampLastDemoTokenUsed != LicenseData::Now())
+            numDaysLeft--;
+        if (numDaysLeft < 0)
+            numDaysLeft = m_pLicenseData->m_timestampLastDemoTokenUsed == TEXT("") ? m_config.numDemoDays : 0;
 
-		return numDaysLeft;
-	}
+        return numDaysLeft;
+    }
 
-	void ShowDemoDialog();
+    void ShowDemoDialog();
 
     bool SendRequest(String url, std::string data, std::stringstream& out);
     bool ParseResponse(String url, std::string data, String errorMsg, picojson::object& result);
 
-	void OnActivate(bool isSuccess);
-	void OnReceiveDemoTokens(bool isSuccess);
+    void OnActivate(bool isSuccess);
+    void OnReceiveDemoTokens(bool isSuccess);
 
-	bool VerifyKey(String key, String info, const TCHAR* pubkey);
+    bool VerifyKey(String key, String info, const TCHAR* pubkey);
 
     bool VerifyAll(String key, std::vector<String> v, const TCHAR* pubkey)
     {
@@ -399,49 +399,49 @@ private:
         return false;
     }
 
-	inline bool DecodeKey(String key, unsigned char** pRetBuf, size_t* pRetBufLen)
-	{
-		size_t rawKeyLen = 0;
-		for (String::iterator it = key.begin(); it != key.end(); ++it)
-			if (*it != TEXT('-'))
-				rawKeyLen++;
+    inline bool DecodeKey(String key, unsigned char** pRetBuf, size_t* pRetBufLen)
+    {
+        size_t rawKeyLen = 0;
+        for (String::iterator it = key.begin(); it != key.end(); ++it)
+            if (*it != TEXT('-'))
+                rawKeyLen++;
 
-		// pad to octets
-		rawKeyLen = ((rawKeyLen + 7) / 8) * 8;
+        // pad to octets
+        rawKeyLen = ((rawKeyLen + 7) / 8) * 8;
 
-		uint8_t* pRawKey = new uint8_t[rawKeyLen];
-		int idx = 0;
-		for (String::iterator it = key.begin(); it != key.end(); ++it)
-		{
-			// replace 9s with Is and 8s with Os
-			if (*it == TEXT('9'))
-				pRawKey[idx++] = 'I';
-			else if (*it == TEXT('8'))
-				pRawKey[idx++] = 'O';
-			else if ((TEXT('A') <= *it && *it <= TEXT('Z')) || (TEXT('0') <= *it && *it <= TEXT('9')))
-				pRawKey[idx++] = (uint8_t) *it;
-		}
+        uint8_t* pRawKey = new uint8_t[rawKeyLen];
+        int idx = 0;
+        for (String::iterator it = key.begin(); it != key.end(); ++it)
+        {
+            // replace 9s with Is and 8s with Os
+            if (*it == TEXT('9'))
+                pRawKey[idx++] = 'I';
+            else if (*it == TEXT('8'))
+                pRawKey[idx++] = 'O';
+            else if ((TEXT('A') <= *it && *it <= TEXT('Z')) || (TEXT('0') <= *it && *it <= TEXT('9')))
+                pRawKey[idx++] = (uint8_t) *it;
+        }
 
-		// pad with '='
-		while (idx < (int) rawKeyLen)
-			pRawKey[idx++] = '=';
+        // pad with '='
+        while (idx < (int) rawKeyLen)
+            pRawKey[idx++] = '=';
 
-		// decode the base32 string
-		*pRetBufLen = base32_decoder_buffer_size(rawKeyLen);
-		*pRetBuf = new unsigned char[*pRetBufLen];
-		if (*pRetBuf == NULL)
-			return false;
+        // decode the base32 string
+        *pRetBufLen = base32_decoder_buffer_size(rawKeyLen);
+        *pRetBuf = new unsigned char[*pRetBufLen];
+        if (*pRetBuf == NULL)
+            return false;
 
-		*pRetBufLen = base32_decode(*pRetBuf, *pRetBufLen, pRawKey, rawKeyLen);
-		return *pRetBufLen > 0;
-	}
+        *pRetBufLen = base32_decode(*pRetBuf, *pRetBufLen, pRawKey, rawKeyLen);
+        return *pRetBufLen > 0;
+    }
 
 protected:
     LicenseManagerConfig m_config;
 
 private:
-	LicenseData* m_pLicenseData;
-	bool m_canStartApp;
+    LicenseData* m_pLicenseData;
+    bool m_canStartApp;
 
 
 #ifdef OS_MACOSX
@@ -453,13 +453,13 @@ private:
 
 #ifdef OS_WIN
 public:
-	void KillTimer();
+    void KillTimer();
 
-	DemoDialog* m_pDemoDlg;
+    DemoDialog* m_pDemoDlg;
 
 private:
-	UINT_PTR m_timerId;
-	ULONGLONG m_lastDemoValidityCheck;
+    UINT_PTR m_timerId;
+    ULONGLONG m_lastDemoValidityCheck;
 #endif
 
 #ifdef OS_LINUX

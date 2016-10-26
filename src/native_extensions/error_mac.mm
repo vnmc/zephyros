@@ -35,13 +35,13 @@ namespace Zephyros {
 
 void Error::FromError(id error)
 {
-	if (!error)
-	{
-		SetError(ERR_OK);
-		return;
-	}
+    if (!error)
+    {
+        SetError(ERR_OK);
+        return;
+    }
 
-	int code = ERR_UNKNOWN;
+    int code = ERR_UNKNOWN;
 
     if ([((NSError*) error).domain isEqualToString: NSCocoaErrorDomain])
     {
@@ -139,7 +139,7 @@ void Error::FromError(id error)
         }
     }
 
-	SetError(code, [((NSError*) error).localizedDescription UTF8String]);
+    SetError(code, [((NSError*) error).localizedDescription UTF8String]);
 }
 
 } // namespace Zephyros

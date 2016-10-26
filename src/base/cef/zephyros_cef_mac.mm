@@ -146,7 +146,7 @@ int RunApplication(int argc, char* argv[])
     // release the handler
     g_handler = NULL;
 
-	Zephyros::Shutdown();
+    Zephyros::Shutdown();
 
     return 0;
 }

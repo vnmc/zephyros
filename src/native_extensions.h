@@ -136,7 +136,7 @@ typedef int (*Function)(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefListValue> args,
     CefRefPtr<CefListValue> ret,
-	CallbackId callbackId
+    CallbackId callbackId
 );
 
 typedef void (*CallbacksCompleteHandler)(
@@ -187,7 +187,7 @@ public:
     }
 
 #ifdef OS_WIN
-	void FromError(DWORD windowsErrorCode);
+    void FromError(DWORD windowsErrorCode);
     void FromLastError();
 #endif
 
@@ -274,131 +274,131 @@ class ClientHandler : public CefClient,
 {
 public:
 
-	typedef std::set<CefRefPtr<ProcessMessageDelegate> > ProcessMessageDelegateSet;
+    typedef std::set<CefRefPtr<ProcessMessageDelegate> > ProcessMessageDelegateSet;
 
 
-	ClientHandler();
-	virtual ~ClientHandler();
+    ClientHandler();
+    virtual ~ClientHandler();
 
-	void ReleaseCefObjects();
+    void ReleaseCefObjects();
 
 
-	// CefClient methods
-	virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefDragHandler> GetDragHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefKeyboardHandler> GetKeyboardHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE { return this; }
-	virtual CefRefPtr<CefRequestHandler> GetRequestHandler() OVERRIDE { return this; }
+    // CefClient methods
+    virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE { return this; }
+    virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE { return this; }
+    virtual CefRefPtr<CefDragHandler> GetDragHandler() OVERRIDE { return this; }
+    virtual CefRefPtr<CefKeyboardHandler> GetKeyboardHandler() OVERRIDE { return this; }
+    virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE { return this; }
+    virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE { return this; }
+    virtual CefRefPtr<CefRequestHandler> GetRequestHandler() OVERRIDE { return this; }
 
-	virtual bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message) OVERRIDE;
+    virtual bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message) OVERRIDE;
 
-	// CefContextMenuHandler methods
-	virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) OVERRIDE;
-	virtual bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, int command_id, EventFlags event_flags) OVERRIDE;
+    // CefContextMenuHandler methods
+    virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) OVERRIDE;
+    virtual bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, int command_id, EventFlags event_flags) OVERRIDE;
 
-	virtual bool OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString& message, const CefString& source, int line) OVERRIDE;
+    virtual bool OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString& message, const CefString& source, int line) OVERRIDE;
 
-	// CefDragHandler methods
-	virtual bool OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDragData> dragData, CefDragHandler::DragOperationsMask mask) OVERRIDE;
+    // CefDragHandler methods
+    virtual bool OnDragEnter(CefRefPtr<CefBrowser> browser, CefRefPtr<CefDragData> dragData, CefDragHandler::DragOperationsMask mask) OVERRIDE;
 
-	// CefKeyboardHandler methods
-	virtual bool OnPreKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event, bool* is_keyboard_shortcut) OVERRIDE;
-	virtual bool OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event) OVERRIDE;
+    // CefKeyboardHandler methods
+    virtual bool OnPreKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event, bool* is_keyboard_shortcut) OVERRIDE;
+    virtual bool OnKeyEvent(CefRefPtr<CefBrowser> browser, const CefKeyEvent& event, CefEventHandle os_event) OVERRIDE;
 
-	// CefLifeSpanHandler methods
-	virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
-	virtual bool DoClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
-	virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
+    // CefLifeSpanHandler methods
+    virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
+    virtual bool DoClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
+    virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
 
-	// CefLoadHandler methods
+    // CefLoadHandler methods
     virtual void OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode) OVERRIDE;
-	virtual void OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl) OVERRIDE;
+    virtual void OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl) OVERRIDE;
 
-	// CefRequestHandler methods
-	virtual CefRefPtr<CefResourceHandler> GetResourceHandler(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request) OVERRIDE;
+    // CefRequestHandler methods
+    virtual CefRefPtr<CefResourceHandler> GetResourceHandler(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request) OVERRIDE;
 
-	virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, TerminationStatus status) OVERRIDE;
+    virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, TerminationStatus status) OVERRIDE;
 
-	void SetMainHwnd(ClientWindowHandle handle);
-	ClientWindowHandle GetMainHwnd() const;
+    void SetMainHwnd(ClientWindowHandle handle);
+    ClientWindowHandle GetMainHwnd() const;
 
 #ifdef OS_WIN
-	inline HACCEL GetAccelTable() { return m_hAccelTable; }
-	inline void SetAccelTable(HACCEL hAccelTable) { m_hAccelTable = hAccelTable; }
+    inline HACCEL GetAccelTable() { return m_hAccelTable; }
+    inline void SetAccelTable(HACCEL hAccelTable) { m_hAccelTable = hAccelTable; }
 #endif
 
-	CefRefPtr<ClientExtensionHandler> GetClientExtensionHandler();
+    CefRefPtr<ClientExtensionHandler> GetClientExtensionHandler();
 
-	CefRefPtr<CefBrowser> GetBrowser() const;
-	int GetBrowserId() const;
+    CefRefPtr<CefBrowser> GetBrowser() const;
+    int GetBrowserId() const;
 
-	// Request that all existing browser windows close.
-	void CloseAllBrowsers(bool force_close);
+    // Request that all existing browser windows close.
+    void CloseAllBrowsers(bool force_close);
 
-	// Returns true if the main browser window is currently closing. Used in
-	// combination with DoClose() and the OS close notification to properly handle
-	// 'onbeforeunload' JavaScript events during window close.
-	bool IsClosing() const;
+    // Returns true if the main browser window is currently closing. Used in
+    // combination with DoClose() and the OS close notification to properly handle
+    // 'onbeforeunload' JavaScript events during window close.
+    bool IsClosing() const;
 
-	void ShowDevTools(CefRefPtr<CefBrowser> browser, const CefPoint& inspect_element_at);
-	void CloseDevTools(CefRefPtr<CefBrowser> browser);
+    void ShowDevTools(CefRefPtr<CefBrowser> browser, const CefPoint& inspect_element_at);
+    void CloseDevTools(CefRefPtr<CefBrowser> browser);
 
 private:
-	// START THREAD SAFE MEMBERS
-	// The following members are thread-safe because they're initialized during
-	// object construction and not changed thereafter.
+    // START THREAD SAFE MEMBERS
+    // The following members are thread-safe because they're initialized during
+    // object construction and not changed thereafter.
 
     // Registered delegates.
     ProcessMessageDelegateSet m_processMessageDelegates;
 
-	CefRefPtr<ClientExtensionHandler> m_clientExtensionHandler;
+    CefRefPtr<ClientExtensionHandler> m_clientExtensionHandler;
 
-	// END THREAD SAFE MEMBERS
-
-
-	// Lock used to protect members accessed on multiple threads. Make it mutable
-	// so that it can be used from const methods.
-	mutable base::Lock m_lock;
+    // END THREAD SAFE MEMBERS
 
 
-	// START LOCK PROTECTED MEMBERS
-	// The following members are accessed on multiple threads and must be protected by |lock_|.
-
-	// The child browser window.
-	CefRefPtr<CefBrowser> m_browser;
-
-	// The child browser id.
-	int m_nBrowserId;
-
-	// True if the main browser window is currently closing.
-	bool m_bIsClosing;
-
-	// END LOCK PROTECTED MEMBERS
+    // Lock used to protect members accessed on multiple threads. Make it mutable
+    // so that it can be used from const methods.
+    mutable base::Lock m_lock;
 
 
-	// START UI THREAD ACCESS ONLY MEMBERS
-	// The following members will only be accessed on the CEF UI thread.
+    // START LOCK PROTECTED MEMBERS
+    // The following members are accessed on multiple threads and must be protected by |lock_|.
 
-	// List of any popup browser windows.
-	std::list<CefRefPtr<CefBrowser> > m_popupBrowsers;
+    // The child browser window.
+    CefRefPtr<CefBrowser> m_browser;
 
-	// The main frame window handle.
-	ClientWindowHandle m_mainHwnd;
+    // The child browser id.
+    int m_nBrowserId;
+
+    // True if the main browser window is currently closing.
+    bool m_bIsClosing;
+
+    // END LOCK PROTECTED MEMBERS
+
+
+    // START UI THREAD ACCESS ONLY MEMBERS
+    // The following members will only be accessed on the CEF UI thread.
+
+    // List of any popup browser windows.
+    std::list<CefRefPtr<CefBrowser> > m_popupBrowsers;
+
+    // The main frame window handle.
+    ClientWindowHandle m_mainHwnd;
 
 #if OS_WIN
-	HACCEL m_hAccelTable;
+    HACCEL m_hAccelTable;
 #endif
 
-	// Number of currently existing browser windows. The application will exit
-	// when the number of windows reaches 0.
-	static int m_nBrowserCount;
+    // Number of currently existing browser windows. The application will exit
+    // when the number of windows reaches 0.
+    static int m_nBrowserCount;
 
-	// END UI THREAD ACCESS ONLY MEMBERS
+    // END UI THREAD ACCESS ONLY MEMBERS
 
-	// Include the default reference counting implementation.
-	IMPLEMENT_REFCOUNTING(ClientHandler);
+    // Include the default reference counting implementation.
+    IMPLEMENT_REFCOUNTING(ClientHandler);
 };
 
 
@@ -510,18 +510,18 @@ public:
 
 #ifdef USE_CEF
 protected:
-	String CreateArgList(NativeFunction* fnx, bool hasReturnValue, bool hasPersistentCallback)
-	{
-		String argList = fnx->GetArgList();
-		if (hasReturnValue || hasPersistentCallback)
-		{
-			if (fnx->GetNumArgs() > 0)
-				argList.append(TEXT(","));
-			argList.append(TEXT("callback"));
-		}
+    String CreateArgList(NativeFunction* fnx, bool hasReturnValue, bool hasPersistentCallback)
+    {
+        String argList = fnx->GetArgList();
+        if (hasReturnValue || hasPersistentCallback)
+        {
+            if (fnx->GetNumArgs() > 0)
+                argList.append(TEXT(","));
+            argList.append(TEXT("callback"));
+        }
 
-		return argList;
-	}
+        return argList;
+    }
 #endif
 };
 
@@ -536,10 +536,10 @@ public:
 
     virtual void ReleaseCefObjects() override;
 
-	virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) override;
+    virtual void AddNativeJavaScriptFunction(String name, NativeFunction* fnx, bool hasReturnValue = true, bool hasPersistentCallback = false, String customJavaScriptImplementation = TEXT("")) override;
 
-	void InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args);
-	void InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args);
+    void InvokeCallbacks(String functionName, CefRefPtr<CefListValue> args);
+    void InvokeCallback(CallbackId callbackId, CefRefPtr<CefListValue> args);
 
 
     // ProcessMessageDelegate Implementation
@@ -549,7 +549,7 @@ public:
 
 private:
     std::map<String, NativeFunction*> m_mapFunctions;
-	std::map<CallbackId, ClientCallback*> m_mapDelayedCallbacks;
+    std::map<CallbackId, ClientCallback*> m_mapDelayedCallbacks;
 
     IMPLEMENT_REFCOUNTING(ClientExtensionHandler);
 };

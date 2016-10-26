@@ -51,21 +51,21 @@ void CustomURLManager::AddURL(String url)
 #ifndef APPSTORE
     if (Zephyros::GetLicenseManager() != NULL && Zephyros::GetLicenseManager()->IsLicensingLink(url))
         Zephyros::GetLicenseManager()->ActivateFromURL(url);
-	else
+    else
 #endif
-		m_urls.push_back(url);
+        m_urls.push_back(url);
 }
 
 void CustomURLManager::FireCustomURLs()
 {
-	for (String url : m_urls)
-	{
+    for (String url : m_urls)
+    {
         Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-		args->SetString(0, url);
-		Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onCustomURL"), args);
-	}
+        args->SetString(0, url);
+        Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onCustomURL"), args);
+    }
 
-	m_urls.clear();
+    m_urls.clear();
 }
 
 } // namespace Zephyros

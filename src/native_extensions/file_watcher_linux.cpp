@@ -210,7 +210,7 @@ FileWatcher::FileWatcher()
 
 FileWatcher::~FileWatcher()
 {
-	Stop();
+    Stop();
 }
 
 void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions)

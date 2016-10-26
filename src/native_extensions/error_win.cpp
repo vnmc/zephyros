@@ -32,84 +32,84 @@ namespace Zephyros {
 
 void Error::FromError(DWORD windowsErrorCode)
 {
-	if (windowsErrorCode == ERROR_SUCCESS)
-	{
-		SetError(ERR_OK);
-		return;
-	}
+    if (windowsErrorCode == ERROR_SUCCESS)
+    {
+        SetError(ERR_OK);
+        return;
+    }
 
-	TCHAR* msg = NULL;
-	String strMsg;
+    TCHAR* msg = NULL;
+    String strMsg;
 
-	int code = ERR_UNKNOWN;
-	switch (windowsErrorCode)
-	{
-	case ERROR_FILE_NOT_FOUND:
-	case ERROR_PATH_NOT_FOUND:
-		code = ERR_FILE_NOT_FOUND;
-		break;
-	case ERROR_TOO_MANY_OPEN_FILES:
-	case ERROR_NO_MORE_FILES:
-	case ERROR_TOO_MANY_DESCRIPTORS:
-		code = ERR_TOO_MANY_OPEN_FILES;
-		break;
-	case ERROR_ACCESS_DENIED:
-	case ERROR_DELETE_PENDING:
-	case ERROR_SHARING_VIOLATION:
-		code = ERR_FILE_NO_READ_PERMISSION;
-		break;
-	case ERROR_NOT_ENOUGH_MEMORY:
-	case ERROR_OUTOFMEMORY:
-		code = ERR_INSUFFICIENT_MEMORY;
-		break;
-	case ERROR_WRITE_PROTECT:
-	case ERROR_DRIVE_LOCKED:
-		code = ERR_FILE_NO_WRITE_PERMISSION;
-		break;
-	case ERROR_HANDLE_DISK_FULL:
-	case ERROR_DISK_RESOURCES_EXHAUSTED:
-		code = ERR_DISK_FULL;
-		break;
-	case ERROR_DEV_NOT_EXIST:
-		code = ERR_NO_NETWORK;
-		break;
-	case ERROR_FILE_EXISTS:
-	case ERROR_ALREADY_EXISTS:
-		code = ERR_FILE_EXISTS;
-		break;
-	case ERROR_INVALID_NAME:
-	case ERROR_DIRECTORY:
-	case ERROR_FILENAME_EXCED_RANGE:
-		code = ERR_INVALID_FILENAME;
-		break;
-	case ERROR_FILE_TOO_LARGE:
-		code = ERR_FILE_TOO_LARGE;
-		break;
-	case WAIT_TIMEOUT:
-		code = ERR_TIMED_OUT;
-		break;
-	case ERROR_INSUFFICIENT_BUFFER:
-		code = ERR_INSUFFICIENT_MEMORY;
-		break;
-	case ERROR_NO_UNICODE_TRANSLATION:
-		code = ERR_DECODING_FAILED;
-		break;
-	}
+    int code = ERR_UNKNOWN;
+    switch (windowsErrorCode)
+    {
+    case ERROR_FILE_NOT_FOUND:
+    case ERROR_PATH_NOT_FOUND:
+        code = ERR_FILE_NOT_FOUND;
+        break;
+    case ERROR_TOO_MANY_OPEN_FILES:
+    case ERROR_NO_MORE_FILES:
+    case ERROR_TOO_MANY_DESCRIPTORS:
+        code = ERR_TOO_MANY_OPEN_FILES;
+        break;
+    case ERROR_ACCESS_DENIED:
+    case ERROR_DELETE_PENDING:
+    case ERROR_SHARING_VIOLATION:
+        code = ERR_FILE_NO_READ_PERMISSION;
+        break;
+    case ERROR_NOT_ENOUGH_MEMORY:
+    case ERROR_OUTOFMEMORY:
+        code = ERR_INSUFFICIENT_MEMORY;
+        break;
+    case ERROR_WRITE_PROTECT:
+    case ERROR_DRIVE_LOCKED:
+        code = ERR_FILE_NO_WRITE_PERMISSION;
+        break;
+    case ERROR_HANDLE_DISK_FULL:
+    case ERROR_DISK_RESOURCES_EXHAUSTED:
+        code = ERR_DISK_FULL;
+        break;
+    case ERROR_DEV_NOT_EXIST:
+        code = ERR_NO_NETWORK;
+        break;
+    case ERROR_FILE_EXISTS:
+    case ERROR_ALREADY_EXISTS:
+        code = ERR_FILE_EXISTS;
+        break;
+    case ERROR_INVALID_NAME:
+    case ERROR_DIRECTORY:
+    case ERROR_FILENAME_EXCED_RANGE:
+        code = ERR_INVALID_FILENAME;
+        break;
+    case ERROR_FILE_TOO_LARGE:
+        code = ERR_FILE_TOO_LARGE;
+        break;
+    case WAIT_TIMEOUT:
+        code = ERR_TIMED_OUT;
+        break;
+    case ERROR_INSUFFICIENT_BUFFER:
+        code = ERR_INSUFFICIENT_MEMORY;
+        break;
+    case ERROR_NO_UNICODE_TRANSLATION:
+        code = ERR_DECODING_FAILED;
+        break;
+    }
 
-	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, windowsErrorCode, 0, (LPWSTR) &msg, 0, NULL);
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, windowsErrorCode, 0, (LPWSTR) &msg, 0, NULL);
 
-	if (msg != NULL)
-	{
-		strMsg = String(msg);
-		LocalFree(msg);
-	}
+    if (msg != NULL)
+    {
+        strMsg = String(msg);
+        LocalFree(msg);
+    }
 
-	SetError(code, strMsg);
+    SetError(code, strMsg);
 }
 
 void Error::FromLastError()
 {
-	FromError(GetLastError());
+    FromError(GetLastError());
 }
 
 } // namespace Zephyros

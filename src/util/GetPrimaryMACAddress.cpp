@@ -134,7 +134,7 @@ std::vector<String> GetMACAddresses(io_iterator_t intfIterator)
     char szBuf[20];
     std::vector<String> result;
     
-	// Initialize the returned address
+    // Initialize the returned address
     bzero(MACAddress, kIOEthernetAddressSize);
     
     // IOIteratorNext retains the returned object, so release it when we're done with it.

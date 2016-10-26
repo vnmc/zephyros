@@ -35,7 +35,7 @@ namespace BrowserUtil {
 
 Browser* GetDefaultBrowser(std::vector<Browser*>* pBrowsers)
 {
-	FindBrowsers(&pBrowsers);
+    FindBrowsers(&pBrowsers);
 
     Browser* firstBrowser = NULL;
     for (std::vector<Browser*>::iterator it = pBrowsers->begin(); it != pBrowsers->end(); ++it)
@@ -51,7 +51,7 @@ Browser* GetDefaultBrowser(std::vector<Browser*>* pBrowsers)
 
 Browser* GetBrowserForIdentifier(std::vector<Browser*>* pBrowsers, String identifier)
 {
-	FindBrowsers(&pBrowsers);
+    FindBrowsers(&pBrowsers);
 
     for (std::vector<Browser*>::iterator it = pBrowsers->begin(); it != pBrowsers->end(); ++it)
         if ((*it)->GetIdentifier() == identifier)
@@ -61,7 +61,7 @@ Browser* GetBrowserForIdentifier(std::vector<Browser*>* pBrowsers, String identi
 
 Browser* GetBrowserForUserAgent(std::vector<Browser*>* pBrowsers, JavaScript::Object userAgent)
 {
-	FindBrowsers(&pBrowsers);
+    FindBrowsers(&pBrowsers);
 
     String strUserAgent = userAgent->GetString("name");
     String strUserAgentLc = ToLower(strUserAgent);
@@ -69,7 +69,7 @@ Browser* GetBrowserForUserAgent(std::vector<Browser*>* pBrowsers, JavaScript::Ob
 
     for (std::vector<Browser*>::iterator it = pBrowsers->begin(); it != pBrowsers->end(); ++it)
     {
-		Browser* browser = *it;
+        Browser* browser = *it;
 
         String name = ToLower(browser->GetName());
         String identifier = ToLower(browser->GetIdentifier());
@@ -102,7 +102,7 @@ Browser* GetBrowserForUserAgent(std::vector<Browser*>* pBrowsers, JavaScript::Ob
 
 Browser* GetBrowserFromJSRepresentation(std::vector<Browser*>* pBrowsers, JavaScript::Object obj)
 {
-	FindBrowsers(&pBrowsers);
+    FindBrowsers(&pBrowsers);
 
     String identifier = obj->GetString("id");
     Browser* browser = GetBrowserForIdentifier(pBrowsers, identifier);

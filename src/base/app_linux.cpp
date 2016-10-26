@@ -94,8 +94,8 @@ void QuitMessageLoop()
 {
     CefQuitMessageLoop();
 
-	if (g_pLogFile != NULL)
-	{
+    if (g_pLogFile != NULL)
+    {
         g_pLogFile->close();
         delete g_pLogFile;
         g_pLogFile = NULL;
@@ -142,7 +142,7 @@ void Alert(String title, String msg, AlertStyle style)
 std::ofstream* OpenLogFile()
 {
     String strFilename(OSUtil::GetConfigDirectory());
-	strFilename.append(TEXT("/debug.log"));
+    strFilename.append(TEXT("/debug.log"));
 
     std::ofstream* pFile = new std::ofstream();
     pFile->open(strFilename, std::ios::out);
@@ -157,14 +157,14 @@ void Log(String msg)
 
 void SetMenuItemStatuses(MenuItemStatuses& statuses)
 {
-	if (!g_handler.get())
-		return;
+    if (!g_handler.get())
+        return;
 
     // TODO
     /*
-	HMENU hMenu = GetMenu(g_handler->GetMainHwnd());
-	if (!hMenu)
-		return;
+    HMENU hMenu = GetMenu(g_handler->GetMainHwnd());
+    if (!hMenu)
+        return;
     */
 
     for (MenuItemStatuses::iterator it = statuses.begin(); it != statuses.end(); ++it)
@@ -173,10 +173,10 @@ void SetMenuItemStatuses(MenuItemStatuses& statuses)
         if (nID)
         {
             int nStatus = it->second;
-			/*
-			EnableMenuItem(hMenu, nID, MF_BYCOMMAND | ((status & 0x01) ? MF_ENABLED : MF_DISABLED));
-			CheckMenuItem(hMenu, nID, MF_BYCOMMAND | ((status & 0x02) ? MF_CHECKED : MF_UNCHECKED));
-			*/
+            /*
+            EnableMenuItem(hMenu, nID, MF_BYCOMMAND | ((status & 0x01) ? MF_ENABLED : MF_DISABLED));
+            CheckMenuItem(hMenu, nID, MF_BYCOMMAND | ((status & 0x02) ? MF_CHECKED : MF_UNCHECKED));
+            */
         }
     }
 }

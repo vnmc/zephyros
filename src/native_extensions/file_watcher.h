@@ -213,12 +213,12 @@ public:
     id m_activity;
 #endif
 #ifdef OS_WIN
-	HANDLE m_hDirectory;
-	OVERLAPPED m_overlapped;
+    HANDLE m_hDirectory;
+    OVERLAPPED m_overlapped;
 
-	HANDLE m_hFileWatcherThread;
+    HANDLE m_hFileWatcherThread;
 
-	HANDLE m_hEventTerminate;
+    HANDLE m_hEventTerminate;
 #endif
 #ifdef OS_LINUX
 

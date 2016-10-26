@@ -16,8 +16,8 @@ CefRefPtr<CefStreamReader> GetBinaryResourceReader(const TCHAR* szResourceName)
     char* pData = NULL;
     int nLen = 0;
 
-	if (!Zephyros::GetResource(szResourceName, pData, nLen))
+    if (!Zephyros::GetResource(szResourceName, pData, nLen))
         return NULL;
 
-	return CefStreamReader::CreateForHandler(new CefByteReadHandler((unsigned char*) pData, nLen, NULL));
+    return CefStreamReader::CreateForHandler(new CefByteReadHandler((unsigned char*) pData, nLen, NULL));
 }

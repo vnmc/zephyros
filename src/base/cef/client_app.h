@@ -49,34 +49,34 @@ class ClientApp : public CefApp,
 {
 public:
 
-	// Interface for browser delegates. All BrowserDelegates must be returned via
-	// CreateBrowserDelegates. Do not perform work in the BrowserDelegate
-	// constructor. See CefBrowserProcessHandler for documentation.
-	class BrowserDelegate : public virtual CefBase
-	{
-	public:
-		virtual void OnContextInitialized(CefRefPtr<ClientApp> app) {}
+    // Interface for browser delegates. All BrowserDelegates must be returned via
+    // CreateBrowserDelegates. Do not perform work in the BrowserDelegate
+    // constructor. See CefBrowserProcessHandler for documentation.
+    class BrowserDelegate : public virtual CefBase
+    {
+    public:
+        virtual void OnContextInitialized(CefRefPtr<ClientApp> app) {}
         virtual void OnBeforeChildProcessLaunch(CefRefPtr<ClientApp> app, CefRefPtr<CefCommandLine> command_line) {}
         virtual void OnRenderProcessThreadCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefListValue> extra_info) {}
     };
 
-	typedef std::set<CefRefPtr<BrowserDelegate> > BrowserDelegateSet;
+    typedef std::set<CefRefPtr<BrowserDelegate> > BrowserDelegateSet;
 
-	// Interface for renderer delegates. All RenderDelegates must be returned via
-	// CreateRenderDelegates. Do not perform work in the RenderDelegate
-	// constructor. See CefRenderProcessHandler for documentation.
-	class RenderDelegate : public virtual CefBase
-	{
-	public:
+    // Interface for renderer delegates. All RenderDelegates must be returned via
+    // CreateRenderDelegates. Do not perform work in the RenderDelegate
+    // constructor. See CefRenderProcessHandler for documentation.
+    class RenderDelegate : public virtual CefBase
+    {
+    public:
         virtual void OnRenderThreadCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefListValue> extra_info) {}
         virtual void OnWebKitInitialized(CefRefPtr<ClientApp> app) {}
         virtual void OnBrowserCreated(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser) {}
         virtual void OnBrowserDestroyed(CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser) {}
 
-		virtual CefRefPtr<CefLoadHandler> GetLoadHandler(CefRefPtr<ClientApp> app)
-		{
-			return NULL;
-		}
+        virtual CefRefPtr<CefLoadHandler> GetLoadHandler(CefRefPtr<ClientApp> app)
+        {
+            return NULL;
+        }
 
         virtual bool OnBeforeNavigation(
             CefRefPtr<ClientApp> app, CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
@@ -103,13 +103,13 @@ public:
         {
             return false;
         }
-	};
+    };
 
-	typedef std::set<CefRefPtr<RenderDelegate> > RenderDelegateSet;
+    typedef std::set<CefRefPtr<RenderDelegate> > RenderDelegateSet;
 
 
-	ClientApp();
-	~ClientApp();
+    ClientApp();
+    ~ClientApp();
 
 private:
     virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() OVERRIDE
@@ -122,7 +122,7 @@ private:
         return this;
     }
 
-	virtual void OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line) OVERRIDE;
+    virtual void OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line) OVERRIDE;
 
     // CefBrowserProcessHandler methods
     virtual void OnContextInitialized() OVERRIDE;
@@ -134,7 +134,7 @@ private:
     virtual void OnWebKitInitialized() OVERRIDE;
     virtual void OnBrowserCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
     virtual void OnBrowserDestroyed(CefRefPtr<CefBrowser> browser) OVERRIDE;
-	virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE;
+    virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE;
     virtual bool OnBeforeNavigation(
         CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, NavigationType navigation_type, bool is_redirect) OVERRIDE;
     virtual void OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context) OVERRIDE;
@@ -152,7 +152,7 @@ private:
     // set of supported RenderDelegates
     RenderDelegateSet m_renderDelegates;
 
-	CefRefPtr<AppExtensionHandler> m_pAppExtensionHandler;
+    CefRefPtr<AppExtensionHandler> m_pAppExtensionHandler;
 
 
     IMPLEMENT_REFCOUNTING(ClientApp);

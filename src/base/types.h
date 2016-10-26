@@ -57,7 +57,7 @@ typedef std::stringstream StringStream;
 #define _tcscpy      strcpy
 #define _tcscat      strcat
 #define _tcslen      strlen
-#define _ttoi		 atoi
+#define _ttoi        atoi
 #define _tcsnccmp    strncmp
 #define _wtoi64      atoi
 

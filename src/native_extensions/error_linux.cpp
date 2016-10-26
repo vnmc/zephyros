@@ -33,15 +33,15 @@ namespace Zephyros {
 
 void Error::FromErrno()
 {
-	if (errno == 0)
-	{
-		SetError(ERR_OK);
-		return;
-	}
+    if (errno == 0)
+    {
+        SetError(ERR_OK);
+        return;
+    }
 
-	int code = ERR_UNKNOWN;
-	switch (errno)
-	{
+    int code = ERR_UNKNOWN;
+    switch (errno)
+    {
     case ENOENT:
         code = ERR_FILE_NOT_FOUND;
         break;
@@ -95,9 +95,9 @@ void Error::FromErrno()
     case ENAMETOOLONG:
         code = ERR_NAME_TOO_LONG;
         break;
-	}
+    }
 
-	SetError(code, strerror(errno));
+    SetError(code, strerror(errno));
 }
 
 } // namespace Zephyros

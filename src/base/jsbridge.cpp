@@ -94,14 +94,14 @@ String JSONEscape(String s)
 
 bool HasType(int type, int expectedType)
 {
-	if (type == expectedType)
-		return true;
+    if (type == expectedType)
+        return true;
 
-	// treat "int" and "double" as synonyms for "number"
-	if (expectedType == VTYPE_INT || expectedType == VTYPE_DOUBLE)
-		return type == VTYPE_INT || type == VTYPE_DOUBLE;
+    // treat "int" and "double" as synonyms for "number"
+    if (expectedType == VTYPE_INT || expectedType == VTYPE_DOUBLE)
+        return type == VTYPE_INT || type == VTYPE_DOUBLE;
 
-	return false;
+    return false;
 }
 
 } // namespace JavaScript

@@ -256,7 +256,7 @@ CefRefPtr<CefV8Value> DictionaryValueToV8Value(CefRefPtr<CefDictionaryValue> val
 
 void CopyList(CefRefPtr<CefListValue> source, CefRefPtr<CefListValue> dest, int offset)
 {
-	int size = (int) source->GetSize();
+    int size = (int) source->GetSize();
     for (int i = 0; i < size; i++)
     {
         if (i + offset < 0)
