@@ -41,6 +41,7 @@
 #include "util/string_util.h"
 
 #include "native_extensions/file_util.h"
+#include "native_extensions/error.h"
 #include "native_extensions/image_util_win.h"
 
 
@@ -202,8 +203,8 @@ bool Stat(String path, StatInfo* stat)
 	DWORD dwFileAttrs = GetFileAttributes(path.c_str());
 	if (dwFileAttrs != INVALID_FILE_ATTRIBUTES)
 	{
-		stat->isFile = dwFileAttrs & ~FILE_ATTRIBUTE_DIRECTORY & (FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_ARCHIVE | FILE_ATTRIBUTE_READONLY);
-		stat->isDirectory = dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY;
+		stat->isFile = (dwFileAttrs & ~FILE_ATTRIBUTE_DIRECTORY & (FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_ARCHIVE | FILE_ATTRIBUTE_READONLY)) != 0;
+		stat->isDirectory = (dwFileAttrs & FILE_ATTRIBUTE_DIRECTORY) != 0;
 	}
 	else
 	{
@@ -242,16 +243,18 @@ bool Stat(String path, StatInfo* stat)
 	return true;
 }
 
-bool MakeDirectory(String path, bool recursive)
+bool MakeDirectory(String path, bool recursive, Error& err)
 {
 	// TODO: revise: according to MSDN:
 	// "[SHCreateDirectory is available for use in the operating systems
 	// specified in the Requirements section. It may be altered or unavailable
 	// in subsequent versions.]"
 
-	int r = SHCreateDirectory(GetActiveWindow(), PCWSTR(path.c_str()));
-	if (r == ERROR_SUCCESS)
+	int ret = SHCreateDirectory(GetActiveWindow(), PCWSTR(path.c_str()));
+	if (ret == ERROR_SUCCESS)
 		return true;
+
+	err.FromError(ret);
 	return false;
 }
 
@@ -275,7 +278,7 @@ bool GetDirectory(String& path)
 	return true;
 }
 
-bool ReadDirectory(String path, std::vector<String>& files)
+bool ReadDirectory(String path, std::vector<String>& files, Error& err)
 {
 	if (path.find_first_of(TEXT("*?")) == String::npos)
 	{
@@ -288,7 +291,10 @@ bool ReadDirectory(String path, std::vector<String>& files)
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = FindFirstFile(path.c_str(), &fd);
 	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		err.FromLastError();
 		return false;
+	}
 
 	TCHAR* pBasePath = new TCHAR[path.length() + 1];
 	_tcscpy(pBasePath, path.c_str());
@@ -317,22 +323,33 @@ bool ReadFileBinary(String filename, uint8_t** ppData, int& size, Error& err)
 	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
-		// TODO: error
+		err.FromLastError();
 		return false;
 	}
 
 	DWORD numBytesRead = 0;
 	LARGE_INTEGER fileSize;
-	GetFileSizeEx(hFile, &fileSize);
+	if (!GetFileSizeEx(hFile, &fileSize))
+	{
+		CloseHandle(hFile);
+		err.FromLastError();
+		return false;
+	}
 
 	// we don't want to read too large files
 	_ASSERT(fileSize.HighPart == 0);
 
 	// allocate buffer and read file
-	*ppData = new uint8_t[fileSize.LowPart];
-	::ReadFile(hFile, (LPVOID) data, (DWORD) fileSize.LowPart, &numBytesRead, NULL);
-	size = numBytesRead;
+	**ppData = new BYTE[fileSize.LowPart];
+	if (!::ReadFile(hFile, (LPVOID) data, (DWORD) fileSize.LowPart, &numBytesRead, NULL))
+	{
+		delete[] *ppData;
+		CloseHandle(hFile);
+		err.FromLastError();
+		return false;
+	}
 
+	size = numBytesRead;
 	CloseHandle(hFile);
 
 	return true;
@@ -355,15 +372,25 @@ bool ReadFile(String filename, JavaScript::Object options, String& result, Error
 			// convert the buffer
 			int wcLen = MultiByteToWideChar(CP_UTF8, 0, (LPCCH) data, numBytesRead, NULL, 0);
 			TCHAR* buf = new TCHAR[wcLen + 1];
-			MultiByteToWideChar(CP_UTF8, 0, (LPCCH) data, numBytesRead, buf, wcLen);
+
+			if (MultiByteToWideChar(CP_UTF8, 0, (LPCCH) data, numBytesRead, buf, wcLen) == 0)
+			{
+				delete[] data;
+				delete[] buf;
+				err.FromLastError();
+				return false;
+			}
+
 			buf[wcLen] = 0;
 			result = String(buf, buf + wcLen);
+
 			delete[] buf;
 			delete[] data;
 
 			return true;
 		}
 
+		// reading the file failed
 		return false;
 	}
 
@@ -372,7 +399,7 @@ bool ReadFile(String filename, JavaScript::Object options, String& result, Error
 	{
 		BYTE* pData;
 		DWORD length;
-		if (!ImageUtil::ImageFileToPNG(filename, &pData, &length))
+		if (!ImageUtil::ImageFileToPNG(filename, &pData, &length, err))
 			return false;
 
 		result = TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length);
@@ -380,48 +407,73 @@ bool ReadFile(String filename, JavaScript::Object options, String& result, Error
 		return true;
 	}
 
+	// unknown encoding
+	err.SetError(ERR_UNKNOWN_ENCODING, TEXT("The encoding \"") + encoding + TEXT("\" is not supported."));
+
 	return false;
 }
 
 bool WriteFile(String filename, String contents, Error& err)
 {
+	bool ret = false;
+
 	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (hFile == INVALID_HANDLE_VALUE)
+	if (hFile != INVALID_HANDLE_VALUE)
 	{
-		// TODO: error
-		return false;
+		int mbLen = WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), NULL, 0, NULL, NULL);
+		BYTE* buf = new BYTE[mbLen + 1];
+		if (WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), (LPSTR) buf, mbLen, NULL, NULL))
+		{
+			buf[mbLen] = 0;
+
+			DWORD dwBytesWritten = 0;
+			ret = ::WriteFile(hFile, buf, mbLen, &dwBytesWritten, NULL) == TRUE;
+			FlushFileBuffers(hFile);
+		}
+
+		delete[] buf;
+		CloseHandle(hFile);
 	}
 
-	int mbLen = WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), NULL, 0, NULL, NULL);
-	BYTE* buf = new BYTE[mbLen + 1];
-	WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), (LPSTR) buf, mbLen, NULL, NULL);
-	buf[mbLen] = 0;
-	
-	DWORD dwBytesWritten = 0;
-	::WriteFile(hFile, buf, mbLen, &dwBytesWritten, NULL);
-	FlushFileBuffers(hFile);
-	
-	delete[] buf;
-	CloseHandle(hFile);
+	if (!ret)
+		err.FromLastError();
+
+	return ret;
+}
+
+bool MoveFile(String oldFilename, String newFilename, Error& err)
+{
+	if (!::MoveFile(oldFilename.c_str(), newFilename.c_str()))
+	{
+		err.FromLastError();
+		return false;
+	}
 
 	return true;
 }
 
-bool MoveFile(String oldFilename, String newFilename)
-{
-	return ::MoveFile(oldFilename.c_str(), newFilename.c_str()) != FALSE;
-}
-
-bool DeleteFiles(String filenames)
+bool DeleteFiles(String filenames, Error& err)
 {
 	// no wildcards in the filename; simply delete the file
 	if (filenames.find_first_of(TEXT("*?")) == String::npos)
-		return DeleteFile(filenames.c_str()) != 0;
+	{
+		if (!DeleteFile(filenames.c_str()))
+		{
+			err.FromLastError();
+			return false;
+		}
+
+		return true;
+	}
+		
 
 	WIN32_FIND_DATA fd;
     HANDLE hFind = FindFirstFile(filenames.c_str(), &fd);
-    if (hFind == INVALID_HANDLE_VALUE)
-        return false;
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		err.FromLastError();
+		return false;
+	}
 
 	TCHAR* pDir = new TCHAR[filenames.length() + 1];
 	_tcscpy(pDir, filenames.c_str());
@@ -441,6 +493,7 @@ bool DeleteFiles(String filenames)
 		{
 			FindClose(hFind);
 			delete[] pDir;
+			err.FromLastError();
 			return false;
 		}
 	} while (FindNextFile(hFind, &fd));
@@ -482,7 +535,7 @@ void StorePreferences(String key, String data)
 	}
 }
 
-bool StartAccessingPath(Path& path)
+bool StartAccessingPath(Path& path, Error& err)
 {
 	// not supported on Windows
 	return true;

@@ -208,7 +208,7 @@ int MakeDirectoryInternal(const char* path, mode_t mode)
     return status;
 }
 
-bool MakeDirectory(String path, bool recursive)
+bool MakeDirectory(String path, bool recursive, Error& err)
 {
     int status = 0;
     char* pathTmp = strdup(path.c_str());
@@ -233,10 +233,13 @@ bool MakeDirectory(String path, bool recursive)
 
     free(pathTmp);
 
+    if (status)
+        err.FromErrno();
+
     return status == 0;
 }
 
-bool ReadDirectory(String path, std::vector<String>& files)
+bool ReadDirectory(String path, std::vector<String>& files, Error& err)
 {
     if (path.find_first_of(TEXT("*?")) == String::npos)
     {
@@ -251,15 +254,19 @@ bool ReadDirectory(String path, std::vector<String>& files)
 
     // no match
     if (glob_result.gl_pathc == 0)
+    {
+        globfree(&glob_result);
         return true;
+    }
 
     for (unsigned int i = 0; i < glob_result.gl_pathc; i++)
         files.push_back(String(glob_result.gl_pathv[i]));
 
+    globfree(&glob_result);
     return true;
 }
 
-bool ReadFile(String filename, JavaScript::Object options, String& result)
+bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err)
 {
     bool isBinary;
     bool isImage;
@@ -270,38 +277,53 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
     if (fs.is_open())
     {
         fs.seekg(0, std::ios::end);
-        long size = fs.tellg();
-        char* contents = new char[size];
-        fs.seekg(0, std::ios::beg);
-        fs.read(contents, size);
-
-        if (isImage)
+        if (!fs.fail())
         {
-            // TODO: convert .ico to .png
-            // http://fossies.org/linux/xpaint/util/ico2png/create_icon.c ?
-            result = "data:";
-            result.append(mimeType);
-            result.append(";base64,");
-            result.append(ImageUtil::Base64Encode(contents, size));
-        }
-        else
-            result = String(contents);
+            long size = fs.tellg();
+            if (size >= 0)
+            {
+                char* contents = new char[size];
+                fs.seekg(0, std::ios::beg);
+                if (!fs.fail())
+                {
+                    fs.read(contents, size);
+                    if (!fs.fail())
+                    {
+                        if (isImage)
+                        {
+                            // TODO: convert .ico to .png
+                            // http://fossies.org/linux/xpaint/util/ico2png/create_icon.c ?
+                            result = "data:";
+                            result.append(mimeType);
+                            result.append(";base64,");
+                            result.append(ImageUtil::Base64Encode(contents, size));
+                        }
+                        else
+                            result = String(contents);
 
-        delete[] contents;
-        fs.close();
-        return true;
+                        delete[] contents;
+                        fs.close();
+                        return true;
+                    }
+                }
+            }
+        }
     }
 
+    err.FromErrno();
     return false;
 }
 
-bool WriteFile(String filename, String contents)
+bool WriteFile(String filename, String contents, Error& err)
 {
     std::ofstream file;
     file.open(filename, std::ios::out | std::ios::binary);
 
     if (!file.is_open())
+    {
+        err.FromErrno();
         return false;
+    }
 
     file << contents;
     file.close();
@@ -309,12 +331,15 @@ bool WriteFile(String filename, String contents)
     return true;
 }
 
-bool MoveFile(String oldFilename, String newFilename)
+bool MoveFile(String oldFilename, String newFilename, Error& err)
 {
-    return rename(oldFilename.c_str(), newFilename.c_str()) != 0;
+    int ret = rename(oldFilename.c_str(), newFilename.c_str());
+    if (ret == -1)
+        err.FromErrno();
+    return ret == 0;
 }
 
-bool DeleteFiles(String filenames)
+bool DeleteFiles(String filenames, Error& err)
 {
     glob_t glob_result;
 
@@ -322,11 +347,22 @@ bool DeleteFiles(String filenames)
 
     // no match
     if (glob_result.gl_pathc == 0)
+    {
+        globfree(&glob_result);
         return false;
+    }
 
     for (unsigned int i = 0; i < glob_result.gl_pathc; i++)
+    {
         if (unlink(glob_result.gl_pathv[i]) != 0)
+        {
+            globfree(&glob_result);
+            err.FromErrno();
             return false;
+        }
+    }
+
+    globfree(&glob_result);
 
     // there was a match, and all matching files were deleted successfully
     return true;
@@ -380,10 +416,11 @@ void StorePreferences(String key, String data)
     else
         newContents << key << "=" << data << std::endl;
 
-    WriteFile(prefFile, newContents.str());
+    Error err;
+    WriteFile(prefFile, newContents.str(), err);
 }
 
-bool StartAccessingPath(Path& path)
+bool StartAccessingPath(Path& path, Error& err)
 {
 	// not supported on Linux
 	return true;

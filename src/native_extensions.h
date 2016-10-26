@@ -187,6 +187,7 @@ public:
     }
 
 #ifdef OS_WIN
+	void FromError(DWORD windowsErrorCode);
     void FromLastError();
 #endif
 

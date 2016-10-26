@@ -133,9 +133,9 @@ public:
 		// create a PNG and base64-encode it
 		BYTE* pData = NULL;
 		DWORD length = 0;
-		ImageUtil::BitmapToPNGData(pImage, &pData, &length);
+		Zephyros::ImageUtil::BitmapToPNGData(pImage, &pData, &length);
 		Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-		args->SetString(0, TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length));
+		args->SetString(0, TEXT("data:image/png;base64,") + Zephyros::ImageUtil::Base64Encode(pData, length));
 		
 		g_handler->GetClientExtensionHandler()->InvokeCallback(item->callbackId, args);
 
