@@ -202,6 +202,10 @@ set(ZEPHYROS_CEF_BASE_SRCS
   base/cef/client_handler.h
   base/cef/extension_handler.cpp
   base/cef/extension_handler.h
+  base/cef/local_scheme_handler.cpp
+  base/cef/local_scheme_handler.h
+  base/cef/mime_types.cpp
+  base/cef/mime_types.h
   base/cef/resource_util.h
   base/cef/v8_util.cpp
   base/cef/v8_util.h

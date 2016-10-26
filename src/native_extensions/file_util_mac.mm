@@ -300,6 +300,26 @@ bool ReadDirectory(String path, std::vector<String>& files, Error& err)
 
     return true;
 }
+    
+bool ReadFileBinary(String filename, uint8_t** ppData, int& size, Error& err)
+{
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile: [NSString stringWithUTF8String: filename.c_str()]
+                                          options: 0
+                                            error: &error];
+    
+    if (data == nil || error != nil)
+    {
+        err.FromError(error);
+        return false;
+    }
+    
+    size = data.length;
+    *ppData = new uint8_t[size];
+    [data getBytes: *ppData length: size];
+    
+    return true;
+}
 
 bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err)
 {
