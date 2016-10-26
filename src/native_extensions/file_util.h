@@ -78,6 +78,7 @@ bool ReadDirectory(String path, std::vector<String>& files, Error& err);
  */
 bool GetDirectory(String& path);
 
+bool ReadFileBinary(String filename, uint8_t** ppData, int& size, Error& err);
 bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err);
 bool WriteFile(String filename, String contents, Error& err);
 bool MoveFile(String oldFilename, String newFilename, Error& err);

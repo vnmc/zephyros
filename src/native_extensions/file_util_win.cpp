@@ -312,7 +312,33 @@ bool ReadDirectory(String path, std::vector<String>& files)
 	return true;
 }
 
-bool ReadFile(String filename, JavaScript::Object options, String& result)
+bool ReadFileBinary(String filename, uint8_t** ppData, int& size, Error& err)
+{
+	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		// TODO: error
+		return false;
+	}
+
+	DWORD numBytesRead = 0;
+	LARGE_INTEGER fileSize;
+	GetFileSizeEx(hFile, &fileSize);
+
+	// we don't want to read too large files
+	_ASSERT(fileSize.HighPart == 0);
+
+	// allocate buffer and read file
+	*ppData = new uint8_t[fileSize.LowPart];
+	::ReadFile(hFile, (LPVOID) data, (DWORD) fileSize.LowPart, &numBytesRead, NULL);
+	size = numBytesRead;
+
+	CloseHandle(hFile);
+
+	return true;
+}
+
+bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err)
 {
 	String encoding = TEXT("");
 	if (options->HasKey("encoding"))
@@ -321,20 +347,11 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
 	// text file
 	if (encoding == TEXT("") || encoding == TEXT("utf-8") || encoding == TEXT("text/plain;utf-8"))
 	{
-		HANDLE hFile = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hFile != INVALID_HANDLE_VALUE)
+		uint8_t* data = NULL;
+		int numBytesRead = 0;
+
+		if (ReadFileBinary(filename, &data, numBytesRead, err))
 		{
-			DWORD numBytesRead = 0;
-			LARGE_INTEGER fileSize;
-			GetFileSizeEx(hFile, &fileSize);
-
-			// we don't want to read too large files
-			_ASSERT(fileSize.HighPart == 0);
-
-			// allocate buffer and read file
-			BYTE* data = new BYTE[fileSize.LowPart];
-			::ReadFile(hFile, (LPVOID) data, (DWORD) fileSize.LowPart, &numBytesRead, NULL);
-
 			// convert the buffer
 			int wcLen = MultiByteToWideChar(CP_UTF8, 0, (LPCCH) data, numBytesRead, NULL, 0);
 			TCHAR* buf = new TCHAR[wcLen + 1];
@@ -343,12 +360,13 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
 			result = String(buf, buf + wcLen);
 			delete[] buf;
 			delete[] data;
+
+			return true;
 		}
 
-		CloseHandle(hFile);
-		return true;
+		return false;
 	}
-	
+
 	// image file; return as base64-encoded PNG
 	if (encoding == TEXT("image/png;base64"))
 	{
@@ -365,11 +383,14 @@ bool ReadFile(String filename, JavaScript::Object options, String& result)
 	return false;
 }
 
-bool WriteFile(String filename, String contents)
+bool WriteFile(String filename, String contents, Error& err)
 {
 	HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		// TODO: error
 		return false;
+	}
 
 	int mbLen = WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), NULL, 0, NULL, NULL);
 	BYTE* buf = new BYTE[mbLen + 1];

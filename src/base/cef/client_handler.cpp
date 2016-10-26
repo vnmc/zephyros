@@ -46,6 +46,7 @@
 
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
+#include "base/cef/mime_types.h"
 #include "base/cef/resource_util.h"
 
 #include "native_extensions/file_util.h"
@@ -79,128 +80,10 @@ ClientHandler::ClientHandler()
 	m_processMessageDelegates.insert(static_cast< CefRefPtr<ProcessMessageDelegate> >(m_clientExtensionHandler));
     Zephyros::GetNativeExtensions()->AddNativeExtensions(m_clientExtensionHandler.get());
     Zephyros::GetNativeExtensions()->SetNativeExtensionsAdded();
-	InitializeMIMETypes();
 }
 
 ClientHandler::~ClientHandler()
 {
-}
-
-void ClientHandler::InitializeMIMETypes()
-{
-    m_mimeTypes[TEXT(".html")] = TEXT("text/html");
-    m_mimeTypes[TEXT(".htm")] = TEXT("text/html");
-    m_mimeTypes[TEXT(".css")] = TEXT("text/css");
-    m_mimeTypes[TEXT(".json")] = TEXT("application/json");
-    m_mimeTypes[TEXT(".js")] = TEXT("text/javascript");
-    m_mimeTypes[TEXT(".xml")] = TEXT("application/xml");
-    m_mimeTypes[TEXT(".txt")] = TEXT("text/plain");
-    m_mimeTypes[TEXT(".log")] = TEXT("text/plain");
-
-    // fonts
-    m_mimeTypes[TEXT(".pdf")] = TEXT("application/pdf");
-    m_mimeTypes[TEXT(".otf")] = TEXT("application/x-font-otf");
-    m_mimeTypes[TEXT(".ttf")] = TEXT("application/x-font-ttf");
-    m_mimeTypes[TEXT(".pfa")] = TEXT("application/x-font-type1");
-    m_mimeTypes[TEXT(".pfb")] = TEXT("application/x-font-type1");
-    m_mimeTypes[TEXT(".pfm")] = TEXT("application/x-font-type1");
-    m_mimeTypes[TEXT(".afm")] = TEXT("application/x-font-type1");
-    m_mimeTypes[TEXT(".woff")] = TEXT("application/font-woff");
-
-    // images
-    m_mimeTypes[TEXT(".bmp'")] = TEXT("image/bmp");
-    m_mimeTypes[TEXT(".cgm")] = TEXT("image/cgm");
-    m_mimeTypes[TEXT(".gif")] = TEXT("image/gif");
-    m_mimeTypes[TEXT(".ief")] = TEXT("image/ief");
-    m_mimeTypes[TEXT(".jpeg")] = TEXT("image/jpeg");
-    m_mimeTypes[TEXT(".jpg")] = TEXT("image/jpeg");
-    m_mimeTypes[TEXT(".jpe")] = TEXT("image/jpeg");
-    m_mimeTypes[TEXT(".png")] = TEXT("image/png");
-    m_mimeTypes[TEXT(".sgi")] = TEXT("image/sgi");
-    m_mimeTypes[TEXT(".svg")] = TEXT("image/svg+xml");
-    m_mimeTypes[TEXT(".svgz")] = TEXT("image/svg+xml");
-    m_mimeTypes[TEXT(".tiff")] = TEXT("image/tiff");
-    m_mimeTypes[TEXT(".tif")] = TEXT("image/tiff");
-
-    // audio
-    m_mimeTypes[TEXT(".au")] = TEXT("audio/basic");
-    m_mimeTypes[TEXT(".snd")] = TEXT("audio/basic");
-    m_mimeTypes[TEXT(".mid")] = TEXT("audio/midi");
-    m_mimeTypes[TEXT(".midi")] = TEXT("audio/midi");
-    m_mimeTypes[TEXT(".rmi")] = TEXT("audio/midi");
-    m_mimeTypes[TEXT(".mp4a")] = TEXT("audio/mp4");
-    m_mimeTypes[TEXT(".mpga")] = TEXT("audio/mpeg");
-    m_mimeTypes[TEXT(".mp2")] = TEXT("audio/mpeg");
-    m_mimeTypes[TEXT(".mp2a")] = TEXT("audio/mpeg");
-    m_mimeTypes[TEXT(".mp3")] = TEXT("audio/mpeg");
-    m_mimeTypes[TEXT(".m2a")] = TEXT("audio/mpeg");
-    m_mimeTypes[TEXT(".m3a")] = TEXT("audio/mpeg");
-    m_mimeTypes[TEXT(".oga")] = TEXT("audio/ogg");
-    m_mimeTypes[TEXT(".ogg")] = TEXT("audio/ogg");
-    m_mimeTypes[TEXT(".spx")] = TEXT("audio/ogg");
-    m_mimeTypes[TEXT(".s3m")] = TEXT("audio/s3m");
-    m_mimeTypes[TEXT(".sil")] = TEXT("audio/silk");
-    m_mimeTypes[TEXT(".rip")] = TEXT("audio/vnd.rip");
-    m_mimeTypes[TEXT(".weba")] = TEXT("audio/webm");
-    m_mimeTypes[TEXT(".aac")] = TEXT("audio/x-aac");
-    m_mimeTypes[TEXT(".aif")] = TEXT("audio/x-aiff");
-    m_mimeTypes[TEXT(".aiff")] = TEXT("audio/x-aiff");
-    m_mimeTypes[TEXT(".aifc")] = TEXT("audio/x-aiff");
-    m_mimeTypes[TEXT(".caf")] = TEXT("audio/x-caf");
-    m_mimeTypes[TEXT(".flac")] = TEXT("audio/x-flac");
-    m_mimeTypes[TEXT(".m3u")] = TEXT("audio/x-mpegurl");
-    m_mimeTypes[TEXT(".wax")] = TEXT("audio/x-ms-wax");
-    m_mimeTypes[TEXT(".wma")] = TEXT("audio/x-ms-wma");
-    m_mimeTypes[TEXT(".ram")] = TEXT("audio/x-pn-realaudio");
-    m_mimeTypes[TEXT(".ra")] = TEXT("audio/x-pn-realaudio");
-    m_mimeTypes[TEXT(".rmp")] = TEXT("audio/x-pn-realaudio-plugin");
-    m_mimeTypes[TEXT(".wav")] = TEXT("audio/x-wav");
-    m_mimeTypes[TEXT(".xm")] = TEXT("audio/xm");
-
-    // video
-    m_mimeTypes[TEXT(".3gp")] = TEXT("video/3gpp");
-    m_mimeTypes[TEXT(".3g2")] = TEXT("video/3gpp2");
-    m_mimeTypes[TEXT(".h261")] = TEXT("video/h261");
-    m_mimeTypes[TEXT(".h263")] = TEXT("video/h263");
-    m_mimeTypes[TEXT(".h264")] = TEXT("video/h264");
-    m_mimeTypes[TEXT(".jpgv")] = TEXT("video/jpeg");
-    m_mimeTypes[TEXT(".jpm")] = TEXT("video/jpm");
-    m_mimeTypes[TEXT(".jpgm")] = TEXT("video/jpm");
-    m_mimeTypes[TEXT(".mj2")] = TEXT("video/mj2");
-    m_mimeTypes[TEXT(".mjp2")] = TEXT("video/mj2");
-    m_mimeTypes[TEXT(".mp4")] = TEXT("video/mp4");
-    m_mimeTypes[TEXT(".mp4v")] = TEXT("video/mp4");
-    m_mimeTypes[TEXT(".mpg4")] = TEXT("video/mp4");
-    m_mimeTypes[TEXT(".mpeg")] = TEXT("video/mpeg");
-    m_mimeTypes[TEXT(".mpg")] = TEXT("video/mpeg");
-    m_mimeTypes[TEXT(".mpe")] = TEXT("video/mpeg");
-    m_mimeTypes[TEXT(".m1v")] = TEXT("video/mpeg");
-    m_mimeTypes[TEXT(".m2v")] = TEXT("video/mpeg");
-    m_mimeTypes[TEXT(".ogv")] = TEXT("video/ogg");
-    m_mimeTypes[TEXT(".qt")] = TEXT("video/quicktime");
-    m_mimeTypes[TEXT(".mov")] = TEXT("video/quicktime");
-    m_mimeTypes[TEXT(".mxu")] = TEXT("video/vnd.mpegurl");
-    m_mimeTypes[TEXT(".m4u")] = TEXT("video/vnd.mpegurl");
-    m_mimeTypes[TEXT(".pyv")] = TEXT("video/vnd.ms-playready.media.pyv");
-    m_mimeTypes[TEXT(".uvu")] = TEXT("video/vnd.uvvu.mp4");
-    m_mimeTypes[TEXT(".uvvu")] = TEXT("video/vnd.uvvu.mp4");
-    m_mimeTypes[TEXT(".viv")] = TEXT("video/vnd.vivo");
-    m_mimeTypes[TEXT(".webm")] = TEXT("video/webm");
-    m_mimeTypes[TEXT(".f4v")] = TEXT("video/x-f4v");
-    m_mimeTypes[TEXT(".fli")] = TEXT("video/x-fli");
-    m_mimeTypes[TEXT(".flv")] = TEXT("video/x-flv");
-    m_mimeTypes[TEXT(".m4v")] = TEXT("video/x-m4v");
-    m_mimeTypes[TEXT(".mng")] = TEXT("video/x-mng");
-    m_mimeTypes[TEXT(".asf")] = TEXT("video/x-ms-asf");
-    m_mimeTypes[TEXT(".asx")] = TEXT("video/x-ms-asf");
-    m_mimeTypes[TEXT(".vob")] = TEXT("video/x-ms-vob");
-    m_mimeTypes[TEXT(".wm")] = TEXT("video/x-ms-wm");
-    m_mimeTypes[TEXT(".wmv")] = TEXT("video/x-ms-wmv");
-    m_mimeTypes[TEXT(".wmx")] = TEXT("video/x-ms-wmx");
-    m_mimeTypes[TEXT(".wvx")] = TEXT("video/x-ms-wvx");
-    m_mimeTypes[TEXT(".avi")] = TEXT("video/x-msvideo");
-    m_mimeTypes[TEXT(".movie")] = TEXT("video/x-sgi-movie");
-    m_mimeTypes[TEXT(".smv")] = TEXT("video/x-smv");
 }
 
 bool ClientHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
@@ -378,16 +261,10 @@ CefRefPtr<CefResourceHandler> ClientHandler::GetResourceHandler(CefRefPtr<CefBro
        url = url.substr(7);
     }
 
-    // find the MIME type
-    size_t pos = url.rfind(TEXT('.'));
-    String extension = pos == String::npos ? TEXT("") : url.substr(pos);
-    std::map<String, String>::iterator it = m_mimeTypes.find(extension);
-    String mimeType = it == m_mimeTypes.end() ? TEXT("application/octet-stream") : it->second;
-
     // load the data
     CefRefPtr<CefStreamReader> stream = GetBinaryResourceReader(url.c_str());
     if (stream.get())
-        return new CefStreamResourceHandler(mimeType, stream);
+        return new CefStreamResourceHandler(GetMIMETypeForFilename(url), stream);
 
 	return NULL;
 }

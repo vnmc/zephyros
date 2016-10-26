@@ -36,6 +36,7 @@
 
 #import "base/app.h"
 #import "base/cef/client_app.h"
+#import "base/cef/local_scheme_handler.h"
 #import "base/cef/ZPYCEFAppDelegate.h"
 
 
@@ -117,6 +118,7 @@ int RunApplication(int argc, char* argv[])
 
     // initialize CEF
     CefInitialize(main_args, settings, app.get(), NULL);
+    CefRegisterSchemeHandlerFactory("local", "", new LocalSchemeHandlerFactory());
 
     Zephyros::AbstractLicenseManager* pLicenseMgr = Zephyros::GetLicenseManager();
     g_appDelegate = [[ZPYCEFAppDelegate alloc] init];

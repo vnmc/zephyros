@@ -74,13 +74,17 @@ void InitCommandLine(int argc, const char* const* argv)
 #endif
 }
 
-// Returns the application command line object.
+/**
+ * Returns the application command line object.
+ */
 CefRefPtr<CefCommandLine> GetCommandLine()
 {
     return g_command_line;
 }
 
-// Returns the application settings based on command line arguments.
+/**
+ * Returns the application settings based on command line arguments.
+ */
 void GetSettings(CefSettings& settings)
 {
     DCHECK(g_command_line.get());
@@ -100,6 +104,9 @@ void GetSettings(CefSettings& settings)
     if (!g_command_line->HasSwitch("remote-debugging-port"))
         settings.remote_debugging_port = 19384;
 #endif
+    
+    //CefString(&settings.log_file).FromASCII("/Users/christen/tmp1/zephyros.log");
+    settings.log_severity = LOGSEVERITY_VERBOSE;
 }
 
 } // namespace App

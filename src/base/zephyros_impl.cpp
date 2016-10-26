@@ -42,6 +42,7 @@
 #ifdef USE_CEF
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
+#include "base/cef/mime_types.h"
 #endif
 
 #include "zephyros.h"
@@ -178,6 +179,10 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
 
     // initialize with default values
     InitDefaultStrings();
+    
+#ifdef USE_CEF
+    InitializeMIMETypes();
+#endif
 
 #ifdef OS_WIN
     // - set the registry key to "Software\<AppName>"

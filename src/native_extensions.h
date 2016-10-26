@@ -345,9 +345,6 @@ public:
 	void CloseDevTools(CefRefPtr<CefBrowser> browser);
 
 private:
-	void InitializeMIMETypes();
-
-private:
 	// START THREAD SAFE MEMBERS
 	// The following members are thread-safe because they're initialized during
 	// object construction and not changed thereafter.
@@ -356,8 +353,6 @@ private:
     ProcessMessageDelegateSet m_processMessageDelegates;
 
 	CefRefPtr<ClientExtensionHandler> m_clientExtensionHandler;
-
-	std::map<String, String> m_mimeTypes;
 
 	// END THREAD SAFE MEMBERS
 
