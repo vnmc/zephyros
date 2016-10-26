@@ -31,6 +31,7 @@
 #include "native_extensions/image_util_win.h"
 
 
+namespace Zephyros {
 namespace ImageUtil {
 
 /**
@@ -144,7 +145,7 @@ bool IconToGrayscalePNG(HICON hIcon, BYTE** pData, DWORD* pLength)
 	return *pData != NULL;
 }
 
-bool ImageFileToPNG(String filename, BYTE** pData, DWORD* pLength)
+bool ImageFileToPNG(String filename, BYTE** pData, DWORD* pLength, Error& err)
 {
 	*pData = NULL;
 
@@ -152,6 +153,11 @@ bool ImageFileToPNG(String filename, BYTE** pData, DWORD* pLength)
 
 	if (bitmap.GetLastStatus() == Gdiplus::Ok)
 		BitmapToPNGData(&bitmap, pData, pLength);
+	else
+		err.SetError(ERR_FILE_NOT_FOUND, TEXT("The image file \"") + filename + TEXT("\" could not be found."));
+
+	if (pData == NULL)
+		err.SetError(ERR_DECODING_FAILED, TEXT("The file \"") + filename + TEXT("\" is not a valid image."));
 
 	return *pData != NULL;
 }
@@ -325,3 +331,4 @@ BYTE* Base64Decode(String strData, size_t* pLength)
 }
 
 } // namespace ImageUtil
+} // namespace Zephyros

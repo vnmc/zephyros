@@ -25,45 +25,79 @@
  *******************************************************************************/
 
 
-#ifndef Zephyros_ImageUtilWin_h
-#define Zephyros_ImageUtilWin_h
-
-
-#include <Windows.h>
-#include <minmax.h>
-#include <objidl.h>
-#include <gdiplus.h>
-
-#include "include/cef_base.h"
-#include "base/types.h"
-
-#include "lib/cef/include/base/cef_lock.h"
-#include "lib/cef/include/cef_client.h"
-#include "lib/cef/include/wrapper/cef_helpers.h"
-
-#include "native_extensions.h"
+#include <string.h>
 #include "native_extensions/error.h"
 
 
 namespace Zephyros {
-namespace ImageUtil {
 
+void Error::FromErrno()
+{
+	if (errno == 0)
+	{
+		SetError(ERR_OK);
+		return;
+	}
 
-bool IconToPNG(HICON hIcon, BYTE** pData, DWORD* pLength);
-bool IconToGrayscalePNG(HICON hIcon, BYTE** pData, DWORD* pLength);
-bool ImageFileToPNG(String filename, BYTE** pData, DWORD* pLength, Error& err);
+	int code = ERR_UNKNOWN;
+	switch (errno)
+	{
+    case ENOENT:
+        code = ERR_FILE_NOT_FOUND;
+        break;
+    case EACCES:
+        code = ERR_FILE_NO_READ_PERMISSION;
+        break;
+    case EEXIST:
+        code = ERR_FILE_EXISTS;
+        break;
+    case ENOTDIR:
+        code = ERR_NO_DIRECTORY;
+        break;
+    case EISDIR:
+        code = ERR_IS_DIRECTORY;
+        break;
+    case EMFILE:
+    case ENFILE:
+        code = ERR_TOO_MANY_OPEN_FILES;
+        break;
+    case EFBIG:
+        code = ERR_FILE_TOO_LARGE;
+        break;
+    case ENOSPC:
+        code = ERR_DISK_FULL;
+        break;
+    case EROFS:
+        code = ERR_FILE_NO_WRITE_PERMISSION;
+        break;
+    case EADDRINUSE:
+        code = ERR_ADDRESS_IN_USE;
+        break;
+    case EADDRNOTAVAIL:
+        code = ERR_ADDRESS_NOT_AVAILABLE;
+        break;
+    case ENETDOWN:
+    case ENETUNREACH:
+        code = ERR_NO_NETWORK;
+        break;
+    case ECONNRESET:
+        code = ERR_CONNECTION_RESET;
+        break;
+    case ENOTCONN:
+        code = ERR_NOT_CONNECTED;
+        break;
+    case ETIMEDOUT:
+        code = ERR_TIMED_OUT;
+        break;
+    case ECONNREFUSED:
+        code = ERR_CONNECTION_REFUSED;
+        break;
+    case ENAMETOOLONG:
+        code = ERR_NAME_TOO_LONG;
+        break;
+	}
 
-bool BitmapToPNGData(Gdiplus::Bitmap* pBitmap, BYTE** pData, DWORD* pLength);
-String Base64Encode(BYTE* data, DWORD length);
-BYTE* Base64Decode(String strData, size_t* pLength);
+	SetError(code, strerror(errno));
+}
 
-HBITMAP Base64PNGDataToBitmap(String strData, SIZE size);
-
-bool GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
-
-
-} // namespace ImageUtil
 } // namespace Zephyros
-
-
-#endif // Zephyros_ImageUtilWin_h

@@ -59,8 +59,9 @@
 #define ERR_TIMED_OUT 60
 #define ERR_CONNECTION_REFUSED 61
 #define ERR_NAME_TOO_LONG 63
-#define ERR_UNKNOWN_ENCODING 101
-#define ERR_DECODING_FAILED 102
+#define ERR_INSUFFICIENT_MEMORY 101
+#define ERR_UNKNOWN_ENCODING 102
+#define ERR_DECODING_FAILED 103
 
 // the class "Error" is declared in native_extensions.h
 
