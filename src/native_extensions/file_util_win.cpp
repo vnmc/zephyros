@@ -340,8 +340,8 @@ bool ReadFileBinary(String filename, uint8_t** ppData, int& size, Error& err)
     _ASSERT(fileSize.HighPart == 0);
 
     // allocate buffer and read file
-    **ppData = new BYTE[fileSize.LowPart];
-    if (!::ReadFile(hFile, (LPVOID) data, (DWORD) fileSize.LowPart, &numBytesRead, NULL))
+    *ppData = new BYTE[fileSize.LowPart];
+    if (!::ReadFile(hFile, (LPVOID) *ppData, (DWORD) fileSize.LowPart, &numBytesRead, NULL))
     {
         delete[] *ppData;
         CloseHandle(hFile);

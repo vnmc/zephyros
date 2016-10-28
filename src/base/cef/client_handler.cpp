@@ -249,6 +249,8 @@ CefRefPtr<CefResourceHandler> ClientHandler::GetResourceHandler(CefRefPtr<CefBro
     CEF_REQUIRE_IO_THREAD();
 
     String url = request->GetURL();
+	if (url.substr(0, 7) != TEXT("http://"))
+		return NULL;
 
     // construct the path to the resource
     String appURL(Zephyros::GetAppURL());
