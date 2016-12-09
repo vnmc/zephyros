@@ -25,34 +25,26 @@
  *******************************************************************************/
 
 
-#ifndef Zephyros_NetworkUtil_h
-#define Zephyros_NetworkUtil_h
+#ifndef Zephyros_ZPYTouchBarItems_h
+#define Zephyros_ZPYTouchBarItems_h
 #pragma once
 
 
-#include <vector>
-#include "base/types.h"
-#include "jsbridge.h"
+#import <Cocoa/Cocoa.h>
+
+@interface ZPYTouchBarButton : NSButton
+
+@property (copy) NSString* commandId;
+
++ (NSCustomTouchBarItem*) buttonWithId: (NSString*) cmdId
+                                 title: (NSString*) title
+                                 image: (NSImage*) image
+                                 color: (NSColor*) color
+                       backgroundColor: (NSColor*) backgroundColor
+                                action: (SEL) selector
+                                target: (id) target;
+
+@end
 
 
-namespace Zephyros {
-namespace NetworkUtil {
-
-std::vector<String> GetNetworkIPs();
-
-String GetPrimaryMACAddress();
-
-std::vector<String> GetAllMACAddresses();
-
-bool GetProxyForURL(String url, String& proxyType, String& host, int& port, String& username, String& password);
-
-#ifdef USE_WEBVIEW
-// For Mac/WebView: Make a HTTP request
-void MakeRequest(JSObjectRef callback, String httpMethod, String url, String postData, String postDataContentType, String responseDataType);
-#endif
-
-} // namespace NetworkUtil
-} // namespace Zephyros
-
-
-#endif // Zepyhros_NetworkUtil_h
+#endif // Zephyros_ZPYTouchBarItems_h

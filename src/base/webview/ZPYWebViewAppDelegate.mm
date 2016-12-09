@@ -73,6 +73,8 @@ JSContextRef g_ctx = NULL;
 
 - (void) applicationDidFinishLaunching: (NSNotification*) notification
 {
+    [super applicationDidFinishLaunching: notification];
+
     _view.extension = m_extension;
     
     // set this class as the web view's frame load delegate

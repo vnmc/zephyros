@@ -588,6 +588,11 @@ String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
     return TEXT("");
 }
 
+void CreateTouchBar(JavaScript::Array touchBarItems)
+{
+    // not applicable
+}
+
 
 int lastOriginX = INT_MIN;
 int lastOriginY = INT_MIN;

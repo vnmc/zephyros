@@ -37,6 +37,7 @@
 #endif
 
 #import "base/app.h"
+#import "base/ZPYTouchBarHandler.h"
 
 #import "native_extensions/path.h"
 
@@ -45,7 +46,7 @@
 #import "native_extensions.h"
 
 
-@interface ZPYAppDelegate : NSObject <NSApplicationDelegate, NSUserNotificationCenterDelegate>
+@interface ZPYAppDelegate : NSObject <NSApplicationDelegate, NSUserNotificationCenterDelegate, NSTouchBarProvider, NSTouchBarDelegate>
 {
 @protected
     std::vector<Zephyros::Path*> m_launchPaths;
@@ -57,6 +58,9 @@
 #ifndef APPSTORE
 @property (retain) SUUpdater *updater;
 #endif
+
+@property ZPYTouchBarHandler *touchBarHandler;
+@property NSTouchBar *touchBar;
 
 
 - (void) addLaunchPaths;

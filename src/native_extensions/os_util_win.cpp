@@ -469,6 +469,11 @@ String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
     return Zephyros::GetMenuCommandForID(nRet);
 }
 
+void CreateTouchBar(JavaScript::Array touchBarItems)
+{
+    // not applicable
+}
+
 void GetWindowBorderSize(POINT* pPtBorder)
 {
     RECT rectWnd, rectClient;
