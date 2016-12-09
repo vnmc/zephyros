@@ -67,6 +67,8 @@ MenuHandle CreateContextMenu(JavaScript::Array menuItems);
 String ShowContextMenu(MenuHandle nMenuHandle, int x, int y);
 void RemoveMenuItem(String strCommandId);
 
+void CreateTouchBar(JavaScript::Array touchBarItems);
+    
 #ifdef OS_WIN
 void GetWindowBorderSize(POINT* pPtBorder);
 #endif

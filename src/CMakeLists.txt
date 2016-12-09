@@ -35,6 +35,8 @@ set(ZEPHYROS__BASE_SRCS_MACOSX
   base/ZPYAppDelegate.mm
   base/ZPYMenuHandler.h
   base/ZPYMenuHandler.mm
+  base/ZPYTouchBarHandler.h
+  base/ZPYTouchBarHandler.mm
 )
 set(ZEPHYROS__BASE_SRCS_WINDOWS
   base/app_win.cpp
@@ -141,6 +143,8 @@ set(ZEPHYROS__COMPONENTS_SRCS)
 set(ZEPHYROS__COMPONENTS_SRCS_MACOSX
   components/ZPYMenuItem.h
   components/ZPYMenuItem.mm
+  components/ZPYTouchBarItems.h
+  components/ZPYTouchBarItems.mm
 )
 set(ZEPHYROS__COMPONENTS_SRCS_WINDOWS
   components/dialog_win.cpp

@@ -129,6 +129,15 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
+    // onTouchBarAction: (callback: (id: string) => void) => void
+    e->AddNativeJavaScriptCallback(
+        TEXT("onTouchBarAction"),
+        FUNC({
+            // only register callback
+            return NO_ERROR;
+        }
+    ));
+
     // onFileChanged: (callback: (paths: string[]) => void) => void
     e->AddNativeJavaScriptCallback(
         TEXT("onFileChanged"),
@@ -232,6 +241,16 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_STRING, "menuHandle")
         ARG(VTYPE_INT, "x")
         ARG(VTYPE_INT, "y")
+    ));
+    
+    // createTouchBar: (touchBarItems: ITouchBarItem[]) => void;
+    e->AddNativeJavaScriptProcedure(
+        TEXT("createTouchBar"),
+        FUNC({
+            OSUtil::CreateTouchBar(args->GetList(0));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_LIST, "items")
     ));
 
 

@@ -38,6 +38,7 @@
 #endif
 
 #import "components/ZPYMenuItem.h"
+#import "components/ZPYTouchBarItems.h"
 
 #import "native_extensions/os_util.h"
 #import "native_extensions/image_util_mac.h"
@@ -758,6 +759,95 @@ String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
         
     [NSMenu popUpContextMenu: menu withEvent: event forView: view];
     return view.selectedCommandId == nil ? "" : String([view.selectedCommandId UTF8String]);
+}
+    
+int HexCharToInt(char c)
+{
+    if ('0' <= c && c <= '9')
+        return c - '0';
+    if ('a' <= c && c <= 'f')
+        return c - 'a' + 10;
+    if ('A' <= c && c <= 'F')
+        return c - 'A' + 10;
+    return 0;
+}
+    
+float ToColorComponent(const char* str)
+{
+    return (HexCharToInt(str[0]) * 16 + HexCharToInt(str[1])) / 255.f;
+}
+    
+void CreateTouchBar(JavaScript::Array touchBarItems)
+{
+    if (![[NSApplication sharedApplication] respondsToSelector: @selector(isAutomaticCustomizeTouchBarMenuItemEnabled)])
+        return;
+
+    ZPYAppDelegate* appDelegate = (ZPYAppDelegate*) [[NSApplication sharedApplication] delegate];
+    NSMutableArray* ids = [[NSMutableArray alloc] init];
+    int numItems = (int) touchBarItems->GetSize();
+    
+    [appDelegate.touchBarHandler clear];
+    
+    for (int i = 0; i < numItems; ++i)
+    {
+        JavaScript::Object item = touchBarItems->GetDictionary(i);
+        if (!item->HasKey("id") || !item->HasKey("caption"))
+            continue;
+
+        NSString* identifier = [NSString stringWithUTF8String: item->GetString("id").c_str()];
+        
+        // add the identifier to the list
+        [ids addObject: identifier];
+
+        // create the image
+        NSImage* image = nil;
+        if (item->HasKey("image"))
+        {
+            String imgStr = item->GetString("image");
+            if (!imgStr.empty())
+                image = ImageUtil::Base64EncodedPNGToNSImage(imgStr, NSMakeSize(18, 18));
+        }
+        
+        // create the text color
+        NSColor* color = nil;
+        if (item->HasKey("color"))
+        {
+            const char* col = item->GetString("color").c_str();
+            if (col[0] == '#' && strlen(col) >= 7)
+            {
+                color = [NSColor colorWithCalibratedRed: ToColorComponent(col + 1)
+                                                  green: ToColorComponent(col + 3)
+                                                   blue: ToColorComponent(col + 5)
+                                                  alpha: 1.f];
+            }
+        }
+
+        // create the background color
+        NSColor* colorBkgnd = nil;
+        if (item->HasKey("backgroundColor"))
+        {
+            const char* col = item->GetString("backgroundColor").c_str();
+            if (col[0] == '#' && strlen(col) >= 7)
+            {
+                colorBkgnd = [NSColor colorWithCalibratedRed: ToColorComponent(col + 1)
+                                                       green: ToColorComponent(col + 3)
+                                                        blue: ToColorComponent(col + 5)
+                                                       alpha: 1.f];
+            }
+        }
+        
+        // create the button
+        [appDelegate.touchBarHandler addItem: [ZPYTouchBarButton buttonWithId: identifier
+                                                                        title: [NSString stringWithUTF8String: item->GetString("caption").c_str()]
+                                                                        image: image
+                                                                        color: color
+                                                              backgroundColor: colorBkgnd
+                                                                       action: @selector(touchBarItemSelected:)
+                                                                       target: appDelegate.touchBarHandler]];
+    }
+
+    [ids addObject: NSTouchBarItemIdentifierOtherItemsProxy];
+    appDelegate.touchBar.defaultItemIdentifiers = ids;
 }
     
 void CopyToClipboard(String text)

@@ -25,34 +25,54 @@
  *******************************************************************************/
 
 
-#ifndef Zephyros_NetworkUtil_h
-#define Zephyros_NetworkUtil_h
-#pragma once
+#import <Cocoa/Cocoa.h>
+
+#import "base/ZPYAppDelegate.h"
+#import "base/ZPYTouchBarHandler.h"
+#import "base/types.h"
+
+#import "zephyros.h"
 
 
-#include <vector>
-#include "base/types.h"
-#include "jsbridge.h"
+@implementation ZPYTouchBarHandler
+
+- (id) init
+{
+    self = [super init];
+    m_items = [[NSMutableDictionary alloc] init];
+
+    return self;
+}
+
+- (void) clear
+{
+    [m_items removeAllObjects];
+}
+
+- (void) addItem: (NSTouchBarItem*) item
+{
+    [m_items setObject: item forKey: item.identifier];
+}
+
+- (NSTouchBarItem*) itemForId: (NSString*) identifier
+{
+    return [m_items objectForKey: identifier];
+}
+
+/**
+ * Invoked when a menu has been clicked.
+ */
+- (IBAction) touchBarItemSelected: (id) sender
+{
+    NSString *commandId = [sender valueForKey: @"commandId"];
+    
+    if (commandId == nil || [commandId isEqualToString: @""])
+        return;
+    
+    Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
+    args->SetString(0, String([commandId UTF8String]));
+    Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onTouchBarAction"), args);
+}
 
 
-namespace Zephyros {
-namespace NetworkUtil {
-
-std::vector<String> GetNetworkIPs();
-
-String GetPrimaryMACAddress();
-
-std::vector<String> GetAllMACAddresses();
-
-bool GetProxyForURL(String url, String& proxyType, String& host, int& port, String& username, String& password);
-
-#ifdef USE_WEBVIEW
-// For Mac/WebView: Make a HTTP request
-void MakeRequest(JSObjectRef callback, String httpMethod, String url, String postData, String postDataContentType, String responseDataType);
-#endif
-
-} // namespace NetworkUtil
-} // namespace Zephyros
-
-
-#endif // Zepyhros_NetworkUtil_h
+@end

@@ -62,6 +62,10 @@ declare module NativeInterface
 		onMenuCommand: (callback: (commandId: string) => void) => void;
 
 		/**
+		 */
+		onTouchBarAction: (callback: (id: string) => void) => void;
+
+		/**
 		 * The callback function will be called when file watching has been
 		 * started on a directory, and a file in that directory has changed.
 		 *
@@ -107,6 +111,7 @@ declare module NativeInterface
 		// UI Commands
 
 		/**
+		 * Creates the application menu.
 		 */
 		createMenu: (menuItems: IMenuItem[]) => void;
 
@@ -165,6 +170,11 @@ declare module NativeInterface
 		 *   context menu.
 		 */
 		showContextMenu: (menuHandle: string, x: number, y: number, callback: (menuCommandId: string) => void) => void;
+
+		/**
+		 * On macOS with touch bars: sets the current touch bar.
+		 */
+		createTouchBar: (touchBarItems: ITouchBarItem[]) => void;
 
         /**
          * Copies the text "text" to the clipboard.
@@ -815,10 +825,29 @@ declare module NativeInterface
 		 */
 		keyModifiers?: number;
 
+		/**
+		 * Base64-encoded PNG of the image
+		 */
 		image?: string;
+
 		menuCommandId?: string;
 		systemCommandId?: string|number;
 		subMenuItems?: IMenuItem[];
+	}
+
+	export interface ITouchBarItem
+	{
+		id: string;
+
+		caption: string;
+
+		/**
+		 * Base64-encoded PNG of the image
+		 */
+		image?: string;
+
+		color?: string;
+		backgroundColor?: string;
 	}
 
 	export interface IUpdaterSettings

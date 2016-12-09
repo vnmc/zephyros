@@ -95,6 +95,18 @@
         pMgr->GetReceiptChecker()->CopyAppStoreReceipt();
 }
 
+- (void)applicationDidFinishLaunching: (NSNotification*) notification
+{
+    if ([[NSApplication sharedApplication] respondsToSelector: @selector(isAutomaticCustomizeTouchBarMenuItemEnabled)])
+    {
+        [NSApplication sharedApplication].automaticCustomizeTouchBarMenuItemEnabled = YES;
+
+        self.touchBarHandler = [[ZPYTouchBarHandler alloc] init];
+        self.touchBar = [[NSTouchBar alloc] init];
+        self.touchBar.delegate = self;
+    }
+}
+
 /**
  * Called when an URL is dropped on the dock icon.
  */
@@ -224,6 +236,11 @@
         if (item.hasSubmenu)
             [self setMenuItemStatusesRecursive: statuses forMenu: item.submenu];
     }
+}
+
+- (nullable NSTouchBarItem*) touchBar: (NSTouchBar*) touchBar makeItemForIdentifier: (NSTouchBarItemIdentifier) identifier
+{
+    return [self.touchBarHandler itemForId: identifier];
 }
 
 - (BOOL) userNotificationCenter: (NSUserNotificationCenter*) center shouldPresentNotification: (NSUserNotification*) notification

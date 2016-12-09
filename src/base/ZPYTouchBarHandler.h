@@ -25,34 +25,17 @@
  *******************************************************************************/
 
 
-#ifndef Zephyros_NetworkUtil_h
-#define Zephyros_NetworkUtil_h
-#pragma once
+#import <Foundation/Foundation.h>
 
+@interface ZPYTouchBarHandler : NSObject
+{
+    NSMutableDictionary* m_items;
+}
 
-#include <vector>
-#include "base/types.h"
-#include "jsbridge.h"
+- (void) clear;
+- (void) addItem: (NSTouchBarItem*) item;
+- (NSTouchBarItem*) itemForId: (NSString*) identifier;
 
+- (IBAction) touchBarItemSelected: (id) sender;
 
-namespace Zephyros {
-namespace NetworkUtil {
-
-std::vector<String> GetNetworkIPs();
-
-String GetPrimaryMACAddress();
-
-std::vector<String> GetAllMACAddresses();
-
-bool GetProxyForURL(String url, String& proxyType, String& host, int& port, String& username, String& password);
-
-#ifdef USE_WEBVIEW
-// For Mac/WebView: Make a HTTP request
-void MakeRequest(JSObjectRef callback, String httpMethod, String url, String postData, String postDataContentType, String responseDataType);
-#endif
-
-} // namespace NetworkUtil
-} // namespace Zephyros
-
-
-#endif // Zepyhros_NetworkUtil_h
+@end
