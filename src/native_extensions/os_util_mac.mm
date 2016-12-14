@@ -794,7 +794,7 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
         if (!item->HasKey("id") || !item->HasKey("caption"))
             continue;
 
-        NSString* identifier = [NSString stringWithUTF8String: item->GetString("id").c_str()];
+        NSString* identifier = [NSString stringWithUTF8String: String(item->GetString("id")).c_str()];
         
         // add the identifier to the list
         [ids addObject: identifier];
@@ -812,7 +812,7 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
         NSColor* color = nil;
         if (item->HasKey("color"))
         {
-            const char* col = item->GetString("color").c_str();
+            const char* col = String(item->GetString("color")).c_str();
             if (col[0] == '#' && strlen(col) >= 7)
             {
                 color = [NSColor colorWithCalibratedRed: ToColorComponent(col + 1)
@@ -826,7 +826,7 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
         NSColor* colorBkgnd = nil;
         if (item->HasKey("backgroundColor"))
         {
-            const char* col = item->GetString("backgroundColor").c_str();
+            const char* col = String(item->GetString("backgroundColor")).c_str();
             if (col[0] == '#' && strlen(col) >= 7)
             {
                 colorBkgnd = [NSColor colorWithCalibratedRed: ToColorComponent(col + 1)
@@ -838,7 +838,7 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
         
         // create the button
         [appDelegate.touchBarHandler addItem: [ZPYTouchBarButton buttonWithId: identifier
-                                                                        title: [NSString stringWithUTF8String: item->GetString("caption").c_str()]
+                                                                        title: [NSString stringWithUTF8String: String(item->GetString("caption")).c_str()]
                                                                         image: image
                                                                         color: color
                                                               backgroundColor: colorBkgnd

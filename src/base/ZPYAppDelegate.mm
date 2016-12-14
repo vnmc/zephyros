@@ -44,6 +44,16 @@
 
 @implementation ZPYAppDelegate
 
+- (id) init
+{
+    self = [super init];
+    
+    m_previousDropURL = nil;
+    m_previousDropURLTime = 0;
+
+    return self;
+}
+
 - (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication*) sender
 {
     return NSTerminateNow;
@@ -113,6 +123,17 @@
 - (void) handleGetURLEvent: (NSAppleEventDescriptor*) event withReplyEvent: (NSAppleEventDescriptor*) replyEvent
 {
     NSString *url = [[event paramDescriptorForKeyword: keyDirectObject] stringValue];
+    
+    bool isSameURL = false;
+    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+    if ([url isEqualToString: m_previousDropURL] && now - m_previousDropURLTime < 1)
+        isSameURL = true;
+
+    m_previousDropURL = url;
+    m_previousDropURLTime = now;
+
+    if (isSameURL)
+        return;
     
     if ([url hasPrefix: @"http://"] || [url hasPrefix: @"https://"])
     {
