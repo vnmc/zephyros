@@ -43,7 +43,8 @@
 namespace Zephyros {
 namespace JavaScript {
 
-String GetStringFromDictionary(Object dict, KeyType key);
+String GetStringFromDictionary(Object dict, KeyType key, int level = 0);
+String GetStringFromList(Array list, int index, int level = 0);
 
 String JSONEscape(String s);
 

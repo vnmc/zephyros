@@ -34,7 +34,7 @@
 namespace Zephyros {
 namespace JavaScript {
 
-String GetStringFromDictionary(Object dict, KeyType key)
+String GetStringFromDictionary(Object dict, KeyType key, int level)
 {
     StringStream ss;
     switch (dict->GetType(key))
@@ -49,7 +49,10 @@ String GetStringFromDictionary(Object dict, KeyType key)
             ss << dict->GetDouble(key);
             break;
         case VTYPE_STRING:
-            ss << String(dict->GetString(key));
+            if (level == 0)
+                ss << String(dict->GetString(key));
+            else
+                ss << TEXT("\"") << JSONEscape(dict->GetString(key)) << TEXT("\"");
             break;
         case VTYPE_LIST:
         {
@@ -60,7 +63,7 @@ String GetStringFromDictionary(Object dict, KeyType key)
             {
                 if (i > 0)
                     ss << TEXT(",");
-                ss << TEXT("\"") << JSONEscape(list->GetString((int) i)) << TEXT("\"");
+                ss << GetStringFromList(list, (int) i, level + 1);
             }
             ss << TEXT("]");
         }
@@ -75,6 +78,53 @@ String GetStringFromDictionary(Object dict, KeyType key)
             break;
     }
 
+    return ss.str();
+}
+
+String GetStringFromList(Array list, int index, int level)
+{
+    StringStream ss;
+    switch (list->GetType(index))
+    {
+    case VTYPE_BOOL:
+        ss << (list->GetBool(index) ? TEXT("true") : TEXT("false"));
+        break;
+    case VTYPE_INT:
+        ss << list->GetInt(index);
+        break;
+    case VTYPE_DOUBLE:
+        ss << list->GetDouble(index);
+        break;
+    case VTYPE_STRING:
+        if (level == 0)
+            ss << String(list->GetString(index));
+        else
+            ss << TEXT("\"") << JSONEscape(list->GetString(index)) << TEXT("\"");
+        break;
+    case VTYPE_LIST:
+        {
+            ss << TEXT("[");
+            Array l = list->GetList(index);
+            size_t len = l->GetSize();
+            for (size_t i = 0; i < len; ++i)
+            {
+                if (i > 0)
+                    ss << TEXT(",");
+                ss << GetStringFromList(l, (int) i, level + 1);
+            }
+            ss << TEXT("]");
+        }
+        break;
+    case VTYPE_INVALID:
+        ss << TEXT("invalid");
+        break;
+    case VTYPE_NULL:
+        ss << TEXT("null");
+        break;
+    default:
+        break;
+    }
+    
     return ss.str();
 }
 
