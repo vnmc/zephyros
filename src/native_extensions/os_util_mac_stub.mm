@@ -92,7 +92,11 @@ String ShowContextMenu(MenuHandle nMenuHandle, int x, int y)
 {
     return "";
 }
-    
+
+void CreateTouchBar(JavaScript::Array touchBarItems)
+{
+}
+
 void CopyToClipboard(String text)
 {
 }

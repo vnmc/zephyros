@@ -50,6 +50,9 @@
 {
 @protected
     std::vector<Zephyros::Path*> m_launchPaths;
+
+    NSString* m_previousDropURL;
+    NSTimeInterval m_previousDropURLTime;
 }
 
 

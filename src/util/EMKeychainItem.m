@@ -449,7 +449,7 @@ static BOOL _logsErrors;
     
     OSStatus attributeStatus = SecKeychainItemCopyAttributesAndData(item, &attributeInfo, NULL, &attributeList, 0, NULL);
     
-    if (attributeStatus != noErr || !item)
+    if (attributeStatus != noErr || !item || !attributeList || !attributeList->attr)
     {
         if (_logsErrors)
         {
