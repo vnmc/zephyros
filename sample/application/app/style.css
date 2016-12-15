@@ -21,3 +21,17 @@ body {
 	width: 16px;
 	height: auto;
 }
+
+button {
+	width: 150px;
+	height: 28px;
+	margin: 2px;
+	color: white;
+	background-color: cornflowerblue;
+	border: none;
+	border-radius: 2px;
+}
+
+button.small {
+	width: auto;
+}

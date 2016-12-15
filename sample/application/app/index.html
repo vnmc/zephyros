@@ -10,29 +10,34 @@
 
 		<h2>Select a browser to open the website:</h2>
 		<ul id="browsers"></ul>
+        <button class="open-with-default-browser">Open in default browser</button>
 
         <h2>Compute Fibonacci numbers with custom native extension:</h2>
         <p>
             The <input type="number" class="fib-number" value="5"/>-th Fibonacci number
-            <button class="compute-fib">is</button>
+            <button class="small compute-fib">is</button>
             <span class="fib-result">...</span>.
         </p>
         
         <hr>
         <input id="param" value="http://www.baz.ch"></input>
         <hr>
-        <h2>OS Utils</h2>
+
+        <h2>OS Functions</h2>
+        <button id="setMenuItemStatuses">setMenuItemStatuses</button>
         <button class="context-menu">Menu</button>
         <button class="save-file">Save File</button>
         <button class="open-file">Open File</button>
         <button class="remove-menuitem">Remove Menu Item</button>
+        <button id="copyToClipboard">copyToClipboard</button>
         <button id="getComputerName">getComputerName</button>
+        <button id="startProcess">startProcess</button>
 
-        <h2>Network Utils</h2>
+        <h2>Network Functions</h2>
         <button id="getNetworkIPs">getNetworkIPs</button>
+        <button id="getProxyForUrl">getProxyForUrl</button>
 
-        <h2>File utils</h2>
-
+        <h2>File Functions</h2>
         <button id="showOpenFileDialog">showOpenFileDialog</button>
         <button id="showOpenDirectoryDialog">showOpenDirectoryDialog</button>
         <button id="showOpenFileOrDirectoryDialog">showOpenFileOrDirectoryDialog</button>
@@ -49,16 +54,14 @@
         <button id="loadPreferences">loadPreferences</button>
         <button id="storePreferences">storePreferences</button>
         <button id="getApplicationResourcesDirectory">getApplicationResourcesDirectory</button>
-        <button id="startWatchingFiles" style="background-color: cornflowerblue;">startWatchingFiles</button>
-        <button id="stopWatchingFiles" style="background-color: cornflowerblue;">stopWatchingFiles</button>
-        <hr>
+        <button id="startWatchingFiles">startWatchingFiles</button>
+        <button id="stopWatchingFiles">stopWatchingFiles</button>
+        
+        <h2>Window Functions</h2>
         <button id="resizeMainWindow">resizeWindow</button>
         <button id="setMinimumWindowWidth">setMinSize</button>
         <button id="requestUserAttention">requestUserAttention</button>
-        <hr>
-        <button id="copyToClipboard">copyToClipboard</button>
-        <button id="getProxyForUrl">getProxyForUrl</button>
-        <button id="startProcess">startProcess</button>
+        
         <hr>
         <div id="messages"></div>
 	</body>

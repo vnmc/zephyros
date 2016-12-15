@@ -45,7 +45,7 @@
 #include "native_extensions/pageimage.h"
 #include "native_extensions/path.h"
 
-#ifdef USE_WEBVIEW
+#ifdef OS_MACOSX
 #include "native_extensions/image_util_mac.h"
 #endif
 
@@ -971,12 +971,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     );
 #endif
 
-#ifdef USE_WEBVIEW
+#ifdef OS_MACOSX
     // convertImage: (base64ImageData: string, callback: (base64PNG: string) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("convertImage"),
         FUNC({
-            ret->SetString(0, ImageUtil::ConvertImageToBase64EncodedPNG(args->GetString(0)));
+            ret->SetString(0, Zephyros::ImageUtil::ConvertImageToBase64EncodedPNG(args->GetString(0)));
             return NO_ERROR;
         },
         ARG(VTYPE_STRING, "imageData")

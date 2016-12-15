@@ -247,9 +247,9 @@
                 if (statuses.find(strCommandId) != statuses.end())
                 {
                     int status = statuses.at(strCommandId);
-                    
+
                     [item setEnabled: (status & 0x01) ? YES : NO];
-                    item.state = (status & 0x02) ? NSOnState : NSOffState;
+                    [item setState: (status & 0x02) ? NSOnState : NSOffState];
                 }
             }
         }
