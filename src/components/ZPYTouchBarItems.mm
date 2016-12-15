@@ -76,7 +76,7 @@
     button.target = target;
     button.action = selector;
     button.bezelStyle = NSRoundedBezelStyle;
-    button.imagePosition = NSImageLeft;
+    button.imagePosition = title && title.length > 0 ? NSImageLeft : NSImageOnly;
 
     item.view = button;
 
