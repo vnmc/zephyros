@@ -637,7 +637,11 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
                     ch = NSInsertFunctionKey;
                 else if (strKeyLc == "delete")
                     ch = NSDeleteFunctionKey;
-                else if (strKeyLc.length() > 0 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
+                else if (strKeyLc == "backspace")
+                    ch = NSBackspaceCharacter;
+                else if (strKeyLc == "enter")
+                    ch = NSCarriageReturnCharacter;
+                else if (strKeyLc.length() > 1 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
                     ch = NSF1FunctionKey + atoi(strKey.substr(1).c_str()) - 1;
 
                 menuItem.keyEquivalent = ch ?
@@ -673,6 +677,8 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
             {
                 NSMenu* menu = [[NSMenu alloc] init];
                 menu.title = menuItem.title;
+                menu.autoenablesItems = NO;
+
                 menuItem.submenu = menu;
                 CreateMenuRecursive(menu, item->GetList("subMenuItems"), menuHandler, bIsInDemoMode);
             }
@@ -689,6 +695,8 @@ void CreateMenu(JavaScript::Array menuItems)
         g_menuHandler = [[ZPYMenuHandler alloc] init];
     
     NSMenu* mainMenu = [[NSMenu alloc] init];
+    mainMenu.autoenablesItems = NO;
+
     CreateMenuRecursive(mainMenu, menuItems, g_menuHandler, Zephyros::GetLicenseManager() != NULL && Zephyros::GetLicenseManager()->IsInDemoMode());
     [NSApp setMainMenu: mainMenu];
 }

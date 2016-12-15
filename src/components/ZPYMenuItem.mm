@@ -34,8 +34,10 @@
 - (id) initWithTitle: (NSString*) title action: (SEL) selector target: (id) target commandId: (NSString*) cmd
 {
     self = [super initWithTitle: title action: selector keyEquivalent: @""];
+    
     self.target = target;
     self.commandId = cmd;
+    
     return self;
 }
 

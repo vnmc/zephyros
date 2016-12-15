@@ -487,7 +487,11 @@ int CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsI
                         key = GDK_KEY_Insert;
                     else if (strKeyLc == "delete")
                         key = GDK_KEY_Delete;
-                    else if (strKeyLc.length() > 0 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
+                    else if (strKeyLc == "backspace")
+                        key = GDK_KEY_BackSpace;
+                    else if (strKeyLc == "enter")
+                        key = GDK_KEY_Return;
+                    else if (strKeyLc.length() > 1 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
                         key = GDK_KEY_F1 + atoi(strKey.substr(1).c_str()) - 1;
                     else
                         key = (guint) strKey.at(0);

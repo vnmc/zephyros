@@ -301,7 +301,11 @@ void CreateMenuRecursive(
                         wVkCode = VK_INSERT;
                     else if (strKeyLc == TEXT("delete"))
                         wVkCode = VK_DELETE;
-                    else if (strKeyLc.length() > 0 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
+                    else if (strKeyLc == TEXT("backspace"))
+                        wVkCode = VK_BACK;
+                    else if (strKeyLc == TEXT("enter"))
+                        wVkCode = VK_RETURN;
+                    else if (strKeyLc.length() > 1 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
                         wVkCode = VK_F1 + _ttoi(strKey.substr(1).c_str()) - 1;
                     else
                         wVkCode = (WORD) toupper(strKey.at(0));
