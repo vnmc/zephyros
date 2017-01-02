@@ -928,9 +928,9 @@ declare module NativeInterface
 
     export interface ITouchBarItem
     {
-        id: string;
+        id?: string;
 
-        caption: string;
+        caption?: string;
 
         /**
          * Base64-encoded PNG of the image
@@ -939,6 +939,8 @@ declare module NativeInterface
 
         color?: string;
         backgroundColor?: string;
+
+        items?: ITouchBarItem[];
     }
 
     export interface IUpdaterSettings

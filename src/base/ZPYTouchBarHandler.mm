@@ -59,18 +59,42 @@
     return [m_items objectForKey: identifier];
 }
 
+- (int) getTagForCommandId: (String) commandId
+{
+    std::map<String, int>::iterator it = m_mapIDsToTags.find(commandId);
+
+    if (it == m_mapIDsToTags.end())
+    {
+        int tag = m_mapIDsToTags.size() + 1;
+
+        m_mapIDsToTags[commandId] = tag;
+        m_mapTagsToIDs[tag] = commandId;
+        
+        return tag;
+    }
+    
+    return it->second;
+}
+
+- (String) getCommandIdForTag: (int) tag
+{
+    std::map<int, String>::iterator it = m_mapTagsToIDs.find(tag);
+    return it == m_mapTagsToIDs.end() ? "" : it->second;
+}
+
 /**
  * Invoked when a menu has been clicked.
  */
 - (IBAction) touchBarItemSelected: (id) sender
 {
-    NSString *commandId = [sender valueForKey: @"commandId"];
+    NSInteger tag = ((NSControl*) sender).tag;
+    String commandId = [self getCommandIdForTag: tag];
     
-    if (commandId == nil || [commandId isEqualToString: @""])
+    if (commandId.length() == 0)
         return;
     
     Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-    args->SetString(0, String([commandId UTF8String]));
+    args->SetString(0, commandId);
     Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onTouchBarAction"), args);
 }
 
