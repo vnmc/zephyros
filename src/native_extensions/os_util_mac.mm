@@ -38,7 +38,6 @@
 #endif
 
 #import "components/ZPYMenuItem.h"
-#import "components/ZPYTouchBarItems.h"
 
 #import "native_extensions/os_util.h"
 #import "native_extensions/image_util_mac.h"
@@ -785,6 +784,140 @@ float ToColorComponent(const char* str)
     return (HexCharToInt(str[0]) * 16 + HexCharToInt(str[1])) / 255.f;
 }
     
+NSButton* CreateTouchBarButton(JavaScript::Object item)
+{
+    if (!item->HasKey("id") || !item->HasKey("caption"))
+        return nil;
+    
+    NSString* identifier = [NSString stringWithUTF8String: String(item->GetString("id")).c_str()];
+    
+    // create the image
+    NSImage* image = nil;
+    if (item->HasKey("image"))
+    {
+        String imgStr = item->GetString("image");
+        if (!imgStr.empty())
+            image = ImageUtil::Base64EncodedPNGToNSImage(imgStr, NSMakeSize(18, 18));
+    }
+    
+    // create the button
+    ZPYAppDelegate* appDelegate = (ZPYAppDelegate*) [[NSApplication sharedApplication] delegate];
+    NSString* title = [NSString stringWithUTF8String: String(item->GetString("caption")).c_str()];
+    NSButton* btn = nil;
+
+    if (title && ![title isEqualToString: @""])
+    {
+        btn = image ?
+            [NSButton buttonWithTitle: title image: image target: appDelegate.touchBarHandler action: @selector(touchBarItemSelected:)] :
+            [NSButton buttonWithTitle: title target: appDelegate.touchBarHandler action: @selector(touchBarItemSelected:)];
+    }
+    else if (image)
+        btn = [NSButton buttonWithImage: image target: appDelegate.touchBarHandler action: @selector(touchBarItemSelected:)];
+    else
+        btn = [NSButton buttonWithTitle: @"" target: appDelegate.touchBarHandler action: @selector(touchBarItemSelected:)];
+
+    // create the text color
+    if (item->HasKey("color"))
+    {
+        const char* col = String(item->GetString("color")).c_str();
+        if (col[0] == '#' && strlen(col) >= 7)
+        {
+            NSDictionary* attrs = @{
+                NSForegroundColorAttributeName: [NSColor colorWithCalibratedRed: ToColorComponent(col + 1)
+                                                                          green: ToColorComponent(col + 3)
+                                                                           blue: ToColorComponent(col + 5)
+                                                                          alpha: 1.f],
+                NSFontAttributeName: [NSFont systemFontOfSize: 0]
+            };
+            
+            NSMutableAttributedString* str = [[NSMutableAttributedString alloc] initWithString: title attributes: attrs];
+            [str setAlignment: NSTextAlignmentCenter range: NSMakeRange(0, str.length)];
+            btn.attributedTitle = str;
+        }
+    }
+    
+    // create the background color
+    if (item->HasKey("backgroundColor"))
+    {
+        const char* col = String(item->GetString("backgroundColor")).c_str();
+        if (col[0] == '#' && strlen(col) >= 7)
+        {
+            btn.bezelColor = [NSColor colorWithCalibratedRed: ToColorComponent(col + 1)
+                                                       green: ToColorComponent(col + 3)
+                                                        blue: ToColorComponent(col + 5)
+                                                       alpha: 1.f];
+        }
+    }
+    
+    btn.tag = [appDelegate.touchBarHandler getTagForCommandId: String([identifier UTF8String])];
+    return btn;
+}
+    
+NSString* AddTouchBarGroup(JavaScript::Object group, int idx)
+{
+    const int itemWidth = 300;
+    const int itemHeight = 30;
+    
+    NSString *identifier = [NSString stringWithFormat: @"__grp-%d", idx];
+    NSCustomTouchBarItem *item = [[NSCustomTouchBarItem alloc] initWithIdentifier: identifier];
+        
+    NSRect rect;
+    rect.origin.x = 0;
+    rect.origin.y = 0;
+    rect.size.width = itemWidth;
+    rect.size.height = itemHeight;
+        
+    NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame: rect];
+    NSView *view = [[NSView alloc] initWithFrame: rect];
+    scrollView.documentView = view;
+    
+    int width = 0;
+    JavaScript::Array items = group->GetList("items");
+    int itemsCount = items->GetSize();
+
+    for (int i = 0; i < itemsCount; i++)
+    {
+        NSButton* btn = CreateTouchBarButton(items->GetDictionary(i));
+        [btn sizeToFit];
+
+        rect = btn.frame;
+        rect.origin.x = width;
+        rect.origin.y = 0;
+        rect.size.height = itemHeight;
+        
+        btn.frame = rect;
+        width += rect.size.width + 5;
+            
+        [view addSubview: btn];
+    }
+        
+    rect = view.frame;
+    rect.size.width = width;
+    view.frame = rect;
+        
+    item.view = scrollView;
+
+    // add the item
+    ZPYAppDelegate* appDelegate = (ZPYAppDelegate*) [[NSApplication sharedApplication] delegate];
+    [appDelegate.touchBarHandler addItem: item];
+
+    return identifier;
+}
+    
+NSString* AddTouchBarButton(JavaScript::Object item)
+{
+    if (!item->HasKey("id") || !item->HasKey("caption"))
+        return nil;
+    
+    NSString* identifier = [NSString stringWithUTF8String: String(item->GetString("id")).c_str()];
+    ZPYAppDelegate* appDelegate = (ZPYAppDelegate*) [[NSApplication sharedApplication] delegate];
+    NSCustomTouchBarItem* touchbarItem = [[NSCustomTouchBarItem alloc] initWithIdentifier: identifier];
+    touchbarItem.view = CreateTouchBarButton(item);
+    [appDelegate.touchBarHandler addItem: touchbarItem];
+    
+    return identifier;
+}
+    
 void CreateTouchBar(JavaScript::Array touchBarItems)
 {
     if (![[NSApplication sharedApplication] respondsToSelector: @selector(isAutomaticCustomizeTouchBarMenuItemEnabled)])
@@ -799,59 +932,15 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
     for (int i = 0; i < numItems; ++i)
     {
         JavaScript::Object item = touchBarItems->GetDictionary(i);
-        if (!item->HasKey("id") || !item->HasKey("caption"))
-            continue;
+        NSString* itemId = nil;
 
-        NSString* identifier = [NSString stringWithUTF8String: String(item->GetString("id")).c_str()];
+        if (item->HasKey("items"))
+            itemId = AddTouchBarGroup(item, i);
+        else
+            itemId = AddTouchBarButton(item);
         
-        // add the identifier to the list
-        [ids addObject: identifier];
-
-        // create the image
-        NSImage* image = nil;
-        if (item->HasKey("image"))
-        {
-            String imgStr = item->GetString("image");
-            if (!imgStr.empty())
-                image = ImageUtil::Base64EncodedPNGToNSImage(imgStr, NSMakeSize(18, 18));
-        }
-        
-        // create the text color
-        NSColor* color = nil;
-        if (item->HasKey("color"))
-        {
-            const char* col = String(item->GetString("color")).c_str();
-            if (col[0] == '#' && strlen(col) >= 7)
-            {
-                color = [NSColor colorWithCalibratedRed: ToColorComponent(col + 1)
-                                                  green: ToColorComponent(col + 3)
-                                                   blue: ToColorComponent(col + 5)
-                                                  alpha: 1.f];
-            }
-        }
-
-        // create the background color
-        NSColor* colorBkgnd = nil;
-        if (item->HasKey("backgroundColor"))
-        {
-            const char* col = String(item->GetString("backgroundColor")).c_str();
-            if (col[0] == '#' && strlen(col) >= 7)
-            {
-                colorBkgnd = [NSColor colorWithCalibratedRed: ToColorComponent(col + 1)
-                                                       green: ToColorComponent(col + 3)
-                                                        blue: ToColorComponent(col + 5)
-                                                       alpha: 1.f];
-            }
-        }
-        
-        // create the button
-        [appDelegate.touchBarHandler addItem: [ZPYTouchBarButton buttonWithId: identifier
-                                                                        title: [NSString stringWithUTF8String: String(item->GetString("caption")).c_str()]
-                                                                        image: image
-                                                                        color: color
-                                                              backgroundColor: colorBkgnd
-                                                                       action: @selector(touchBarItemSelected:)
-                                                                       target: appDelegate.touchBarHandler]];
+        if (itemId)
+            [ids addObject: itemId];
     }
 
     [ids addObject: NSTouchBarItemIdentifierOtherItemsProxy];

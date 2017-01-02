@@ -51,7 +51,7 @@ String GetUserAgent()
         Zephyros::GetAppName(),
         [bundle objectForInfoDictionaryKey: @"CFBundleShortVersionString"],
         [bundleId substringFromIndex: [bundleId rangeOfString: @"." options: NSBackwardsSearch].location + 1],
-        [[NSLocale preferredLanguages] objectAtIndex: 0]];
+        [[[NSLocale preferredLanguages] objectAtIndex: 0] substringToIndex: 2]];
     
     return String([userAgent UTF8String]);
 }

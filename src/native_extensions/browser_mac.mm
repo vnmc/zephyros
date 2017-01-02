@@ -56,10 +56,15 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
     {
         NSString *bundleID = (NSString*) CFArrayGetValueAtIndex(handlerApps, i);
             
-        // exclude this app and the PBLinkHandler
-        if (bundleID == nil || [ownBundleId isEqualToString: bundleID] || [bundleID isEqualToString: @"com.apple.PBLinkHandler"])
+        // exclude this app, the PBLinkHandler, Mobile Safari
+        if (bundleID == nil ||
+            [ownBundleId isEqualToString: bundleID] ||
+            [bundleID isEqualToString: @"com.apple.PBLinkHandler"] ||
+            [bundleID isEqualToString: @"com.apple.mobilesafari"])
+        {
             continue;
-            
+        }
+
         NSString *bundlePath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier: bundleID];
         if (bundlePath == nil)
             continue;

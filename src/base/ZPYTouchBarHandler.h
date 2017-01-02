@@ -26,15 +26,21 @@
 
 
 #import <Foundation/Foundation.h>
+#import <map>
 
 @interface ZPYTouchBarHandler : NSObject
 {
     NSMutableDictionary* m_items;
+    std::map<int, String> m_mapTagsToIDs;
+    std::map<String, int> m_mapIDsToTags;
 }
 
 - (void) clear;
 - (void) addItem: (NSTouchBarItem*) item;
 - (NSTouchBarItem*) itemForId: (NSString*) identifier;
+
+- (int) getTagForCommandId: (String) commandId;
+- (String) getCommandIdForTag: (int) tag;
 
 - (IBAction) touchBarItemSelected: (id) sender;
 
