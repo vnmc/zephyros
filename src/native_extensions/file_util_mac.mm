@@ -272,7 +272,7 @@ bool MakeDirectory(String path, bool recursive, Error& err)
 
     return ret == YES;
 }
-    
+
 bool ReadDirectory(String path, std::vector<String>& files, Error& err)
 {
     bool hasWildcard = path.find_first_of(TEXT("*?")) != String::npos;
@@ -284,7 +284,7 @@ bool ReadDirectory(String path, std::vector<String>& files, Error& err)
     
     // list all the files in the directory
     NSError *error = nil;
-    NSArray *arrFiles = [mgr contentsOfDirectoryAtPath: strBasePath error: &error];
+    NSArray *arrFiles = strBasePath.length == 0 ? nil : [mgr contentsOfDirectoryAtPath: strBasePath error: &error];
     
     if (!arrFiles || error)
     {
