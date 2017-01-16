@@ -1,2 +1,2 @@
-Download "CEF 3.2623.*" from https://cefbuilds.com/ (branch 2623, Windows 32bit),
+Download "CEF 3.2883.*" from http://opensource.spotify.com/cefbuilds/index.html (Windows 32-bit),
 extract, and copy the folders "Debug", "Release", "Resources" into this folder.

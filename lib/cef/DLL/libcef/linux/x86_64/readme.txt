@@ -1,2 +1,2 @@
-Download "CEF 3.2623.*" from https://cefbuilds.com/ (branch 2623, Linux 64bit),
+Download "CEF 3.2883.*" from http://opensource.spotify.com/cefbuilds/index.html (Linux 64-bit),
 extract, and copy the folders "Debug", "Release", "Resources" into this folder.

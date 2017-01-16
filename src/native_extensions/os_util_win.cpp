@@ -150,8 +150,8 @@ String GetHomeDirectory()
 
 String GetComputerName()
 {
-    TCHAR szComputerName[MAX_COMPUTERNAME_LENGTH + 1];
-    DWORD dwLen = MAX_COMPUTERNAME_LENGTH;
+    TCHAR szComputerName[MAX_COMPUTERNAME_LENGTH + 2];
+    DWORD dwLen = MAX_COMPUTERNAME_LENGTH + 1;
     ::GetComputerName(szComputerName, &dwLen);
     return szComputerName;
 }

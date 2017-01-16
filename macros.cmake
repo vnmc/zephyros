@@ -31,6 +31,7 @@ endif()
 # CEF distributable files
 if(OS_WINDOWS)
   set(CEF_BINARY_FILES
+    chrome_elf.dll
     d3dcompiler_43.dll
     d3dcompiler_47.dll
     libcef.dll
