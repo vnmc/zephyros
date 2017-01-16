@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2017 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -61,7 +61,7 @@ CefRefPtr<CefRequestContext> CefRequestContext::CreateContext(
   // Unverified params: handler
 
   // Execute
-  cef_request_context_t* _retval = create_context_shared(
+  cef_request_context_t* _retval = cef_create_context_shared(
       CefRequestContextCToCpp::Unwrap(other),
       CefRequestContextHandlerCppToC::Wrap(handler));
 
@@ -428,7 +428,7 @@ template<> cef_request_context_t* CefCToCpp<CefRequestContextCToCpp,
   return NULL;
 }
 
-#ifndef NDEBUG
+#if DCHECK_IS_ON()
 template<> base::AtomicRefCount CefCToCpp<CefRequestContextCToCpp,
     CefRequestContext, cef_request_context_t>::DebugObjCt = 0;
 #endif

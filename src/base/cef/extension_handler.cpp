@@ -610,7 +610,7 @@ void AppExtensionHandler::ThrowJavaScriptException(CefRefPtr<CefV8Context> conte
     CefRefPtr<CefV8Value> rv;
     CefRefPtr<CefV8Exception> exception;
 
-    context->Eval(code, rv, exception);
+    context->Eval(code, TEXT(""), 0, rv, exception);
 }
 
 } // namespace Zephyros

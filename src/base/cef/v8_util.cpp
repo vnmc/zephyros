@@ -189,7 +189,7 @@ CefRefPtr<CefV8Value> ListValueToV8Value(CefRefPtr<CefListValue> value, int inde
     case VTYPE_DICTIONARY:
         {
             CefRefPtr<CefDictionaryValue> dict = value->GetDictionary(index);
-            new_value = CefV8Value::CreateObject(CefRefPtr<CefV8Accessor>());
+            new_value = CefV8Value::CreateObject(CefRefPtr<CefV8Accessor>(), CefRefPtr<CefV8Interceptor>());
             SetDictionary(dict, new_value);
         }
         break;
@@ -230,7 +230,7 @@ CefRefPtr<CefV8Value> DictionaryValueToV8Value(CefRefPtr<CefDictionaryValue> val
     case VTYPE_DICTIONARY:
         {
             CefRefPtr<CefDictionaryValue> dict = value->GetDictionary(key);
-            new_value = CefV8Value::CreateObject(CefRefPtr<CefV8Accessor>());
+            new_value = CefV8Value::CreateObject(CefRefPtr<CefV8Accessor>(), CefRefPtr<CefV8Interceptor>());
             SetDictionary(dict, new_value);
         }
         break;

@@ -344,7 +344,6 @@ if(OS_MACOSX)
     INSTALL_NAME_DIR "@rpath"
   )
   EMBED_FRAMEWORK(Zephyros_CEF ${LIB_SPARKLE})
-  FIX_MACOSX_MAIN_FRAMEWORK_LINK(Zephyros_CEF ${CEF_TARGET_OUT_DIR} YES)
 
   # CEF Helper configuration
   add_library(Zephyros_CEF_Helper SHARED ${ZEPHYROS_CEFHELPER_SRCS})
@@ -357,7 +356,6 @@ if(OS_MACOSX)
     PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
     INSTALL_NAME_DIR "@rpath"
   )
-  FIX_MACOSX_HELPER_FRAMEWORK_LINK(Zephyros_CEF_Helper ${CEF_TARGET_OUT_DIR})
 
   # WebView configuration
   add_library(Zephyros_WebView SHARED ${ZEPHYROS_WEBVIEW_SRCS})

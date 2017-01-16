@@ -100,66 +100,6 @@ extern bool g_isWindowLoaded;
 }
 
 /**
- * Called when we have been minimized.
- */
-- (void) windowDidMiniaturize: (NSNotification*) notification
-{
-    if (g_handler.get())
-    {
-        CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-        if (browser.get())
-            browser->GetHost()->SetWindowVisibility(false);
-    }
-}
-
-/**
- * Called when we have been unminimized.
- */
-- (void) windowDidDeminiaturize: (NSNotification*) notification
-{
-    if (g_handler.get())
-    {
-        CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-        if (browser.get())
-            browser->GetHost()->SetWindowVisibility(true);
-    }
-}
-
-/**
- * Called when the application has been hidden.
- */
-- (void) applicationDidHide: (NSNotification*) notification
-{
-    // if the window is miniaturized then nothing has really changed
-    if (![m_window isMiniaturized])
-    {
-        if (g_handler.get())
-        {
-            CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-            if (browser.get())
-                browser->GetHost()->SetWindowVisibility(false);
-        }
-    }
-}
-
-/**
- * Called when the application has been unhidden.
- */
-- (void) applicationDidUnhide: (NSNotification*) notification
-{
-    // if the window is miniaturized then nothing has really changed.
-    if (![m_window isMiniaturized])
-    {
-        if (g_handler.get())
-        {
-            CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-            if (browser.get())
-                browser->GetHost()->SetWindowVisibility(true);
-        }
-    }
-}
-
-/**
  * Called when the window is about to close. Perform the self-destruction
  * sequence by getting rid of the window. By returning YES, we allow the window
  * to be removed from the screen.

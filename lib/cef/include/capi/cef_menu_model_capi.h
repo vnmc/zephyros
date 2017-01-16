@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Marshall A. Greenblatt. All rights reserved.
+// Copyright (c) 2017 Marshall A. Greenblatt. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -39,6 +39,7 @@
 #pragma once
 
 #include "include/capi/cef_base_capi.h"
+#include "include/capi/cef_menu_model_delegate_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -379,6 +380,13 @@ typedef struct _cef_menu_model_t {
       int index, int* key_code, int* shift_pressed, int* ctrl_pressed,
       int* alt_pressed);
 } cef_menu_model_t;
+
+
+///
+// Create a new MenuModel with the specified |delegate|.
+///
+CEF_EXPORT cef_menu_model_t* cef_menu_model_create(
+    struct _cef_menu_model_delegate_t* delegate);
 
 
 #ifdef __cplusplus
