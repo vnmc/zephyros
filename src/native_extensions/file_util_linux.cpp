@@ -37,7 +37,10 @@
 #include <gtk/gtk.h>
 
 #include "base/app.h"
+
+#include "util/base64.h"
 #include "util/string_util.h"
+
 #include "native_extensions/image_util_linux.h"
 #include "native_extensions/os_util.h"
 #include "native_extensions/file_util.h"
@@ -328,8 +331,12 @@ bool ReadFile(String filename, JavaScript::Object options, String& result, Error
     return false;
 }
 
-bool WriteFile(String filename, String contents, Error& err)
+bool WriteFile(String filename, String contents, JavaScript::Object options, Error& err)
 {
+	String encoding(TEXT(""));
+	if (options && options->HasKey("encoding"))
+		encoding = options->GetString("encoding");
+
     std::ofstream file;
     file.open(filename, std::ios::out | std::ios::binary);
 
@@ -339,7 +346,15 @@ bool WriteFile(String filename, String contents, Error& err)
         return false;
     }
 
-    file << contents;
+    if (encoding == "base64")
+    {
+        size_t len = 0;
+        char* data = (char*) NewBase64Decode(contents.c_str(), contents.length(), &len);
+        file.write(data, len);
+    }
+    else
+        file << contents;
+
     file.close();
 
     return true;
@@ -431,7 +446,7 @@ void StorePreferences(String key, String data)
         newContents << key << "=" << data << std::endl;
 
     Error err;
-    WriteFile(prefFile, newContents.str(), err);
+    WriteFile(prefFile, newContents.str(), NULL, err);
 }
 
 bool StartAccessingPath(Path& path, Error& err)

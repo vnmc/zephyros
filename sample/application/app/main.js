@@ -214,7 +214,7 @@ $(document).ready(function()
 	    app.readFile(path, { encoding: '' }, function(err, data)
         {
             if (err === null)
-        	    setMessage(data);	    
+        	    setMessage(data);
         	else
         	    setMessage('Could not read file. Error: ' + JSON.stringify(err));
     	 });
@@ -224,7 +224,20 @@ $(document).ready(function()
 	{
 	    var path = getParameterAsPath();
 	    setMessage('Trying to write to file  ' + path.path + '...');
-	    app.writeFile(path, 'Hey this is the file contents', function(err)
+	    app.writeFile(path, 'Hey this is the file contents', {}, function(err)
+	    {
+	    	if (err === null)
+    	    	setMessage('File ' + path.path + ' was written.');
+    	    else
+    	    	setMessage('Error: ' + JSON.stringify(err));
+	    });
+	});
+
+	$('#writeFileBase64').click(function()
+	{
+	    var path = getParameterAsPath();
+	    setMessage('Trying to write to file  ' + path.path + '...');
+	    app.writeFile(path, 'iVBORw0KGgoAAAANSUhEUgAAAKkAAACpCAMAAABnC+0dAAAAbFBMVEVHcEz/Bwf/Cgr/Bgb/Bwf/Bwf/Bwf/Bgb/AAD/Bwf/AwP/Bwf/Bwf/AAD/Bwf/AAD/Bwf/Bwf/Bwf/Bwf/Bwf/Bwf/CAj/Bwf/Bgb/Bwf/Bwf/Bgb/Bwf/Bwf/Bwf/Bwf/CAj/Bgb/BQX/Bwcu3BALAAAAI3RSTlMA4Rkrsvf6VQb+EMFDCdkD0F7xmbmBOyOhasl6b+qrj2NMM5/IgPUAAAPqSURBVHhe7M4xDoAwDATBFCg4kjGV7QIpDf//I4ICqCHlzgP2rrwBAAAAkqrzKXL9GYqro5pSBlvCJ6v7rVn3+LIi6t3aE6o2bTHs7kGdnSYxCgJRAH4uqEhcY9bFLO/+d5x/MzWFSVA06XwHoCgsHt1teDCKA9q4yTFG3sQtByhzCOGtSruET6n9A662e8Wnki6t4KM4BHzjeIeL+5FvlIcCk90udFCv8M6qpoNLg2keRzrRug/xStjTiaaJMF610XTWNniuaeksOVUYKTQcpc8xLI85igkxyvbCkcoHhjwCjnTZYoRUcTSVwpYmfgvZ/Ncnk8YOD80JkhSOUs1pTvjfidPoFE62ihPpM/4BzpxKbeEgajmZbqxPP4luI7xV1PSQ/Htb7wmn03WBd/b08vcwHope9ngjpacyBwDkJT2leCkP6En3AICevoICr1zp7wDgTH9XvBAl9NfusFP0l+zwXM85mMpwDj2e2mnOIia57KHuKcsaT+SKsqgcww6U5oZhhtIYDAo1pdEhhtwoTyPg5vvUKQHF0QEGhJQohG1FiVZC09R2gO1Kia6wxZQohs1QIG1gqynREbaSEpVCg98W/MxOy5/5+jVsx5+5UYYSGdg6StT9zBvVO0wl5JbSa0q0hm1DiU4/U5/eYLtTojtsESWKYCs05dHZj3TRDDCkE9ycyI+pDYaklCfFkJ3cEYr8K1U6jPllD/obStNgWJ5QliTHE0ZowW87yxz0yf8hpXI81cvsocTXqCu8UMscnwhvUW54JQsoRZDhRw71hteKQOKRSq5SdYq3jNCH1PbQ/L4kgoON0P7JVpT8Ml0WcBIpfle7g6ObwI5UZEe1hrui5vfUBUaIWn5LG2GUleJ3qC1GSrXMV9RWnQTM9R2thV57W9bx07oMk2QxPyvOAK+tyt8oUHRCN2orDD+lK+AlP/IzTAFPWc9P6DN4q/Zc3r7CHK5c2hUz2Qh4QiVsVZ8woybhUlSKWa1aLuOyxcyigEsIIswurDm/YwgHAoqAuMAiqjXnta6wlJPmfPQZFpFplTSwiEyrdoWFRcFC6SQ0reoQH5Ab+jI5PiLbS00n20aLTSc7raTUTu5p5Z9OQtMqiP60c0c5CMJAEEDHqghGLIjaCBQSvP8dPcD+GDfpjsm+Q8xOOklRXBgV3ams9lCgOxl1qzXCytyQppN0OrKlk/7TpPyEsfTdynpNMBc6RTrRpdVSg0IcOLqT/t3qASJzQxqjUl8pYpSiBt4uoLPlt5Q3ENrvFG3U+AZ0AYzkeDWeQau9i9GOVb0oLqjRZR0i2K1iC6M1iYmJ1qvq8ScSfuKcc84559wHVw+eefv5E7AAAAAASUVORK5CYII=', { encoding: 'base64' }, function(err)
 	    {
 	    	if (err === null)
     	    	setMessage('File ' + path.path + ' was written.');

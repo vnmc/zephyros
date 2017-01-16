@@ -38,6 +38,7 @@
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
 
+#include "util/base64.h"
 #include "util/string_util.h"
 
 #include "native_extensions/file_util.h"
@@ -413,26 +414,41 @@ bool ReadFile(String filename, JavaScript::Object options, String& result, Error
     return false;
 }
 
-bool WriteFile(String filename, String contents, Error& err)
+bool WriteFile(String filename, String contents, JavaScript::Object options, Error& err)
 {
+	String encoding(TEXT(""));
+	if (options->HasKey("encoding"))
+		encoding = options->GetString("encoding");
+
     bool ret = false;
 
     HANDLE hFile = CreateFile(filename.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile != INVALID_HANDLE_VALUE)
     {
-        int mbLen = WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), NULL, 0, NULL, NULL);
-        BYTE* buf = new BYTE[mbLen + 1];
-        if (WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), (LPSTR) buf, mbLen, NULL, NULL))
-        {
-            buf[mbLen] = 0;
+		if (encoding == TEXT("base64"))
+		{
+			size_t len = 0;
+			BYTE* pData = (BYTE*) NewBase64Decode(std::string(contents.begin(), contents.end()).c_str(), contents.length(), &len);
+			DWORD dwBytesWritten = 0;
+			ret = ::WriteFile(hFile, pData, len, &dwBytesWritten, NULL) == TRUE;
+		}
+		else
+		{
+			int mbLen = WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), NULL, 0, NULL, NULL);
+			BYTE* buf = new BYTE[mbLen + 1];
+			if (WideCharToMultiByte(CP_UTF8, 0, contents.c_str(), (int) contents.length(), (LPSTR) buf, mbLen, NULL, NULL))
+			{
+				buf[mbLen] = 0;
 
-            DWORD dwBytesWritten = 0;
-            ret = ::WriteFile(hFile, buf, mbLen, &dwBytesWritten, NULL) == TRUE;
-            FlushFileBuffers(hFile);
-        }
+				DWORD dwBytesWritten = 0;
+				ret = ::WriteFile(hFile, buf, mbLen, &dwBytesWritten, NULL) == TRUE;
+				FlushFileBuffers(hFile);
+			}
 
-        delete[] buf;
-        CloseHandle(hFile);
+			delete[] buf;
+		}
+
+		CloseHandle(hFile);
     }
 
     if (!ret)
