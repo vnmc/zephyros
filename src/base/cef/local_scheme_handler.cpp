@@ -43,6 +43,45 @@
 
 
 namespace Zephyros {
+    
+int hexValue(TCHAR c)
+{
+    if (TEXT('0') <= c && c <= TEXT('9'))
+        return c - TEXT('0');
+    if (TEXT('a') <= c && c <= TEXT('f'))
+        return c - TEXT('a') + 10;
+    if (TEXT('A') <= c && c <= TEXT('F'))
+        return c - TEXT('A') + 10;
+    
+    return 0;
+}
+    
+String DecodeURL(String url)
+{
+    std::ostringstream out;
+    
+    for (String::size_type i = 0; i < url.length(); ++i)
+    {
+        switch (url.at(i))
+        {
+        case TEXT('%'):
+            out << (TCHAR) ((hexValue(url.at(i + 1)) << 4) | (hexValue(url.at(i + 2))));
+            i += 2;
+            break;
+            
+        case TEXT('+'):
+            out << TEXT(' ');
+            break;
+                
+        default:
+            out << url.at(i);
+            break;
+        }
+    }
+    
+    return out.str();
+}
+    
 
 LocalSchemeHandler::LocalSchemeHandler()
     : m_size(0), m_offset(0)
@@ -57,8 +96,20 @@ bool LocalSchemeHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr
     Error err;
     m_pData = NULL;
     
+    // remove query and hash parts
+    String::size_type posQuery = url.find(TEXT("?"));
+    String::size_type posHash = url.find(TEXT("#"));
+    String::size_type len = String::npos;
+
+    if (posQuery != String::npos && posHash != String::npos)
+        len = std::min(posQuery, posHash);
+    else if (posQuery != String::npos)
+        len = posQuery;
+    else if (posHash != String::npos)
+        len = posHash;
+    
     // the URL is prefixed with "local://"
-    FileUtil::ReadFileBinary(url.substr(8), &m_pData, m_size, err);
+    FileUtil::ReadFileBinary(DecodeURL(url.substr(8, len - 8)), &m_pData, m_size, err);
     m_mimeType = GetMIMETypeForFilename(url);
 
     // indicate the headers are available

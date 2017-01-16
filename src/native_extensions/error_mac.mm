@@ -141,5 +141,74 @@ void Error::FromError(id error)
 
     SetError(code, [((NSError*) error).localizedDescription UTF8String]);
 }
+    
+void Error::FromErrno()
+{
+    if (errno == 0)
+    {
+        SetError(ERR_OK);
+        return;
+    }
+        
+    int code = ERR_UNKNOWN;
+    switch (errno)
+    {
+    case ENOENT:
+        code = ERR_FILE_NOT_FOUND;
+        break;
+    case EACCES:
+        code = ERR_FILE_NO_READ_PERMISSION;
+        break;
+    case EEXIST:
+        code = ERR_FILE_EXISTS;
+        break;
+    case ENOTDIR:
+        code = ERR_NO_DIRECTORY;
+        break;
+    case EISDIR:
+        code = ERR_IS_DIRECTORY;
+        break;
+    case EMFILE:
+    case ENFILE:
+        code = ERR_TOO_MANY_OPEN_FILES;
+        break;
+    case EFBIG:
+        code = ERR_FILE_TOO_LARGE;
+        break;
+    case ENOSPC:
+        code = ERR_DISK_FULL;
+        break;
+    case EROFS:
+        code = ERR_FILE_NO_WRITE_PERMISSION;
+        break;
+    case EADDRINUSE:
+        code = ERR_ADDRESS_IN_USE;
+        break;
+    case EADDRNOTAVAIL:
+        code = ERR_ADDRESS_NOT_AVAILABLE;
+        break;
+    case ENETDOWN:
+    case ENETUNREACH:
+        code = ERR_NO_NETWORK;
+        break;
+    case ECONNRESET:
+        code = ERR_CONNECTION_RESET;
+        break;
+    case ENOTCONN:
+        code = ERR_NOT_CONNECTED;
+        break;
+    case ETIMEDOUT:
+        code = ERR_TIMED_OUT;
+        break;
+    case ECONNREFUSED:
+        code = ERR_CONNECTION_REFUSED;
+        break;
+    case ENAMETOOLONG:
+        code = ERR_NAME_TOO_LONG;
+        break;
+    }
+        
+    SetError(code, strerror(errno));
+}
 
 } // namespace Zephyros
