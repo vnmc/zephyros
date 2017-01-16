@@ -14,7 +14,7 @@ build/
 /ipch
 /sample/application/res/windows/content.h
 /sample/application/res/linux/content.*
-/lib/cef/DLL/libcef/mac
+/lib/cef/DLL/libcef/mac/*.framework
 /lib/cef/DLL/libcef/windows/Win32/Debug
 /lib/cef/DLL/libcef/windows/Win32/Release
 /lib/cef/DLL/libcef/windows/Win32/Resources
