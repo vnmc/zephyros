@@ -58,7 +58,7 @@ int hexValue(TCHAR c)
     
 String DecodeURL(String url)
 {
-    std::ostringstream out;
+    StringStream out;
     
     for (String::size_type i = 0; i < url.length(); ++i)
     {
