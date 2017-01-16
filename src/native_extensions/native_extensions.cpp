@@ -546,8 +546,8 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             if (FileUtil::StartAccessingPath(path, errStartAccessingPath))
             {
                 Error errWriteFile;
-
-                if (FileUtil::WriteFile(path.GetPath(), args->GetString(1), errWriteFile))
+                
+                if (FileUtil::WriteFile(path.GetPath(), args->GetString(1), args->GetDictionary(2), errWriteFile))
                     ret->SetNull(0);
                 else
                     ret->SetDictionary(0, errWriteFile.CreateJSRepresentation());
@@ -561,6 +561,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         },
         ARG(VTYPE_DICTIONARY, "path")
         ARG(VTYPE_STRING, "contents")
+        ARG(VTYPE_DICTIONARY, "options")
     ));
 
     // existsFile: (path: IPath, callback(exists: boolean) => void) => void

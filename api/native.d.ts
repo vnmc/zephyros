@@ -502,7 +502,7 @@ declare module NativeInterface
          *   Callback invoked when the operation has completed and providing
          *   an error object in case an error occurred.
          */
-        writeFile: (path: IPath, contents: string, callback: (err: Error) => void) => void;
+        writeFile: (path: IPath, contents: string, options: IWriteFileOptions, callback: (err: Error) => void) => void;
 
         /**
          * Moves the file at "oldPath" to "newPath".
@@ -995,6 +995,18 @@ declare module NativeInterface
          * If "image/png;base64" is used as encoding, the file is interpreted
          * as image file, converted to PNG, and returned as base-64 encoded
          * data URL.
+         */
+        encoding?: string;
+    }
+    
+    export interface IWriteFileOptions
+    {
+        /**
+         * The encoding of the contents; can be one of
+         * - "utf-8" (default)
+         * - "base64".
+         *
+         * The contents will be decoded (if needed) before it is written to file.
          */
         encoding?: string;
     }

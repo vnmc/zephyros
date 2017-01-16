@@ -193,6 +193,7 @@ public:
 
 #ifdef OS_MACOSX
     void FromError(id error);
+    void FromErrno();
 #endif
 
 #ifdef OS_LINUX

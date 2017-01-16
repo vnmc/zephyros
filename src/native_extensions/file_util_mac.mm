@@ -33,6 +33,8 @@
 #import "native_extensions/file_util.h"
 #import "native_extensions/image_util_mac.h"
 
+#import "util/NSData+Base64.h"
+
 
 #ifdef USE_CEF
 extern CefRefPtr<Zephyros::ClientHandler> g_handler;
@@ -376,17 +378,31 @@ bool ReadFile(String filename, JavaScript::Object options, String& result, Error
     return false;
 }
 
-bool WriteFile(String filename, String contents, Error& err)
+bool WriteFile(String filename, String contents, JavaScript::Object options, Error& err)
 {
-    NSError* error;
-    BOOL ret = [[NSString stringWithUTF8String: contents.c_str()] writeToFile: [NSString stringWithUTF8String: filename.c_str()]
-                                                                   atomically: NO
-                                                                     encoding: NSUTF8StringEncoding
-                                                                        error: &error];
-    if (error != nil)
-        err.FromError(error);
+    String encoding = "";
+    if (options->HasKey("encoding"))
+        encoding = options->GetString("encoding");
+    
+    NSData *data = nil;
+    
+    if (encoding == "base64")
+        data = [NSData dataFromBase64String: [NSString stringWithUTF8String: contents.c_str()]];
+    else
+        data = [[NSString stringWithUTF8String: contents.c_str()] dataUsingEncoding: NSUTF8StringEncoding];
 
-    return ret == YES;
+    if (data == nil)
+    {
+        err.SetError(ERR_DECODING_FAILED, "Failed to decode data");
+        return false;
+    }
+    
+    [[NSFileManager defaultManager] createFileAtPath: [NSString stringWithUTF8String: filename.c_str()]
+                                            contents: data
+                                          attributes: nil];
+    
+    err.FromErrno();
+    return errno == 0;
 }
     
 bool MoveFile(String oldFilename, String newFilename, Error& err)
