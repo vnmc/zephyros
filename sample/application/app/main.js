@@ -214,7 +214,7 @@ $(document).ready(function()
 	    app.readFile(path, { encoding: '' }, function(err, data)
         {
             if (err === null)
-        	    setMessage(data);	    
+        	    setMessage(data);
         	else
         	    setMessage('Could not read file. Error: ' + JSON.stringify(err));
     	 });
