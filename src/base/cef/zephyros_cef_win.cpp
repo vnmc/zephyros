@@ -189,8 +189,15 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
     // initialize CEF
     CefInitialize(main_args, settings, app.get(), NULL);
-    CefRegisterSchemeHandlerFactory("local", "", new LocalSchemeHandlerFactory());
 
+    // register the "local" scheme (for loading resources from the local file system)
+    CefRegisterSchemeHandlerFactory("local", "", new LocalSchemeHandlerFactory());
+    
+    std::vector<CefString> schemes;
+    schemes.push_back("local");
+    CefCookieManager::GetGlobalManager(NULL)->SetSupportedSchemes(schemes, NULL);
+
+    // start GDI+
     ULONG_PTR gdiplusToken;
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
