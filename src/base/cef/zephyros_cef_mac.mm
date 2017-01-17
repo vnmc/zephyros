@@ -118,8 +118,15 @@ int RunApplication(int argc, char* argv[])
 
     // initialize CEF
     CefInitialize(main_args, settings, app.get(), NULL);
+    
+    // register the "local" scheme (for loading resources from the local file system)
     CefRegisterSchemeHandlerFactory("local", "", new LocalSchemeHandlerFactory());
+    
+    std::vector<CefString> schemes;
+    schemes.push_back("local");
+    CefCookieManager::GetGlobalManager(NULL)->SetSupportedSchemes(schemes, NULL);
 
+    // initialize the license manager (if available)
     Zephyros::AbstractLicenseManager* pLicenseMgr = Zephyros::GetLicenseManager();
     g_appDelegate = [[ZPYCEFAppDelegate alloc] init];
 
