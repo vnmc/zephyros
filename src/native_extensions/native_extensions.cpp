@@ -1090,6 +1090,19 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         },
         ARG(VTYPE_STRING, "text")
     ));
+    
+    // beginDragFile: (path: IPath, x: number, y: number) => void
+    e->AddNativeJavaScriptProcedure(
+        TEXT("beginDragFile"),
+        FUNC({
+            Path path(args->GetDictionary(0));
+            OSUtil::BeginDragFile(path, args->GetInt(1), args->GetInt(2));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_DICTIONARY, "path")
+        ARG(VTYPE_INT, "x")
+        ARG(VTYPE_INT, "y")
+    ));
 
 
     //////////////////////////////////////////////////////////////////////

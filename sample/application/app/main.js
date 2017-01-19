@@ -434,6 +434,11 @@ $(document).ready(function()
 			open_recent: (Math.random() * 4) | 0
 		});
 	});
+
+	$('#dragMe').on('mousedown', function(event)
+	{
+		app.beginDragFile(getParameterAsPath(), event.clientX, event.clientY);
+	});
 });
 
 // create the app menu

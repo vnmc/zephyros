@@ -184,6 +184,24 @@ declare module NativeInterface
          */
         copyToClipboard: (text: string) => void;
 
+        /**
+         * Initiates a file drag with a file located at "path" from the
+         * mouse coordinates (x, y).
+         * The file will be copied to the drag destination in the file manager
+         * or uploaded in a browser, etc.
+         * The drag should be initiated from within a "mousedown" event handler.
+         *
+         * @param path
+         *   The path to the file to drag.
+         *
+         * @param x
+         *   The x coordinate where the drag originates.
+         *
+         * @param y
+         *   The y coordinate where the drag originates.
+         */
+        beginDragFile: (path: IPath, x: number, y: number) => void
+
 
         ///////////////////////////////////////////////////////////////////////
         // Loading/Saving Preferences Commands

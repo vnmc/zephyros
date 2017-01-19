@@ -704,6 +704,10 @@ void CopyToClipboard(String text)
     gtk_clipboard_set_text(cb, text.c_str(), -1);
 }
 
+void BeginDragFile(Path& path, int x, int y)
+{
+}
+
 void CleanUp()
 {
     ClearMenuItemData();

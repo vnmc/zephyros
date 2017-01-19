@@ -705,6 +705,11 @@ void CopyToClipboard(String text)
     CloseClipboard();
 }
 
+void BeginDragFile(Path& path, int x, int y)
+{
+    // https://www.codeproject.com/Articles/840/How-to-Implement-Drag-and-Drop-Between-Your-Progra
+}
+
 void CleanUp()
 {
     for (HMENU hMenu : g_vecCreatedMenus)
