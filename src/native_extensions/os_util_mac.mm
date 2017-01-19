@@ -80,31 +80,36 @@ ZPYMenuHandler* g_menuHandler = nil;
 @end
 
 
+Zephyros::Path g_draggedFile;
+
 @interface DragView : NSView <NSDraggingSource>
 @end
 
 @implementation DragView
 
-- (NSDragOperation) draggingSourceOperationMaskForLocal:(BOOL)isLocal {
-    //return NSDragOperationNone|NSDragOperationCopy|NSDragOperationLink|NSDragOperationGeneric;
+- (NSDragOperation) draggingSourceOperationMaskForLocal:(BOOL)isLocal
+{
     return NSDragOperationCopy;
 }
 
-- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
+- (NSDragOperation) draggingSession: (NSDraggingSession*) session sourceOperationMaskForDraggingContext: (NSDraggingContext) context
 {
     return NSDragOperationCopy;
 }
 
 - (NSArray<NSString*>*) namesOfPromisedFilesDroppedAtDestination: (NSURL*) dropDestination
 {
-    NSLog(@"XXX %@", dropDestination);
+    String p = g_draggedFile.GetPath();
+    String::size_type pos = p.find_last_of('/');
+    NSString* filename = [NSString stringWithUTF8String: pos == String::npos ? p.c_str() : p.substr(pos + 1).c_str()];
+
+    // copy the file
+    [[NSFileManager defaultManager] copyItemAtPath: [NSString stringWithUTF8String: p.c_str()]
+                                            toPath: [NSString pathWithComponents: @[dropDestination.path, filename]]
+                                             error: nil];
     
-    [[NSFileManager defaultManager] createFileAtPath: [NSString pathWithComponents: @[dropDestination.path, @"X.png"]]
-                                            contents: [@"Hello" dataUsingEncoding: NSUTF8StringEncoding]
-                                          attributes: nil];
-    
-    // Return an array of file names for the created files
-    return [NSArray arrayWithObject: @"X.png"];
+    // return an array of file names for the created files
+    return @[filename];
 }
 
 @end
@@ -994,12 +999,13 @@ void BeginDragFile(Path& path, int x, int y)
 {
     if (g_dragView == nil)
         g_dragView = [[DragView alloc] init];
+    g_draggedFile = path;
     
     NSPasteboardItem *pasteboardItem = [[NSPasteboardItem alloc] init];
 
     // add the file promise
     String p = path.GetPath();
-    size_t pos = p.find_last_of('.');
+    String::size_type pos = p.find_last_of('.');
     NSString* extension = pos == String::npos ? @"" : [NSString stringWithUTF8String: p.substr(pos + 1).c_str()];
     [pasteboardItem setPropertyList: @[extension] forType: (NSString*) kPasteboardTypeFileURLPromise];
     
