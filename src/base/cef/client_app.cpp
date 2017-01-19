@@ -53,8 +53,11 @@ ClientApp::~ClientApp()
 
 void ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line)
 {
-    // disable proxy resolution (we only want to contact the Ghostlab server from the UI)
+    // disable proxy resolution (we might want to contact a local server from the UI)
     command_line->AppendSwitch(TEXT("no-proxy-server"));
+    
+    // ignore certificate errors (e.g., in case the app makes requests to HTTPS services with self-signed certificates)
+    command_line->AppendSwitch(TEXT("ignore-certificate-errors"));
 }
 
 void ClientApp::OnContextInitialized()
