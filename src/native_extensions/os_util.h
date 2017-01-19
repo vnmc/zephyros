@@ -32,9 +32,14 @@
 
 #include "base/types.h"
 #include "jsbridge.h"
-#ifdef USE_WEBVIEW
-#include "native_extensions.h"
+
+#ifdef USE_CEF
+#include "lib/cef/include/base/cef_lock.h"
+#include "lib/cef/include/cef_client.h"
+#include "lib/cef/include/wrapper/cef_helpers.h"
 #endif
+
+#include "native_extensions.h"
 
 
 #ifdef OS_WIN
@@ -81,6 +86,8 @@ void DisplayNotification(String title, String details);
 void RequestUserAttention();
 
 void CopyToClipboard(String text);
+    
+void BeginDragFile(Path& path, int x, int y);
 
 void CleanUp();
 

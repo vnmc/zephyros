@@ -100,7 +100,11 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
 void CopyToClipboard(String text)
 {
 }
-
+    
+void BeginDragFile(Path& path, int x, int y)
+{
+}
+    
 void CleanUp()
 {
 }

@@ -37,6 +37,10 @@
 #import "base/cef/extension_handler.h"
 #endif
 
+#ifdef USE_WEBVIEW
+#import "base/webview/ZPYWebViewAppDelegate.h"
+#endif
+
 #import "components/ZPYMenuItem.h"
 
 #import "native_extensions/os_util.h"
@@ -74,6 +78,38 @@ ZPYMenuHandler* g_menuHandler = nil;
 }
 
 @end
+
+
+@interface DragView : NSView <NSDraggingSource>
+@end
+
+@implementation DragView
+
+- (NSDragOperation) draggingSourceOperationMaskForLocal:(BOOL)isLocal {
+    //return NSDragOperationNone|NSDragOperationCopy|NSDragOperationLink|NSDragOperationGeneric;
+    return NSDragOperationCopy;
+}
+
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
+{
+    return NSDragOperationCopy;
+}
+
+- (NSArray<NSString*>*) namesOfPromisedFilesDroppedAtDestination: (NSURL*) dropDestination
+{
+    NSLog(@"XXX %@", dropDestination);
+    
+    [[NSFileManager defaultManager] createFileAtPath: [NSString pathWithComponents: @[dropDestination.path, @"X.png"]]
+                                            contents: [@"Hello" dataUsingEncoding: NSUTF8StringEncoding]
+                                          attributes: nil];
+    
+    // Return an array of file names for the created files
+    return [NSArray arrayWithObject: @"X.png"];
+}
+
+@end
+
+DragView* g_dragView = nil;
 
 
 @interface StreamData : NSObject
@@ -952,6 +988,56 @@ void CopyToClipboard(String text)
     NSPasteboard* pasteBoard = [NSPasteboard generalPasteboard];
     [pasteBoard declareTypes: @[ NSStringPboardType ] owner: nil];
     [pasteBoard setString: [NSString stringWithUTF8String: text.c_str()] forType: NSStringPboardType];
+}
+    
+void BeginDragFile(Path& path, int x, int y)
+{
+    if (g_dragView == nil)
+        g_dragView = [[DragView alloc] init];
+    
+    NSPasteboardItem *pasteboardItem = [[NSPasteboardItem alloc] init];
+
+    // add the file promise
+    String p = path.GetPath();
+    size_t pos = p.find_last_of('.');
+    NSString* extension = pos == String::npos ? @"" : [NSString stringWithUTF8String: p.substr(pos + 1).c_str()];
+    [pasteboardItem setPropertyList: @[extension] forType: (NSString*) kPasteboardTypeFileURLPromise];
+    
+    NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter: pasteboardItem];
+    /*
+    [dragItem setDraggingFrame: NSMakeRect(0, 0, 32, 32)
+                      contents: [NSImage imageNamed: NSImageNameMultipleDocuments]];
+     */
+    
+    NSInteger windowNum = [[[NSApplication sharedApplication] mainWindow] windowNumber];
+
+#ifdef USE_CEF
+    NSView* view = g_handler->GetMainHwnd();
+#endif
+#ifdef USE_WEBVIEW
+    NSView* view = ((ZPYWebViewAppDelegate*) [NSApplication sharedApplication].delegate).view;
+#endif
+
+    // create an event for the dragging session
+    NSEvent* event = [NSEvent mouseEventWithType: NSEventTypeLeftMouseDown
+                                        location: NSMakePoint(x, y)
+                                   modifierFlags: 0
+                                       timestamp: CFAbsoluteTimeGetCurrent()
+                                    windowNumber: windowNum
+                                         context: nil
+                                     eventNumber: 0
+                                      clickCount: 1
+                                        pressure: 0];
+
+    // begin the dragging session
+    NSDraggingSession* session = [view beginDraggingSessionWithItems: @[dragItem]
+                                                               event: event
+                                                              source: g_dragView];
+
+    // set the path in the pasteboard
+    [session.draggingPasteboard setString: [NSString stringWithUTF8String: p.c_str()]
+                                  forType: (NSString*) kUTTypeFileURL];
+
 }
 
 void CleanUp()
