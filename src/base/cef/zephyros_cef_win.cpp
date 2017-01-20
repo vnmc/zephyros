@@ -157,6 +157,9 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
         return 0;
     }
 
+	// initialize OLE
+	OleInitialize(0);
+
     // open the log file for writing
     g_hndLogFile = Zephyros::App::OpenLogFile();
     InstallCrashReporting();
@@ -223,6 +226,8 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
     CefShutdown();
 
     Gdiplus::GdiplusShutdown(gdiplusToken);
+
+	OleUninitialize();
 
     // Uninitialize CrashRpt before exiting the main function
     const TCHAR* szCrashReportingURL = Zephyros::GetCrashReportingURL();

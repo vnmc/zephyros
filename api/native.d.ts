@@ -191,6 +191,14 @@ declare module NativeInterface
          * or uploaded in a browser, etc.
          * The drag should be initiated from within a "mousedown" event handler.
          *
+         * The callback is invoked once the drag&drop operation has been
+         * competed or canceled. In the former case, the first argument to the
+         * callback is true, and false in the latter.
+         * The second argument identifies the nature of the drop operation:
+         * - 1: copy
+         * - 2: move
+         * - 3: link
+         *
          * @param path
          *   The path to the file to drag.
          *
@@ -199,8 +207,18 @@ declare module NativeInterface
          *
          * @param y
          *   The y coordinate where the drag originates.
+         *
+         * @param callback
+         *   The callback invoked once the drag&drop operation has been completed
+         *   or canceled. It receives the following arguments:
+         *   - isDragSuccessful: if true, the drag&drop operation completed successfully;
+         *                       if false, an error occurred or the drag was canceled.
+         *   - dragResult:       an integer identifying the nature of the drop operation:
+         *                       1: copy
+         *                       2: move
+         *                       3: link
          */
-        beginDragFile: (path: IPath, x: number, y: number) => void;
+        beginDragFile: (path: IPath, x: number, y: number, callback: (isDragSuccessful: boolean; dragResult: number) => void) => void;
 
 
         ///////////////////////////////////////////////////////////////////////

@@ -49,7 +49,11 @@ typedef unsigned long MenuHandle;
 #endif
 
 
-#define CONTEXT_MENU_STARTID 90000
+#define CONTEXT_MENU_STARTID 60000
+
+#define DND_COPY 1
+#define DND_MOVE 2
+#define DND_LINK 3
 
 
 namespace Zephyros {
@@ -87,7 +91,11 @@ void RequestUserAttention();
 
 void CopyToClipboard(String text);
     
-void BeginDragFile(Path& path, int x, int y);
+#ifdef OS_MACOSX
+void BeginDragFile(CallbackId callback, Path& path, int x, int y);
+#else
+bool BeginDragFile(Path& path, int x, int y, int& result);
+#endif
 
 void CleanUp();
 
