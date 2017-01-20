@@ -997,7 +997,7 @@ void CopyToClipboard(String text)
     [pasteBoard setString: [NSString stringWithUTF8String: text.c_str()] forType: NSStringPboardType];
 }
     
-void BeginDragFile(Path& path, int x, int y)
+void BeginDragFile(CallbackId callback, Path& path, int x, int y)
 {
     if (g_dragView == nil)
         g_dragView = [[DragView alloc] init];

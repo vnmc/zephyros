@@ -1092,17 +1092,32 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
     ));
     
     // beginDragFile: (path: IPath, x: number, y: number) => void
-    e->AddNativeJavaScriptProcedure(
+    e->AddNativeJavaScriptFunction(
         TEXT("beginDragFile"),
+#ifdef OS_MACOSX
         FUNC({
             Path path(args->GetDictionary(0));
-            OSUtil::BeginDragFile(path, args->GetInt(1), args->GetInt(2));
-            return NO_ERROR;
+            OSUtil::BeginDragFile(callback, path, args->GetInt(1), args->GetInt(2));
+            return RET_DELAYED_CALLBACK;
         },
+		ARG(VTYPE_DICTIONARY, "path")
+		ARG(VTYPE_INT, "x")
+		ARG(VTYPE_INT, "y"))
+#else
+		FUNC({
+			Path path(args->GetDictionary(0));
+			int result = 0;
+
+			ret->SetBool(0, OSUtil::BeginDragFile(path, args->GetInt(1), args->GetInt(2), result));
+			ret->SetInt(1, result);
+
+			return NO_ERROR;
+		}, 
         ARG(VTYPE_DICTIONARY, "path")
         ARG(VTYPE_INT, "x")
-        ARG(VTYPE_INT, "y")
-    ));
+        ARG(VTYPE_INT, "y"))
+#endif
+	);
 
 
     //////////////////////////////////////////////////////////////////////

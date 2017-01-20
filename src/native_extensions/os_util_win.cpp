@@ -36,6 +36,8 @@
 #include "base/cef/extension_handler.h"
 
 #include "util/string_util.h"
+#include "util/dropsource.h"
+#include "util/dataobject.h"
 
 #include "native_extensions/os_util.h"
 #include "native_extensions/image_util_win.h"
@@ -705,9 +707,74 @@ void CopyToClipboard(String text)
     CloseClipboard();
 }
 
-void BeginDragFile(Path& path, int x, int y)
+bool BeginDragFile(Path& path, int x, int y, int& result)
 {
-    // https://www.codeproject.com/Articles/840/How-to-Implement-Drag-and-Drop-Between-Your-Progra
+	// http://stackoverflow.com/questions/13576225/drag-drop-win-api-32
+	// http://www.catch22.net/tuts/drop-source
+	
+	String p = path.GetPath();
+	result = 0;
+
+	// +2 = the filename's null terminator and the file list's null terminator
+	HGLOBAL hMem = GlobalAlloc(GHND | GMEM_ZEROINIT, sizeof(DROPFILES) + (p.length() + 2) * sizeof(TCHAR));
+	if (!hMem)
+		return false;
+
+	DROPFILES* pDropFiles = (DROPFILES*) GlobalLock(hMem);
+	if (!pDropFiles)
+	{
+		GlobalFree(hMem);
+		return false;
+	}
+
+	pDropFiles->pFiles = sizeof(DROPFILES);
+	GetCursorPos(&(pDropFiles->pt));
+	pDropFiles->fNC = TRUE;
+
+#ifdef _UNICODE
+	pDropFiles->fWide = TRUE;
+#else
+	pDropFiles->fWide = FALSE;
+#endif
+
+	memcpy(&pDropFiles[1], p.c_str(), p.length() * sizeof(TCHAR));
+
+	GlobalUnlock(hMem);
+
+	// transfer the current selection into the IDataObject
+	STGMEDIUM stgmed = { TYMED_HGLOBAL, { 0 }, 0 };
+	stgmed.hGlobal = hMem;
+
+	// Create IDataObject and IDropSource COM objects
+	IDropSource* pDropSource;
+	CreateDropSource(&pDropSource);
+
+	IDataObject* pDataObject;
+	FORMATETC fmtetc = { CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	CreateDataObject(&fmtetc, &stgmed, 1, &pDataObject);
+
+	SetCapture(g_handler->GetMainHwnd());
+
+	DWORD dwEffect;
+	DWORD dwResult = DoDragDrop(pDataObject, pDropSource, DROPEFFECT_COPY, &dwEffect);
+
+	if (dwResult == DRAGDROP_S_DROP)
+	{
+		// success
+		if (dwEffect & DROPEFFECT_COPY)
+			result = DND_COPY;
+		else if (dwEffect & DROPEFFECT_MOVE)
+			result = DND_MOVE;
+		else if (dwEffect & DROPEFFECT_LINK)
+			result = DND_LINK;
+	}
+
+	pDataObject->Release();
+	pDropSource->Release();
+
+	ReleaseCapture();
+
+	return dwResult == DRAGDROP_S_DROP;
 }
 
 void CleanUp()
