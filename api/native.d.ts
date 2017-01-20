@@ -200,7 +200,7 @@ declare module NativeInterface
          * @param y
          *   The y coordinate where the drag originates.
          */
-        beginDragFile: (path: IPath, x: number, y: number) => void
+        beginDragFile: (path: IPath, x: number, y: number) => void;
 
 
         ///////////////////////////////////////////////////////////////////////
