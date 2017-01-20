@@ -82,7 +82,8 @@ ZPYMenuHandler* g_menuHandler = nil;
 
 Zephyros::Path g_draggedFile;
 
-@interface DragView : NSView <NSDraggingSource>
+
+@interface DragView : NSObject <NSDraggingSource>
 @end
 
 @implementation DragView
@@ -113,6 +114,7 @@ Zephyros::Path g_draggedFile;
 }
 
 @end
+
 
 DragView* g_dragView = nil;
 
@@ -1000,7 +1002,14 @@ void BeginDragFile(Path& path, int x, int y)
     if (g_dragView == nil)
         g_dragView = [[DragView alloc] init];
     g_draggedFile = path;
-    
+
+#ifdef USE_CEF
+    NSView* view = g_handler->GetMainHwnd();
+#endif
+#ifdef USE_WEBVIEW
+    NSView* view = ((ZPYWebViewAppDelegate*) [NSApplication sharedApplication].delegate).view;
+#endif
+
     NSPasteboardItem *pasteboardItem = [[NSPasteboardItem alloc] init];
 
     // add the file promise
@@ -1010,23 +1019,17 @@ void BeginDragFile(Path& path, int x, int y)
     [pasteboardItem setPropertyList: @[extension] forType: (NSString*) kPasteboardTypeFileURLPromise];
     
     NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter: pasteboardItem];
-    /*
-    [dragItem setDraggingFrame: NSMakeRect(0, 0, 32, 32)
-                      contents: [NSImage imageNamed: NSImageNameMultipleDocuments]];
-     */
+
+    NSPoint point = NSMakePoint(x, view.bounds.size.height - y);
+    NSPoint dragPoint = [view convertPoint: point toView: nil];
+    [dragItem setDraggingFrame: NSMakeRect(dragPoint.x - 24, dragPoint.y - 4, 32, 32)
+                      contents: [[NSWorkspace sharedWorkspace] iconForFileType: extension]];
     
     NSInteger windowNum = [[[NSApplication sharedApplication] mainWindow] windowNumber];
 
-#ifdef USE_CEF
-    NSView* view = g_handler->GetMainHwnd();
-#endif
-#ifdef USE_WEBVIEW
-    NSView* view = ((ZPYWebViewAppDelegate*) [NSApplication sharedApplication].delegate).view;
-#endif
-
     // create an event for the dragging session
     NSEvent* event = [NSEvent mouseEventWithType: NSEventTypeLeftMouseDown
-                                        location: NSMakePoint(x, y)
+                                        location: point
                                    modifierFlags: 0
                                        timestamp: CFAbsoluteTimeGetCurrent()
                                     windowNumber: windowNum

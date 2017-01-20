@@ -383,7 +383,7 @@ bool WriteFile(String filename, String contents, JavaScript::Object options, Err
     String encoding = "";
     if (options->HasKey("encoding"))
         encoding = options->GetString("encoding");
-    
+
     NSData *data = nil;
     
     if (encoding == "base64")
@@ -396,21 +396,49 @@ bool WriteFile(String filename, String contents, JavaScript::Object options, Err
         err.SetError(ERR_DECODING_FAILED, "Failed to decode data");
         return false;
     }
+
+    NSString *path = [NSString stringWithUTF8String: filename.c_str()];
     
-    [[NSFileManager defaultManager] createFileAtPath: [NSString stringWithUTF8String: filename.c_str()]
-                                            contents: data
-                                          attributes: nil];
+    // create the file if it doesn't exist
+    if ([[NSFileManager defaultManager] createFileAtPath: path contents: nil attributes: nil] == NO)
+    {
+        err.FromErrno();
+        return false;
+    }
     
-    err.FromErrno();
-    return errno == 0;
+    // open the file for writing
+    NSError *error = nil;
+    NSFileHandle *file = [NSFileHandle fileHandleForWritingToURL: [NSURL fileURLWithPath: path]
+                                                           error: &error];
+    if (error != nil)
+    {
+        err.FromError(error);
+        return false;
+    }
+
+    // write the data to the file
+    bool ret = true;
+    @try
+    {
+        [file writeData: data];
+    }
+    @catch (NSException *e)
+    {
+        err.SetError(ERR_UNKNOWN, e.reason ? [e.reason UTF8String] : "");
+        ret = false;
+    }
+
+    [file closeFile];
+
+    return ret;
 }
     
 bool MoveFile(String oldFilename, String newFilename, Error& err)
 {
     NSError* error = nil;
     BOOL ret = [[NSFileManager defaultManager] moveItemAtPath: [NSString stringWithUTF8String: oldFilename.c_str()]
-                                                   toPath: [NSString stringWithUTF8String: newFilename.c_str()]
-                                                    error: &error];
+                                                       toPath: [NSString stringWithUTF8String: newFilename.c_str()]
+                                                        error: &error];
     
     if (error != nil)
         err.FromError(error);
