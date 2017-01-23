@@ -468,6 +468,17 @@ bool MoveFile(String oldFilename, String newFilename, Error& err)
     return true;
 }
 
+bool CopyFile(String source, String destination, Error& err)
+{
+	if (!::CopyFile(source.c_str(), destination.c_str(), FALSE))
+	{
+		err.FromLastError();
+		return false;
+	}
+
+	return true;
+}
+
 bool DeleteFiles(String filenames, Error& err)
 {
     // no wildcards in the filename; simply delete the file
