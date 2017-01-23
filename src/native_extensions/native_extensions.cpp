@@ -606,6 +606,28 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "newPath")
     ));
     
+    // copyFile: (source: IPath, destination: IPath, callback: (err: Error) => void) => void
+    e->AddNativeJavaScriptFunction(
+        TEXT("copyFile"),
+        FUNC({
+            Path source(args->GetDictionary(0));
+            Path destination(args->GetDictionary(1));
+            Error err;
+        
+            // TODO: macOS: sandboxing stuff; need access to the directory the file is moved to
+            // e.g., cf. http://stackoverflow.com/questions/13950476/application-sandbox-renaming-a-file-doesnt-work
+        
+            if (FileUtil::CopyFile(source.GetPath(), destination.GetPath(), err))
+                ret->SetNull(0);
+            else
+                ret->SetDictionary(0, err.CreateJSRepresentation());
+        
+            return NO_ERROR;
+        },
+        ARG(VTYPE_DICTIONARY, "source")
+        ARG(VTYPE_DICTIONARY, "destination")
+    ));
+
     // deleteFiles: (path: IPath, relativeFilenames: string, cb: (err: Error) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("deleteFiles"),

@@ -537,6 +537,7 @@ declare module NativeInterface
          * @param callback
          *   Callback invoked when the operation has completed and providing
          *   an error object in case an error occurred.
+         *   If no error occurred, "err" is null.
          */
         writeFile: (path: IPath, contents: string, options: IWriteFileOptions, callback: (err: Error) => void) => void;
 
@@ -550,10 +551,27 @@ declare module NativeInterface
          *   The destination path of the file.
          *
          * @param callback
-         *   Callback invoked with the result of the move operation (true means that
-         *   moving the file was successful).
+         *   Callback invoked when the operation has completed and providing
+         *   an error object in case an error occurred.
+         *   If no error occurred, "err" is null.
          */
         moveFile: (oldPath: IPath, newPath: IPath, callback: (err: Error) => void) => void;
+
+        /**
+         * Copies the file at "source" to "destination".
+         *
+         * @param source
+         *   The path of the file to copy.
+         *
+         * @param destination
+         *   The destination path of the file.
+         *
+         * @param callback
+         *   Callback invoked when the operation has completed and providing
+         *   an error object in case an error occurred.
+         *   If no error occurred, "err" is null.
+         */
+        copyFile: (source: IPath, destination: IPath, callback: (err: Error) => void) => void;
 
         /**
          * Deletes all the files described by "path". The file part of "path"
@@ -571,7 +589,7 @@ declare module NativeInterface
          *   Callback invoked when the operation has completed and providing
          *   an error object in case an error occurred.
          */
-        deleteFiles: (path: IPath, relativeFilenames?: string, cb?: (err: Error) => void) => void;
+        deleteFiles: (path: IPath, relativeFilenames: string, cb?: (err: Error) => void) => void;
 
         /**
          * Starts watching the files in the directory at "path" and its sub-
