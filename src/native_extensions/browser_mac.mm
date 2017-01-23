@@ -111,21 +111,21 @@ bool OpenURLInBrowser(std::string strUrl, Browser* browser)
     // parse the URL
     NSString *urlStr = [NSString stringWithUTF8String: strUrl.c_str()];
     NSURL *url = [NSURL URLWithString: urlStr];
+
+    // if the URL is malformed, try to fix it
     if (url == nil)
     {
-        // malformed URL; try to fix
-        
         // maybe there are multiple hashtags?
         // create a new URL with only the last hashtag
         NSArray *parts = [urlStr componentsSeparatedByString: @"#"];
         if (parts.count > 2)
-        {
             url = [NSURL URLWithString: [NSString stringWithFormat: @"%@#%@", parts[0], parts[parts.count - 1]]];
-            if (url == nil)
-                return false;
-        }
     }
-    
+
+    // if the URL is still nil, abort
+    if (url == nil)
+        return false;
+
     // get the browser's bundle id
     NSString *bundleId = nil;
     if (browser != NULL)

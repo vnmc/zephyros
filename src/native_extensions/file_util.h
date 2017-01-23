@@ -82,6 +82,7 @@ bool ReadFileBinary(String filename, uint8_t** ppData, int& size, Error& err);
 bool ReadFile(String filename, JavaScript::Object options, String& result, Error& err);
 bool WriteFile(String filename, String contents, JavaScript::Object options, Error& err);
 bool MoveFile(String oldFilename, String newFilename, Error& err);
+bool CopyFile(String source, String destination, Error& err);
 bool DeleteFiles(String filenames, Error& err);
 
 void LoadPreferences(String key, String& data);

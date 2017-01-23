@@ -446,6 +446,19 @@ bool MoveFile(String oldFilename, String newFilename, Error& err)
     return ret == YES;
 }
 
+bool CopyFile(String source, String destination, Error& err)
+{
+    NSError* error = nil;
+    BOOL ret = [[NSFileManager defaultManager] copyItemAtPath: [NSString stringWithUTF8String: source.c_str()]
+                                                       toPath: [NSString stringWithUTF8String: destination.c_str()]
+                                                        error: &error];
+    
+    if (error != nil)
+        err.FromError(error);
+    
+    return ret == YES;
+}
+
 bool DeleteFiles(String filenames, Error& err)
 {
     NSFileManager *mgr = [NSFileManager defaultManager];
