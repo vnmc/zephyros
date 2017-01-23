@@ -80,15 +80,91 @@ ZPYMenuHandler* g_menuHandler = nil;
 @end
 
 
-Zephyros::Path g_draggedFile;
+@interface DragSource : NSObject <NSDraggingSource, NSPasteboardItemDataProvider>
+{
+@private
+    Zephyros::Path m_draggedFile;
+    CallbackId m_callback;
+}
 
+- (void) beginDragFile: (Zephyros::Path&) path withCallback: (CallbackId) callback  atCoordinates: (NSPoint) coords;
 
-@interface DragView : NSObject <NSDraggingSource>
 @end
 
-@implementation DragView
+@implementation DragSource
 
-- (NSDragOperation) draggingSourceOperationMaskForLocal:(BOOL)isLocal
+- (void) beginDragFile: (Zephyros::Path&) path withCallback: (CallbackId) callback atCoordinates: (NSPoint) coords
+{
+    m_draggedFile = path;
+    m_callback = callback;
+    
+#ifdef USE_WEBVIEW
+    JSValueProtect(g_ctx, m_callback);
+#endif
+    
+#ifdef USE_CEF
+    NSView* view = g_handler->GetMainHwnd();
+#endif
+#ifdef USE_WEBVIEW
+    NSView* view = ((ZPYWebViewAppDelegate*) [NSApplication sharedApplication].delegate).view;
+#endif
+    
+    // create a pasteboard item and add the file promise
+    NSPasteboardItem *pasteboardItem = [[NSPasteboardItem alloc] init];
+    [pasteboardItem setDataProvider: self forTypes: @[(NSString*) kPasteboardTypeFileURLPromise]];
+    NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter: pasteboardItem];
+    
+    String p = path.GetPath();
+    String::size_type pos = p.find_last_of('.');
+    NSString* extension = pos == String::npos ? @"" : [NSString stringWithUTF8String: p.substr(pos + 1).c_str()];
+    
+    coords.y = view.bounds.size.height - coords.y;
+    NSPoint dragPoint = [view convertPoint: coords toView: nil];
+    [dragItem setDraggingFrame: NSMakeRect(dragPoint.x - 24, dragPoint.y - 4, 32, 32)
+                      contents: [[NSWorkspace sharedWorkspace] iconForFileType: extension]];
+    
+    // create an event for the dragging session
+    NSEvent* event = [NSEvent mouseEventWithType: NSEventTypeLeftMouseDown
+                                        location: coords
+                                   modifierFlags: 0
+                                       timestamp: CFAbsoluteTimeGetCurrent()
+                                    windowNumber: [NSApp mainWindow].windowNumber
+                                         context: nil
+                                     eventNumber: 0
+                                      clickCount: 1
+                                        pressure: 0];
+    
+    // begin the dragging session
+    NSDraggingSession* session = [view beginDraggingSessionWithItems: @[dragItem]
+                                                               event: event
+                                                              source: self];
+    
+    // set the path in the pasteboard
+    [session.draggingPasteboard setString: [NSString stringWithUTF8String: p.c_str()]
+                                  forType: (NSString*) kUTTypeFileURL];
+}
+
+- (void) invokeCallback: (bool) result withEffect: (int) effect
+{
+#ifdef USE_CEF
+    Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
+    args->SetBool(0, result);
+    args->SetInt(1, effect);
+    g_handler->GetClientExtensionHandler()->InvokeCallback(m_callback, args);
+#endif
+
+#ifdef USE_WEBVIEW
+    JSValueRef args[2];
+    args[0] = JSValueMakeBoolean(g_ctx, result);
+    args[1] = JSValueMakeNumber(g_ctx, effect);
+
+    JSObjectCallAsFunction(g_ctx, m_callback, NULL, 2, args, NULL);
+    JSValueUnprotect(g_ctx, m_callback);
+#endif
+
+}
+
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL) isLocal
 {
     return NSDragOperationCopy;
 }
@@ -98,25 +174,71 @@ Zephyros::Path g_draggedFile;
     return NSDragOperationCopy;
 }
 
-- (NSArray<NSString*>*) namesOfPromisedFilesDroppedAtDestination: (NSURL*) dropDestination
+- (void) draggingSession: (NSDraggingSession*) session endedAtPoint: (NSPoint) screenPoint operation: (NSDragOperation) operation
 {
-    String p = g_draggedFile.GetPath();
-    String::size_type pos = p.find_last_of('/');
-    NSString* filename = [NSString stringWithUTF8String: pos == String::npos ? p.c_str() : p.substr(pos + 1).c_str()];
+    if (operation & NSDragOperationCopy)
+        [self invokeCallback: true withEffect: DND_COPY];
+    else if (operation & NSDragOperationMove)
+        [self invokeCallback: true withEffect: DND_MOVE];
+    else if (operation & NSDragOperationLink)
+        [self invokeCallback: true withEffect: DND_LINK];
+    else
+        [self invokeCallback: false withEffect: 0];
+}
 
-    // copy the file
-    [[NSFileManager defaultManager] copyItemAtPath: [NSString stringWithUTF8String: p.c_str()]
-                                            toPath: [NSString pathWithComponents: @[dropDestination.path, filename]]
-                                             error: nil];
+- (NSString*) getPasteLocation
+{
+    PasteboardRef pasteboard = NULL;
+    PasteboardCreate((CFStringRef) NSDragPboard, &pasteboard);
+    if (pasteboard == NULL)
+        return nil;
     
-    // return an array of file names for the created files
-    return @[filename];
+    PasteboardSynchronize(pasteboard);
+
+    CFURLRef url = NULL;
+    PasteboardCopyPasteLocation(pasteboard, &url);
+    if (url == NULL)
+    {
+        CFRelease(pasteboard);
+        return nil;
+    }
+    
+    NSString* ret = [(__bridge NSURL*) url path];
+    CFRelease(pasteboard);
+    CFRelease(url);
+    
+    return ret;
+}
+
+- (void) pasteboard: (NSPasteboard*) sender item: (NSPasteboardItem*) item provideDataForType: (NSString*) type
+{
+    if ([type isEqualToString: (NSString*) kPasteboardTypeFileURLPromise])
+    {
+        // get the location where the item was dropped
+        NSString* location = [self getPasteLocation];
+        
+        // build the new file path
+        String p = m_draggedFile.GetPath();
+        String::size_type pos = p.find_last_of('/');
+        NSString* filename = [NSString stringWithUTF8String: pos == String::npos ? p.c_str() : p.substr(pos + 1).c_str()];
+        
+        // copy the file
+        NSString* destination = [NSString pathWithComponents: @[location, filename]];
+        [[NSFileManager defaultManager] copyItemAtPath: [NSString stringWithUTF8String: p.c_str()]
+                                                toPath: destination
+                                                 error: nil];
+        
+        
+
+        // set some data
+        [item setString: destination forType: type];
+    }
 }
 
 @end
 
 
-DragView* g_dragView = nil;
+DragSource* g_dragSource = nil;
 
 
 @interface StreamData : NSObject
@@ -999,54 +1121,10 @@ void CopyToClipboard(String text)
     
 void BeginDragFile(CallbackId callback, Path& path, int x, int y)
 {
-    if (g_dragView == nil)
-        g_dragView = [[DragView alloc] init];
-    g_draggedFile = path;
+    if (g_dragSource == nil)
+        g_dragSource = [[DragSource alloc] init];
 
-#ifdef USE_CEF
-    NSView* view = g_handler->GetMainHwnd();
-#endif
-#ifdef USE_WEBVIEW
-    NSView* view = ((ZPYWebViewAppDelegate*) [NSApplication sharedApplication].delegate).view;
-#endif
-
-    NSPasteboardItem *pasteboardItem = [[NSPasteboardItem alloc] init];
-
-    // add the file promise
-    String p = path.GetPath();
-    String::size_type pos = p.find_last_of('.');
-    NSString* extension = pos == String::npos ? @"" : [NSString stringWithUTF8String: p.substr(pos + 1).c_str()];
-    [pasteboardItem setPropertyList: @[extension] forType: (NSString*) kPasteboardTypeFileURLPromise];
-    
-    NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter: pasteboardItem];
-
-    NSPoint point = NSMakePoint(x, view.bounds.size.height - y);
-    NSPoint dragPoint = [view convertPoint: point toView: nil];
-    [dragItem setDraggingFrame: NSMakeRect(dragPoint.x - 24, dragPoint.y - 4, 32, 32)
-                      contents: [[NSWorkspace sharedWorkspace] iconForFileType: extension]];
-    
-    NSInteger windowNum = [[[NSApplication sharedApplication] mainWindow] windowNumber];
-
-    // create an event for the dragging session
-    NSEvent* event = [NSEvent mouseEventWithType: NSEventTypeLeftMouseDown
-                                        location: point
-                                   modifierFlags: 0
-                                       timestamp: CFAbsoluteTimeGetCurrent()
-                                    windowNumber: windowNum
-                                         context: nil
-                                     eventNumber: 0
-                                      clickCount: 1
-                                        pressure: 0];
-
-    // begin the dragging session
-    NSDraggingSession* session = [view beginDraggingSessionWithItems: @[dragItem]
-                                                               event: event
-                                                              source: g_dragView];
-
-    // set the path in the pasteboard
-    [session.draggingPasteboard setString: [NSString stringWithUTF8String: p.c_str()]
-                                  forType: (NSString*) kUTTypeFileURL];
-
+    [g_dragSource beginDragFile: path withCallback: callback atCoordinates: NSMakePoint(x, y)];
 }
 
 void CleanUp()

@@ -437,7 +437,10 @@ $(document).ready(function()
 
 	$('#dragMe').on('mousedown', function(event)
 	{
-		app.beginDragFile(getParameterAsPath(), event.clientX, event.clientY);
+		app.beginDragFile(getParameterAsPath(), event.clientX, event.clientY, function(result, effect)
+		{
+			setMessage('Drag ended with result=' + result + ', effect=' + effect);
+		});
 	});
 });
 

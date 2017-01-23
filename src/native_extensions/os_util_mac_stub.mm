@@ -101,7 +101,7 @@ void CopyToClipboard(String text)
 {
 }
     
-void BeginDragFile(Path& path, int x, int y)
+void BeginDragFile(CallbackId callback, Path& path, int x, int y)
 {
 }
     
