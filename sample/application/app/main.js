@@ -260,12 +260,40 @@ $(document).ready(function()
 	        hasSecurityAccessData: false
 	    };
 
-	    app.writeFile(oldPath, '42');
+	    app.writeFile(oldPath, '42', {});
 		app.moveFile(oldPath, newPath, function(err)
 		{
 			setMessage('Moving the file ' + (err === null ? 'succeeded' : 'failed with error ' + JSON.stringify(err)));
 		});
 	});
+
+    $('#copyFile').click(function()
+    {
+        var oldPath = {
+            path: 'a.txt',
+            urlWithSecurityAccessData: '',
+            hasSecurityAccessData: false
+        };
+
+        var newPath = {
+            path: 'b.txt',
+            urlWithSecurityAccessData: '',
+            hasSecurityAccessData: false
+        };
+
+        app.writeFile(oldPath, '42', {}, function(err1)
+        {
+            if (err1)
+                setMessage('Creating the file ' + (err1 === null ? 'succeeded' : 'failed with error ' + JSON.stringify(err1)));
+            else
+            {
+                app.copyFile(oldPath, newPath, function(err2)
+                {
+                    setMessage('Copying the file ' + (err2 === null ? 'succeeded' : 'failed with error ' + JSON.stringify(err2)));
+                });
+            }
+        });
+    });
 
 	$('#showOpenFileDialog').click(function()
 	{

@@ -387,7 +387,7 @@ bool CopyFile(String source, String destination, Error& err)
         return false;
     }
 
-    int fdDest = open(destination.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
+    int fdDest = open(destination.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0664);
     if (fdDest < 0)
     {
         close(fdSource);
