@@ -33,7 +33,9 @@
 #include <pwd.h>
 #include <libgen.h>
 
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/sendfile.h>
 #include <gtk/gtk.h>
 
 #include "base/app.h"
@@ -366,6 +368,44 @@ bool MoveFile(String oldFilename, String newFilename, Error& err)
     if (ret == -1)
         err.FromErrno();
     return ret == 0;
+}
+
+bool CopyFile(String source, String destination, Error& err)
+{
+    int fdSource = open(source.c_str(), O_RDONLY, 0);
+    if (fdSource < 0)
+    {
+        err.FromErrno();
+        return false;
+    }
+
+    struct stat statSource;
+    if (fstat(fdSource, &statSource) < 0)
+    {
+        close(fdSource);
+        err.FromErrno();
+        return false;
+    }
+
+    int fdDest = open(destination.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
+    if (fdDest < 0)
+    {
+        close(fdSource);
+        err.FromErrno();
+        return false;
+    }
+
+    bool ret = true;
+    if (sendfile(fdDest, fdSource, 0, statSource.st_size) < 0)
+    {
+        ret = false;
+        err.FromErrno();
+    }
+
+    close(fdSource);
+    close(fdDest);
+
+    return ret;
 }
 
 bool DeleteFiles(String filenames, Error& err)
