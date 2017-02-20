@@ -75,7 +75,7 @@ bool LoadBinaryResource(const TCHAR* szResourceName, String& resourceData)
 CefRefPtr<CefStreamReader> GetBinaryResourceReader(const TCHAR* szResourceName)
 {
     int resource_id = Zephyros::GetResourceID(szResourceName);
-    if (resource_id == 0)
+    if (resource_id < 0)
         return NULL;
 
     DWORD dwSize;
