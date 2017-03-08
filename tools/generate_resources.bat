@@ -19,6 +19,34 @@ set id=10000
 rem ### set webappDir to the name of the current directory
 for %%f in (%cd%) do set webappDir=%%~nxf
 
+rem ### Chromium lowercases the first part of the path ("domain")
+set webappDir=!webappDir:A=a!
+set webappDir=!webappDir:B=b!
+set webappDir=!webappDir:C=c!
+set webappDir=!webappDir:D=d!
+set webappDir=!webappDir:E=e!
+set webappDir=!webappDir:F=f!
+set webappDir=!webappDir:G=g!
+set webappDir=!webappDir:H=h!
+set webappDir=!webappDir:I=i!
+set webappDir=!webappDir:J=j!
+set webappDir=!webappDir:K=k!
+set webappDir=!webappDir:L=l!
+set webappDir=!webappDir:M=m!
+set webappDir=!webappDir:N=n!
+set webappDir=!webappDir:O=o!
+set webappDir=!webappDir:P=p!
+set webappDir=!webappDir:Q=q!
+set webappDir=!webappDir:R=r!
+set webappDir=!webappDir:S=s!
+set webappDir=!webappDir:T=t!
+set webappDir=!webappDir:U=u!
+set webappDir=!webappDir:V=v!
+set webappDir=!webappDir:W=w!
+set webappDir=!webappDir:X=x!
+set webappDir=!webappDir:Y=y!
+set webappDir=!webappDir:Z=z!
+
 for /R %%f in (*) do (
 	set file=%%f
 
@@ -31,7 +59,7 @@ for /R %%f in (*) do (
 	rem ### The resource names have to be relative to the root (we use the current directory, %cd%)
 	rem ### and the backslashes have to be replaced by slashes.
 	set resname=!file:%cd%\=%webappDir%/!
-	@echo 	Zephyros::SetResourceID(TEXT("!resname:\=/!"^), !id!^); >> %2
+	@echo Zephyros::SetResourceID(TEXT("!resname:\=/!"^), !id!^); >> %2
 
 	rem ### Increment the counter.
 	set /a id=id+1

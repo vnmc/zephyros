@@ -155,8 +155,8 @@ else()
     set(LIB_ZEPHYROS_WEBVIEW_PATH "${LIB_ZEPHYROS_WEBVIEW}")
     set(LIB_ZEPHYROS_APPSTORE_PATH "${LIB_ZEPHYROS_APPSTORE}")
   elseif(OS_WINDOWS)
-    set(LIB_ZEPHYROS_CEF "${ZEPHYROS_BUILD_DIR}/Zephyros.lib")
-    set(LIB_DLL_WRAPPER "${ZEPHYROS_BUILD_DIR}/libcef_dll_wrapper.lib")
+    set(LIB_ZEPHYROS_CEF "${ZEPHYROS_BUILD_DIR}/src/$<CONFIGURATION>/Zephyros.lib")
+    set(LIB_DLL_WRAPPER "${ZEPHYROS_BUILD_DIR}/lib/cef/libcef_dll/$<CONFIGURATION>/libcef_dll_wrapper.lib")
   elseif(OS_LINUX)
     set(LIB_ZEPHYROS_CEF "${ZEPHYROS_BUILD_DIR}/src/libZephyros.a")
     set(LIB_DLL_WRAPPER "${ZEPHYROS_BUILD_DIR}/lib/cef/libcef_dll/libcef_dll_wrapper.a")
@@ -282,6 +282,10 @@ elseif(OS_WINDOWS)
     target_include_directories(${APP_NAME} PRIVATE ${ZEPHYROS_DIR} ${ZEPHYROS_DIR}/src ${ZEPHYROS_DIR}/lib/cef)
   endif()
   target_include_directories(${APP_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/res/windows)
+
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+  add_definitions(-DWIN32 -D_WIN32 -D_WINDOWS -DUNICODE -D_UNICODE -DWINVER=0x0602 -D_WIN32_WINNT=0x602 -DNOMINMAX -D_HAS_EXCEPTIONS=0)
 
   set(CEF_STANDARD_LIBS
     winhttp.lib

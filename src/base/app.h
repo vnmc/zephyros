@@ -30,10 +30,7 @@
 #pragma once
 
 #include <string>
-#include <map>
-
 #include "base/types.h"
-
 #include "zephyros.h"
 
 
@@ -46,9 +43,6 @@ class CefCommandLine;
 
 namespace Zephyros {
 namespace App {
-
-
-typedef std::map<String, int> MenuItemStatuses;
 
 
 #ifdef USE_CEF
@@ -79,67 +73,6 @@ CefRefPtr<CefCommandLine> GetCommandLine();
 void GetSettings(CefSettings& settings);
 
 #endif
-
-
-/**
- * Returns the user-agent string to use.
- */
-String GetUserAgent();
-
-/**
- * Initiates closing the application window.
- */
-void CloseWindow();
-
-/**
- * Quits the app.
- */
-void Quit();
-
-/**
- * Quit the application message loop.
- */
-void QuitMessageLoop();
-
-/**
- * Show an alert box.
- */
-void Alert(String title, String msg, AlertStyle style);
-
-/**
- * Set the app to a "waiting" state (e.g., by displaying an hourglass cursor).
- */
-void BeginWait();
-
-/**
- * Restores the default state.
- */
-void EndWait();
-
-/**
- * Log.
- */
-void Log(String msg);
-
-/**
- * Displays an error message.
- */
-String ShowErrorMessage();
-
-/**
- * Sets the statuses (checked, enabled, ...) of app menu items.
- */
-void SetMenuItemStatuses(MenuItemStatuses& statuses);
-
-/**
- * Returns a reference to the license manager or NULL if there is none.
- */
-Zephyros::LicenseManager* GetLicenseManager();
-
-/**
- * Removes all the menu items from the app menu related to the demo mode.
- */
-void RemoveDemoMenuItems();
 
 } // namespace App
 } // namespace Zephyros
