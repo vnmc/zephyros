@@ -110,10 +110,7 @@
     if ([[NSApplication sharedApplication] respondsToSelector: @selector(isAutomaticCustomizeTouchBarMenuItemEnabled)])
     {
         [NSApplication sharedApplication].automaticCustomizeTouchBarMenuItemEnabled = YES;
-
         self.touchBarHandler = [[ZPYTouchBarHandler alloc] init];
-        self.touchBar = [[NSTouchBar alloc] init];
-        self.touchBar.delegate = self;
     }
 }
 

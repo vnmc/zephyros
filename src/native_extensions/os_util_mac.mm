@@ -1109,6 +1109,10 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
     }
 
     [ids addObject: NSTouchBarItemIdentifierOtherItemsProxy];
+
+    // create a new touch bar object
+    appDelegate.touchBar = [[NSTouchBar alloc] init];
+    appDelegate.touchBar.delegate = appDelegate;
     appDelegate.touchBar.defaultItemIdentifiers = ids;
 }
     
