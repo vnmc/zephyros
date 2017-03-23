@@ -365,6 +365,15 @@ if(OS_MACOSX)
 		INSTALL_NAME_DIR "@rpath"
 	)
 
+	set_target_properties(Zephyros_CEF
+     	PROPERTIES
+    	XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
+ 	)
+ 	#set_target_properties(Zephyros_CEF_Helper
+    # 	PROPERTIES
+    #	XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
+ 	#)
+
 	# WebView configuration
 	add_library(Zephyros_WebView SHARED ${ZEPHYROS_WEBVIEW_SRCS})
 	target_include_directories(Zephyros_WebView PUBLIC ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/base/webview)
