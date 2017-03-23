@@ -369,10 +369,11 @@ if(OS_MACOSX)
      	PROPERTIES
     	XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
  	)
- 	#set_target_properties(Zephyros_CEF_Helper
-    # 	PROPERTIES
-    #	XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
- 	#)
+ 	
+ 	set_target_properties(Zephyros_CEF_Helper
+     	PROPERTIES
+    	XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
+ 	)
 
 	# WebView configuration
 	add_library(Zephyros_WebView SHARED ${ZEPHYROS_WEBVIEW_SRCS})
