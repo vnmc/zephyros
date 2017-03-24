@@ -350,6 +350,7 @@ if(OS_MACOSX)
 		PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
 		RESOURCE "res/mac/LicenseCheckWindowController.xib"
 		INSTALL_NAME_DIR "@rpath"
+		XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
 	)
 	EMBED_FRAMEWORK(Zephyros_CEF ${LIB_SPARKLE})
 
@@ -363,17 +364,8 @@ if(OS_MACOSX)
 		FRAMEWORK TRUE
 		PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
 		INSTALL_NAME_DIR "@rpath"
+		XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
 	)
-
-	set_target_properties(Zephyros_CEF
-     	PROPERTIES
-    	XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
- 	)
- 	
- 	set_target_properties(Zephyros_CEF_Helper
-     	PROPERTIES
-    	XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
- 	)
 
 	# WebView configuration
 	add_library(Zephyros_WebView SHARED ${ZEPHYROS_WEBVIEW_SRCS})
@@ -385,6 +377,7 @@ if(OS_MACOSX)
 		PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
 		RESOURCE "res/mac/MainWindow.xib;res/mac/LicenseCheckWindowController.xib"
 		INSTALL_NAME_DIR "@rpath"
+		XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
 	)
 	EMBED_FRAMEWORK(Zephyros_WebView ${LIB_SPARKLE})
 
@@ -398,6 +391,7 @@ if(OS_MACOSX)
 		PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
 		RESOURCE "res/mac/MainWindow.xib"
 		INSTALL_NAME_DIR "@rpath"
+		XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
 	)
 elseif(OS_WINDOWS)
 	add_library(Zephyros STATIC ${ZEPHYROS_CEF_SRCS})

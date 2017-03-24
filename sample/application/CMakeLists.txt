@@ -42,9 +42,12 @@ set(APP_SRCS
 
 # app resources
 set(APP_RESOURCES)
+set(APP_ICON_MACOSX
+  res/mac/icon.icns
+)
 set(APP_RESOURCES_MACOSX
   res/mac/en.lproj/Localizable.strings
-  res/mac/Images.xcassets
+  ${APP_ICON_MACOSX}
   ${WEBAPP}
 )
 set(APP_RESOURCES_WINDOWS
@@ -175,6 +178,20 @@ SET_CEF_TARGET_OUT_DIR()
 
 # configure the executables
 if(OS_MACOSX)
+  # Target SDK
+  set(CEF_TARGET_SDK "10.7")
+  set(CEF_COMPILER_FLAGS "${CEF_COMPILER_FLAGS} -mmacosx-version-min=${CEF_TARGET_SDK}")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET ${CEF_TARGET_SDK})
+
+  # Icon
+  # add property to info.plist
+  get_filename_component(APP_ICON_FILENAME "${APP_ICON_MACOSX}" NAME)
+  set(MACOSX_BUNDLE_ICON_FILE "${APP_ICON_FILENAME}")
+  # this part tells CMake where to find and install the file itself
+  set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
+    MACOSX_PACKAGE_LOCATION "Resources"
+  )
+
   # CEF version
   if(${BUILD_CEF_VERSION})
     # CEF Helper App
@@ -192,6 +209,7 @@ if(OS_MACOSX)
     target_link_libraries(${APP_NAME_CEFHELPER} PRIVATE ${LIB_APPKIT} ${LIB_ZEPHYROS_CEFHELPER} ${LIB_CEF})
     set_target_properties(${APP_NAME_CEFHELPER} PROPERTIES
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${APP_CEFHELPER_PLIST}"
+      XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/../../../../Frameworks @loader_path/../Frameworks @loader_path/../../../../Frameworks/Zephyros_CEF.framework/Versions/A/Frameworks"
     )
     EMBED_FRAMEWORK("${APP_NAME_CEFHELPER}" "${LIB_ZEPHYROS_CEFHELPER_PATH}")
     FIX_MACOSX_FRAMEWORK_LINK("${APP_NAME_CEFHELPER}" "${CEF_TARGET_OUT_DIR}")
@@ -213,6 +231,7 @@ if(OS_MACOSX)
     set_target_properties(${APP_NAME_CEF} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${APP_CEF_PLIST}"
+      XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/../Frameworks @loader_path/../Frameworks/Zephyros_CEF.framework/Versions/A/Frameworks"
     )
     EMBED_FRAMEWORK("${APP_NAME_CEF}" "${LIB_ZEPHYROS_CEF_PATH}")
     EMBED_FRAMEWORK("${APP_NAME_CEF}" "${LIB_CEF}")
@@ -240,6 +259,7 @@ if(OS_MACOSX)
     set_target_properties(${APP_NAME_WEBVIEW} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${APP_WEBVIEW_PLIST}"
+      XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/../Frameworks @loader_path/../Frameworks/Zephyros_WebView.framework/Versions/A/Frameworks"
     )
     EMBED_FRAMEWORK("${APP_NAME_WEBVIEW}" "${LIB_ZEPHYROS_WEBVIEW_PATH}")
 
@@ -265,6 +285,7 @@ if(OS_MACOSX)
     set_target_properties(${APP_NAME_APPSTORE} PROPERTIES
       RESOURCE "${APP_RESOURCES}"
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/${APP_APPSTORE_PLIST}"
+      XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/../Frameworks @loader_path/../Frameworks/Zephyros_AppStore.framework/Versions/A/Frameworks"
     )
     EMBED_FRAMEWORK("${APP_NAME_APPSTORE}" "${LIB_ZEPHYROS_APPSTORE_PATH}")
 
