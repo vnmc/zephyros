@@ -524,7 +524,12 @@ void StartProcess(CallbackId callback, String executableFileName, std::vector<St
                 arguments: args
          currentDirectory: [NSString stringWithUTF8String: cwd.c_str()]];
 }
- 
+    
+void BringWindowToFront()
+{
+    [NSApp activateIgnoringOtherApps: YES];
+}
+
     
 static int lastOriginX = INT_MIN;
 static int lastOriginY = INT_MIN;
@@ -951,7 +956,7 @@ float ToColorComponent(const char* str)
     
 NSButton* CreateTouchBarButton(JavaScript::Object item)
 {
-    if (!item->HasKey("id") || !item->HasKey("caption"))
+    if (!item->HasKey("id"))
         return nil;
     
     NSString* identifier = [NSString stringWithUTF8String: String(item->GetString("id")).c_str()];
@@ -967,8 +972,11 @@ NSButton* CreateTouchBarButton(JavaScript::Object item)
     
     // create the button
     ZPYAppDelegate* appDelegate = (ZPYAppDelegate*) [[NSApplication sharedApplication] delegate];
-    NSString* title = [NSString stringWithUTF8String: String(item->GetString("caption")).c_str()];
     NSButton* btn = nil;
+    
+    NSString* title = item->HasKey("caption") ?
+        [NSString stringWithUTF8String: String(item->GetString("caption")).c_str()] :
+        nil;
 
     if (title && ![title isEqualToString: @""])
     {
@@ -1071,7 +1079,7 @@ NSString* AddTouchBarGroup(JavaScript::Object group, int idx)
     
 NSString* AddTouchBarButton(JavaScript::Object item)
 {
-    if (!item->HasKey("id") || !item->HasKey("caption"))
+    if (!item->HasKey("id"))
         return nil;
     
     NSString* identifier = [NSString stringWithUTF8String: String(item->GetString("id")).c_str()];

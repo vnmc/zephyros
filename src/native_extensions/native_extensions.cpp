@@ -1082,6 +1082,14 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         },
         ARG(VTYPE_DICTIONARY, "size")
     ));
+    
+    e->AddNativeJavaScriptProcedure(
+        TEXT("bringWindowToFront"),
+        FUNC({
+            OSUtil::BringWindowToFront();
+            return NO_ERROR;
+        }
+    ));
 
     // displayNotification: (title: string, details: string) => void
     e->AddNativeJavaScriptProcedure(

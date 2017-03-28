@@ -82,6 +82,7 @@ void CreateTouchBar(JavaScript::Array touchBarItems);
 void GetWindowBorderSize(POINT* pPtBorder);
 #endif
 
+void BringWindowToFront();
 void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bool hasHeight, int* pNewWidth, int* pNewHeight);
 void SetMinimumWindowSize(int width, int height);
 

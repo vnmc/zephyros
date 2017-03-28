@@ -724,6 +724,11 @@ declare module NativeInterface
         // Windows, Notifications
 
         /**
+         * Brings the application window to the front.
+         */
+        bringWindowToFront: () => void;
+
+        /**
          * Sets the size of the app's window.
          *
          * @param size
