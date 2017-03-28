@@ -56,6 +56,10 @@ String GetComputerName()
 void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
 {
 }
+    
+void BringWindowToFront()
+{
+}
  
 void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bool hasHeight, int* pNewWidth, int* pNewHeight)
 {
