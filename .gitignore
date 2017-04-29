@@ -29,3 +29,5 @@ build/
 /lib/cef/DLL/libcef/linux/x86_64/Resources
 /.vs
 *~
+/build32/
+/build64/

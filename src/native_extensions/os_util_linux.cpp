@@ -597,6 +597,11 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
     // not applicable
 }
 
+void BringWindowToFront()
+{
+    // TODO: implement
+}
+
 
 int lastOriginX = INT_MIN;
 int lastOriginY = INT_MIN;

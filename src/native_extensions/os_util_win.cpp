@@ -492,6 +492,11 @@ void GetWindowBorderSize(POINT* pPtBorder)
     pPtBorder->y = rectWnd.bottom - rectWnd.top - rectClient.bottom;
 }
 
+void BringWindowToFront()
+{
+	SetForegroundWindow(App::GetMainHwnd());
+}
+
 
 int lastOriginX = INT_MIN;
 int lastOriginY = INT_MIN;
