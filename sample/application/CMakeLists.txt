@@ -121,6 +121,8 @@ endif()
 if(OS_WINDOWS)
   option(USE_WINSPARKLE "Use the WinSparkle updater" ON)
   option(USE_CRASHRPT "Use the CrashRpt crash reporter" ON)
+  set(CUSTOM_ARCH "x64" CACHE STRING "Architecture Win: 32 or 64")
+  set_property(CACHE CUSTOM_ARCH PROPERTY STRINGS "Win32;x64")
 endif()
 
 
@@ -344,7 +346,7 @@ elseif(OS_WINDOWS)
 
   if(USE_WINSPARKLE)
     set(CEF_STANDARD_LIBS ${CEF_STANDARD_LIBS} "${ZEPHYROS_DIR}/lib/winsparkle/\$(Platform)/WinSparkle.lib")
-    COPY_FILES(${APP_NAME} "${WINSPARKLE_BINARY_FILES}" "${ZEPHYROS_DIR}/lib/winsparkle/x64" "${CEF_TARGET_OUT_DIR}")
+    COPY_FILES(${APP_NAME} "${WINSPARKLE_BINARY_FILES}" "${ZEPHYROS_DIR}/lib/winsparkle/${CUSTOM_ARCH}" "${WINDOWS_OUT_DIR}")
   else()
     set(APP_ALL_SRCS ${APP_ALL_SRCS} "${ZEPHYROS_DIR}/src/stubs_win.cpp")
     target_compile_definitions(${APP_NAME} PRIVATE -DNO_WINSPARKLE)
@@ -352,14 +354,26 @@ elseif(OS_WINDOWS)
 
   if(USE_CRASHRPT)
     set(CEF_STANDARD_LIBS ${CEF_STANDARD_LIBS} "${ZEPHYROS_DIR}/lib/CrashRpt/\$(Platform)/CrashRpt1402.lib")
-    COPY_FILES(${APP_NAME} "${CRASHREPORTER_BINARY_FILES}" "${ZEPHYROS_DIR}/lib/CrashRpt/x64" "${CEF_TARGET_OUT_DIR}")
+    COPY_FILES(${APP_NAME} "${CRASHREPORTER_BINARY_FILES}" "${ZEPHYROS_DIR}/lib/CrashRpt/${CUSTOM_ARCH}" "${WINDOWS_OUT_DIR}")
   else()
     set(APP_ALL_SRCS ${APP_ALL_SRCS} "${ZEPHYROS_DIR}/src/stubs_win.cpp")
     target_compile_definitions(${APP_NAME} PRIVATE -DNO_CRASHRPT)
   endif()
 
-  set(CEF_RESOURCE_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/windows/x64/Resources/")
-  set(CEF_BINARY_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/windows/x64/Release/")
+  set(CEF_RESOURCE_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/windows/${CUSTOM_ARCH}/Resources/")
+  set(CEF_BINARY_DIR "${ZEPHYROS_DIR}/lib/cef/DLL/libcef/windows/${CUSTOM_ARCH}/Release/")
+
+  # set solution build directory
+  # TODO: use CMake variables for ../../../bin
+  set(WINDOWS_OUT_DIR ../../../bin/${CUSTOM_ARCH}/Release)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${WINDOWS_OUT_DIR}")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${WINDOWS_OUT_DIR}")
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${WINDOWS_OUT_DIR}")
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${WINDOWS_OUT_DIR}")
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${WINDOWS_OUT_DIR}")
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${WINDOWS_OUT_DIR}")
+  #set(EXECUTABLE_OUTPUT_PATH ${WINDOWS_OUT_DIR})
+  #set(LIBRARY_OUTPUT_PATH ${WINDOWS_OUT_DIR})
 
   target_compile_definitions(${APP_NAME} PRIVATE -DUSE_CEF ${PLATFORM})
   target_link_libraries(${APP_NAME} PRIVATE ${LIB_ZEPHYROS_CEF} ${LIB_DLL_WRAPPER} ${CEF_BINARY_DIR}/libcef.lib ${CEF_STANDARD_LIBS})
@@ -378,7 +392,6 @@ elseif(OS_WINDOWS)
   # copy CEF binary and resource files to the target output directory
   COPY_FILES(${APP_NAME} "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
   COPY_FILES(${APP_NAME} "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
-
 elseif(OS_LINUX)
   enable_language(ASM-ATT)
 
