@@ -846,7 +846,11 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
                                 ret = true;
                             }
                         }
+						else
+							App::ShowErrorMessage();
                     }
+					else
+						App::ShowErrorMessage();
 
                     delete[] szPostData;
                 }
@@ -864,12 +868,18 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
 
                 WinHttpCloseHandle(hRequest);
             }
+			else
+				App::ShowErrorMessage();
 
             WinHttpCloseHandle(hHttp);
         }
+		else
+			App::ShowErrorMessage();
 
         WinHttpCloseHandle(hSession);
     }
+	else
+		App::ShowErrorMessage();
 
     return ret;
 }
