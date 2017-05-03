@@ -45,6 +45,7 @@ extern bool g_isWindowLoaded;
     {
         m_window = window;
         
+        /*
         // register for application hide/unhide notifications
         [[NSNotificationCenter defaultCenter] addObserver: self
                                                  selector: @selector(applicationDidHide:)
@@ -55,8 +56,9 @@ extern bool g_isWindowLoaded;
                                                  selector: @selector(applicationDidUnhide:)
                                                      name: NSApplicationDidUnhideNotification
                                                    object: nil];
+        */
     }
-    
+
     return self;
 }
 
