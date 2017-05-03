@@ -141,7 +141,7 @@ extern bool g_isWindowLoaded;
     }
     
     self.window = [[UnderlayOpenGLHostingWindow alloc] initWithContentRect: rectWindow
-                                                                 styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
+                                                                 styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSUnifiedTitleAndToolbarWindowMask
                                                                    backing: NSBackingStoreBuffered
                                                                      defer: NO];
     
@@ -157,9 +157,10 @@ extern bool g_isWindowLoaded;
     // releasing when the window gets closed. We use the delegate to do
     // everything from the autorelease pool so the window isn't on the stack
     // during cleanup (ie, a window close from javascript)
-    [self.window setReleasedWhenClosed: NO];
+    self.window.releasedWhenClosed = NO;
     
     NSView* contentView = self.window.contentView;
+    contentView.wantsLayer = YES;
     g_handler->SetMainHwnd(contentView);
     
     // create the browser view
