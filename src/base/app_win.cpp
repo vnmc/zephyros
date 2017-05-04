@@ -56,9 +56,6 @@ namespace App {
 String GetUserAgent()
 {
     String strOS = Zephyros::OSUtil::GetOSVersion();
-    if (strOS[strOS.length() - 1] == TEXT('\0'))
-        strOS = strOS.substr(0, strOS.length() - 1);
-
     StringStream ssUserAgent;
     ssUserAgent << Zephyros::GetAppName() << TEXT(" ") << Zephyros::GetAppVersion() << TEXT("; Windows NT/") << strOS << TEXT("; ");
 

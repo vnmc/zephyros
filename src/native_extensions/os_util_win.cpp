@@ -103,7 +103,11 @@ String GetOSVersion()
         delete[] pData;
     }
 
-    return ssVersion.str();
+    String strOS = ssVersion.str();
+	if (strOS[strOS.length() - 1] == TEXT('\0'))
+		strOS = strOS.substr(0, strOS.length() - 1);
+
+	return strOS;
 }
 
 /**

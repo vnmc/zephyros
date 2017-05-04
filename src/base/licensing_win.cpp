@@ -757,7 +757,8 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
         if (hHttp != NULL)
         {
             String strPath(urlComponents.lpszUrlPath, urlComponents.dwUrlPathLength);
-            HINTERNET hRequest = WinHttpOpenRequest(hHttp, TEXT("POST"), strPath.c_str(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+			bool isHTTPS = urlComponents.nScheme == INTERNET_SCHEME_HTTPS;
+            HINTERNET hRequest = WinHttpOpenRequest(hHttp, TEXT("POST"), strPath.c_str(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH | (isHTTPS ? WINHTTP_FLAG_SECURE : 0));
             if (hRequest != NULL)
             {
                 // check for proxy
