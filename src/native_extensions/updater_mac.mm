@@ -62,6 +62,12 @@ void SetSettings(JavaScript::Object settings)
     [updater setAutomaticallyDownloadsUpdates: autoDownload];
 }
     
+void CheckForUpdates()
+{
+    SUUpdater *updater = [SUUpdater sharedUpdater];
+    [updater checkForUpdatesInBackground];
+}
+    
 } // namespace UpdaterUtil
 } // namespace Zephyros
 
