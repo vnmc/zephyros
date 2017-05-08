@@ -28,6 +28,7 @@
 #include <vector>
 #include <map>
 
+#include <locale.h>
 #include <ShlObj.h>
 
 #include "base/app.h"
@@ -181,18 +182,20 @@ String GetKeyName(WORD wVkCode)
     int nRet = GetKeyNameText(MapVirtualKey(wVkCode, MAPVK_VK_TO_VSC) << 16 | (nFlags << 24), szName, 127);
     szName[nRet] = TEXT('\0');
 
+	_locale_t lc = _get_current_locale();
+
     // capitalize the name
     bool bPrevWasAlnum = false;
     for (int i = 0; i < nRet; ++i)
     {
         TCHAR c = szName[i];
 
-        if (bPrevWasAlnum)
-            szName[i] = tolower(c);
+		if (bPrevWasAlnum)
+			szName[i] = _totlower_l(c, lc);
         if (i > 0 && c == TEXT('-'))
             szName[i] = TEXT(' ');
 
-        bPrevWasAlnum = isalnum(c) != 0;
+        bPrevWasAlnum = _istalnum_l(c, lc) != 0;
     }
 
     return szName;
@@ -287,30 +290,38 @@ void CreateMenuRecursive(
                     pBufAccel[dwNumAccels].fVirt = FVIRTKEY | ((nModifiers & 1) ? FSHIFT : 0) | ((nModifiers & 2) ? FCONTROL : 0) | ((nModifiers & 4) ? FALT : 0);
                     
                     WORD wVkCode = 0;
-                    if (strKeyLc == TEXT("left"))
-                        wVkCode = VK_LEFT;
-                    else if (strKeyLc == TEXT("right"))
-                        wVkCode = VK_RIGHT;
-                    else if (strKeyLc == TEXT("up"))
-                        wVkCode = VK_UP;
-                    else if (strKeyLc == TEXT("down"))
-                        wVkCode = VK_DOWN;
-                    else if (strKeyLc == TEXT("page up") || strKeyLc == TEXT("pageup"))
-                        wVkCode = VK_PRIOR;
-                    else if (strKeyLc == TEXT("page down") || strKeyLc == TEXT("pagedown"))
-                        wVkCode = VK_NEXT;
-                    else if (strKeyLc == TEXT("home"))
-                        wVkCode = VK_HOME;
-                    else if (strKeyLc == TEXT("end"))
-                        wVkCode = VK_END;
-                    else if (strKeyLc == TEXT("insert"))
-                        wVkCode = VK_INSERT;
-                    else if (strKeyLc == TEXT("delete"))
-                        wVkCode = VK_DELETE;
-                    else if (strKeyLc == TEXT("backspace"))
-                        wVkCode = VK_BACK;
-                    else if (strKeyLc == TEXT("enter"))
-                        wVkCode = VK_RETURN;
+					if (strKeyLc == TEXT("left"))
+						wVkCode = VK_LEFT;
+					else if (strKeyLc == TEXT("right"))
+						wVkCode = VK_RIGHT;
+					else if (strKeyLc == TEXT("up"))
+						wVkCode = VK_UP;
+					else if (strKeyLc == TEXT("down"))
+						wVkCode = VK_DOWN;
+					else if (strKeyLc == TEXT("page up") || strKeyLc == TEXT("pageup"))
+						wVkCode = VK_PRIOR;
+					else if (strKeyLc == TEXT("page down") || strKeyLc == TEXT("pagedown"))
+						wVkCode = VK_NEXT;
+					else if (strKeyLc == TEXT("home"))
+						wVkCode = VK_HOME;
+					else if (strKeyLc == TEXT("end"))
+						wVkCode = VK_END;
+					else if (strKeyLc == TEXT("insert"))
+						wVkCode = VK_INSERT;
+					else if (strKeyLc == TEXT("delete"))
+						wVkCode = VK_DELETE;
+					else if (strKeyLc == TEXT("backspace"))
+						wVkCode = VK_BACK;
+					else if (strKeyLc == TEXT("enter"))
+						wVkCode = VK_RETURN;
+					else if (strKey == TEXT("."))
+						wVkCode = VK_OEM_PERIOD;
+					else if (strKey == TEXT(","))
+						wVkCode = VK_OEM_COMMA;
+					else if (strKey == TEXT("+"))
+						wVkCode = VK_OEM_PLUS;
+					else if (strKey == TEXT("-"))
+						wVkCode = VK_OEM_MINUS;
                     else if (strKeyLc.length() > 1 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
                         wVkCode = VK_F1 + _ttoi(strKey.substr(1).c_str()) - 1;
                     else
