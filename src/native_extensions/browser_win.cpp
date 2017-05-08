@@ -449,6 +449,7 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
 bool OpenURLInBrowser(String url, Browser* browser)
 {
     SHELLEXECUTEINFO execInfo = { 0 };
+	String id;
 
     execInfo.cbSize = sizeof(SHELLEXECUTEINFO);
     execInfo.fMask = SEE_MASK_DEFAULT;
@@ -462,7 +463,7 @@ bool OpenURLInBrowser(String url, Browser* browser)
     }
     else
     {
-        String id = browser->GetIdentifier();
+        id = browser->GetIdentifier();
 
         // in case we're launching Edge, we do this via microsoft-edge:url,
         // and microsoft-edge is the browser identifier in that case
