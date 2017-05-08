@@ -368,7 +368,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowOpenFileDialog(path))
+            if (FileUtil::ShowSaveFileDialog(path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);

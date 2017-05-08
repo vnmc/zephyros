@@ -92,7 +92,7 @@ bool ShowSaveFileDialog(Path& path)
 
     if (GetSaveFileName(&ofn))
     {
-        path = Path();
+        path = Path(szFile);
         return true;
     }
 
