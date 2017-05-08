@@ -895,6 +895,15 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         },
         ARG(VTYPE_DICTIONARY, "updaterSettings")
     ));
+
+	// checkForUpdates: () => void
+	e->AddNativeJavaScriptProcedure(
+		TEXT("checkForUpdates"),
+		FUNC({
+			UpdaterUtil::CheckForUpdates();
+			return NO_ERROR;
+		})
+	);
 #endif
 
 

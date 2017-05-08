@@ -40,6 +40,7 @@ namespace UpdaterUtil {
 
 JavaScript::Object GetSettings();
 void SetSettings(JavaScript::Object settings);
+void CheckForUpdates();
 
 } // namespace UpdaterUtil
 } // namespace Zephyros

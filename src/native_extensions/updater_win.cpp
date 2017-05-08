@@ -67,5 +67,10 @@ void SetSettings(JavaScript::Object settings)
     win_sparkle_set_update_check_interval(frequency);
 }
 
+void CheckForUpdates()
+{
+	win_sparkle_check_update_with_ui();
+}
+
 } // namespace UpdaterUtil
 } // namespace Zephyros

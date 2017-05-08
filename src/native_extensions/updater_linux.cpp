@@ -50,7 +50,11 @@ void SetSettings(JavaScript::Object settings)
 {
     // TODO: implement
     // Round 2
+}
 
+void CheckForUpdates()
+{
+	// TODO: implement
 }
 
 } // namespace UpdaterUtil

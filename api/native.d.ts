@@ -218,7 +218,7 @@ declare module NativeInterface
          *                       2: move
          *                       3: link
          */
-        beginDragFile: (path: IPath, x: number, y: number, callback: (isDragSuccessful: boolean; dragResult: number) => void) => void;
+        beginDragFile: (path: IPath, x: number, y: number, callback: (isDragSuccessful: boolean, dragResult: number) => void) => void;
 
 
         ///////////////////////////////////////////////////////////////////////
@@ -276,6 +276,11 @@ declare module NativeInterface
          *   The IUpdaterSettings object containing the updater settings.
          */
         setUpdaterSettings: (settings: IUpdaterSettings) => void;
+
+        /**
+         * Makes the in-app updater look for updates.
+         */
+        checkForUpdates: () => void;
 
 
         ///////////////////////////////////////////////////////////////////////
