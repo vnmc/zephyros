@@ -48,6 +48,59 @@ extern JSContextRef g_ctx;
 namespace Zephyros {
 namespace FileUtil {
 
+void SetPanelOptions(JavaScript::Object options, id panel)
+{
+    // set the panel title
+    if (options->HasKey(TEXT("title")))
+        [panel setTitle: [NSString stringWithUTF8String: String(options->GetString(TEXT("title"))).c_str()]];
+    
+    // set the initial file name
+    if (options->HasKey(TEXT("initialFile")))
+        [panel setNameFieldStringValue: [NSString stringWithUTF8String: String(options->GetString(TEXT("initialFile"))).c_str()]];
+    
+    // set the initial directory
+    if (options->HasKey(TEXT("initialDirectory")))
+        [panel setDirectoryURL: [NSURL URLWithString: [NSString stringWithUTF8String: String(options->GetString(TEXT("initialDirectory"))).c_str()]]];
+
+    // set the allowed file types
+    if (options->HasKey(TEXT("filters")))
+    {
+        NSMutableArray *extensions = [[NSMutableArray alloc] init];
+        
+        JavaScript::Array filters = options->GetList(TEXT("filters"));
+        int nNumItems = (int) filters->GetSize();
+        
+        for (int i = 0; i < nNumItems; ++i)
+        {
+            JavaScript::Object filter = filters->GetDictionary(i);
+            if (filter->HasKey(TEXT("extensions")))
+            {
+                NSString *strExts = [NSString stringWithUTF8String: String(filter->GetString(TEXT("extensions"))).c_str()];
+                NSArray *exts = [strExts componentsSeparatedByString: @";"];
+
+                for (NSString *ext in exts)
+                {
+                    // split the file extensions into parts (separated by dots)
+                    NSArray *parts = [ext componentsSeparatedByString: @"."];
+                    
+                    // if there is a part, add the last part to the array of extensions
+                    // (if it doesn't contain a wildcard)
+                    if (parts.count > 0)
+                    {
+                        NSString *e = parts[parts.count - 1];
+                        
+                        if ([e rangeOfString: @"*"].location == NSNotFound && [e rangeOfString: @"?"].location == NSNotFound)
+                            [extensions addObject: e];
+                    }
+                }
+            }
+        }
+        
+        if (extensions.count > 0)
+            [panel setAllowedFileTypes: extensions];
+    }
+}
+
 void GetPathFromNSURL(NSURL* url, Path& path, BOOL useParentDirForSecurityBookmark)
 {
     NSURL* urlDir = useParentDirForSecurityBookmark && ![url.absoluteString hasSuffix: @"/"] ? [url URLByDeletingLastPathComponent] : url;
@@ -74,7 +127,7 @@ void GetPathFromNSURL(NSURL* url, Path& path, BOOL useParentDirForSecurityBookma
 }
 
 
-void ShowOpenDialog(CallbackId callback, BOOL canChooseFiles, BOOL useParentDirForSecurityBookmark)
+void ShowOpenDialog(JavaScript::Object options, CallbackId callback, BOOL canChooseFiles, BOOL useParentDirForSecurityBookmark)
 {
 #ifdef USE_WEBVIEW
     JSValueProtect(g_ctx, callback);
@@ -85,6 +138,8 @@ void ShowOpenDialog(CallbackId callback, BOOL canChooseFiles, BOOL useParentDirF
     browsePanel.canChooseFiles = canChooseFiles;
     browsePanel.canChooseDirectories = YES;
     browsePanel.allowsMultipleSelection = NO;
+
+    SetPanelOptions(options, browsePanel);
 
     [browsePanel beginSheetModalForWindow: [NSApp mainWindow] completionHandler: ^(NSInteger result)
     {
@@ -127,12 +182,14 @@ void ShowOpenDialog(CallbackId callback, BOOL canChooseFiles, BOOL useParentDirF
     }];
 }
 
-void ShowSaveFileDialog(CallbackId callback)
+void ShowSaveFileDialog(JavaScript::Object options, CallbackId callback)
 {
     // create and configure a save panel
     NSSavePanel* savePanel = [NSSavePanel savePanel];
     savePanel.canCreateDirectories = YES;
-        
+    
+    SetPanelOptions(options, savePanel);
+
     // show the save panel
     [savePanel beginSheetModalForWindow: [NSApp mainWindow] completionHandler: ^(NSInteger result)
     {
@@ -175,19 +232,19 @@ void ShowSaveFileDialog(CallbackId callback)
     }];
 }
 
-void ShowOpenFileDialog(CallbackId callback)
+void ShowOpenFileDialog(JavaScript::Object options, CallbackId callback)
 {
-    ShowOpenDialog(callback, YES, NO);
+    ShowOpenDialog(options, callback, YES, NO);
 }
 
-void ShowOpenDirectoryDialog(CallbackId callback)
+void ShowOpenDirectoryDialog(JavaScript::Object options, CallbackId callback)
 {
-    ShowOpenDialog(callback, NO, NO);
+    ShowOpenDialog(options, callback, NO, NO);
 }
 
-void ShowOpenFileOrDirectoryDialog(CallbackId callback)
+void ShowOpenFileOrDirectoryDialog(JavaScript::Object options, CallbackId callback)
 {
-    ShowOpenDialog(callback, YES, YES);
+    ShowOpenDialog(options, callback, YES, YES);
 }
 
 void ShowInFileManager(String path)

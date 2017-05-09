@@ -1050,7 +1050,7 @@ declare module NativeInterface
     export interface IFileDialogOptions
     {
         title?: string;
-        intialFile?: string;
+        initialFile?: string;
         initialDirectory?: string;
 
         /**

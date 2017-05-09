@@ -357,7 +357,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
-    // showSaveFileDialog: (callback: (path: IPath) => void) => void
+    // showSaveFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showSaveFileDialog"),
 #ifdef OS_MACOSX
@@ -379,12 +379,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 #endif
     );
 
-    // showOpenFileDialog: (callback: (path: IPath) => void) => void
+    // showOpenFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenFileDialog"),
 #ifdef OS_MACOSX
         FUNC({
-            Zephyros::FileUtil::ShowOpenFileDialog(callback);
+            Zephyros::FileUtil::ShowOpenFileDialog(args->GetDictionary(0), callback);
             return RET_DELAYED_CALLBACK;
         }
         ARG(VTYPE_DICTIONARY, "options"))
@@ -401,12 +401,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 #endif
     );
 
-    // showOpenDirectoryDialog: (callback: (path: IPath) => void) => void
+    // showOpenDirectoryDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenDirectoryDialog"),
 #ifdef OS_MACOSX
         FUNC({
-            Zephyros::FileUtil::ShowOpenDirectoryDialog(callback);
+            Zephyros::FileUtil::ShowOpenDirectoryDialog(args->GetDictionary(0), callback);
             return RET_DELAYED_CALLBACK;
         }
         ARG(VTYPE_DICTIONARY, "options"))
@@ -423,12 +423,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 #endif
     );
 
-    // showOpenFileOrDirectoryDialog: (callback: (path: IPath) => void) => void
+    // showOpenFileOrDirectoryDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenFileOrDirectoryDialog"),
 #ifdef OS_MACOSX
         FUNC({
-            Zephyros::FileUtil::ShowOpenFileOrDirectoryDialog(callback);
+            Zephyros::FileUtil::ShowOpenFileOrDirectoryDialog(args->GetDictionary(0), callback);
             return RET_DELAYED_CALLBACK;
         }
         ARG(VTYPE_DICTIONARY, "options"))

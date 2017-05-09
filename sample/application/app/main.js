@@ -26,7 +26,8 @@ function getParameterAsPath()
 
 var fileDlgOptions = {
 	initialFile: 'random.jpg',
-	initialDirectory: 'C:\\Users',
+	//initialDirectory: 'C:\\Users',
+	initialDirectory: '/Users',
 	//*
 	filters: [
 		{ description: 'Images', extensions: '*.png;*.jpg;*.jpeg' },
