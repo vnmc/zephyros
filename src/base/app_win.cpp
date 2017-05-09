@@ -46,7 +46,7 @@ extern bool g_isMessageLoopRunning;
 extern bool g_isMultithreadedMessageLoop;
 extern HWND g_hMessageWnd;
 
-HANDLE g_hndLogFile;
+HANDLE g_hndLogFile = NULL;
 TCHAR g_szLogFileName[MAX_PATH];
 
 
@@ -114,7 +114,12 @@ void Quit()
 {
     // close the app's main window
     DestroyWindow(App::GetMainHwnd());
-    CloseHandle(g_hndLogFile);
+
+	if (g_hndLogFile)
+	{
+		CloseHandle(g_hndLogFile);
+		g_hndLogFile = NULL;
+	}
 }
 
 void QuitMessageLoop()
@@ -132,7 +137,11 @@ void QuitMessageLoop()
     else
         CefQuitMessageLoop();
 
-    CloseHandle(g_hndLogFile);
+	if (g_hndLogFile)
+	{
+		CloseHandle(g_hndLogFile);
+		g_hndLogFile = NULL;
+	}
 }
 
 void BeginWait()
@@ -203,7 +212,7 @@ HANDLE OpenLogFile()
 
 void Log(String msg)
 {
-    if (msg.length() == 0)
+    if (!g_hndLogFile || msg.length() == 0)
         return;
 
     int mbLen = WideCharToMultiByte(CP_UTF8, 0, msg.c_str(), (int) msg.length(), NULL, 0, NULL, NULL);

@@ -58,21 +58,23 @@ public:
     
     inline void AddStatic(String strCaption, int x, int y, int nWidth, int nHeight, int nID = -1, int nStyle = WS_CHILD | WS_VISIBLE | SS_LEFT, int nExStyle = 0) ADD_CONTROL(0x0082, 0)
     inline void AddIcon(int nIconID, int x, int y, int nWidth, int nHeight, int nID = -1, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) { AddControl(NULL, nIconID, 0x0082, NULL, nID, x, y, nWidth, nHeight, nStyle, nExStyle); }
-    inline void AddGroupBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID = -1, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_GROUPBOX)
-    inline void AddButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_PUSHBUTTON)
-    inline void AddDefaultButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_DEFPUSHBUTTON)
-    inline void AddCheckBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_AUTOCHECKBOX)
-    inline void AddRadioButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_AUTORADIOBUTTON)
-    inline void AddTextBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0081, 0)
-    inline void AddComboBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x083, LBS_COMBOBOX)
-    inline void AddListBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083, 0)
-    inline void AddVScrollBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083, SBS_VERT)
-    inline void AddHScrollBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083, SBS_HORZ)
-    inline void AddProgressBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("msctls_progress32"), 0)
-    inline void AddTrackBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("msctls_trackbar32"), 0)
-    inline void AddTab(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysTabControl32"), 0)
-    inline void AddListView(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysListView32"), 0)
-    inline void AddTreeView(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysTreeView32"), 0)
+	inline void AddGroupBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID = -1, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_GROUPBOX)
+	inline void AddButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_PUSHBUTTON | WS_TABSTOP)
+	inline void AddDefaultButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_DEFPUSHBUTTON | WS_TABSTOP)
+	inline void AddCheckBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_AUTOCHECKBOX | WS_TABSTOP)
+	inline void AddRadioButton(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0080, BS_AUTORADIOBUTTON | WS_TABSTOP)
+	inline void AddTextBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0081, WS_TABSTOP)
+	inline void AddComboBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x083, LBS_COMBOBOX | WS_TABSTOP)
+	inline void AddListBox(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083, WS_TABSTOP)
+	inline void AddVScrollBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083, SBS_VERT)
+	inline void AddHScrollBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(0x0083, SBS_HORZ)
+	inline void AddProgressBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("msctls_progress32"), 0)
+	inline void AddTrackBar(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("msctls_trackbar32"), 0)
+	inline void AddTab(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysTabControl32"), WS_TABSTOP)
+	inline void AddListView(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysListView32"), WS_TABSTOP)
+	inline void AddTreeView(String strCaption, int x, int y, int nWidth, int nHeight, int nID, int nStyle = WS_CHILD | WS_VISIBLE, int nExStyle = 0) ADD_CONTROL(TEXT("SysTreeView32"), WS_TABSTOP)
+
+	void CenterDialog();
 
     INT_PTR DoModal();
 

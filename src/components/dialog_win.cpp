@@ -167,6 +167,17 @@ template<typename T> void Dialog::WriteData(T datum)
     m_ptr += sizeof(T);
 }
 
+void Dialog::CenterDialog()
+{
+	// center the dialog on the screen
+	RECT r;
+	GetWindowRect(GetDesktopWindow(), &r);
+	LONG width = r.right - r.left;
+	LONG height = r.bottom - r.top;
+	GetWindowRect(m_hwnd, &r);
+	SetWindowPos(m_hwnd, NULL, (width - r.right + r.left) / 2, (height - r.bottom + r.top) / 2 - 80, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+}
+
 INT_PTR Dialog::DoModal()
 {
     // show the dialog box

@@ -320,7 +320,7 @@ int LicenseManagerImpl::Activate(String name, String company, String licenseKey)
         {
             StringStream ssInfoPrevVersion;
             ssInfoPrevVersion << name << TEXT("|") << company << TEXT("|") << info.productId;
-            if (!VerifyKey(licenseKey, ssInfoPrevVersion.str(), info.pubkey))
+            if (VerifyKey(licenseKey, ssInfoPrevVersion.str(), info.pubkey))
             {
                 isObsoleteLicense = true;
                 break;
