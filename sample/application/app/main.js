@@ -24,6 +24,17 @@ function getParameterAsPath()
 	};
 }
 
+var fileDlgOptions = {
+	initialFile: 'random.jpg',
+	initialDirectory: 'C:\\Users',
+	//*
+	filters: [
+		{ description: 'Images', extensions: '*.png;*.jpg;*.jpeg' },
+		{ description: 'All Files', extensions: '*.*' }
+	], //*/
+	folderSelectionText: 'FLDR'
+};
+
 
 $(document).ready(function()
 {
@@ -106,7 +117,7 @@ $(document).ready(function()
 
 	$('.save-file').click(function()
 	{
-		app.showSaveFileDialog(function(path)
+		app.showSaveFileDialog(fileDlgOptions, function(path)
 		{
 			setMessage('Path: ' + path.path);
 		});
@@ -115,7 +126,7 @@ $(document).ready(function()
 	$('.open-file').click(function()
 	{
 		setMessage('opening file...');
-		app.showOpenFileDialog(function(path)
+		app.showOpenFileDialog(fileDlgOptions, function(path)
 		{
 			setMessage('Path: ' + path.path);
 		});
@@ -298,7 +309,7 @@ $(document).ready(function()
 	$('#showOpenFileDialog').click(function()
 	{
 		setMessage('Trying to select file via dialog...');
-		app.showOpenFileDialog(function(path)
+		app.showOpenFileDialog(fileDlgOptions, function(path)
 		{
 			setMessage('File selected: ' + path.path);	
 		});
@@ -307,12 +318,19 @@ $(document).ready(function()
 	$('#showOpenDirectoryDialog').click(function()
 	{
 		setMessage('Trying to select folder via dialog...');
-		app.showOpenDirectoryDialog(function(path)
+		app.showOpenDirectoryDialog(fileDlgOptions, function(path)
 		{
 			setMessage('Folder selected: ' + path.path);	
 		});
 	});
 
+	$('#showOpenFileOrDirectoryDialog').click(function()
+	{
+		app.showOpenFileOrDirectoryDialog(fileDlgOptions, function(path)
+		{
+			setMessage('File/folder selected: ' + path.path);
+		});
+	});
 
 	$('#storePreferences').click(function()
 	{

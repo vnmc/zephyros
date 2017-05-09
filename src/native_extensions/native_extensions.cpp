@@ -362,18 +362,20 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         TEXT("showSaveFileDialog"),
 #ifdef OS_MACOSX
         FUNC({
-            Zephyros::FileUtil::ShowSaveFileDialog(callback);
+            Zephyros::FileUtil::ShowSaveFileDialog(args->GetDictionary(0), callback);
             return RET_DELAYED_CALLBACK;
-        })
+        },
+        ARG(VTYPE_DICTIONARY, "options"))
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowSaveFileDialog(path))
+            if (FileUtil::ShowSaveFileDialog(args->GetDictionary(0), path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #endif
     );
 
@@ -384,16 +386,18 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         FUNC({
             Zephyros::FileUtil::ShowOpenFileDialog(callback);
             return RET_DELAYED_CALLBACK;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowOpenFileDialog(path))
+            if (FileUtil::ShowOpenFileDialog(args->GetDictionary(0), path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #endif
     );
 
@@ -404,16 +408,18 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         FUNC({
             Zephyros::FileUtil::ShowOpenDirectoryDialog(callback);
             return RET_DELAYED_CALLBACK;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowOpenDirectoryDialog(path))
+            if (FileUtil::ShowOpenDirectoryDialog(args->GetDictionary(0), path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #endif
     );
 
@@ -424,16 +430,18 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         FUNC({
             Zephyros::FileUtil::ShowOpenFileOrDirectoryDialog(callback);
             return RET_DELAYED_CALLBACK;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowOpenFileOrDirectoryDialog(path))
+            if (FileUtil::ShowOpenFileOrDirectoryDialog(args->GetDictionary(0), path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #endif
     );
 

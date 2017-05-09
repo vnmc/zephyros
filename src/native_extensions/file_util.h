@@ -51,15 +51,15 @@ typedef struct
 } StatInfo;
 
 #ifdef OS_MACOSX
-void ShowOpenFileDialog(CallbackId callback);
-void ShowSaveFileDialog(CallbackId callback);
-void ShowOpenDirectoryDialog(CallbackId callback);
-void ShowOpenFileOrDirectoryDialog(CallbackId callback);
+void ShowOpenFileDialog(JavaScript::Object options, CallbackId callback);
+void ShowSaveFileDialog(JavaScript::Object options, CallbackId callback);
+void ShowOpenDirectoryDialog(JavaScript::Object options, CallbackId callback);
+void ShowOpenFileOrDirectoryDialog(JavaScript::Object options, CallbackId callback);
 #else
-bool ShowOpenFileDialog(Path& path);
-bool ShowSaveFileDialog(Path& path);
-bool ShowOpenDirectoryDialog(Path& path);
-bool ShowOpenFileOrDirectoryDialog(Path& path);
+bool ShowOpenFileDialog(JavaScript::Object options, Path& path);
+bool ShowSaveFileDialog(JavaScript::Object options, Path& path);
+bool ShowOpenDirectoryDialog(JavaScript::Object options, Path& path);
+bool ShowOpenFileOrDirectoryDialog(JavaScript::Object options, Path& path);
 #endif
 
 void ShowInFileManager(String path);

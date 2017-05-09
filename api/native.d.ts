@@ -351,7 +351,7 @@ declare module NativeInterface
          *   is passed as an IPath object to the callback. If the user canceled
          *   the dialog, null is passed to the callback.
          */
-        showOpenFileDialog: (callback: (path: IPath) => void) => void;
+        showOpenFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void;
 
         /**
          * Shows the OS dialog to save a file.
@@ -361,7 +361,7 @@ declare module NativeInterface
          *   file is passed as an IPath object to the callback. null is passed
          *   if the dialog was canceled by the user.
          */
-        showSaveFileDialog: (callback: (path: IPath) => void) => void;
+        showSaveFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void;
 
         /**
          * Shows the OS dialog to select a directory.
@@ -370,7 +370,7 @@ declare module NativeInterface
          *   Callback invoked with the directory selected by the user as an
          *   IPath object. If the dialog was canceled, null is passed.
          */
-        showOpenDirectoryDialog: (callback: (path: IPath) => void) => void;
+        showOpenDirectoryDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void;
 
         /**
          * Shows a dialog allowing to select either a file or a directory.
@@ -380,7 +380,7 @@ declare module NativeInterface
          *   user. The path to the file or directory is passed as a IPath
          *   object to the callback, or null if the dialog was canceled.
          */
-        showOpenFileOrDirectoryDialog: (callback: (path: IPath) => void) => void;
+        showOpenFileOrDirectoryDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void;
 
         /**
          * Reveals the file or directory at "path" in the file manager (Finder
@@ -1045,6 +1045,28 @@ declare module NativeInterface
         version: string;
         id: string;
         raw: string;
+    }
+
+    export interface IFileDialogOptions
+    {
+        title?: string;
+        intialFile?: string;
+        initialDirectory?: string;
+
+        /**
+         * A list of file filters shown in the file dialog
+         */
+        filters?: {
+            description: string;
+            extensions: string;
+        }[];
+
+        /**
+         * The text used to display as file name when a file-or-folder dialog is shown.
+         * This text will signify that a folder was chosen.
+         * Defaults to "Folder Selection.".
+         */
+        folderSelectionText?: string;
     }
 
     export interface IReadFileOptions

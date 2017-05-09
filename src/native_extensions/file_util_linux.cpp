@@ -49,8 +49,9 @@
 #include "zephyros_strings.h"
 
 
-bool OpenFileDlg(GtkFileChooserAction action, int titleId, int okId, Zephyros::Path& path)
+bool OpenFileDlg(GtkFileChooserAction action, int titleId, int okId, JavaScript::Object options, Zephyros::Path& path)
 {
+    // TODO: options
     bool retVal = false;
 
     GtkWidget* dialog = gtk_file_chooser_dialog_new(
@@ -120,22 +121,22 @@ String GetPreferencesFile()
 namespace Zephyros {
 namespace FileUtil {
 
-bool ShowOpenFileDialog(Path& path)
+bool ShowOpenFileDialog(JavaScript::Object options, Path& path)
 {
-    return OpenFileDlg(GTK_FILE_CHOOSER_ACTION_OPEN, ZS_DIALOG_OPEN_FILE, ZS_DIALOG_FILE_OPEN_BUTTON, path);
+    return OpenFileDlg(GTK_FILE_CHOOSER_ACTION_OPEN, ZS_DIALOG_OPEN_FILE, ZS_DIALOG_FILE_OPEN_BUTTON, options, path);
 }
 
-bool ShowSaveFileDialog(Path& path)
+bool ShowSaveFileDialog(JavaScript::Object options, Path& path)
 {
-    return OpenFileDlg(GTK_FILE_CHOOSER_ACTION_SAVE, ZS_DIALOG_SAVE_FILE, ZS_DIALOG_FILE_SAVE_BUTTON, path);
+    return OpenFileDlg(GTK_FILE_CHOOSER_ACTION_SAVE, ZS_DIALOG_SAVE_FILE, ZS_DIALOG_FILE_SAVE_BUTTON, options, path);
 }
 
-bool ShowOpenDirectoryDialog(Path& path)
+bool ShowOpenDirectoryDialog(JavaScript::Object options, Path& path)
 {
-    return OpenFileDlg(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, ZS_DIALOG_OPEN_FOLDER, ZS_DIALOG_FILE_OPEN_BUTTON, path);
+    return OpenFileDlg(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER, ZS_DIALOG_OPEN_FOLDER, ZS_DIALOG_FILE_OPEN_BUTTON, options, path);
 }
 
-bool ShowOpenFileOrDirectoryDialog(Path& path)
+bool ShowOpenFileOrDirectoryDialog(JavaScript::Object options, Path& path)
 {
     // TODO: not available in GTK? Seems only either file or folder is possible.
     return false;
