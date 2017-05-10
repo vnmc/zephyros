@@ -191,7 +191,7 @@ String GetKeyName(WORD wVkCode)
         TCHAR c = szName[i];
 
 		if (bPrevWasAlnum)
-			szName[i] = _totlower_l(c, lc);
+			szName[i] = (TCHAR) CharLower((LPTSTR) ((DWORD) c));
         if (i > 0 && c == TEXT('-'))
             szName[i] = TEXT(' ');
 
@@ -210,6 +210,7 @@ void CreateMenuRecursive(
 {
     bool bPrevItemWasSeparator = false;
     int nNumItems = (int) menuItems->GetSize();
+    MENUITEMTEMPLATE* pPrevTemplate = NULL;
 
     for (int i = 0; i < nNumItems; ++i)
     {
@@ -224,17 +225,32 @@ void CreateMenuRecursive(
             if (bPrevItemWasSeparator)
                 continue;
 
-            pTemplate->mtOption = (i == nNumItems - 1 ? MF_END : 0);
+            // don't add a separator if the next item is a license-specific menu item and we're not in demo mode
+            if (!bIsInDemoMode && i < nNumItems - 1)
+            {
+                JavaScript::Object nextItem = menuItems->GetDictionary(i + 1);
+                if (nextItem->HasKey(TEXT("menuCommandId")))
+                {
+                    String strCmdId = nextItem->GetString(TEXT("menuCommandId"));
+                    if (strCmdId == TEXT(MENUCOMMAND_ENTER_LICENSE) || strCmdId == TEXT(MENUCOMMAND_PURCHASE_LICENSE))
+                        continue;
+                }
+            }
+
+            pTemplate->mtOption = MF_END;
             // ID and mtString are 0x0000
 
             dwOffsetMenu += sizeof(MENUITEMTEMPLATE);
+            if (pPrevTemplate)
+                pPrevTemplate->mtOption = pPrevTemplate->mtOption & ~MF_END;
+            pPrevTemplate = pTemplate;
             bPrevItemWasSeparator = true;
         }
         else
         {
             bool bHasSubMenuItems = item->HasKey(TEXT("subMenuItems"));
             wchar_t* pCaption = pTemplate->mtString;
-            pTemplate->mtOption = (bHasSubMenuItems ? MF_POPUP : 0) | (i == nNumItems - 1 ? MF_END : 0);
+            pTemplate->mtOption = (bHasSubMenuItems ? MF_POPUP : 0) | MF_END;
 
             // menu ID
             if (!bHasSubMenuItems)
@@ -354,6 +370,9 @@ void CreateMenuRecursive(
             // caption (Windows expects a "&" before the underlined character)
             strCaption = StringReplace(StringReplace(strCaption, TEXT("&"), TEXT("&&")), TEXT("_"), TEXT("&"));
             dwOffsetMenu += (DWORD) ((strCaption.length() + 1) * sizeof(wchar_t));
+            if (pPrevTemplate)
+                pPrevTemplate->mtOption = pPrevTemplate->mtOption & ~MF_END;
+            pPrevTemplate = pTemplate;
             if (dwOffsetMenu >= MENU_BUF_SIZE)
                 return;
             wcscpy(pCaption, strCaption.c_str());

@@ -366,6 +366,9 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
                         if (type == REG_SZ && len > 0)
                         {
                             strBrowserCommand = ToString(data, len);
+                            int l = strBrowserCommand.length();
+                            if (strBrowserCommand.at(0) == TEXT('"') && strBrowserCommand.at(l - 1) == TEXT('"'))
+                                strBrowserCommand = strBrowserCommand.substr(1, l - 2);
                             DEBUG_LOG(TEXT("Found browser command ") + strBrowserCommand);
                         }
                         else
