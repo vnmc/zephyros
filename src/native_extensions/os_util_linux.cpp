@@ -414,6 +414,18 @@ int CreateMenuRecursive(GtkWidget* pMenu, JavaScript::Array menuItems, bool bIsI
             if (bPrevItemWasSeparator)
                 continue;
 
+            // don't add a separator if the next item is a license-specific menu item and we're not in demo mode
+            if (!bIsInDemoMode && i < nNumItems - 1)
+            {
+                JavaScript::Object nextItem = menuItems->GetDictionary(i + 1);
+                if (nextItem->HasKey(TEXT("menuCommandId")))
+                {
+                    String strCmdId = nextItem->GetString(TEXT("menuCommandId"));
+                    if (strCmdId == TEXT(MENUCOMMAND_ENTER_LICENSE) || strCmdId == TEXT(MENUCOMMAND_PURCHASE_LICENSE))
+                        continue;
+                }
+            }
+
             pMenuItem = gtk_separator_menu_item_new();
             bPrevItemWasSeparator = true;
         }

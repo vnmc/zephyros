@@ -735,7 +735,7 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
                 continue;
             
             // don't add a separator if the next item is a license-specific menu item and we're not in demo mode
-            if (i < numItems - 1)
+            if (!bIsInDemoMode && i < numItems - 1)
             {
                 JavaScript::Object nextItem = menuItems->GetDictionary(i + 1);
                 if (nextItem->HasKey("menuCommandId"))
