@@ -734,6 +734,18 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
             if (bPrevItemWasSeparator)
                 continue;
             
+            // don't add a separator if the next item is a license-specific menu item and we're not in demo mode
+            if (i < numItems - 1)
+            {
+                JavaScript::Object nextItem = menuItems->GetDictionary(i + 1);
+                if (nextItem->HasKey("menuCommandId"))
+                {
+                    String cmdId = nextItem->GetString("menuCommandId");
+                    if (cmdId == MENUCOMMAND_ENTER_LICENSE || cmdId == MENUCOMMAND_PURCHASE_LICENSE)
+                        continue;
+                }
+            }
+
             // add the separator
             menuItem = [NSMenuItem separatorItem];
             bPrevItemWasSeparator = true;
@@ -878,13 +890,13 @@ bool RemoveMenuItemRecursive(NSMenu* menu, String& strCommandId)
     int idx = 0;
     for (NSMenuItem* item in [menu itemArray])
     {
-        if ([item isKindOfClass: ZPYMenuItem.class] && strCommandId == [((ZPYMenuItem*) item).commandId UTF8String])
+        if ([item isKindOfClass: ZPYMenuItem.class] && ((ZPYMenuItem*) item).commandId && strCommandId == [((ZPYMenuItem*) item).commandId UTF8String])
         {
             [menu removeItemAtIndex: idx];
             return true;
         }
         
-        if (item.menu && RemoveMenuItemRecursive(item.menu, strCommandId))
+        if (item.hasSubmenu && RemoveMenuItemRecursive(item.submenu, strCommandId))
             return true;
         
         ++idx;
