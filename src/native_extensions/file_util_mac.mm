@@ -73,26 +73,25 @@ void SetPanelOptions(JavaScript::Object options, id panel)
         for (int i = 0; i < nNumItems; ++i)
         {
             JavaScript::Object filter = filters->GetDictionary(i);
-            if (filter->HasKey(TEXT("extensions")))
-            {
-                NSString *strExts = [NSString stringWithUTF8String: String(filter->GetString(TEXT("extensions"))).c_str()];
-                NSArray *exts = [strExts componentsSeparatedByString: @";"];
+            if (!filter->HasKey(TEXT("extensions")))
+                continue;
 
-                for (NSString *ext in exts)
-                {
-                    // split the file extensions into parts (separated by dots)
-                    NSArray *parts = [ext componentsSeparatedByString: @"."];
-                    
-                    // if there is a part, add the last part to the array of extensions
-                    // (if it doesn't contain a wildcard)
-                    if (parts.count > 0)
-                    {
-                        NSString *e = parts[parts.count - 1];
-                        
-                        if ([e rangeOfString: @"*"].location == NSNotFound && [e rangeOfString: @"?"].location == NSNotFound)
-                            [extensions addObject: e];
-                    }
-                }
+            NSString *strExts = [NSString stringWithUTF8String: String(filter->GetString(TEXT("extensions"))).c_str()];
+            NSArray *exts = [strExts componentsSeparatedByString: @";"];
+
+            for (NSString *ext in exts)
+            {
+                // split the file extensions into parts (separated by dots)
+                NSArray *parts = [ext componentsSeparatedByString: @"."];
+                if (parts.count == 0)
+                    continue;
+
+                // if there is a part, add the last part to the array of extensions
+                // (if it doesn't contain a wildcard)
+                NSString *e = parts[parts.count - 1];
+
+                if ([e rangeOfString: @"*"].location == NSNotFound && [e rangeOfString: @"?"].location == NSNotFound)
+                    [extensions addObject: e];
             }
         }
         
