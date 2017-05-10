@@ -163,6 +163,7 @@ void ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
     if (!GetBrowser())
     {
         base::AutoLock lock_scope(m_lock);
+
         // we need to keep the main child window, but not popup windows
         m_browser = browser;
         m_nBrowserId = browser->GetIdentifier();

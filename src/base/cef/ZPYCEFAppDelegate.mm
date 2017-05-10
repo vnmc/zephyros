@@ -180,25 +180,4 @@ extern bool g_isWindowLoaded;
     [self.window setFrame: [self.window frameRectForContentRect: r] display: YES];
 }
 
-//
-// Restore the window when the dock icon is clicked.
-//
-- (BOOL) applicationShouldHandleReopen: (NSApplication*) sender hasVisibleWindows: (BOOL) flag
-{
-    if ((g_isWindowBeingLoaded && !g_isWindowLoaded) || [super applicationShouldHandleReopen: sender hasVisibleWindows: flag] == NO)
-        return NO;
-    
-    if (!flag)
-    {
-        // get rid of the old window
-        [self.window orderOut: self];
-        
-        // create a new window
-        g_isWindowBeingLoaded = true;
-        [self createMainWindow];
-    }
-    
-    return YES;
-}
-
 @end

@@ -51,7 +51,9 @@ extern bool g_isWindowLoaded;
                                                  selector: @selector(applicationDidHide:)
                                                      name: NSApplicationDidHideNotification
                                                    object: nil];
-        
+        */
+
+        /*
         [[NSNotificationCenter defaultCenter] addObserver: self
                                                  selector: @selector(applicationDidUnhide:)
                                                      name: NSApplicationDidUnhideNotification
@@ -80,12 +82,13 @@ extern bool g_isWindowLoaded;
  */
 - (void) windowDidBecomeKey: (NSNotification*) notification
 {
+    /*
     if (g_handler.get())
     {
         CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
         if (browser.get())
             browser->GetHost()->SetFocus(true);
-    }
+    }*/
 }
 
 /**
@@ -93,12 +96,13 @@ extern bool g_isWindowLoaded;
  */
 - (void) windowDidResignKey: (NSNotification*) notification
 {
+    /*
     if (g_handler.get())
     {
         CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
         if (browser.get())
             browser->GetHost()->SetFocus(false);
-    }
+    }*/
 }
 
 /**
@@ -123,26 +127,6 @@ extern bool g_isWindowLoaded;
     [defaults setObject: [NSKeyedArchiver archivedDataWithRootObject: data] forKey: @"wnd2"];
     [defaults synchronize];
     
-    if (g_handler.get() && !g_handler->IsClosing())
-    {
-        CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-        if (browser.get())
-        {
-            // notify the browser window that we would like to close it. This
-            // will result in a call to ClientHandler::DoClose() if the
-            // JavaScript 'onbeforeunload' event handler allows it
-            browser->GetHost()->CloseBrowser(false);
-            
-            // cancel the close
-            return NO;
-        }
-    }
-    
-    // try to make the window go away
-    m_window = nil;
-    g_isWindowLoaded = false;
-    
-    // allow closing
     return YES;
 }
 
