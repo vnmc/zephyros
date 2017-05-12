@@ -112,6 +112,7 @@
         [NSApplication sharedApplication].automaticCustomizeTouchBarMenuItemEnabled = YES;
         self.touchBarHandler = [[ZPYTouchBarHandler alloc] init];
     }
+    [self.window makeKeyAndOrderFront: self];
 }
 
 /**
