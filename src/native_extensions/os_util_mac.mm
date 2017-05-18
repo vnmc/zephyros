@@ -161,7 +161,6 @@ ZPYMenuHandler* g_menuHandler = nil;
     JSObjectCallAsFunction(g_ctx, m_callback, NULL, 2, args, NULL);
     JSValueUnprotect(g_ctx, m_callback);
 #endif
-
 }
 
 - (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL) isLocal
@@ -221,15 +220,32 @@ ZPYMenuHandler* g_menuHandler = nil;
         String p = m_draggedFile.GetPath();
         String::size_type pos = p.find_last_of('/');
         NSString* filename = [NSString stringWithUTF8String: pos == String::npos ? p.c_str() : p.substr(pos + 1).c_str()];
+        NSString* filenameWithoutExtension = [filename stringByDeletingPathExtension];
+        NSString* filenameExtension = [filename pathExtension];
+
+        // add the dot if an extension could be extracted
+        if (filenameExtension.length > 0)
+            filenameExtension = [NSString stringWithFormat: @".%@", filenameExtension];
         
         // copy the file
         NSString* destination = [NSString pathWithComponents: @[location, filename]];
-        [[NSFileManager defaultManager] copyItemAtPath: [NSString stringWithUTF8String: p.c_str()]
-                                                toPath: destination
-                                                 error: nil];
-        
-        
+        NSError* err = nil;
 
+        for (int i = 1; ; ++i)
+        {
+            [[NSFileManager defaultManager] copyItemAtPath: [NSString stringWithUTF8String: p.c_str()]
+                                                    toPath: destination
+                                                     error: &err];
+
+            // exit if there was no error or another error than "file exists"
+            if (!err || err.code != NSFileWriteFileExistsError)
+                break;
+
+            // try the next filename
+            err = nil;
+            destination = [NSString pathWithComponents: @[location, [NSString stringWithFormat: @"%@ (%d)%@", filenameWithoutExtension, i, filenameExtension]]];
+        }
+        
         // set some data
         [item setString: destination forType: type];
     }
