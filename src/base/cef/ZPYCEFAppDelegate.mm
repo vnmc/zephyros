@@ -152,6 +152,7 @@ extern bool g_isWindowLoaded;
     self.window.delegate = self.windowDelegate;
     self.window.title = [NSString stringWithUTF8String: Zephyros::GetAppName()];
     self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
+    self.window.hidesOnDeactivate = NO;
     
     // rely on the window delegate to clean us up rather than immediately
     // releasing when the window gets closed. We use the delegate to do

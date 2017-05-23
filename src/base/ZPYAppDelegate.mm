@@ -105,13 +105,14 @@
         pMgr->GetReceiptChecker()->CopyAppStoreReceipt();
 }
 
-- (void)applicationDidFinishLaunching: (NSNotification*) notification
+- (void) applicationDidFinishLaunching: (NSNotification*) notification
 {
     if ([[NSApplication sharedApplication] respondsToSelector: @selector(isAutomaticCustomizeTouchBarMenuItemEnabled)])
     {
         [NSApplication sharedApplication].automaticCustomizeTouchBarMenuItemEnabled = YES;
         self.touchBarHandler = [[ZPYTouchBarHandler alloc] init];
     }
+
     [self.window makeKeyAndOrderFront: self];
 }
 

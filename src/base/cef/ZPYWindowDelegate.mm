@@ -45,13 +45,13 @@ extern bool g_isWindowLoaded;
     {
         m_window = window;
         
-        /*
+        //*
         // register for application hide/unhide notifications
         [[NSNotificationCenter defaultCenter] addObserver: self
                                                  selector: @selector(applicationDidHide:)
                                                      name: NSApplicationDidHideNotification
                                                    object: nil];
-        */
+        //*/
 
         /*
         [[NSNotificationCenter defaultCenter] addObserver: self
@@ -62,6 +62,11 @@ extern bool g_isWindowLoaded;
     }
 
     return self;
+}
+
+- (void) applicationDidHide: (NSNotification*) notification
+{
+    NSLog(@"!!! window hidden");
 }
 
 - (void) dealloc
@@ -80,8 +85,8 @@ extern bool g_isWindowLoaded;
 /**
  * Called when we are activated (when we gain focus).
  */
-- (void) windowDidBecomeKey: (NSNotification*) notification
-{
+//- (void) windowDidBecomeKey: (NSNotification*) notification
+//{
     /*
     if (g_handler.get())
     {
@@ -89,13 +94,13 @@ extern bool g_isWindowLoaded;
         if (browser.get())
             browser->GetHost()->SetFocus(true);
     }*/
-}
+//}
 
 /**
  * Called when we are deactivated (when we lose focus).
  */
-- (void) windowDidResignKey: (NSNotification*) notification
-{
+//- (void) windowDidResignKey: (NSNotification*) notification
+//{
     /*
     if (g_handler.get())
     {
@@ -103,7 +108,7 @@ extern bool g_isWindowLoaded;
         if (browser.get())
             browser->GetHost()->SetFocus(false);
     }*/
-}
+//}
 
 /**
  * Called when the window is about to close. Perform the self-destruction
