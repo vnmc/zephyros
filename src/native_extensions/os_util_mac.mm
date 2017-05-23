@@ -770,10 +770,22 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
         {
             if (item->HasKey("systemCommandId"))
             {
-                // set the menu action to the selector corresponding to systemCommandId,
-                // but don't set target => the target will be the first responder
-                menuItem = [[ZPYMenuItem alloc] init];
-                menuItem.action = NSSelectorFromString([NSString stringWithUTF8String: String(item->GetString("systemCommandId")).c_str()]);
+                NSString *commandId = [NSString stringWithUTF8String: String(item->GetString("systemCommandId")).c_str()];
+                if ([commandId isEqualToString: @"services"])
+                {
+                    // create the "Services" menu
+                    menuItem = [[NSMenuItem alloc] init];
+                    NSMenu* menu = [[NSMenu alloc] init];
+                    menuItem.submenu = menu;
+                    [NSApp setServicesMenu: menu];
+                }
+                else
+                {
+                    // set the menu action to the selector corresponding to systemCommandId,
+                    // but don't set target => the target will be the first responder
+                    menuItem = [[ZPYMenuItem alloc] init];
+                    menuItem.action = NSSelectorFromString(commandId);
+                }
             }
             else
             {
