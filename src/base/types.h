@@ -61,6 +61,9 @@ typedef std::stringstream StringStream;
 #define _tcsnccmp    strncmp
 #define _wtoi64      atoi
 
+#define _tcscpy_s(dest, size, src)   strcpy(dest, src)
+#define _tcscat_s(dest, size, src)   strcat(dest, src)
+
 typedef std::string String;
 typedef std::stringstream StringStream;
 

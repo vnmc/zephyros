@@ -77,6 +77,9 @@ typedef std::string String;
 #define _tcsnccmp    strncmp
 #define _wtoi64      atoi
 
+#define _tcscpy_s(dest, size, src)   strcpy(dest, src)
+#define _tcscat_s(dest, size, src)   strcat(dest, src)
+
 #define MAIN main
 #define MAIN_ARGS int argc, char* argv[]
 #define INIT_APPLICATION_ARGS argc, argv
