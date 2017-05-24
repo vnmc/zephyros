@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -173,7 +173,7 @@ bool ShowSaveFileDialog(JavaScript::Object options, Path& path)
 {
     OPENFILENAME ofn;
     CreateOpenFileNameStruct(options, &ofn, NULL);
-    ofn.Flags = OFN_EXPLORER;
+    ofn.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT;
 
     bool ret = false;
     if (GetSaveFileName(&ofn))
