@@ -133,6 +133,7 @@
     {
         self.updater = [[SUUpdater alloc] init];
         self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
+        [self.updater resetUpdateCycle];
     }
 #endif
 }
