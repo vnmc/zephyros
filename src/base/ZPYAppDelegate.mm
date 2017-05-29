@@ -119,7 +119,22 @@
         self.touchBarHandler = [[ZPYTouchBarHandler alloc] init];
     }
 
-    [self.window makeKeyAndOrderFront: self];
+#ifndef APPSTORE
+    // initialize the license manager (if available)
+    if (Zephyros::GetLicenseManager())
+    {
+        Zephyros::GetLicenseManager()->Start();
+        if (!Zephyros::GetLicenseManager()->CanStartApp())
+            [NSApp terminate: self];
+    }
+
+    // create and initialize the updater
+    if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
+    {
+        self.updater = [[SUUpdater alloc] init];
+        self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
+    }
+#endif
 }
 
 /**

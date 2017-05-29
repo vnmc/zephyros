@@ -98,23 +98,6 @@ JSContextRef g_ctx = NULL;
     [url appendString: [NSString stringWithUTF8String: Zephyros::GetAppURL()]];
     _view.mainFrameURL = url;
     
-#ifndef APPSTORE
-    if (Zephyros::GetLicenseManager())
-    {
-        Zephyros::GetLicenseManager()->Start();
-    
-        if (!Zephyros::GetLicenseManager()->CanStartApp())
-            [NSApp terminate: self];
-    }
-    
-    // create and initialize the updater
-    if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
-    {
-        self.updater = [[SUUpdater alloc] init];
-        self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
-    }
-#endif
-    
     self.window.isVisible = YES;
     
     // register ourselves as delegate for the notification center

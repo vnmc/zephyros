@@ -60,18 +60,31 @@ extern bool g_isWindowLoaded;
     self = [super init];
     
     self.windowDelegate = nil;
-    
+
+    /*
     if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
     {
         self.updater = [[SUUpdater alloc] init];
         self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
     }
-    
+     */
+
     // TODO: check if this works (not too early)
     // register ourselves as delegate for the notification center
     [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate: self];
     
     return self;
+}
+
+- (void) applicationDidFinishLaunching: (NSNotification*) notification
+{
+    [super applicationDidFinishLaunching: notification];
+
+    if (g_isWindowLoaded)
+    {
+        self.window.isVisible = YES;
+        [self.window makeKeyAndOrderFront: self];
+    }
 }
 
 - (void) createApp: (id) object
@@ -88,10 +101,7 @@ extern bool g_isWindowLoaded;
     app.delegate = self;
     
     [self applicationWillFinishLaunching: nil];
-
-    Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
-    if (pMgr == NULL || pMgr->CanStartApp())
-        [self createMainWindow];
+    [self createMainWindow];
 }
 
 - (void) createMainWindow
@@ -153,7 +163,7 @@ extern bool g_isWindowLoaded;
     self.window.title = [NSString stringWithUTF8String: Zephyros::GetAppName()];
     self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
     self.window.hidesOnDeactivate = NO;
-    
+
     // rely on the window delegate to clean us up rather than immediately
     // releasing when the window gets closed. We use the delegate to do
     // everything from the autorelease pool so the window isn't on the stack

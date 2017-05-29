@@ -125,24 +125,14 @@ int RunApplication(int argc, char* argv[])
     schemes.push_back("local");
     CefCookieManager::GetGlobalManager(NULL)->SetSupportedSchemes(schemes, NULL);
 
-    // initialize the license manager (if available)
-    Zephyros::AbstractLicenseManager* pLicenseMgr = Zephyros::GetLicenseManager();
+    // create the app delegate and the application window
     g_appDelegate = [[ZPYCEFAppDelegate alloc] init];
+    [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: YES];
 
-    if (pLicenseMgr != NULL)
-        pLicenseMgr->Start();
-
-    if (pLicenseMgr == NULL || pLicenseMgr->CanStartApp())
-    {
-        // create the application window
-        [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: YES];
-        [g_appDelegate.window orderFrontRegardless];
-
-        // run the application message loop
-        g_isMessageLoopRunning = true;
-        CefRunMessageLoop();
-        g_isMessageLoopRunning = false;
-    }
+    // run the application message loop
+    g_isMessageLoopRunning = true;
+    CefRunMessageLoop();
+    g_isMessageLoopRunning = false;
 
     // shut down CEF
     if (g_handler != NULL)
