@@ -53,6 +53,8 @@
 
     NSString* m_previousDropURL;
     NSTimeInterval m_previousDropURLTime;
+    
+    bool m_eventsRegistered;
 }
 
 

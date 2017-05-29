@@ -50,6 +50,7 @@
     
     m_previousDropURL = nil;
     m_previousDropURLTime = 0;
+    m_eventsRegistered = false;
 
     return self;
 }
@@ -91,6 +92,9 @@
 
 - (void) applicationWillFinishLaunching: (NSNotification*) notification
 {
+    if (m_eventsRegistered)
+        return;
+
     // register URL drops to the dock
     // (we need to do this in applicationWillFinishLaunching so it picks up link clicks when the app isn't started yet)
     // http://stackoverflow.com/questions/3115657/nsapplicationdelegate-application-active-because-of-url-protocol
@@ -103,6 +107,8 @@
     Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
     if (pMgr && pMgr->GetReceiptChecker())
         pMgr->GetReceiptChecker()->CopyAppStoreReceipt();
+    
+    m_eventsRegistered = true;
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification*) notification
