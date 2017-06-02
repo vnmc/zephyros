@@ -78,7 +78,12 @@ DWORD WINAPI ReadOutput(LPVOID param)
         {
             Zephyros::StreamDataEntry entry;
             entry.type = p->type;
-            entry.text = String(buf, buf + numBytesRead);
+
+            int nWcLen = MultiByteToWideChar(CP_UTF8, 0, (LPCCH) buf, numBytesRead, NULL, 0);
+            TCHAR* bufWc = new TCHAR[nWcLen + 1];
+            MultiByteToWideChar(CP_UTF8, 0, (LPCCH) buf, numBytesRead, bufWc, nWcLen);
+            bufWc[nWcLen] = 0;
+            entry.text = String(bufWc, bufWc + nWcLen);
 
             EnterCriticalSection(&(p->pData->cs));
             p->pData->stream.push_back(entry);
