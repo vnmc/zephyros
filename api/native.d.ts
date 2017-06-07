@@ -46,22 +46,20 @@ declare module NativeInterface
          * The callback function will be invoked when a menu item in the native
          * application menu is clicked.
          *
-         * On Mac, in the inspector in XCode, set the menu item class of a menu
-         * item that you want to handle from your JavaScript app, to
-         * ZPYMenuItem and give it a user defined runtime attribute of "String"
-         * with key path "commandId" and a value that will be received by the
-         * callback.
-         *
-         * On Windows, map your menu command IDs (menuID) by using
-         * Zephyros::SetMenuIDForCommand(commandId, menuID).
-         *
          * @param callback
          *   Function called with the commandId of the menu item that was
-         *   selected.
+         *   selected. The commandId corresponds to the one passed in the
+         *   IMenuItem structure to the createMenu function.
          */
         onMenuCommand: (callback: (commandId: string) => void) => void;
 
         /**
+         * Mac with TouchBar only.
+         * The callback function will be invoked when a TouchBar button was pressed.
+         *
+         * @param callback
+         *   Function called with the ID of the TouchBar button, which was passed
+         *   in the ITouchBarItem structure to the createTouchBar function.
          */
         onTouchBarAction: (callback: (id: string) => void) => void;
 
@@ -104,6 +102,9 @@ declare module NativeInterface
         ///////////////////////////////////////////////////////////////////////
         // App Life Cycle
 
+        /**
+         * Terminates the app.
+         */
         quit: () => void;
 
 
@@ -112,8 +113,20 @@ declare module NativeInterface
 
         /**
          * Creates the application menu.
+         *
+         * @param menuItems
+         *   An array of (possibly nested) menu items defining the application menu.
          */
         createMenu: (menuItems: IMenuItem[]) => void;
+
+        /**
+         * Removes the menu item with command ID "commandId" from the application
+         * menu.
+         *
+         * @param commandId
+         *   The command ID of the menu item to remove from the application menu.
+         */
+        removeMenuItem: (commandId: string) => void;
 
         /**
          * Call this function to enable/disable or check/uncheck menu items of
@@ -172,7 +185,7 @@ declare module NativeInterface
         showContextMenu: (menuHandle: string, x: number, y: number, callback: (menuCommandId: string) => void) => void;
 
         /**
-         * On macOS with touch bars: sets the current touch bar.
+         * On Mac with TouchBar: sets the current TouchBar.
          */
         createTouchBar: (touchBarItems: ITouchBarItem[]) => void;
 
@@ -344,18 +357,10 @@ declare module NativeInterface
         // File System Commands
 
         /**
-         * Shows the OS dialog to open an existing file.
-         *
-         * @param callback
-         *   Callback invoked when the user selected a file to open. The file
-         *   is passed as an IPath object to the callback. If the user canceled
-         *   the dialog, null is passed to the callback.
-         */
-        showOpenFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void;
-
-        /**
          * Shows the OS dialog to save a file.
          *
+         * @param options
+         *   Configuration options for the dialog.
          * @param callback
          *   Callback invoked when the user entered a filename to safe. The
          *   file is passed as an IPath object to the callback. null is passed
@@ -364,8 +369,22 @@ declare module NativeInterface
         showSaveFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void;
 
         /**
+         * Shows the OS dialog to open an existing file.
+         *
+         * @param options
+         *   Configuration options for the dialog.
+         * @param callback
+         *   Callback invoked when the user selected a file to open. The file
+         *   is passed as an IPath object to the callback. If the user canceled
+         *   the dialog, null is passed to the callback.
+         */
+        showOpenFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void;
+
+        /**
          * Shows the OS dialog to select a directory.
          *
+         * @param options
+         *   Configuration options for the dialog.
          * @param callback
          *   Callback invoked with the directory selected by the user as an
          *   IPath object. If the dialog was canceled, null is passed.
@@ -375,6 +394,8 @@ declare module NativeInterface
         /**
          * Shows a dialog allowing to select either a file or a directory.
          *
+         * @param options
+         *   Configuration options for the dialog.
          * @param callback
          *   Callback invoked when a file or a directory was selected by the
          *   user. The path to the file or directory is passed as a IPath
@@ -527,6 +548,7 @@ declare module NativeInterface
          *
          * @param callback
          *   Callback invoked with an error object and the contents of the file as a string.
+         *   If no error occurred, "err" is null.
          */
         readFile: (path: IPath, options: IReadFileOptions, callback: (err: Error, contents: string) => void) => void;
 
@@ -538,6 +560,9 @@ declare module NativeInterface
          *
          * @param contents
          *   The contents to write to the file.
+         *
+         * @param options
+         *   Options specifying how to write the file.
          *
          * @param callback
          *   Callback invoked when the operation has completed and providing
@@ -590,11 +615,11 @@ declare module NativeInterface
          *   Optionally, you can specify the file name(s), which are treated
          *   relatively to "path". Can contain wildcard characters (*, ?).
          *
-         * @param cb
+         * @param callback
          *   Callback invoked when the operation has completed and providing
          *   an error object in case an error occurred.
          */
-        deleteFiles: (path: IPath, relativeFilenames: string, cb?: (err: Error) => void) => void;
+        deleteFiles: (path: IPath, relativeFilenames: string, callback?: (err: Error) => void) => void;
 
         /**
          * Starts watching the files in the directory at "path" and its sub-

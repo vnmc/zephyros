@@ -544,7 +544,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "options")
     ));
 
-    // writeFile: (path: IPath, contents: String, callback(err: Error) => void) => void
+    // writeFile: (path: IPath, contents: String, options: IWriteFileOptions, callback(err: Error) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("writeFile"),
         FUNC({

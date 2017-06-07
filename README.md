@@ -16,7 +16,7 @@ Zephyros enables you to create your GUI in HTML5/CSS and write your application 
 
 Currently, Mac and Windows are supported. The Linux version still lacks implementation of some native features, but if you don't need them, you're good to go. (Please note, however, that the Linux version uses GTK3 and the default branch no longer builds on Linux because CEF introduced an incompatibility; for Linux, please use the ```develop-cef2623``` branch.)
 
-On Windows, the Chromium browser is used via the [Chromium Embedded Framework](https://code.google.com/p/chromiumembedded/) (CEF); on Mac you have the choice between CEF and the native WebView, which is based on Safari. Note that if you want to publish and sell your app on the Mac AppStore, you should use WebView (using CEF will most likely get the app rejected). 
+On Windows and Linux, the Chromium browser is used via the [Chromium Embedded Framework](https://code.google.com/p/chromiumembedded/) (CEF); on Mac you have the choice between CEF and the native WebView, which is based on Safari. Note that if you want to publish and sell your app on the Mac AppStore, you should use WebView (using CEF will most likely get the app rejected). 
 
 This project is similar to Adobe's [brackets-shell](https://github.com/adobe/brackets-shell) or Github's [Electron](https://electron.atom.io/). The differences are that Zephyros gives the option to use WebView on Mac (for compatibility with the AppStore), and that Zephyros provides (in our opinion) a more easily extensible JavaScript extension ("native") layer.
 
