@@ -32,6 +32,8 @@
 
 #include <vector>
 #include "base/types.h"
+#include "native_extensions/error.h"
+
 
 #define TYPE_STDOUT 0
 #define TYPE_STDIN 1
@@ -65,11 +67,11 @@ typedef struct
 class ProcessManager
 {
 public:
-    ProcessManager(CallbackId callbackId, String strExePath, std::vector<String> vecArgs, String strCWD = TEXT(""));
+    ProcessManager(CallbackId callbackId, String strExePath, std::vector<String> vecArgs, String strCWD, Error& err);
     ~ProcessManager();
 
-    void Start();
-    void FireCallback(bool bSuccess, int exitCode);
+    bool Start();
+    void FireCallback(int exitCode);
 
     static bool CreateProcess(String strExePath, std::vector<String> vecArgs, String strCWD, LPVOID lpEnv,
         PROCESS_INFORMATION* pProcInfo,
@@ -95,6 +97,7 @@ private:
     String m_strExePath;
     std::vector<String> m_vecArgs;
     String m_strCWD;
+    Error* m_error;
 };
 
 } // namespace Zephyros

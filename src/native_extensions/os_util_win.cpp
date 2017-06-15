@@ -163,12 +163,12 @@ String GetComputerName()
     return szComputerName;
 }
 
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err)
 {
     // create and start a new process
     // the process manager deletes itself once the process has terminated
-    ProcessManager* pMgr = new ProcessManager(callback, executableFileName, arguments, cwd);
-    pMgr->Start();
+    ProcessManager* pMgr = new ProcessManager(callback, executableFileName, arguments, cwd, err);
+    return pMgr->Start();
 }
 
 String GetKeyName(WORD wVkCode)

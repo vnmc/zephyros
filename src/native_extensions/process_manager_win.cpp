@@ -120,7 +120,7 @@ DWORD WINAPI WaitForProcessProc(LPVOID param)
     CloseHandle(pMgr->m_procInfo.hThread);
 
     // return the result and clean up
-    pMgr->FireCallback(true, (int) dwExitCode);
+    pMgr->FireCallback((int) dwExitCode);
     delete pMgr;
 
     return 0;
@@ -132,11 +132,12 @@ DWORD WINAPI WaitForProcessProc(LPVOID param)
 
 namespace Zephyros {
 
-ProcessManager::ProcessManager(CallbackId callbackId, String strExePath, std::vector<String> vecArgs, String strCWD)
+ProcessManager::ProcessManager(CallbackId callbackId, String strExePath, std::vector<String> vecArgs, String strCWD, Error& err)
   : m_callbackId(callbackId),
     m_strExePath(strExePath),
     m_vecArgs(vecArgs),
-    m_strCWD(strCWD)
+    m_strCWD(strCWD),
+    m_error(&err)
 {
     InitializeCriticalSection(&m_data.cs);
 
@@ -149,7 +150,7 @@ ProcessManager::~ProcessManager()
     DeleteCriticalSection(&m_data.cs);
 }
 
-void ProcessManager::Start()
+bool ProcessManager::Start()
 {
     m_data.stream.clear();
 
@@ -171,35 +172,33 @@ void ProcessManager::Start()
         m_hReadOutThread = CreateThread(NULL, 0, ReadOutput, &m_out, 0, NULL);
         m_hReadErrThread = CreateThread(NULL, 0, ReadOutput, &m_err, 0, NULL);
         CreateThread(NULL, 0, WaitForProcessProc, this, 0, NULL);
+
+        return true;
     }
-    else
-    {
-        FireCallback(false, -1);
-        delete this;
-    }
+
+    // creating the process failed
+    m_error->FromLastError();
+    delete this;
+    return false;
 }
 
-void ProcessManager::FireCallback(bool bSuccess, int exitCode)
+void ProcessManager::FireCallback(int exitCode)
 {
     JavaScript::Array args = JavaScript::CreateArray();
 
-    if (bSuccess)
+    JavaScript::Array stream = JavaScript::CreateArray();
+    int i = 0;
+    for (StreamDataEntry e : m_data.stream)
     {
-        JavaScript::Array stream = JavaScript::CreateArray();
-        int i = 0;
-        for (StreamDataEntry e : m_data.stream)
-        {
-            JavaScript::Object streamEntry = JavaScript::CreateObject();
-            streamEntry->SetInt(TEXT("fd"), e.type);
-            streamEntry->SetString(TEXT("text"), e.text);
-            stream->SetDictionary(i++, streamEntry);
-        }
-
-        args->SetInt(0, exitCode);
-        args->SetList(1, stream);
+        JavaScript::Object streamEntry = JavaScript::CreateObject();
+        streamEntry->SetInt(TEXT("fd"), e.type);
+        streamEntry->SetString(TEXT("text"), e.text);
+        stream->SetDictionary(i++, streamEntry);
     }
-    else
-        args->SetNull(0);
+
+    args->SetNull(0);
+    args->SetInt(1, exitCode);
+    args->SetList(2, stream);
 
     g_handler->GetClientExtensionHandler()->InvokeCallback(m_callbackId, args);
 }
