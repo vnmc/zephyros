@@ -841,10 +841,20 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         FUNC({
             std::vector<String> arguments;
             JavaScript::Array listArgs = args->GetList(1);
+        
             for (size_t i = 0; i < listArgs->GetSize(); ++i)
                 arguments.push_back(listArgs->GetString((int) i));
-            OSUtil::StartProcess(callback, args->GetString(0), arguments, args->GetString(2));
-            return RET_DELAYED_CALLBACK;
+
+            Error err;
+            if (OSUtil::StartProcess(callback, args->GetString(0), arguments, args->GetString(2), err))
+                return RET_DELAYED_CALLBACK;
+        
+            // process couldn't be started, set the error and invoke the callback immediately
+            ret->SetDictionary(0, err.CreateJSRepresentation());
+            ret->SetNull(1);
+            ret->SetNull(2);
+
+            return NO_ERROR;
         }
         ARG(VTYPE_STRING, "executablePath")
         ARG(VTYPE_LIST, "arguments")

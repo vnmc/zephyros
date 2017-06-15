@@ -53,8 +53,9 @@ String GetComputerName()
     return "";
 }
  
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err)
 {
+    return false;
 }
     
 void BringWindowToFront()

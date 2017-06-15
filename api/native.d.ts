@@ -694,15 +694,15 @@ declare module NativeInterface
          *
          * @param callback
          *   Callback called when the process launched has terminated. The
-         *   callback is passed the exit code of the process and an array of
-         *   IOutputStreamData objects containing the contents of stdout and
-         *   stderr.
+         *   callback is passed an error object, the exit code of the process,
+         *   and an array of IOutputStreamData objects containing the contents
+         *   of stdout and stderr.
          */
         startProcess: (
             executablePath: string, 
             args: string[], 
             cwd: string, 
-            callback: (exitCode: number, output: IOutputStreamData[]) => void) => void;
+            callback: (err: Error, exitCode: number, output: IOutputStreamData[]) => void) => void;
 
 
         ///////////////////////////////////////////////////////////////////////

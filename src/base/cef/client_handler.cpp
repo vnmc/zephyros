@@ -240,6 +240,8 @@ void ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFram
     if (errorCode == ERR_ABORTED)
         return;
 
+    // error codes:
+    // http://magpcss.org/ceforum/apidocs/projects/(default)/cef_handler_errorcode_t.html
     StringStream ssMsg;
     ssMsg << TEXT("Failed to load URL ") << String(failedUrl) << TEXT(" with error ") << String(errorText) << TEXT(" (") << errorCode << TEXT(")");
     App::Log(ssMsg.str());

@@ -64,7 +64,7 @@ String GetComputerName();
 String GetUserName();
 String GetHomeDirectory();
 
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd);
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err);
 
 #ifdef OS_LINUX
 String GetConfigDirectory();

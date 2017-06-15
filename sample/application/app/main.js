@@ -452,22 +452,34 @@ $(document).ready(function()
 
 	    //*
 		var t = getParameter();
-		app.startProcess("/usr/bin/node", ["xx.js", "__111___"], "/home/administrator/tmp/stderrout", function(exitCode, data)
+		app.startProcess("/usr/local/bin/node", ["xx.js", "__111___"], "/home/administrator/tmp/stderrout", function(err, exitCode, data)
 		{
-			var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
-			for (var i = 0; i < data.length; i++)
-				msg += data[i].text.replace('\n', '<br>');
-			appendMessage(msg);
-		});
-
-		setTimeout(function()
-		{
-			app.startProcess("/usr/bin/node", ["xx.js", "__222___"], "/home/administrator/tmp/stderrout", function(exitCode, data)
+			if (err)
+				setMessage('Error: ' + JSON.stringify(err));
+			else
 			{
 				var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
 				for (var i = 0; i < data.length; i++)
 					msg += data[i].text.replace('\n', '<br>');
 				appendMessage(msg);
+			}
+		});
+		//*/
+
+		/*
+		setTimeout(function()
+		{
+			app.startProcess("/usr/bin/node", ["xx.js", "__222___"], "/home/administrator/tmp/stderrout", function(err, exitCode, data)
+			{
+				if (err)
+					setMessage('Error: ' + JSON.stringify(err));
+				else
+				{
+					var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
+					for (var i = 0; i < data.length; i++)
+						msg += data[i].text.replace('\n', '<br>');
+					appendMessage(msg);
+				}
 			});
 		}, 0);
 		//*/

@@ -30,8 +30,8 @@
 
 namespace Zephyros {
 
-Error::Error(int code, String path)
-    : m_code(code), m_message(path)
+Error::Error(int code, String message)
+    : m_code(code), m_message(message)
 {
 }
 

@@ -300,16 +300,17 @@ DragSource* g_dragSource = nil;
 @property NSMutableArray *data;
 
 @property CallbackId callback;
+@property Zephyros::Error *err;
 
-- (id) init: (CallbackId) callback;
-- (void) start: (NSString*) executablePath arguments: (NSArray*) args currentDirectory: (NSString*) cwd;
+- (id) init: (CallbackId) callback withError: (Zephyros::Error*) err;
+- (bool) start: (NSString*) executablePath arguments: (NSArray*) args currentDirectory: (NSString*) cwd;
 - (void) readPipe: (NSNotification*) notification;
 
 @end
 
 @implementation ProcessManager
 
-- (id) init: (CallbackId) callback
+- (id) init: (CallbackId) callback withError: (Zephyros::Error*) err
 {
     self = [super init];
     
@@ -320,6 +321,7 @@ DragSource* g_dragSource = nil;
 #endif
     
     _callback = callback;
+    _err = err;
     
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(readPipe:)
@@ -328,8 +330,9 @@ DragSource* g_dragSource = nil;
     return self;
 }
 
-- (void) start: (NSString*) executablePath arguments: (NSArray*) args currentDirectory: (NSString*) cwd
+- (bool) start: (NSString*) executablePath arguments: (NSArray*) args currentDirectory: (NSString*) cwd
 {
+    bool success = true;
     _task = [[NSTask alloc] init];
     
     // glob the executable path
@@ -380,8 +383,9 @@ DragSource* g_dragSource = nil;
 
 #ifdef USE_CEF
             Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-            args->SetInt(0, [me.task terminationStatus]);
-            args->SetList(1, stream);
+            args->SetNull(0);
+            args->SetInt(1, [me.task terminationStatus]);
+            args->SetList(2, stream);
             g_handler->GetClientExtensionHandler()->InvokeCallback(me.callback, args);
 #endif
                 
@@ -411,30 +415,24 @@ DragSource* g_dragSource = nil;
     @catch (NSException *exception)
     {
         // the process couldn't be launched
+        success = false;
         
-#ifdef USE_CEF
-        Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-        args->SetNull(0);
-        g_handler->GetClientExtensionHandler()->InvokeCallback(_callback, args);
-#endif
-        
-#ifdef USE_WEBVIEW
-        JSValueRef args[] = {
-            JSValueMakeNull(g_ctx),
-            JSValueMakeUndefined(g_ctx),
-            JSValueMakeUndefined(g_ctx)
-        };
-        
-        JSObjectCallAsFunction(g_ctx, _callback, NULL, 3, args, NULL);
-        JSValueUnprotect(g_ctx, _callback);
-#endif
-        
+        if (exception.reason != nil)
+            _err->SetError(ERR_UNKNOWN, String([exception.reason UTF8String]));
+        else
+            _err->SetError(ERR_UNKNOWN);
+
         [[NSNotificationCenter defaultCenter] removeObserver: self];
     }
     
-    // start reading the process's output
-    [_fileHandleOutPipe readInBackgroundAndNotify];
-    [_fileHandleErrPipe readInBackgroundAndNotify];
+    if (success)
+    {
+        // start reading the process's output
+        [_fileHandleOutPipe readInBackgroundAndNotify];
+        [_fileHandleErrPipe readInBackgroundAndNotify];
+    }
+
+    return success;
 }
 
 - (void) recordData: (NSData*) data type: (int) type
@@ -528,17 +526,17 @@ String GetComputerName()
     return ret;
 }
  
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err)
 {
-    ProcessManager *processManager = [[ProcessManager alloc] init: callback];
+    ProcessManager *processManager = [[ProcessManager alloc] init: callback withError: &err];
     
     NSMutableArray *args = [[NSMutableArray alloc] init];
     for (String arg : arguments)
         [args addObject: [NSString stringWithUTF8String: arg.c_str()]];
     
-    [processManager start: [NSString stringWithUTF8String: executableFileName.c_str()]
-                arguments: args
-         currentDirectory: [NSString stringWithUTF8String: cwd.c_str()]];
+    return [processManager start: [NSString stringWithUTF8String: executableFileName.c_str()]
+                       arguments: args
+                currentDirectory: [NSString stringWithUTF8String: cwd.c_str()]];
 }
     
 void BringWindowToFront()
