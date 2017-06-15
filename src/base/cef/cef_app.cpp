@@ -102,6 +102,8 @@ void GetSettings(CefSettings& settings)
     // Specify a port to enable DevTools if one isn't already specified.
     if (!g_command_line->HasSwitch("remote-debugging-port"))
         settings.remote_debugging_port = 19384;
+#else
+    settings.remote_debugging_port = 0;
 #endif
 
     // set the logging severity
