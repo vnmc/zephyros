@@ -72,6 +72,7 @@ typedef struct
     String executableFileName;
     std::vector<String>* arguments;
     String cwd;
+    Zephyros::Error* err;
 } StartProcessThreadData;
 
 typedef struct
@@ -164,58 +165,74 @@ void* StartProcessThread(void* arg)
     }
 
     pid_t pid;
+    bool success = true;
     if (posix_spawnp(&pid, args[0], &action, NULL, &args[0], NULL) != 0)
+    {
+        data->err->FromErrno();
         std::cout << "posix_spawnp failed with error: " << strerror(errno) << "\n";
+        success = false;
+
+        // fire JavaScript callback
+        Zephyros::JavaScript::Array callbackArgs = Zephyros::JavaScript::CreateArray();
+        callbackArgs->SetDictionary(0, data->err->CreateJSRepresentation());
+        callbackArgs->SetNull(1);
+        callbackArgs->SetNull(2);
+        g_handler->GetClientExtensionHandler()->InvokeCallback(data->callback, callbackArgs);
+    }
 
     // close child-side of pipes
     close(outPipe[1]);
     close(errPipe[1]);
 
-    // read process output until terminated, build JS callback arguments on the go
-    Zephyros::JavaScript::Array stream = Zephyros::JavaScript::CreateArray();
-    char buffer[BUFSIZE];
-
-    std::vector<pollfd> plist = {
-        { outPipe[0], POLLIN },
-        { errPipe[0], POLLIN }
-    };
-
-    for (i = 0; poll(&plist[0], plist.size(), -1 /* infinite timeout */) > 0; )
+    if (success)
     {
-        int j = 0;
-        bool somethingRead = false;
+        // read process output until terminated, build JS callback arguments on the go
+        Zephyros::JavaScript::Array stream = Zephyros::JavaScript::CreateArray();
+        char buffer[BUFSIZE];
 
-        for (pollfd p : plist)
+        std::vector<pollfd> plist = {
+            { outPipe[0], POLLIN },
+            { errPipe[0], POLLIN }
+        };
+
+        for (i = 0; poll(&plist[0], plist.size(), -1 /* infinite timeout */) > 0; )
         {
-            if (p.revents & POLLIN)
+            int j = 0;
+            bool somethingRead = false;
+
+            for (pollfd p : plist)
             {
-                int bytesRead = read(p.fd, buffer, BUFSIZE);
+                if (p.revents & POLLIN)
+                {
+                    int bytesRead = read(p.fd, buffer, BUFSIZE);
 
-                Zephyros::JavaScript::Object streamEntry = Zephyros::JavaScript::CreateObject();
-                streamEntry->SetString(TEXT("text"), String(buffer, static_cast<size_t>(bytesRead)));
-                streamEntry->SetInt(TEXT("fd"), j);
-                stream->SetDictionary(i++, streamEntry);
+                    Zephyros::JavaScript::Object streamEntry = Zephyros::JavaScript::CreateObject();
+                    streamEntry->SetString(TEXT("text"), String(buffer, static_cast<size_t>(bytesRead)));
+                    streamEntry->SetInt(TEXT("fd"), j);
+                    stream->SetDictionary(i++, streamEntry);
 
-                somethingRead = true;
-                break;
+                    somethingRead = true;
+                    break;
+                }
+
+                ++j;
             }
 
-            ++j;
+            if (!somethingRead)
+                break;
         }
 
-        if (!somethingRead)
-            break;
+        // wait for process to terminate
+        int exitCode;
+        waitpid(pid, &exitCode, 0);
+
+        // fire JavaScript callback
+        Zephyros::JavaScript::Array callbackArgs = Zephyros::JavaScript::CreateArray();
+        callbackArgs->SetNull(0);
+        callbackArgs->SetInt(1, exitCode);
+        callbackArgs->SetList(2, stream);
+        g_handler->GetClientExtensionHandler()->InvokeCallback(data->callback, callbackArgs);
     }
-
-    // wait for process to terminate
-    int exitCode;
-    waitpid(pid, &exitCode, 0);
-
-    // fire JavaScript callback
-    Zephyros::JavaScript::Array callbackArgs = Zephyros::JavaScript::CreateArray();
-    callbackArgs->SetInt(0, exitCode);
-    callbackArgs->SetList(1, stream);
-    g_handler->GetClientExtensionHandler()->InvokeCallback(data->callback, callbackArgs);
 
     // clean up
     for (i = 0; i < data->arguments->size() + 1; ++i)
@@ -361,12 +378,13 @@ String GetComputerName()
     return String(name);
 }
 
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err)
 {
     StartProcessThreadData* data = new StartProcessThreadData;
     data->callback = callback;
     data->executableFileName = executableFileName;
     data->cwd = cwd;
+    data->err = &err;
     data->arguments = new std::vector<String>();
 
     for (String arg : arguments)
@@ -375,6 +393,8 @@ void StartProcess(CallbackId callback, String executableFileName, std::vector<St
     // start thread
     pthread_t thread;
     pthread_create(&thread, NULL, StartProcessThread, data);
+
+    return true;
 }
 
 String Exec(String command)

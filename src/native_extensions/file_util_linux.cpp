@@ -49,7 +49,7 @@
 #include "zephyros_strings.h"
 
 
-bool OpenFileDlg(GtkFileChooserAction action, int titleId, int okId, JavaScript::Object options, Zephyros::Path& path)
+bool OpenFileDlg(GtkFileChooserAction action, int titleId, int okId, Zephyros::JavaScript::Object options, Zephyros::Path& path)
 {
     // TODO: options
     bool retVal = false;
