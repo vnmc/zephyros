@@ -274,8 +274,8 @@ function(add_executable name)
   SET_XCODE_TARGET_PROPERTIES(${name})
 endfunction()
 
-# Fix the framework link in the helper executable.
-macro(FIX_MACOSX_HELPER_FRAMEWORK_LINK target app_path)
+# Fix the framework link in the executable.
+macro(FIX_MACOSX_FRAMEWORK_LINK target app_path)
   get_property(target_type TARGET ${target} PROPERTY TYPE)
   if(${target_type} STREQUAL "SHARED_LIBRARY")
     set(framework_path "${app_path}/${target}.framework/Versions/Current/${target}")
@@ -283,38 +283,12 @@ macro(FIX_MACOSX_HELPER_FRAMEWORK_LINK target app_path)
     set(framework_path "${app_path}/${target}.app/Contents/MacOS/${target}")
   endif()
 
-  # embed in framework/app bundle
-  add_custom_command(TARGET ${target}
-    POST_BUILD
-    COMMAND install_name_tool -change
-      "@executable_path/Chromium Embedded Framework"
-      "@executable_path/../../../../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework"
-      "${framework_path}"
-    VERBATIM
-  )
-
-endmacro()
-
-# Fix the framework link in the main executable.
-macro(FIX_MACOSX_MAIN_FRAMEWORK_LINK target app_path use_rpath)
-  get_property(target_type TARGET ${target} PROPERTY TYPE)
-  if(${target_type} STREQUAL "SHARED_LIBRARY")
-    set(framework_path "${app_path}/${target}.framework/Versions/Current/${target}")
-  else()
-    set(framework_path "${app_path}/${target}.app/Contents/MacOS/${target}")
-  endif()
-
-  if(${use_rpath})
-    set(install_path "@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework")
-  else()
-#    set(install_path "@executable_path/../Chromium Embedded Framework.framework/Chromium Embedded Framework")
-    set(install_path "@executable_path/../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework")
-  endif()
+  set(install_path "@rpath/Chromium Embedded Framework.framework/Chromium Embedded Framework")
 
   # embed in framework/app bundle
   add_custom_command(TARGET ${target}
     POST_BUILD
-    COMMAND install_name_tool -change "@executable_path/Chromium Embedded Framework" "${install_path}" "${framework_path}"
+    COMMAND install_name_tool -change "@rpath/Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework" "${install_path}" "${framework_path}"
     VERBATIM
   )
 endmacro()

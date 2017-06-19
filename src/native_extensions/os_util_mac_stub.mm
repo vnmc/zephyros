@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -53,7 +53,12 @@ String GetComputerName()
     return "";
 }
  
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err)
+{
+    return false;
+}
+    
+void BringWindowToFront()
 {
 }
  
@@ -101,7 +106,7 @@ void CopyToClipboard(String text)
 {
 }
     
-void BeginDragFile(Path& path, int x, int y)
+void BeginDragFile(CallbackId callback, Path& path, int x, int y)
 {
 }
     

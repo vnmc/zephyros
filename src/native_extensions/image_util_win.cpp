@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -86,7 +86,7 @@ Gdiplus::Bitmap* GetIconPixelData(HICON hIcon)
 
                 // make black pixels of the mask fully opaque (0xff) in the destination image,
                 // and white pixels fully transparent (0x00)
-                if (colorMask.GetValue() == 0)
+                if ((colorMask.GetValue() & 0x00ffffff) == 0)
                 {
                     // black pixel: make opaque (0xff)
                     colorBitmap = Gdiplus::Color::MakeARGB(0xff, colorBitmap.GetRed(), colorBitmap.GetGreen(), colorBitmap.GetBlue());

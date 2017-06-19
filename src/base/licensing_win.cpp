@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -384,28 +384,32 @@ class UpgradeDialog : public Dialog
 {
 public:
     UpgradeDialog(HWND hwndParent = NULL)
-      : Dialog(Zephyros::GetString(ZS_PREVVERSIONDLG_WNDTITLE), hwndParent)
+      : Dialog(Zephyros::GetString(ZS_PREVVERSIONDLG_WNDTITLE), hwndParent),
+        m_hFontBold(NULL),
+        m_hIcon(NULL)
     {
         ON_COMMAND(IDOK, UpgradeDialog::OnOK);
         ON_COMMAND(IDCANCEL, UpgradeDialog::OnCancel);
         ON_MESSAGE(WM_PAINT, UpgradeDialog::OnPaint);
         ON_MESSAGE(WM_INITDIALOG, UpgradeDialog::OnInitDialog);
 
-        AddStatic(Zephyros::GetString(ZS_PREVVERSIONDLG_TITLE), 105, 19, 185, 8);
+        AddStatic(Zephyros::GetString(ZS_PREVVERSIONDLG_TITLE), 105, 19, 185, 8, IDC_UPGRADETITLE);
         AddStatic(Zephyros::GetString(ZS_PREVVERSIONDLG_DESCRIPTION), 105, 40, 185, 30);
 
         const TCHAR* szUpgradeURL = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetUpgradeURL();
         if (szUpgradeURL != NULL && szUpgradeURL[0] != TCHAR('\0'))
         {
-            AddDefaultButton(Zephyros::GetString(ZS_PREVVERSIONDLG_UPGRADE), 171, 155, 131, 14, IDOK);
-            AddButton(Zephyros::GetString(ZS_PREVVERSIONDLG_BACK), 115, 155, 50, 14, IDCANCEL);
+            AddDefaultButton(Zephyros::GetString(ZS_PREVVERSIONDLG_UPGRADE), 160, 85, 130, 14, IDOK);
+            AddButton(Zephyros::GetString(ZS_PREVVERSIONDLG_BACK), 105, 85, 50, 14, IDCANCEL);
         }
         else
-            AddDefaultButton(Zephyros::GetString(ZS_PREVVERSIONDLG_BACK), 115, 155, 50, 14, IDCANCEL);
+            AddDefaultButton(Zephyros::GetString(ZS_PREVVERSIONDLG_BACK), 105, 155, 50, 14, IDCANCEL);
     }
 
     ~UpgradeDialog()
     {
+        if (m_hFontBold != NULL)
+            DeleteObject(m_hFontBold);
         if (m_hIcon != NULL)
             DestroyIcon(m_hIcon);
     }
@@ -424,13 +428,15 @@ protected:
 
     void OnInitDialog(WPARAM wParam, LPARAM lParam)
     {
-        // set the dialog position on the screen
-        RECT r;
-        GetWindowRect(GetDesktopWindow(), &r);
-        LONG width = r.right - r.left;
-        LONG height = r.bottom - r.top;
-        GetWindowRect(m_hwnd, &r);
-        SetWindowPos(m_hwnd, NULL, (width - r.right + r.left) / 2, (height - r.bottom + r.top) / 2 - 80, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        CenterDialog();
+
+        // make the title bold
+        HFONT hFont = (HFONT) SendDlgItemMessage(m_hwnd, IDC_UPGRADETITLE, WM_GETFONT, 0, 0);
+        LOGFONT font;
+        GetObject(hFont, sizeof(LOGFONT), &font);
+        font.lfWeight = FW_BOLD;
+        m_hFontBold = CreateFontIndirect(&font);
+        SendDlgItemMessage(m_hwnd, IDC_UPGRADETITLE, WM_SETFONT, (WPARAM) m_hFontBold, TRUE);
     }
 
     void OnPaint(WPARAM wParam, LPARAM lParam)
@@ -450,6 +456,7 @@ protected:
 
 private:
     HICON m_hIcon;
+    HFONT m_hFontBold;
 };
 
 class LicenseKeyDialog : public Dialog
@@ -460,19 +467,25 @@ public:
     {
         ON_COMMAND(IDOK, LicenseKeyDialog::OnOK);
         ON_COMMAND(IDCANCEL, LicenseKeyDialog::OnCancel);
+        ON_MESSAGE(WM_INITDIALOG, LicenseKeyDialog::OnInitDialog);
 
         AddGroupBox(Zephyros::GetString(ZS_ENTERLICKEYDLG_TITLE), 7, 7, 295, 117, -1, WS_CHILD | WS_VISIBLE | BS_CENTER);
         AddStatic(Zephyros::GetString(ZS_ENTERLICKEYDLG_FULL_NAME), 37, 33, 34, 8, -1, WS_CHILD | WS_VISIBLE | SS_RIGHT);
-        AddTextBox(TEXT(""), 87, 30, 195, 14, IDC_EDIT_FULLNAME, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL);
+        AddTextBox(TEXT(""), 87, 30, 195, 14, IDC_EDIT_FULLNAME, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
         AddStatic(Zephyros::GetString(ZS_ENTERLICKEYDLG_ORGANIZATION), 27, 55, 44, 8, -1, WS_CHILD | WS_VISIBLE | SS_RIGHT);
-        AddTextBox(TEXT(""), 87, 52, 195, 14, IDC_EDIT_ORGANIZATION, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL);
+        AddTextBox(TEXT(""), 87, 52, 195, 14, IDC_EDIT_ORGANIZATION, WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
         AddStatic(Zephyros::GetString(ZS_ENTERLICKEYDLG_LICKEY), 30, 77, 41, 8, -1, WS_CHILD | WS_VISIBLE | SS_RIGHT);
-        AddTextBox(TEXT(""), 87, 74, 195, 33, IDC_EDIT_LICENSEKEY, WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL);
+        AddTextBox(TEXT(""), 87, 74, 195, 33, IDC_EDIT_LICENSEKEY, WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL, WS_EX_CLIENTEDGE);
         AddDefaultButton(Zephyros::GetString(ZS_ENTERLICKEYDLG_ACTIVATE), 198, 140, 50, 14, IDOK);
         AddButton(Zephyros::GetString(ZS_ENTERLICKEYDLG_CANCEL), 252, 140, 50, 14, IDCANCEL);
     }
 
 protected:
+    void OnInitDialog(WPARAM wParam, LPARAM lParam)
+    {
+        CenterDialog();
+    }
+
     void OnOK(WORD w, LPARAM l)
     {
         TCHAR buf[BUF_SIZE + 1];
@@ -493,7 +506,6 @@ protected:
             break;
 
         case ACTIVATION_OBSOLETELICENSE:
-            EndDialog(m_hwnd, IDOK);
             UpgradeDialog dlg(m_hwnd);
             dlg.DoModal();
             break;
@@ -556,13 +568,7 @@ public:
 protected:
     void OnInitDialog(WPARAM wParam, LPARAM lParam)
     {
-        // set the dialog position on the screen
-        RECT r;
-        GetWindowRect(GetDesktopWindow(), &r);
-        LONG width = r.right - r.left;
-        LONG height = r.bottom - r.top;
-        GetWindowRect(m_hwnd, &r);
-        SetWindowPos(m_hwnd, NULL, (width - r.right + r.left) / 2, (height - r.bottom + r.top) / 2 - 80, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        CenterDialog();
 
         // set the text of the number of days display
         String captionNumDays = static_cast<Zephyros::LicenseManager*>(Zephyros::GetLicenseManager())->GetLicenseManagerImpl()->GetDaysCountLabelText();
@@ -757,7 +763,8 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
         if (hHttp != NULL)
         {
             String strPath(urlComponents.lpszUrlPath, urlComponents.dwUrlPathLength);
-            HINTERNET hRequest = WinHttpOpenRequest(hHttp, TEXT("POST"), strPath.c_str(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH);
+            bool isHTTPS = urlComponents.nScheme == INTERNET_SCHEME_HTTPS;
+            HINTERNET hRequest = WinHttpOpenRequest(hHttp, TEXT("POST"), strPath.c_str(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_REFRESH | (isHTTPS ? WINHTTP_FLAG_SECURE : 0));
             if (hRequest != NULL)
             {
                 // check for proxy
@@ -846,7 +853,11 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
                                 ret = true;
                             }
                         }
+                        else
+                            App::ShowErrorMessage();
                     }
+                    else
+                        App::ShowErrorMessage();
 
                     delete[] szPostData;
                 }
@@ -864,12 +875,18 @@ bool LicenseManagerImpl::SendRequest(String url, std::string strPostData, std::s
 
                 WinHttpCloseHandle(hRequest);
             }
+            else
+                App::ShowErrorMessage();
 
             WinHttpCloseHandle(hHttp);
         }
+        else
+            App::ShowErrorMessage();
 
         WinHttpCloseHandle(hSession);
     }
+    else
+        App::ShowErrorMessage();
 
     return ret;
 }

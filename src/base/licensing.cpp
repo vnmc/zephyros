@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -320,7 +320,7 @@ int LicenseManagerImpl::Activate(String name, String company, String licenseKey)
         {
             StringStream ssInfoPrevVersion;
             ssInfoPrevVersion << name << TEXT("|") << company << TEXT("|") << info.productId;
-            if (!VerifyKey(licenseKey, ssInfoPrevVersion.str(), info.pubkey))
+            if (VerifyKey(licenseKey, ssInfoPrevVersion.str(), info.pubkey))
             {
                 isObsoleteLicense = true;
                 break;

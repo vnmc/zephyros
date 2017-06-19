@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,6 +30,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,6 +76,9 @@ typedef std::string String;
 #define _ttoi        atoi
 #define _tcsnccmp    strncmp
 #define _wtoi64      atoi
+
+#define _tcscpy_s(dest, size, src)   strcpy(dest, src)
+#define _tcscat_s(dest, size, src)   strcat(dest, src)
 
 #define MAIN main
 #define MAIN_ARGS int argc, char* argv[]
@@ -140,7 +144,13 @@ typedef struct
     TCHAR* szMainNibName;
 } OSXInfo;
 
+} // namespace Zephyros
 
+
+#include "licensing.h"
+
+
+namespace Zephyros {
 namespace App {
 
 enum AlertStyle
@@ -150,11 +160,74 @@ enum AlertStyle
     AlertError
 };
 
+
+typedef std::map<String, int> MenuItemStatuses;
+
+
+/**
+* Returns the user-agent string to use.
+*/
+String GetUserAgent();
+
+/**
+* Initiates closing the application window.
+*/
+void CloseWindow();
+
+/**
+* Quits the app.
+*/
+void Quit();
+
+/**
+* Quit the application message loop.
+*/
+void QuitMessageLoop();
+
+/**
+* Show an alert box.
+*/
+void Alert(String title, String msg, AlertStyle style);
+
+/**
+* Set the app to a "waiting" state (e.g., by displaying an hourglass cursor).
+*/
+void BeginWait();
+
+/**
+* Restores the default state.
+*/
+void EndWait();
+
+/**
+* Log.
+*/
+void Log(String msg);
+
+/**
+* Displays an error message.
+*/
+String ShowErrorMessage();
+
+/**
+* Sets the statuses (checked, enabled, ...) of app menu items.
+*/
+void SetMenuItemStatuses(MenuItemStatuses& statuses);
+
+/**
+* Returns a reference to the license manager or NULL if there is none.
+*/
+Zephyros::LicenseManager* GetLicenseManager();
+
+/**
+* Removes all the menu items from the app menu related to the demo mode.
+*/
+void RemoveDemoMenuItems();
+
+
 } // namespace App
 } // namespace Zephyros
 
-
-#include "licensing.h"
 
 
 //////////////////////////////////////////////////////////////////////////

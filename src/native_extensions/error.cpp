@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,8 +30,8 @@
 
 namespace Zephyros {
 
-Error::Error(int code, String path)
-    : m_code(code), m_message(path)
+Error::Error(int code, String message)
+    : m_code(code), m_message(message)
 {
 }
 

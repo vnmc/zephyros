@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,19 +45,28 @@ extern bool g_isWindowLoaded;
     {
         m_window = window;
         
+        //*
         // register for application hide/unhide notifications
         [[NSNotificationCenter defaultCenter] addObserver: self
                                                  selector: @selector(applicationDidHide:)
                                                      name: NSApplicationDidHideNotification
                                                    object: nil];
-        
+        //*/
+
+        /*
         [[NSNotificationCenter defaultCenter] addObserver: self
                                                  selector: @selector(applicationDidUnhide:)
                                                      name: NSApplicationDidUnhideNotification
                                                    object: nil];
+        */
     }
-    
+
     return self;
+}
+
+- (void) applicationDidHide: (NSNotification*) notification
+{
+    NSLog(@"!!! window hidden");
 }
 
 - (void) dealloc
@@ -76,88 +85,30 @@ extern bool g_isWindowLoaded;
 /**
  * Called when we are activated (when we gain focus).
  */
-- (void) windowDidBecomeKey: (NSNotification*) notification
-{
+//- (void) windowDidBecomeKey: (NSNotification*) notification
+//{
+    /*
     if (g_handler.get())
     {
         CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
         if (browser.get())
             browser->GetHost()->SetFocus(true);
-    }
-}
+    }*/
+//}
 
 /**
  * Called when we are deactivated (when we lose focus).
  */
-- (void) windowDidResignKey: (NSNotification*) notification
-{
+//- (void) windowDidResignKey: (NSNotification*) notification
+//{
+    /*
     if (g_handler.get())
     {
         CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
         if (browser.get())
             browser->GetHost()->SetFocus(false);
-    }
-}
-
-/**
- * Called when we have been minimized.
- */
-- (void) windowDidMiniaturize: (NSNotification*) notification
-{
-    if (g_handler.get())
-    {
-        CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-        if (browser.get())
-            browser->GetHost()->SetWindowVisibility(false);
-    }
-}
-
-/**
- * Called when we have been unminimized.
- */
-- (void) windowDidDeminiaturize: (NSNotification*) notification
-{
-    if (g_handler.get())
-    {
-        CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-        if (browser.get())
-            browser->GetHost()->SetWindowVisibility(true);
-    }
-}
-
-/**
- * Called when the application has been hidden.
- */
-- (void) applicationDidHide: (NSNotification*) notification
-{
-    // if the window is miniaturized then nothing has really changed
-    if (![m_window isMiniaturized])
-    {
-        if (g_handler.get())
-        {
-            CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-            if (browser.get())
-                browser->GetHost()->SetWindowVisibility(false);
-        }
-    }
-}
-
-/**
- * Called when the application has been unhidden.
- */
-- (void) applicationDidUnhide: (NSNotification*) notification
-{
-    // if the window is miniaturized then nothing has really changed.
-    if (![m_window isMiniaturized])
-    {
-        if (g_handler.get())
-        {
-            CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-            if (browser.get())
-                browser->GetHost()->SetWindowVisibility(true);
-        }
-    }
-}
+    }*/
+//}
 
 /**
  * Called when the window is about to close. Perform the self-destruction
@@ -181,26 +132,6 @@ extern bool g_isWindowLoaded;
     [defaults setObject: [NSKeyedArchiver archivedDataWithRootObject: data] forKey: @"wnd2"];
     [defaults synchronize];
     
-    if (g_handler.get() && !g_handler->IsClosing())
-    {
-        CefRefPtr<CefBrowser> browser = g_handler->GetBrowser();
-        if (browser.get())
-        {
-            // notify the browser window that we would like to close it. This
-            // will result in a call to ClientHandler::DoClose() if the
-            // JavaScript 'onbeforeunload' event handler allows it
-            browser->GetHost()->CloseBrowser(false);
-            
-            // cancel the close
-            return NO;
-        }
-    }
-    
-    // try to make the window go away
-    m_window = nil;
-    g_isWindowLoaded = false;
-    
-    // allow closing
     return YES;
 }
 

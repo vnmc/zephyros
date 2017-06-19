@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -165,6 +165,17 @@ template<typename T> void Dialog::WriteData(T datum)
 {
     *(reinterpret_cast<T*>(m_ptr)) = datum;
     m_ptr += sizeof(T);
+}
+
+void Dialog::CenterDialog()
+{
+	// center the dialog on the screen
+	RECT r;
+	GetWindowRect(GetDesktopWindow(), &r);
+	LONG width = r.right - r.left;
+	LONG height = r.bottom - r.top;
+	GetWindowRect(m_hwnd, &r);
+	SetWindowPos(m_hwnd, NULL, (width - r.right + r.left) / 2, (height - r.bottom + r.top) / 2 - 80, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 INT_PTR Dialog::DoModal()

@@ -335,37 +335,37 @@ SET_CEF_TARGET_OUT_DIR()
 set(ZEPHYROS_BUILD_DIR ${CEF_TARGET_OUT_DIR} PARENT_SCOPE)
 
 if(OS_MACOSX)
-  # CEF configuration
-  add_library(Zephyros_CEF SHARED ${ZEPHYROS_CEF_SRCS})
-  add_dependencies(Zephyros_CEF libcef_dll_wrapper)
-  target_include_directories(Zephyros_CEF PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
-  target_compile_definitions(Zephyros_CEF PRIVATE -DUSE_CEF ${PLATFORM})
-  target_link_libraries(Zephyros_CEF PUBLIC ${DEFAULT_LIBS} ${LIB_SPARKLE} ${LIB_CEF} libcef_dll_wrapper)
-  #set_source_files_properties()
-  #set_property(SOURCE zephyros.h
-  #  PROPERTY MACOSX_PACKAGE_LOCATION Headers
-  #  )
-  set_target_properties(Zephyros_CEF PROPERTIES
-    FRAMEWORK TRUE
-    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
-    RESOURCE "res/mac/LicenseCheckWindowController.xib"
-    INSTALL_NAME_DIR "@rpath"
-  )
-  EMBED_FRAMEWORK(Zephyros_CEF ${LIB_SPARKLE})
-  FIX_MACOSX_MAIN_FRAMEWORK_LINK(Zephyros_CEF ${CEF_TARGET_OUT_DIR} YES)
+	# CEF configuration
+	add_library(Zephyros_CEF SHARED ${ZEPHYROS_CEF_SRCS})
+	add_dependencies(Zephyros_CEF libcef_dll_wrapper)
+	target_include_directories(Zephyros_CEF PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+	target_compile_definitions(Zephyros_CEF PRIVATE -DUSE_CEF ${PLATFORM})
+	target_link_libraries(Zephyros_CEF PUBLIC ${DEFAULT_LIBS} ${LIB_SPARKLE} ${LIB_CEF} libcef_dll_wrapper)
+	#set_source_files_properties()
+	#set_property(SOURCE zephyros.h
+	#  PROPERTY MACOSX_PACKAGE_LOCATION Headers
+	#  )
+	set_target_properties(Zephyros_CEF PROPERTIES
+		FRAMEWORK TRUE
+		PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
+		RESOURCE "res/mac/LicenseCheckWindowController.xib"
+		INSTALL_NAME_DIR "@rpath"
+		XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
+	)
+	EMBED_FRAMEWORK(Zephyros_CEF ${LIB_SPARKLE})
 
-  # CEF Helper configuration
-  add_library(Zephyros_CEF_Helper SHARED ${ZEPHYROS_CEFHELPER_SRCS})
-  add_dependencies(Zephyros_CEF_Helper libcef_dll_wrapper)
-  target_include_directories(Zephyros_CEF_Helper PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
-  target_compile_definitions(Zephyros_CEF_Helper PRIVATE -DUSE_CEF ${PLATFORM})
-  target_link_libraries(Zephyros_CEF_Helper PUBLIC ${DEFAULT_LIBS} ${LIB_SPARKLE} ${LIB_CEF} libcef_dll_wrapper)
-  set_target_properties(Zephyros_CEF_Helper PROPERTIES
-    FRAMEWORK TRUE
-    PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
-    INSTALL_NAME_DIR "@rpath"
-  )
-  FIX_MACOSX_HELPER_FRAMEWORK_LINK(Zephyros_CEF_Helper ${CEF_TARGET_OUT_DIR})
+	# CEF Helper configuration
+	add_library(Zephyros_CEF_Helper SHARED ${ZEPHYROS_CEFHELPER_SRCS})
+	add_dependencies(Zephyros_CEF_Helper libcef_dll_wrapper)
+	target_include_directories(Zephyros_CEF_Helper PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/lib/cef)
+	target_compile_definitions(Zephyros_CEF_Helper PRIVATE -DUSE_CEF ${PLATFORM})
+	target_link_libraries(Zephyros_CEF_Helper PUBLIC ${DEFAULT_LIBS} ${LIB_SPARKLE} ${LIB_CEF} libcef_dll_wrapper)
+	set_target_properties(Zephyros_CEF_Helper PROPERTIES
+		FRAMEWORK TRUE
+		PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_v8.h"
+		INSTALL_NAME_DIR "@rpath"
+		XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
+	)
 
 	# WebView configuration
 	add_library(Zephyros_WebView SHARED ${ZEPHYROS_WEBVIEW_SRCS})
@@ -377,6 +377,7 @@ if(OS_MACOSX)
 		PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
 		RESOURCE "res/mac/MainWindow.xib;res/mac/LicenseCheckWindowController.xib"
 		INSTALL_NAME_DIR "@rpath"
+		XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
 	)
 	EMBED_FRAMEWORK(Zephyros_WebView ${LIB_SPARKLE})
 
@@ -390,6 +391,7 @@ if(OS_MACOSX)
 		PUBLIC_HEADER "${ZEPHYROS__PUBLICHEADERS_SRCS};jsbridge_webview.h;components/ZPYWebView.h;components/ZPYWebViewAppDelegate.h"
 		RESOURCE "res/mac/MainWindow.xib"
 		INSTALL_NAME_DIR "@rpath"
+		XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path/Frameworks"
 	)
 elseif(OS_WINDOWS)
 	add_library(Zephyros STATIC ${ZEPHYROS_CEF_SRCS})

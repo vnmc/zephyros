@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -229,6 +229,60 @@ String GetExeVersion(String strCommand)
 }
 
 /**
+ * Finds Microsoft Edge and adds it to the list of browsers.
+ */
+void FindMicrosoftEdge(std::vector<Browser*>* pBrowsers, String& strDefaultBrowserKey)
+{
+	TCHAR szWindowsDir[MAX_PATH] = TEXT("");
+	ExpandEnvironmentStrings(TEXT("%windir%"), szWindowsDir, MAX_PATH);
+
+	String strSystemAppDir = szWindowsDir;
+	strSystemAppDir.append(TEXT("\\SystemApps\\"));
+
+	String strEdgeSearchString = strSystemAppDir;
+	strEdgeSearchString.append(TEXT("Microsoft.MicrosoftEdge*"));
+
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = FindFirstFile(strEdgeSearchString.c_str(), &fd);
+
+	if (INVALID_HANDLE_VALUE != hFind)
+	{
+		String strEdgeExe = strSystemAppDir;
+		strEdgeExe.append(fd.cFileName);
+		strEdgeExe.append(TEXT("\\MicrosoftEdge.exe"));
+
+		HICON hIcon = NULL;
+		String strIcon = TEXT("");
+
+		if (ExtractIconEx(strEdgeExe.c_str(), 0, &hIcon, NULL, 1) > 0 && hIcon != NULL)
+		{
+			BYTE* pData = NULL;
+			DWORD dwLength;
+
+			if (ImageUtil::IconToPNG(hIcon, &pData, &dwLength))
+			{
+				strIcon = TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, dwLength);
+				delete[] pData;
+			}
+
+			DestroyIcon(hIcon);
+		}
+
+		bool isEdgeDefault = strDefaultBrowserKey.length() > 0 ?
+			strDefaultBrowserKey.find(TEXT("MicrosoftEdge")) != String::npos :
+			false;
+
+		pBrowsers->push_back(new Browser(
+			TEXT("Microsoft Edge"),
+			GetExeVersion(strEdgeExe),
+			TEXT("microsoft-edge:"),
+			strIcon,
+			isEdgeDefault
+		));
+	}
+}
+
+/**
  * Returns an array of all browsers available on the system.
  */
 void FindBrowsers(std::vector<Browser*>** ppBrowsers)
@@ -312,6 +366,9 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
                         if (type == REG_SZ && len > 0)
                         {
                             strBrowserCommand = ToString(data, len);
+                            int l = strBrowserCommand.length();
+                            if (strBrowserCommand.at(0) == TEXT('"') && strBrowserCommand.at(l - 1) == TEXT('"'))
+                                strBrowserCommand = strBrowserCommand.substr(1, l - 2);
                             DEBUG_LOG(TEXT("Found browser command ") + strBrowserCommand);
                         }
                         else
@@ -397,58 +454,13 @@ void FindBrowsers(std::vector<Browser*>** ppBrowsers)
     }
 
     // add Microsoft Edge - they don't believe in the power of the registry...
-    TCHAR szWindowsDir[MAX_PATH] = TEXT("");
-    ExpandEnvironmentStrings(TEXT("%windir%"), szWindowsDir, MAX_PATH);
-    String systemAppDir = szWindowsDir;
-    systemAppDir.append(TEXT("\\SystemApps\\"));
-    String edgeSearchString = systemAppDir;
-    edgeSearchString.append(TEXT("Microsoft.MicrosoftEdge*"));
-    
-    WIN32_FIND_DATA fd;
-    HANDLE hFind = FindFirstFile(edgeSearchString.c_str(), &fd);
-
-    if (INVALID_HANDLE_VALUE != hFind)
-    {
-        String edgeExe = systemAppDir;
-        edgeExe.append(fd.cFileName);
-        edgeExe.append(TEXT("\\MicrosoftEdge.exe"));
-        
-        HICON edgeIcon;
-        String strIcon = TEXT("");
-        int nIcons = ExtractIconEx(edgeExe.c_str(), 0, &edgeIcon, NULL, 1);
-
-        if (edgeIcon != NULL)
-        {
-            BYTE* pData = NULL;
-            DWORD length;
-
-            if (ImageUtil::IconToPNG(edgeIcon, &pData, &length))
-            {
-                strIcon = TEXT("data:image/png;base64,") + ImageUtil::Base64Encode(pData, length);
-                delete[] pData;
-            }
-
-            DestroyIcon(edgeIcon);
-        }
-
-        String search = TEXT("MicrosoftEdge");
-        bool isEdgeDefault = strDefaultBrowserKey.length() > 0 ?
-            strDefaultBrowserKey.find(search) != String::npos :
-            false;
-
-        (*ppBrowsers)->push_back(new Browser(
-            TEXT("Microsoft Edge"),
-            GetExeVersion(edgeExe),
-            TEXT("microsoft-edge:"),
-            strIcon,
-            isEdgeDefault
-        ));
-    }   
+	FindMicrosoftEdge(*ppBrowsers, strDefaultBrowserKey);
 }
 
 bool OpenURLInBrowser(String url, Browser* browser)
 {
     SHELLEXECUTEINFO execInfo = { 0 };
+	String id;
 
     execInfo.cbSize = sizeof(SHELLEXECUTEINFO);
     execInfo.fMask = SEE_MASK_DEFAULT;
@@ -462,7 +474,7 @@ bool OpenURLInBrowser(String url, Browser* browser)
     }
     else
     {
-        String id = browser->GetIdentifier();
+        id = browser->GetIdentifier();
 
         // in case we're launching Edge, we do this via microsoft-edge:url,
         // and microsoft-edge is the browser identifier in that case

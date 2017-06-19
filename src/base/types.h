@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -60,6 +60,9 @@ typedef std::stringstream StringStream;
 #define _ttoi        atoi
 #define _tcsnccmp    strncmp
 #define _wtoi64      atoi
+
+#define _tcscpy_s(dest, size, src)   strcpy(dest, src)
+#define _tcscat_s(dest, size, src)   strcat(dest, src)
 
 typedef std::string String;
 typedef std::stringstream StringStream;

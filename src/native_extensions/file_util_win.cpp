@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -49,57 +49,144 @@
 namespace Zephyros {
 namespace FileUtil {
 
-bool ShowOpenFileDialog(Path& path)
+#define FOLDERSELECTION TEXT("Folder Selection.")
+TCHAR* g_szDefaultFilter = TEXT("All Files\0*.*\0\0");
+
+
+void CreateOpenFileNameStruct(JavaScript::Object options, OPENFILENAME* pOfn, TCHAR** pszFolderSelection)
+{
+    ZeroMemory(pOfn, sizeof(OPENFILENAME));
+
+    pOfn->hwndOwner = GetActiveWindow();
+    pOfn->lStructSize = sizeof(OPENFILENAME);
+    pOfn->nMaxFile = MAX_PATH;
+
+    // fill in the initial file name
+    pOfn->lpstrFile = new TCHAR[MAX_PATH + 1];
+    if (pszFolderSelection)
+    {
+        // combined (file/folder) dialog
+        *pszFolderSelection = new TCHAR[MAX_PATH + 1];
+        _tcscpy(*pszFolderSelection, options->HasKey(TEXT("folderSelectionText")) ? String(options->GetString("folderSelectionText")).c_str() : FOLDERSELECTION);
+
+        // make sure the string ends with a dot
+        if ((*pszFolderSelection)[_tcslen(*pszFolderSelection) - 1] != TEXT('.'))
+            _tcscat(*pszFolderSelection, TEXT("."));
+
+        _tcscpy(pOfn->lpstrFile, *pszFolderSelection);
+    }
+    else
+    {
+        if (options->HasKey(TEXT("initialFile")))
+            _tcscpy(pOfn->lpstrFile, String(options->GetString(TEXT("initialFile"))).c_str());
+        else
+            pOfn->lpstrFile[0] = 0;
+    }
+    
+    // fill in the title (or set to NULL if not provided)
+    if (options->HasKey(TEXT("title")))
+    {
+        String strTitle(options->GetString(TEXT("title")));
+        TCHAR* szTitle = new TCHAR[strTitle.length() + 1];
+        _tcscpy(szTitle, strTitle.c_str());
+        pOfn->lpstrTitle = szTitle;
+    }
+    else
+        pOfn->lpstrTitle = NULL;
+    
+    // fill in the filters
+    if (options->HasKey(TEXT("filters")))
+    {
+        JavaScript::Array filters = options->GetList(TEXT("filters"));
+        int nNumItems = (int) filters->GetSize();
+        StringStream ss;
+
+        for (int i = 0; i < nNumItems; ++i)
+        {
+            JavaScript::Object filter = filters->GetDictionary(i);
+
+            if (filter->HasKey(TEXT("description")))
+                ss << String(filter->GetString(TEXT("description")));
+            else
+                ss << TEXT("");
+            ss << TEXT('\0');
+
+            if (filter->HasKey(TEXT("extensions")))
+                ss << String(filter->GetString(TEXT("extensions")));
+            else
+                ss << TEXT("*.*");
+            ss << TEXT('\0');
+        }
+
+        ss << TEXT('\0');
+
+        String strFilter = ss.str();
+        int nLen = strFilter.length() + 1;
+        TCHAR* szFilter = new TCHAR[nLen];
+        memcpy(szFilter, strFilter.c_str(), nLen * sizeof(TCHAR));
+        pOfn->lpstrFilter = szFilter;
+    }
+    else
+        pOfn->lpstrFilter = g_szDefaultFilter;
+    
+    // fill in the initial directory (or set to NULL if not provided)
+    if (options->HasKey(TEXT("initialDirectory")))
+    {
+        String strInitialDir(options->GetString(TEXT("initialDirectory")));
+        TCHAR* szInitialDir = new TCHAR[strInitialDir.length() + 1];
+        _tcscpy(szInitialDir, strInitialDir.c_str());
+        pOfn->lpstrInitialDir = szInitialDir;
+    }
+    else
+        pOfn->lpstrInitialDir = NULL;
+}
+
+void DestroyOpenFileNameStruct(OPENFILENAME* pOfn)
+{
+    delete[] pOfn->lpstrFile;
+    if (pOfn->lpstrTitle)
+        delete[] pOfn->lpstrTitle;
+    if (pOfn->lpstrFilter && pOfn->lpstrFilter != g_szDefaultFilter)
+        delete[] pOfn->lpstrFilter;
+    if (pOfn->lpstrInitialDir)
+        delete[] pOfn->lpstrInitialDir;
+}
+
+bool ShowOpenFileDialog(JavaScript::Object options, Path& path)
 {
     OPENFILENAME ofn;
-    TCHAR szFile[MAX_PATH];
-    szFile[0] = 0;
-
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.hwndOwner = GetActiveWindow();
-    ofn.lStructSize = sizeof(ofn);
-    ofn.lpstrFile = szFile;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrTitle = NULL;
-    ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
-    ofn.lpstrInitialDir = NULL;
+    CreateOpenFileNameStruct(options, &ofn, NULL);
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
 
+    bool ret = false;
     if (GetOpenFileName(&ofn))
     {
-        path = Path(szFile);
-        return true;
+        path = Path(ofn.lpstrFile);
+        ret = true;
     }
 
-    return false;
+    DestroyOpenFileNameStruct(&ofn);
+    return ret;
 }
 
-bool ShowSaveFileDialog(Path& path)
+bool ShowSaveFileDialog(JavaScript::Object options, Path& path)
 {
     OPENFILENAME ofn;
-    TCHAR szFile[MAX_PATH];
-    szFile[0] = 0;
+    CreateOpenFileNameStruct(options, &ofn, NULL);
+    ofn.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT;
 
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.hwndOwner = GetActiveWindow();
-    ofn.lStructSize = sizeof(ofn);
-    ofn.lpstrFile = szFile;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrTitle = NULL;
-    ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
-    ofn.lpstrInitialDir = NULL;
-    ofn.Flags = OFN_EXPLORER;
-
+    bool ret = false;
     if (GetSaveFileName(&ofn))
     {
-        path = Path();
-        return true;
+        path = Path(ofn.lpstrFile);
+        ret = true;
     }
 
-    return false;
+    DestroyOpenFileNameStruct(&ofn);
+    return ret;
 }
 
-bool ShowOpenDirectoryDialog(Path& path)
+bool ShowOpenDirectoryDialog(JavaScript::Object options, Path& path)
 {
     bool pathSelected = false;
 
@@ -144,34 +231,27 @@ bool ShowOpenDirectoryDialog(Path& path)
     return pathSelected;
 }
 
-#define FOLDERSELECTION TEXT("Folder Selection.")
-
-bool ShowOpenFileOrDirectoryDialog(Path& path)
+bool ShowOpenFileOrDirectoryDialog(JavaScript::Object options, Path& path)
 {
     OPENFILENAME ofn;
-    TCHAR szFile[MAX_PATH];
-    _tcscpy(szFile, FOLDERSELECTION);
-
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.hwndOwner = GetActiveWindow();
-    ofn.lStructSize = sizeof(ofn);
-    ofn.lpstrFile = szFile;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrTitle = NULL;
-    ofn.lpstrFilter = TEXT("All Files\0*.*\0Web Files\0*.js;*.css;*.htm;*.html\0\0");
-    ofn.lpstrInitialDir = NULL;
+    TCHAR* szFolderSelection;
+    CreateOpenFileNameStruct(options, &ofn, &szFolderSelection);
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOTESTFILECREATE | OFN_EXPLORER;
 
+    bool ret = false;
     if (GetOpenFileName(&ofn))
     {
-        if (_tcscmp(szFile + _tcslen(szFile) - _tcslen(FOLDERSELECTION), FOLDERSELECTION) == 0)
+        TCHAR* szFile = ofn.lpstrFile;
+        if (_tcscmp(szFile + _tcslen(szFile) - _tcslen(szFolderSelection), szFolderSelection) == 0)
             PathRemoveFileSpec(szFile);
 
         path = Path(szFile);
-        return true;
+        ret = true;
     }
 
-    return false;
+    DestroyOpenFileNameStruct(&ofn);
+    delete[] szFolderSelection;
+    return ret;
 }
 
 void ShowInFileManager(String path)

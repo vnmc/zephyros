@@ -7,6 +7,8 @@
 #define IDC_EDIT_ORGANIZATION   1012
 #define IDC_EDIT_LICENSEKEY     1013
 
+#define IDC_UPGRADETITLE        1021
+
 #define IDM_EXIT                105
 
 #define ID_QUIT                 32500

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,7 +34,6 @@
 #include "lib/cef/include/cef_browser.h"
 #include "lib/cef/include/cef_command_line.h"
 #include "lib/cef/include/cef_frame.h"
-#include "lib/cef/include/cef_runnable.h"
 #include "lib/cef/include/cef_web_plugin.h"
 
 #include "base/app.h"
@@ -94,19 +93,25 @@ void GetSettings(CefSettings& settings)
     settings.no_sandbox = true;
 
 #if defined(OS_WIN)
-    settings.multi_threaded_message_loop = false;// g_command_line->HasSwitch(cefclient::kMultiThreadedMessageLoop);
+    settings.multi_threaded_message_loop = false;
 #endif
 
-//    CefString(&settings.cache_path) = g_command_line->GetSwitchValue(cefclient::kCachePath);
+    // CefString(&settings.cache_path) = g_command_line->GetSwitchValue(cefclient::kCachePath);
 
 #ifndef NDEBUG
     // Specify a port to enable DevTools if one isn't already specified.
     if (!g_command_line->HasSwitch("remote-debugging-port"))
         settings.remote_debugging_port = 19384;
+#else
+    settings.remote_debugging_port = 0;
 #endif
-    
-    //CefString(&settings.log_file).FromASCII("/Users/christen/tmp1/zephyros.log");
+
+    // set the logging severity
+#ifndef NDEBUG
     settings.log_severity = LOGSEVERITY_VERBOSE;
+#else
+    settings.log_severity = LOGSEVERITY_VERBOSE;
+#endif
 }
 
 } // namespace App

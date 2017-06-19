@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,6 +28,7 @@
 #include <vector>
 #include <map>
 
+#include <locale.h>
 #include <ShlObj.h>
 
 #include "base/app.h"
@@ -103,7 +104,11 @@ String GetOSVersion()
         delete[] pData;
     }
 
-    return ssVersion.str();
+    String strOS = ssVersion.str();
+	if (strOS[strOS.length() - 1] == TEXT('\0'))
+		strOS = strOS.substr(0, strOS.length() - 1);
+
+	return strOS;
 }
 
 /**
@@ -152,18 +157,18 @@ String GetHomeDirectory()
 
 String GetComputerName()
 {
-    TCHAR szComputerName[MAX_COMPUTERNAME_LENGTH + 1];
-    DWORD dwLen = MAX_COMPUTERNAME_LENGTH;
+    TCHAR szComputerName[MAX_COMPUTERNAME_LENGTH + 2];
+    DWORD dwLen = MAX_COMPUTERNAME_LENGTH + 1;
     ::GetComputerName(szComputerName, &dwLen);
     return szComputerName;
 }
 
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err)
 {
     // create and start a new process
     // the process manager deletes itself once the process has terminated
-    ProcessManager* pMgr = new ProcessManager(callback, executableFileName, arguments, cwd);
-    pMgr->Start();
+    ProcessManager* pMgr = new ProcessManager(callback, executableFileName, arguments, cwd, err);
+    return pMgr->Start();
 }
 
 String GetKeyName(WORD wVkCode)
@@ -177,18 +182,20 @@ String GetKeyName(WORD wVkCode)
     int nRet = GetKeyNameText(MapVirtualKey(wVkCode, MAPVK_VK_TO_VSC) << 16 | (nFlags << 24), szName, 127);
     szName[nRet] = TEXT('\0');
 
+	_locale_t lc = _get_current_locale();
+
     // capitalize the name
     bool bPrevWasAlnum = false;
     for (int i = 0; i < nRet; ++i)
     {
         TCHAR c = szName[i];
 
-        if (bPrevWasAlnum)
-            szName[i] = tolower(c);
+		if (bPrevWasAlnum)
+			szName[i] = (TCHAR) CharLower((LPTSTR) ((DWORD) c));
         if (i > 0 && c == TEXT('-'))
             szName[i] = TEXT(' ');
 
-        bPrevWasAlnum = isalnum(c) != 0;
+        bPrevWasAlnum = _istalnum_l(c, lc) != 0;
     }
 
     return szName;
@@ -203,6 +210,7 @@ void CreateMenuRecursive(
 {
     bool bPrevItemWasSeparator = false;
     int nNumItems = (int) menuItems->GetSize();
+    MENUITEMTEMPLATE* pPrevTemplate = NULL;
 
     for (int i = 0; i < nNumItems; ++i)
     {
@@ -217,17 +225,32 @@ void CreateMenuRecursive(
             if (bPrevItemWasSeparator)
                 continue;
 
-            pTemplate->mtOption = (i == nNumItems - 1 ? MF_END : 0);
+            // don't add a separator if the next item is a license-specific menu item and we're not in demo mode
+            if (!bIsInDemoMode && i < nNumItems - 1)
+            {
+                JavaScript::Object nextItem = menuItems->GetDictionary(i + 1);
+                if (nextItem->HasKey(TEXT("menuCommandId")))
+                {
+                    String strCmdId = nextItem->GetString(TEXT("menuCommandId"));
+                    if (strCmdId == TEXT(MENUCOMMAND_ENTER_LICENSE) || strCmdId == TEXT(MENUCOMMAND_PURCHASE_LICENSE))
+                        continue;
+                }
+            }
+
+            pTemplate->mtOption = MF_END;
             // ID and mtString are 0x0000
 
             dwOffsetMenu += sizeof(MENUITEMTEMPLATE);
+            if (pPrevTemplate)
+                pPrevTemplate->mtOption = pPrevTemplate->mtOption & ~MF_END;
+            pPrevTemplate = pTemplate;
             bPrevItemWasSeparator = true;
         }
         else
         {
             bool bHasSubMenuItems = item->HasKey(TEXT("subMenuItems"));
             wchar_t* pCaption = pTemplate->mtString;
-            pTemplate->mtOption = (bHasSubMenuItems ? MF_POPUP : 0) | (i == nNumItems - 1 ? MF_END : 0);
+            pTemplate->mtOption = (bHasSubMenuItems ? MF_POPUP : 0) | MF_END;
 
             // menu ID
             if (!bHasSubMenuItems)
@@ -283,30 +306,38 @@ void CreateMenuRecursive(
                     pBufAccel[dwNumAccels].fVirt = FVIRTKEY | ((nModifiers & 1) ? FSHIFT : 0) | ((nModifiers & 2) ? FCONTROL : 0) | ((nModifiers & 4) ? FALT : 0);
                     
                     WORD wVkCode = 0;
-                    if (strKeyLc == TEXT("left"))
-                        wVkCode = VK_LEFT;
-                    else if (strKeyLc == TEXT("right"))
-                        wVkCode = VK_RIGHT;
-                    else if (strKeyLc == TEXT("up"))
-                        wVkCode = VK_UP;
-                    else if (strKeyLc == TEXT("down"))
-                        wVkCode = VK_DOWN;
-                    else if (strKeyLc == TEXT("page up") || strKeyLc == TEXT("pageup"))
-                        wVkCode = VK_PRIOR;
-                    else if (strKeyLc == TEXT("page down") || strKeyLc == TEXT("pagedown"))
-                        wVkCode = VK_NEXT;
-                    else if (strKeyLc == TEXT("home"))
-                        wVkCode = VK_HOME;
-                    else if (strKeyLc == TEXT("end"))
-                        wVkCode = VK_END;
-                    else if (strKeyLc == TEXT("insert"))
-                        wVkCode = VK_INSERT;
-                    else if (strKeyLc == TEXT("delete"))
-                        wVkCode = VK_DELETE;
-                    else if (strKeyLc == TEXT("backspace"))
-                        wVkCode = VK_BACK;
-                    else if (strKeyLc == TEXT("enter"))
-                        wVkCode = VK_RETURN;
+					if (strKeyLc == TEXT("left"))
+						wVkCode = VK_LEFT;
+					else if (strKeyLc == TEXT("right"))
+						wVkCode = VK_RIGHT;
+					else if (strKeyLc == TEXT("up"))
+						wVkCode = VK_UP;
+					else if (strKeyLc == TEXT("down"))
+						wVkCode = VK_DOWN;
+					else if (strKeyLc == TEXT("page up") || strKeyLc == TEXT("pageup"))
+						wVkCode = VK_PRIOR;
+					else if (strKeyLc == TEXT("page down") || strKeyLc == TEXT("pagedown"))
+						wVkCode = VK_NEXT;
+					else if (strKeyLc == TEXT("home"))
+						wVkCode = VK_HOME;
+					else if (strKeyLc == TEXT("end"))
+						wVkCode = VK_END;
+					else if (strKeyLc == TEXT("insert"))
+						wVkCode = VK_INSERT;
+					else if (strKeyLc == TEXT("delete"))
+						wVkCode = VK_DELETE;
+					else if (strKeyLc == TEXT("backspace"))
+						wVkCode = VK_BACK;
+					else if (strKeyLc == TEXT("enter"))
+						wVkCode = VK_RETURN;
+					else if (strKey == TEXT("."))
+						wVkCode = VK_OEM_PERIOD;
+					else if (strKey == TEXT(","))
+						wVkCode = VK_OEM_COMMA;
+					else if (strKey == TEXT("+"))
+						wVkCode = VK_OEM_PLUS;
+					else if (strKey == TEXT("-"))
+						wVkCode = VK_OEM_MINUS;
                     else if (strKeyLc.length() > 1 && strKeyLc.at(0) == 'f' && isdigit(strKeyLc.at(1)))
                         wVkCode = VK_F1 + _ttoi(strKey.substr(1).c_str()) - 1;
                     else
@@ -339,6 +370,9 @@ void CreateMenuRecursive(
             // caption (Windows expects a "&" before the underlined character)
             strCaption = StringReplace(StringReplace(strCaption, TEXT("&"), TEXT("&&")), TEXT("_"), TEXT("&"));
             dwOffsetMenu += (DWORD) ((strCaption.length() + 1) * sizeof(wchar_t));
+            if (pPrevTemplate)
+                pPrevTemplate->mtOption = pPrevTemplate->mtOption & ~MF_END;
+            pPrevTemplate = pTemplate;
             if (dwOffsetMenu >= MENU_BUF_SIZE)
                 return;
             wcscpy(pCaption, strCaption.c_str());
@@ -490,6 +524,11 @@ void GetWindowBorderSize(POINT* pPtBorder)
 
     pPtBorder->x = rectWnd.right - rectWnd.left - rectClient.right;
     pPtBorder->y = rectWnd.bottom - rectWnd.top - rectClient.bottom;
+}
+
+void BringWindowToFront()
+{
+	SetForegroundWindow(App::GetMainHwnd());
 }
 
 

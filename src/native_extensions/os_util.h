@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -64,7 +64,7 @@ String GetComputerName();
 String GetUserName();
 String GetHomeDirectory();
 
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd);
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err);
 
 #ifdef OS_LINUX
 String GetConfigDirectory();
@@ -82,6 +82,7 @@ void CreateTouchBar(JavaScript::Array touchBarItems);
 void GetWindowBorderSize(POINT* pPtBorder);
 #endif
 
+void BringWindowToFront();
 void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bool hasHeight, int* pNewWidth, int* pNewHeight);
 void SetMinimumWindowSize(int width, int height);
 

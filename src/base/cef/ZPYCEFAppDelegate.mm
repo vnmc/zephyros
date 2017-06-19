@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -60,18 +60,31 @@ extern bool g_isWindowLoaded;
     self = [super init];
     
     self.windowDelegate = nil;
-    
+
+    /*
     if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
     {
         self.updater = [[SUUpdater alloc] init];
         self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
     }
-    
+     */
+
     // TODO: check if this works (not too early)
     // register ourselves as delegate for the notification center
     [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate: self];
     
     return self;
+}
+
+- (void) applicationDidFinishLaunching: (NSNotification*) notification
+{
+    [super applicationDidFinishLaunching: notification];
+
+    if (g_isWindowLoaded)
+    {
+        self.window.isVisible = YES;
+        [self.window makeKeyAndOrderFront: self];
+    }
 }
 
 - (void) createApp: (id) object
@@ -88,10 +101,7 @@ extern bool g_isWindowLoaded;
     app.delegate = self;
     
     [self applicationWillFinishLaunching: nil];
-
-    Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
-    if (pMgr == NULL || pMgr->CanStartApp())
-        [self createMainWindow];
+    [self createMainWindow];
 }
 
 - (void) createMainWindow
@@ -141,7 +151,7 @@ extern bool g_isWindowLoaded;
     }
     
     self.window = [[UnderlayOpenGLHostingWindow alloc] initWithContentRect: rectWindow
-                                                                 styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
+                                                                 styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSUnifiedTitleAndToolbarWindowMask
                                                                    backing: NSBackingStoreBuffered
                                                                      defer: NO];
     
@@ -152,14 +162,16 @@ extern bool g_isWindowLoaded;
     self.window.delegate = self.windowDelegate;
     self.window.title = [NSString stringWithUTF8String: Zephyros::GetAppName()];
     self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
-    
+    self.window.hidesOnDeactivate = NO;
+
     // rely on the window delegate to clean us up rather than immediately
     // releasing when the window gets closed. We use the delegate to do
     // everything from the autorelease pool so the window isn't on the stack
     // during cleanup (ie, a window close from javascript)
-    [self.window setReleasedWhenClosed: NO];
+    self.window.releasedWhenClosed = NO;
     
     NSView* contentView = self.window.contentView;
+    contentView.wantsLayer = YES;
     g_handler->SetMainHwnd(contentView);
     
     // create the browser view
@@ -177,27 +189,6 @@ extern bool g_isWindowLoaded;
     r.size.width = rectWindow.size.width;
     r.size.height = rectWindow.size.height;
     [self.window setFrame: [self.window frameRectForContentRect: r] display: YES];
-}
-
-//
-// Restore the window when the dock icon is clicked.
-//
-- (BOOL) applicationShouldHandleReopen: (NSApplication*) sender hasVisibleWindows: (BOOL) flag
-{
-    if ((g_isWindowBeingLoaded && !g_isWindowLoaded) || [super applicationShouldHandleReopen: sender hasVisibleWindows: flag] == NO)
-        return NO;
-    
-    if (!flag)
-    {
-        // get rid of the old window
-        [self.window orderOut: self];
-        
-        // create a new window
-        g_isWindowBeingLoaded = true;
-        [self createMainWindow];
-    }
-    
-    return YES;
 }
 
 @end

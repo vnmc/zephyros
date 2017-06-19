@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -65,6 +65,11 @@ void SetSettings(JavaScript::Object settings)
 
     win_sparkle_set_automatic_check_for_updates(autoCheck ? 1 : 0);
     win_sparkle_set_update_check_interval(frequency);
+}
+
+void CheckForUpdates()
+{
+	win_sparkle_check_update_with_ui();
 }
 
 } // namespace UpdaterUtil

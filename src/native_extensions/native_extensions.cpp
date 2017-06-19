@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -357,83 +357,91 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         }
     ));
 
-    // showSaveFileDialog: (callback: (path: IPath) => void) => void
+    // showSaveFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showSaveFileDialog"),
 #ifdef OS_MACOSX
         FUNC({
-            Zephyros::FileUtil::ShowSaveFileDialog(callback);
+            Zephyros::FileUtil::ShowSaveFileDialog(args->GetDictionary(0), callback);
             return RET_DELAYED_CALLBACK;
-        })
+        },
+        ARG(VTYPE_DICTIONARY, "options"))
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowOpenFileDialog(path))
+            if (FileUtil::ShowSaveFileDialog(args->GetDictionary(0), path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #endif
     );
 
-    // showOpenFileDialog: (callback: (path: IPath) => void) => void
+    // showOpenFileDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenFileDialog"),
 #ifdef OS_MACOSX
         FUNC({
-            Zephyros::FileUtil::ShowOpenFileDialog(callback);
+            Zephyros::FileUtil::ShowOpenFileDialog(args->GetDictionary(0), callback);
             return RET_DELAYED_CALLBACK;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowOpenFileDialog(path))
+            if (FileUtil::ShowOpenFileDialog(args->GetDictionary(0), path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #endif
     );
 
-    // showOpenDirectoryDialog: (callback: (path: IPath) => void) => void
+    // showOpenDirectoryDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenDirectoryDialog"),
 #ifdef OS_MACOSX
         FUNC({
-            Zephyros::FileUtil::ShowOpenDirectoryDialog(callback);
+            Zephyros::FileUtil::ShowOpenDirectoryDialog(args->GetDictionary(0), callback);
             return RET_DELAYED_CALLBACK;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowOpenDirectoryDialog(path))
+            if (FileUtil::ShowOpenDirectoryDialog(args->GetDictionary(0), path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #endif
     );
 
-    // showOpenFileOrDirectoryDialog: (callback: (path: IPath) => void) => void
+    // showOpenFileOrDirectoryDialog: (options: IFileDialogOptions, callback: (path: IPath) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("showOpenFileOrDirectoryDialog"),
 #ifdef OS_MACOSX
         FUNC({
-            Zephyros::FileUtil::ShowOpenFileOrDirectoryDialog(callback);
+            Zephyros::FileUtil::ShowOpenFileOrDirectoryDialog(args->GetDictionary(0), callback);
             return RET_DELAYED_CALLBACK;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #else
         FUNC({
             Path path;
-            if (FileUtil::ShowOpenFileOrDirectoryDialog(path))
+            if (FileUtil::ShowOpenFileOrDirectoryDialog(args->GetDictionary(0), path))
                 ret->SetDictionary(0, path.CreateJSRepresentation());
             else
                 ret->SetNull(0);
             return NO_ERROR;
-        })
+        }
+        ARG(VTYPE_DICTIONARY, "options"))
 #endif
     );
 
@@ -536,7 +544,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         ARG(VTYPE_DICTIONARY, "options")
     ));
 
-    // writeFile: (path: IPath, contents: String, callback(err: Error) => void) => void
+    // writeFile: (path: IPath, contents: String, options: IWriteFileOptions, callback(err: Error) => void) => void
     e->AddNativeJavaScriptFunction(
         TEXT("writeFile"),
         FUNC({
@@ -833,10 +841,20 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         FUNC({
             std::vector<String> arguments;
             JavaScript::Array listArgs = args->GetList(1);
+        
             for (size_t i = 0; i < listArgs->GetSize(); ++i)
                 arguments.push_back(listArgs->GetString((int) i));
-            OSUtil::StartProcess(callback, args->GetString(0), arguments, args->GetString(2));
-            return RET_DELAYED_CALLBACK;
+
+            Error err;
+            if (OSUtil::StartProcess(callback, args->GetString(0), arguments, args->GetString(2), err))
+                return RET_DELAYED_CALLBACK;
+        
+            // process couldn't be started, set the error and invoke the callback immediately
+            ret->SetDictionary(0, err.CreateJSRepresentation());
+            ret->SetNull(1);
+            ret->SetNull(2);
+
+            return NO_ERROR;
         }
         ARG(VTYPE_STRING, "executablePath")
         ARG(VTYPE_LIST, "arguments")
@@ -895,6 +913,15 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
         },
         ARG(VTYPE_DICTIONARY, "updaterSettings")
     ));
+
+	// checkForUpdates: () => void
+	e->AddNativeJavaScriptProcedure(
+		TEXT("checkForUpdates"),
+		FUNC({
+			UpdaterUtil::CheckForUpdates();
+			return NO_ERROR;
+		})
+	);
 #endif
 
 
@@ -1081,6 +1108,14 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "size")
+    ));
+    
+    e->AddNativeJavaScriptProcedure(
+        TEXT("bringWindowToFront"),
+        FUNC({
+            OSUtil::BringWindowToFront();
+            return NO_ERROR;
+        }
     ));
 
     // displayNotification: (title: string, details: string) => void

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +32,6 @@
 #import "lib/cef/include/cef_application_mac.h"
 #import "lib/cef/include/cef_browser.h"
 #import "lib/cef/include/cef_frame.h"
-#import "lib/cef/include/cef_runnable.h"
 
 #import "base/app.h"
 #import "base/cef/client_app.h"
@@ -126,24 +125,14 @@ int RunApplication(int argc, char* argv[])
     schemes.push_back("local");
     CefCookieManager::GetGlobalManager(NULL)->SetSupportedSchemes(schemes, NULL);
 
-    // initialize the license manager (if available)
-    Zephyros::AbstractLicenseManager* pLicenseMgr = Zephyros::GetLicenseManager();
+    // create the app delegate and the application window
     g_appDelegate = [[ZPYCEFAppDelegate alloc] init];
+    [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: YES];
 
-    if (pLicenseMgr != NULL)
-        pLicenseMgr->Start();
-
-    if (pLicenseMgr == NULL || pLicenseMgr->CanStartApp())
-    {
-        // create the application window
-        [g_appDelegate performSelectorOnMainThread: @selector(createApp:) withObject: nil waitUntilDone: YES];
-        [g_appDelegate.window orderFrontRegardless];
-
-        // run the application message loop
-        g_isMessageLoopRunning = true;
-        CefRunMessageLoop();
-        g_isMessageLoopRunning = false;
-    }
+    // run the application message loop
+    g_isMessageLoopRunning = true;
+    CefRunMessageLoop();
+    g_isMessageLoopRunning = false;
 
     // shut down CEF
     if (g_handler != NULL)

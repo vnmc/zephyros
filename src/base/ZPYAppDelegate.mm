@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -50,6 +50,7 @@
     
     m_previousDropURL = nil;
     m_previousDropURLTime = 0;
+    m_eventsRegistered = false;
 
     return self;
 }
@@ -91,6 +92,9 @@
 
 - (void) applicationWillFinishLaunching: (NSNotification*) notification
 {
+    if (m_eventsRegistered)
+        return;
+
     // register URL drops to the dock
     // (we need to do this in applicationWillFinishLaunching so it picks up link clicks when the app isn't started yet)
     // http://stackoverflow.com/questions/3115657/nsapplicationdelegate-application-active-because-of-url-protocol
@@ -103,18 +107,35 @@
     Zephyros::AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
     if (pMgr && pMgr->GetReceiptChecker())
         pMgr->GetReceiptChecker()->CopyAppStoreReceipt();
+    
+    m_eventsRegistered = true;
 }
 
-- (void)applicationDidFinishLaunching: (NSNotification*) notification
+- (void) applicationDidFinishLaunching: (NSNotification*) notification
 {
     if ([[NSApplication sharedApplication] respondsToSelector: @selector(isAutomaticCustomizeTouchBarMenuItemEnabled)])
     {
         [NSApplication sharedApplication].automaticCustomizeTouchBarMenuItemEnabled = YES;
-
         self.touchBarHandler = [[ZPYTouchBarHandler alloc] init];
-        self.touchBar = [[NSTouchBar alloc] init];
-        self.touchBar.delegate = self;
     }
+
+#ifndef APPSTORE
+    // initialize the license manager (if available)
+    if (Zephyros::GetLicenseManager())
+    {
+        Zephyros::GetLicenseManager()->Start();
+        if (!Zephyros::GetLicenseManager()->CanStartApp())
+            [NSApp terminate: self];
+    }
+
+    // create and initialize the updater
+    if (Zephyros::GetUpdaterURL() && _tcslen(Zephyros::GetUpdaterURL()) > 0)
+    {
+        self.updater = [[SUUpdater alloc] init];
+        self.updater.feedURL = [NSURL URLWithString: [NSString stringWithUTF8String: Zephyros::GetUpdaterURL()]];
+        [self.updater resetUpdateCycle];
+    }
+#endif
 }
 
 /**

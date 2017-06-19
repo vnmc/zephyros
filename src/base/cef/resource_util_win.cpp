@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -75,7 +75,7 @@ bool LoadBinaryResource(const TCHAR* szResourceName, String& resourceData)
 CefRefPtr<CefStreamReader> GetBinaryResourceReader(const TCHAR* szResourceName)
 {
     int resource_id = Zephyros::GetResourceID(szResourceName);
-    if (resource_id == 0)
+    if (resource_id < 0)
         return NULL;
 
     DWORD dwSize;

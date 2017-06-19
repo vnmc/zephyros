@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -80,15 +80,90 @@ ZPYMenuHandler* g_menuHandler = nil;
 @end
 
 
-Zephyros::Path g_draggedFile;
+@interface DragSource : NSObject <NSDraggingSource, NSPasteboardItemDataProvider>
+{
+@private
+    Zephyros::Path m_draggedFile;
+    CallbackId m_callback;
+}
 
+- (void) beginDragFile: (Zephyros::Path&) path withCallback: (CallbackId) callback  atCoordinates: (NSPoint) coords;
 
-@interface DragView : NSObject <NSDraggingSource>
 @end
 
-@implementation DragView
+@implementation DragSource
 
-- (NSDragOperation) draggingSourceOperationMaskForLocal:(BOOL)isLocal
+- (void) beginDragFile: (Zephyros::Path&) path withCallback: (CallbackId) callback atCoordinates: (NSPoint) coords
+{
+    m_draggedFile = path;
+    m_callback = callback;
+    
+#ifdef USE_WEBVIEW
+    JSValueProtect(g_ctx, m_callback);
+#endif
+    
+#ifdef USE_CEF
+    NSView* view = g_handler->GetMainHwnd();
+#endif
+#ifdef USE_WEBVIEW
+    NSView* view = ((ZPYWebViewAppDelegate*) [NSApplication sharedApplication].delegate).view;
+#endif
+    
+    // create a pasteboard item and add the file promise
+    NSPasteboardItem *pasteboardItem = [[NSPasteboardItem alloc] init];
+    [pasteboardItem setDataProvider: self forTypes: @[(NSString*) kPasteboardTypeFileURLPromise]];
+    NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter: pasteboardItem];
+    
+    String p = path.GetPath();
+    String::size_type pos = p.find_last_of('.');
+    NSString* extension = pos == String::npos ? @"" : [NSString stringWithUTF8String: p.substr(pos + 1).c_str()];
+    
+    coords.y = view.bounds.size.height - coords.y;
+    NSPoint dragPoint = [view convertPoint: coords toView: nil];
+    [dragItem setDraggingFrame: NSMakeRect(dragPoint.x - 24, dragPoint.y - 4, 32, 32)
+                      contents: [[NSWorkspace sharedWorkspace] iconForFileType: extension]];
+    
+    // create an event for the dragging session
+    NSEvent* event = [NSEvent mouseEventWithType: NSEventTypeLeftMouseDown
+                                        location: coords
+                                   modifierFlags: 0
+                                       timestamp: CFAbsoluteTimeGetCurrent()
+                                    windowNumber: [NSApp mainWindow].windowNumber
+                                         context: nil
+                                     eventNumber: 0
+                                      clickCount: 1
+                                        pressure: 0];
+    
+    // begin the dragging session
+    NSDraggingSession* session = [view beginDraggingSessionWithItems: @[dragItem]
+                                                               event: event
+                                                              source: self];
+    
+    // set the path in the pasteboard
+    [session.draggingPasteboard setString: [NSString stringWithUTF8String: p.c_str()]
+                                  forType: (NSString*) kUTTypeFileURL];
+}
+
+- (void) invokeCallback: (bool) result withEffect: (int) effect
+{
+#ifdef USE_CEF
+    Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
+    args->SetBool(0, result);
+    args->SetInt(1, effect);
+    g_handler->GetClientExtensionHandler()->InvokeCallback(m_callback, args);
+#endif
+
+#ifdef USE_WEBVIEW
+    JSValueRef args[2];
+    args[0] = JSValueMakeBoolean(g_ctx, result);
+    args[1] = JSValueMakeNumber(g_ctx, effect);
+
+    JSObjectCallAsFunction(g_ctx, m_callback, NULL, 2, args, NULL);
+    JSValueUnprotect(g_ctx, m_callback);
+#endif
+}
+
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL) isLocal
 {
     return NSDragOperationCopy;
 }
@@ -98,25 +173,88 @@ Zephyros::Path g_draggedFile;
     return NSDragOperationCopy;
 }
 
-- (NSArray<NSString*>*) namesOfPromisedFilesDroppedAtDestination: (NSURL*) dropDestination
+- (void) draggingSession: (NSDraggingSession*) session endedAtPoint: (NSPoint) screenPoint operation: (NSDragOperation) operation
 {
-    String p = g_draggedFile.GetPath();
-    String::size_type pos = p.find_last_of('/');
-    NSString* filename = [NSString stringWithUTF8String: pos == String::npos ? p.c_str() : p.substr(pos + 1).c_str()];
+    if (operation & NSDragOperationCopy)
+        [self invokeCallback: true withEffect: DND_COPY];
+    else if (operation & NSDragOperationMove)
+        [self invokeCallback: true withEffect: DND_MOVE];
+    else if (operation & NSDragOperationLink)
+        [self invokeCallback: true withEffect: DND_LINK];
+    else
+        [self invokeCallback: false withEffect: 0];
+}
 
-    // copy the file
-    [[NSFileManager defaultManager] copyItemAtPath: [NSString stringWithUTF8String: p.c_str()]
-                                            toPath: [NSString pathWithComponents: @[dropDestination.path, filename]]
-                                             error: nil];
+- (NSString*) getPasteLocation
+{
+    PasteboardRef pasteboard = NULL;
+    PasteboardCreate((CFStringRef) NSDragPboard, &pasteboard);
+    if (pasteboard == NULL)
+        return nil;
     
-    // return an array of file names for the created files
-    return @[filename];
+    PasteboardSynchronize(pasteboard);
+
+    CFURLRef url = NULL;
+    PasteboardCopyPasteLocation(pasteboard, &url);
+    if (url == NULL)
+    {
+        CFRelease(pasteboard);
+        return nil;
+    }
+    
+    NSString* ret = [(__bridge NSURL*) url path];
+    CFRelease(pasteboard);
+    CFRelease(url);
+    
+    return ret;
+}
+
+- (void) pasteboard: (NSPasteboard*) sender item: (NSPasteboardItem*) item provideDataForType: (NSString*) type
+{
+    if ([type isEqualToString: (NSString*) kPasteboardTypeFileURLPromise])
+    {
+        // get the location where the item was dropped
+        NSString* location = [self getPasteLocation];
+        
+        // build the new file path
+        String p = m_draggedFile.GetPath();
+        String::size_type pos = p.find_last_of('/');
+        NSString* filename = [NSString stringWithUTF8String: pos == String::npos ? p.c_str() : p.substr(pos + 1).c_str()];
+        NSString* filenameWithoutExtension = [filename stringByDeletingPathExtension];
+        NSString* filenameExtension = [filename pathExtension];
+
+        // add the dot if an extension could be extracted
+        if (filenameExtension.length > 0)
+            filenameExtension = [NSString stringWithFormat: @".%@", filenameExtension];
+        
+        // copy the file
+        NSString* destination = [NSString pathWithComponents: @[location, filename]];
+        NSError* err = nil;
+
+        for (int i = 1; ; ++i)
+        {
+            [[NSFileManager defaultManager] copyItemAtPath: [NSString stringWithUTF8String: p.c_str()]
+                                                    toPath: destination
+                                                     error: &err];
+
+            // exit if there was no error or another error than "file exists"
+            if (!err || err.code != NSFileWriteFileExistsError)
+                break;
+
+            // try the next filename
+            err = nil;
+            destination = [NSString pathWithComponents: @[location, [NSString stringWithFormat: @"%@ (%d)%@", filenameWithoutExtension, i, filenameExtension]]];
+        }
+        
+        // set some data
+        [item setString: destination forType: type];
+    }
 }
 
 @end
 
 
-DragView* g_dragView = nil;
+DragSource* g_dragSource = nil;
 
 
 @interface StreamData : NSObject
@@ -162,16 +300,17 @@ DragView* g_dragView = nil;
 @property NSMutableArray *data;
 
 @property CallbackId callback;
+@property Zephyros::Error *err;
 
-- (id) init: (CallbackId) callback;
-- (void) start: (NSString*) executablePath arguments: (NSArray*) args currentDirectory: (NSString*) cwd;
+- (id) init: (CallbackId) callback withError: (Zephyros::Error*) err;
+- (bool) start: (NSString*) executablePath arguments: (NSArray*) args currentDirectory: (NSString*) cwd;
 - (void) readPipe: (NSNotification*) notification;
 
 @end
 
 @implementation ProcessManager
 
-- (id) init: (CallbackId) callback
+- (id) init: (CallbackId) callback withError: (Zephyros::Error*) err
 {
     self = [super init];
     
@@ -182,6 +321,7 @@ DragView* g_dragView = nil;
 #endif
     
     _callback = callback;
+    _err = err;
     
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(readPipe:)
@@ -190,8 +330,9 @@ DragView* g_dragView = nil;
     return self;
 }
 
-- (void) start: (NSString*) executablePath arguments: (NSArray*) args currentDirectory: (NSString*) cwd
+- (bool) start: (NSString*) executablePath arguments: (NSArray*) args currentDirectory: (NSString*) cwd
 {
+    bool success = true;
     _task = [[NSTask alloc] init];
     
     // glob the executable path
@@ -242,8 +383,9 @@ DragView* g_dragView = nil;
 
 #ifdef USE_CEF
             Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-            args->SetInt(0, [me.task terminationStatus]);
-            args->SetList(1, stream);
+            args->SetNull(0);
+            args->SetInt(1, [me.task terminationStatus]);
+            args->SetList(2, stream);
             g_handler->GetClientExtensionHandler()->InvokeCallback(me.callback, args);
 #endif
                 
@@ -273,30 +415,24 @@ DragView* g_dragView = nil;
     @catch (NSException *exception)
     {
         // the process couldn't be launched
+        success = false;
         
-#ifdef USE_CEF
-        Zephyros::JavaScript::Array args = Zephyros::JavaScript::CreateArray();
-        args->SetNull(0);
-        g_handler->GetClientExtensionHandler()->InvokeCallback(_callback, args);
-#endif
-        
-#ifdef USE_WEBVIEW
-        JSValueRef args[] = {
-            JSValueMakeNull(g_ctx),
-            JSValueMakeUndefined(g_ctx),
-            JSValueMakeUndefined(g_ctx)
-        };
-        
-        JSObjectCallAsFunction(g_ctx, _callback, NULL, 3, args, NULL);
-        JSValueUnprotect(g_ctx, _callback);
-#endif
-        
+        if (exception.reason != nil)
+            _err->SetError(ERR_UNKNOWN, String([exception.reason UTF8String]));
+        else
+            _err->SetError(ERR_UNKNOWN);
+
         [[NSNotificationCenter defaultCenter] removeObserver: self];
     }
     
-    // start reading the process's output
-    [_fileHandleOutPipe readInBackgroundAndNotify];
-    [_fileHandleErrPipe readInBackgroundAndNotify];
+    if (success)
+    {
+        // start reading the process's output
+        [_fileHandleOutPipe readInBackgroundAndNotify];
+        [_fileHandleErrPipe readInBackgroundAndNotify];
+    }
+
+    return success;
 }
 
 - (void) recordData: (NSData*) data type: (int) type
@@ -390,19 +526,24 @@ String GetComputerName()
     return ret;
 }
  
-void StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd)
+bool StartProcess(CallbackId callback, String executableFileName, std::vector<String> arguments, String cwd, Error& err)
 {
-    ProcessManager *processManager = [[ProcessManager alloc] init: callback];
+    ProcessManager *processManager = [[ProcessManager alloc] init: callback withError: &err];
     
     NSMutableArray *args = [[NSMutableArray alloc] init];
     for (String arg : arguments)
         [args addObject: [NSString stringWithUTF8String: arg.c_str()]];
     
-    [processManager start: [NSString stringWithUTF8String: executableFileName.c_str()]
-                arguments: args
-         currentDirectory: [NSString stringWithUTF8String: cwd.c_str()]];
+    return [processManager start: [NSString stringWithUTF8String: executableFileName.c_str()]
+                       arguments: args
+                currentDirectory: [NSString stringWithUTF8String: cwd.c_str()]];
 }
- 
+    
+void BringWindowToFront()
+{
+    [NSApp activateIgnoringOtherApps: YES];
+}
+
     
 static int lastOriginX = INT_MIN;
 static int lastOriginY = INT_MIN;
@@ -607,6 +748,18 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
             if (bPrevItemWasSeparator)
                 continue;
             
+            // don't add a separator if the next item is a license-specific menu item and we're not in demo mode
+            if (!bIsInDemoMode && i < numItems - 1)
+            {
+                JavaScript::Object nextItem = menuItems->GetDictionary(i + 1);
+                if (nextItem->HasKey("menuCommandId"))
+                {
+                    String cmdId = nextItem->GetString("menuCommandId");
+                    if (cmdId == MENUCOMMAND_ENTER_LICENSE || cmdId == MENUCOMMAND_PURCHASE_LICENSE)
+                        continue;
+                }
+            }
+
             // add the separator
             menuItem = [NSMenuItem separatorItem];
             bPrevItemWasSeparator = true;
@@ -615,10 +768,22 @@ void CreateMenuRecursive(NSMenu* menuParent, JavaScript::Array menuItems, ZPYMen
         {
             if (item->HasKey("systemCommandId"))
             {
-                // set the menu action to the selector corresponding to systemCommandId,
-                // but don't set target => the target will be the first responder
-                menuItem = [[ZPYMenuItem alloc] init];
-                menuItem.action = NSSelectorFromString([NSString stringWithUTF8String: String(item->GetString("systemCommandId")).c_str()]);
+                NSString *commandId = [NSString stringWithUTF8String: String(item->GetString("systemCommandId")).c_str()];
+                if ([commandId isEqualToString: @"services"])
+                {
+                    // create the "Services" menu
+                    menuItem = [[NSMenuItem alloc] init];
+                    NSMenu* menu = [[NSMenu alloc] init];
+                    menuItem.submenu = menu;
+                    [NSApp setServicesMenu: menu];
+                }
+                else
+                {
+                    // set the menu action to the selector corresponding to systemCommandId,
+                    // but don't set target => the target will be the first responder
+                    menuItem = [[ZPYMenuItem alloc] init];
+                    menuItem.action = NSSelectorFromString(commandId);
+                }
             }
             else
             {
@@ -751,13 +916,13 @@ bool RemoveMenuItemRecursive(NSMenu* menu, String& strCommandId)
     int idx = 0;
     for (NSMenuItem* item in [menu itemArray])
     {
-        if ([item isKindOfClass: ZPYMenuItem.class] && strCommandId == [((ZPYMenuItem*) item).commandId UTF8String])
+        if ([item isKindOfClass: ZPYMenuItem.class] && ((ZPYMenuItem*) item).commandId && strCommandId == [((ZPYMenuItem*) item).commandId UTF8String])
         {
             [menu removeItemAtIndex: idx];
             return true;
         }
         
-        if (item.menu && RemoveMenuItemRecursive(item.menu, strCommandId))
+        if (item.hasSubmenu && RemoveMenuItemRecursive(item.submenu, strCommandId))
             return true;
         
         ++idx;
@@ -829,7 +994,7 @@ float ToColorComponent(const char* str)
     
 NSButton* CreateTouchBarButton(JavaScript::Object item)
 {
-    if (!item->HasKey("id") || !item->HasKey("caption"))
+    if (!item->HasKey("id"))
         return nil;
     
     NSString* identifier = [NSString stringWithUTF8String: String(item->GetString("id")).c_str()];
@@ -845,8 +1010,11 @@ NSButton* CreateTouchBarButton(JavaScript::Object item)
     
     // create the button
     ZPYAppDelegate* appDelegate = (ZPYAppDelegate*) [[NSApplication sharedApplication] delegate];
-    NSString* title = [NSString stringWithUTF8String: String(item->GetString("caption")).c_str()];
     NSButton* btn = nil;
+    
+    NSString* title = item->HasKey("caption") ?
+        [NSString stringWithUTF8String: String(item->GetString("caption")).c_str()] :
+        nil;
 
     if (title && ![title isEqualToString: @""])
     {
@@ -949,7 +1117,7 @@ NSString* AddTouchBarGroup(JavaScript::Object group, int idx)
     
 NSString* AddTouchBarButton(JavaScript::Object item)
 {
-    if (!item->HasKey("id") || !item->HasKey("caption"))
+    if (!item->HasKey("id"))
         return nil;
     
     NSString* identifier = [NSString stringWithUTF8String: String(item->GetString("id")).c_str()];
@@ -987,6 +1155,10 @@ void CreateTouchBar(JavaScript::Array touchBarItems)
     }
 
     [ids addObject: NSTouchBarItemIdentifierOtherItemsProxy];
+
+    // create a new touch bar object
+    appDelegate.touchBar = [[NSTouchBar alloc] init];
+    appDelegate.touchBar.delegate = appDelegate;
     appDelegate.touchBar.defaultItemIdentifiers = ids;
 }
     
@@ -999,54 +1171,10 @@ void CopyToClipboard(String text)
     
 void BeginDragFile(CallbackId callback, Path& path, int x, int y)
 {
-    if (g_dragView == nil)
-        g_dragView = [[DragView alloc] init];
-    g_draggedFile = path;
+    if (g_dragSource == nil)
+        g_dragSource = [[DragSource alloc] init];
 
-#ifdef USE_CEF
-    NSView* view = g_handler->GetMainHwnd();
-#endif
-#ifdef USE_WEBVIEW
-    NSView* view = ((ZPYWebViewAppDelegate*) [NSApplication sharedApplication].delegate).view;
-#endif
-
-    NSPasteboardItem *pasteboardItem = [[NSPasteboardItem alloc] init];
-
-    // add the file promise
-    String p = path.GetPath();
-    String::size_type pos = p.find_last_of('.');
-    NSString* extension = pos == String::npos ? @"" : [NSString stringWithUTF8String: p.substr(pos + 1).c_str()];
-    [pasteboardItem setPropertyList: @[extension] forType: (NSString*) kPasteboardTypeFileURLPromise];
-    
-    NSDraggingItem *dragItem = [[NSDraggingItem alloc] initWithPasteboardWriter: pasteboardItem];
-
-    NSPoint point = NSMakePoint(x, view.bounds.size.height - y);
-    NSPoint dragPoint = [view convertPoint: point toView: nil];
-    [dragItem setDraggingFrame: NSMakeRect(dragPoint.x - 24, dragPoint.y - 4, 32, 32)
-                      contents: [[NSWorkspace sharedWorkspace] iconForFileType: extension]];
-    
-    NSInteger windowNum = [[[NSApplication sharedApplication] mainWindow] windowNumber];
-
-    // create an event for the dragging session
-    NSEvent* event = [NSEvent mouseEventWithType: NSEventTypeLeftMouseDown
-                                        location: point
-                                   modifierFlags: 0
-                                       timestamp: CFAbsoluteTimeGetCurrent()
-                                    windowNumber: windowNum
-                                         context: nil
-                                     eventNumber: 0
-                                      clickCount: 1
-                                        pressure: 0];
-
-    // begin the dragging session
-    NSDraggingSession* session = [view beginDraggingSessionWithItems: @[dragItem]
-                                                               event: event
-                                                              source: g_dragView];
-
-    // set the path in the pasteboard
-    [session.draggingPasteboard setString: [NSString stringWithUTF8String: p.c_str()]
-                                  forType: (NSString*) kUTTypeFileURL];
-
+    [g_dragSource beginDragFile: path withCallback: callback atCoordinates: NSMakePoint(x, y)];
 }
 
 void CleanUp()

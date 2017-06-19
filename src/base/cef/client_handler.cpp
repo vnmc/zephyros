@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -163,6 +163,7 @@ void ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
     if (!GetBrowser())
     {
         base::AutoLock lock_scope(m_lock);
+
         // we need to keep the main child window, but not popup windows
         m_browser = browser;
         m_nBrowserId = browser->GetIdentifier();
@@ -239,6 +240,8 @@ void ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFram
     if (errorCode == ERR_ABORTED)
         return;
 
+    // error codes:
+    // http://magpcss.org/ceforum/apidocs/projects/(default)/cef_handler_errorcode_t.html
     StringStream ssMsg;
     ssMsg << TEXT("Failed to load URL ") << String(failedUrl) << TEXT(" with error ") << String(errorText) << TEXT(" (") << errorCode << TEXT(")");
     App::Log(ssMsg.str());
