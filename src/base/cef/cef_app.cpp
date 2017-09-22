@@ -98,7 +98,7 @@ void GetSettings(CefSettings& settings)
 
     // CefString(&settings.cache_path) = g_command_line->GetSwitchValue(cefclient::kCachePath);
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !defined(ZEPHYROS_NDEBUG)
     // Specify a port to enable DevTools if one isn't already specified.
     if (!g_command_line->HasSwitch("remote-debugging-port"))
         settings.remote_debugging_port = 19384;
@@ -107,7 +107,7 @@ void GetSettings(CefSettings& settings)
 #endif
 
     // set the logging severity
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !defined(ZEPHYROS_NDEBUG)
     settings.log_severity = LOGSEVERITY_VERBOSE;
 #else
     settings.log_severity = LOGSEVERITY_WARNING;
