@@ -302,7 +302,7 @@ if(OS_MACOSX)
   # -g                              = Generate debug information
   set(CEF_COMPILER_FLAGS_DEBUG    "-O0 -g")
   # -O3                             = Optimize for maximum speed plus a few extras
-  set(CEF_COMPILER_FLAGS_RELEASE  "-O3 -DNDEBUG -D_NDEBUG")
+  set(CEF_COMPILER_FLAGS_RELEASE  "-O3 -DZEPHYROS_NDEBUG")
   # -Wl,-search_paths_first         = Search for static or shared library versions in the same pass
   # -Wl,-ObjC                       = Support creation of creation of ObjC static libraries
   # -Wl,-pie                        = Generate position-independent code suitable for executables only
