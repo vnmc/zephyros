@@ -110,7 +110,7 @@ void GetSettings(CefSettings& settings)
 #ifndef NDEBUG
     settings.log_severity = LOGSEVERITY_VERBOSE;
 #else
-    settings.log_severity = LOGSEVERITY_VERBOSE;
+    settings.log_severity = LOGSEVERITY_WARNING;
 #endif
 }
 
