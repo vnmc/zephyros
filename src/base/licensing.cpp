@@ -445,7 +445,7 @@ void LicenseManagerImpl::Start()
     if (m_pLicenseData == NULL)
         m_pLicenseData = new LicenseData(m_config.licenseInfoFilename);
 
-    DEBUG_LOG(m_pLicenseData ? "Start: Has license data" : "Start: No license data")
+    DEBUG_LOG(m_pLicenseData ? TEXT("Start: Has license data") : TEXT("Start: No license data"))
     
     m_canStartApp = false;
 

@@ -311,7 +311,7 @@ public:
      */
     inline bool IsActivated()
     {
-        DEBUG_LOGC(m_pLicenseData ? "IsActivated: has license data" : "IsActivated: no license data")
+        DEBUG_LOGC(m_pLicenseData ? TEXT("IsActivated: has license data") : TEXT("IsActivated: no license data"))
         DEBUG_LOGC(m_pLicenseData->m_activationCookie)
         DEBUG_LOGC(m_pLicenseData->m_name)
         DEBUG_LOGC(m_pLicenseData->m_company)
@@ -321,14 +321,14 @@ public:
             m_pLicenseData->m_activationCookie.length() > 0 &&
             VerifyAll(m_pLicenseData->m_activationCookie, NetworkUtil::GetAllMACAddresses(), m_config.currentLicenseInfo.pubkey);
         
-        DEBUG_LOGC(ret ? "IsActivated -> true" : "IsActivated -> false")
+        DEBUG_LOGC(ret ? TEXT("IsActivated -> true") : TEXT("IsActivated -> false"))
 
 #ifdef OS_MACOSX
         // on Mac, if the activation check wasn't successful, also check whether there
         // is a AppStore receipt, and validate it
         if (!ret)
         {
-            DEBUG_LOGC("IsActivated: checking receipt")
+            DEBUG_LOGC(TEXT("IsActivated: checking receipt"))
             ret = CheckReceipt();
         }
 #endif
@@ -336,7 +336,7 @@ public:
         // try to activate with stored license
         if (!ret && m_pLicenseData->m_licenseKey != TEXT(""))
         {
-            DEBUG_LOGC("IsActivated: activate with stored license")
+            DEBUG_LOGC(TEXT("IsActivated: activate with stored license"))
             ret = Activate(m_pLicenseData->m_name, m_pLicenseData->m_company, m_pLicenseData->m_licenseKey) == ACTIVATION_SUCCEEDED;
         }
 
@@ -364,7 +364,7 @@ public:
 private:
     inline void InitConfig()
     {
-        DEBUG_LOGC("InitConfig")
+        DEBUG_LOGC(TEXT("InitConfig"))
 
         m_pLicenseData = NULL;
 
