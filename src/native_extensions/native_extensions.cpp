@@ -1117,6 +1117,17 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         }
     ));
+    
+    /*
+    e->AddNativeJavaScriptProcedure(
+        TEXT("showFullScreenImage"),
+        FUNC({
+            OSUtil::ShowFullScreenImage(args->GetString(0));
+            return NO_ERROR;
+        },
+        ARG(VTYPE_STRING, "imageData")
+    ));
+    */
 
     // displayNotification: (title: string, details: string) => void
     e->AddNativeJavaScriptProcedure(

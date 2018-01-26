@@ -80,6 +80,64 @@ ZPYMenuHandler* g_menuHandler = nil;
 @end
 
 
+@interface FullScreenPanel : NSPanel <NSWindowDelegate>
+@end
+
+@implementation FullScreenPanel : NSPanel
+
+- (id) initWithImage: (NSImage*) image
+{
+    self = [super init];
+    
+    NSArray* screens = [NSScreen screens];
+    NSRect screenRect = [screens[0] frame];
+    
+    [self setFrame: screenRect display: YES];
+    self.styleMask = NSBorderlessWindowMask | NSClosableWindowMask | NSNonactivatingPanelMask;
+    self.backingType = NSBackingStoreBuffered;
+    self.releasedWhenClosed = YES;
+    self.hidesOnDeactivate = NO;
+    self.floatingPanel = YES;
+    self.level = kCGMainMenuWindowLevel - 1;
+    self.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
+    self.backgroundColor = [NSColor blackColor];
+    self.delegate = self;
+    
+    NSImageView* view = [[NSImageView alloc] init];
+    view.image = image;
+    view.imageScaling = NSImageScaleProportionallyUpOrDown;
+
+    self.contentView = view;
+    
+    [self center];
+    [self makeKeyAndOrderFront: nil];
+    
+    return self;
+}
+
+- (void) mouseDown: (NSEvent*) event
+{
+    [self orderOut: nil];
+}
+
+- (void) keyDown: (NSEvent*) event
+{
+    [self orderOut: nil];
+}
+
+- (void) windowDidResignKey: (NSNotification*) notification
+{
+    [self orderOut: nil];
+}
+
+- (BOOL) canBecomeKeyWindow
+{
+    return YES;
+}
+
+@end
+
+
 @interface DragSource : NSObject <NSDraggingSource, NSPasteboardItemDataProvider>
 {
 @private
@@ -708,7 +766,16 @@ void SetMinimumWindowSize(int width, int height)
     NSWindow *window = [(ZPYAppDelegate*) [[NSApplication sharedApplication] delegate] window];
     [window setMinSize: NSMakeSize(width, height)];
 }
+
+ 
+void ShowFullScreenImage(String imageData)
+{
+    [[FullScreenPanel alloc] initWithImage: ImageUtil::Base64EncodedPNGToNSImage(imageData, NSMakeSize(0, 0))];
     
+    //NSDictionary* fullScreenOptions = [NSDictionary dictionaryWithObjectsAndKeys:
+    //                                   [NSNumber numberWithBool: NO], NSFullScreenModeAllScreens, nil];
+    //[view enterFullScreenMode:screenArray[0] withOptions:fullScreenOptions];
+}
     
 void DisplayNotification(String title, String details)
 {

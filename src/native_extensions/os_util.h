@@ -85,6 +85,8 @@ void GetWindowBorderSize(POINT* pPtBorder);
 void BringWindowToFront();
 void SetWindowSize(CallbackId callback, int width, int height, bool hasWidth, bool hasHeight, int* pNewWidth, int* pNewHeight);
 void SetMinimumWindowSize(int width, int height);
+    
+// void ShowFullScreenImage(String imageData);
 
 void DisplayNotification(String title, String details);
 

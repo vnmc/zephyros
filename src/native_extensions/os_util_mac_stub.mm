@@ -71,6 +71,9 @@ void SetMinimumWindowSize(int width, int height)
 {
 }
     
+void ShowFullScreenImage(String imageData)
+{
+}
     
 void DisplayNotification(String title, String details)
 {
