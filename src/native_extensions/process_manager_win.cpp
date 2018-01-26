@@ -263,6 +263,7 @@ bool ProcessManager::CreateProcess(
     String cmdLine;
     size_t pos = strExePath.find_last_of(TEXT('.'));
     String extension = pos == String::npos ? TEXT("") : ToLower(strExePath.substr(pos));
+    bool usesComSpec = false;
     
     if (extension != TEXT(".exe"))
     {
@@ -270,7 +271,7 @@ bool ProcessManager::CreateProcess(
         String cmd = ProcessManager::GetEnvVar(TEXT("ComSpec"));
         
         bool hasSpaces = strExePath.find(TEXT(" ")) != String::npos;
-        cmdLine = cmd + TEXT(" /C ");
+        cmdLine = cmd + TEXT(" /C \"");
         if (hasSpaces)
             cmdLine.append(TEXT("\""));
         cmdLine.append(strExePath);
@@ -278,6 +279,7 @@ bool ProcessManager::CreateProcess(
             cmdLine.append(TEXT("\""));
 
         strExePath = cmd;
+        usesComSpec = true;
     }
     else
     {
@@ -306,6 +308,9 @@ bool ProcessManager::CreateProcess(
             cmdLine.append(arg);
         }
     }
+
+    if (usesComSpec)
+        cmdLine.append(TEXT("\""));
 
 #ifndef NDEBUG
     App::Log(cmdLine);

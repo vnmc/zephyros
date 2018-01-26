@@ -446,16 +446,18 @@ $(document).ready(function()
 	{
 		setMessage('Starting process...');
 
-		/*
-		app.startProcess("~/a.out", [], '~', function(exitCode, data)
+	    //*
+		var args = getParameter().split('|');
+		app.startProcess(args[0], args.slice(1), '~', function(err, exitCode, data)
 		{
 			var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
 			for (var i = 0; i < data.length; i++)
 				msg += data[i].text.replace('\n', '<br>');
 			appendMessage(msg);
-		});*/
+		});
+		//*/
 
-	    //*
+	    /*
 		var t = getParameter();
 		app.startProcess("/usr/local/bin/node", ["xx.js", "__111___"], "/home/administrator/tmp/stderrout", function(err, exitCode, data)
 		{
@@ -549,7 +551,8 @@ var menu = [
 					{
 						caption: 'Select File',
 						menuCommandId: 'select_file',
-						key: 'f11'
+						key: 'f11',
+						keyModifiers: 7
 					},
 					{
 						caption: 'Open Recent',
