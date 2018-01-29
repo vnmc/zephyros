@@ -61,6 +61,7 @@ class AbstractLicenseManager
 public:
     virtual ~AbstractLicenseManager() {}
 
+    virtual void LoadLicenseData() {}
     virtual void Start() {}
     virtual bool CanStartApp() = 0;
     virtual bool CheckDemoValidity() { return false; }
@@ -109,6 +110,7 @@ public:
     void SetReceiptChecker(ReceiptChecker* pReceiptChecker);
     virtual ReceiptChecker* GetReceiptChecker();
 
+    virtual void LoadLicenseData();
     virtual void Start();
     virtual bool CanStartApp();
     virtual bool CheckDemoValidity();

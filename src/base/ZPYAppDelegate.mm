@@ -113,6 +113,8 @@
 
 - (void) applicationDidFinishLaunching: (NSNotification*) notification
 {
+    NSLog(@"applicationDidFinishLaunching");
+    
     if ([[NSApplication sharedApplication] respondsToSelector: @selector(isAutomaticCustomizeTouchBarMenuItemEnabled)])
     {
         [NSApplication sharedApplication].automaticCustomizeTouchBarMenuItemEnabled = YES;
@@ -123,6 +125,7 @@
     // initialize the license manager (if available)
     if (Zephyros::GetLicenseManager())
     {
+        NSLog(@"Has license manager");
         Zephyros::GetLicenseManager()->Start();
         if (!Zephyros::GetLicenseManager()->CanStartApp())
             [NSApp terminate: self];

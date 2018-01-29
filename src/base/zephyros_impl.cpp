@@ -36,6 +36,9 @@
 #endif
 
 #include "base/types.h"
+/// TODO: XXX remove
+#include "logging.h"
+///
 #include "native_extensions/path.h"
 #include "util/string_util.h"
 
@@ -160,6 +163,9 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
     // set the resources if a function was provided
     if (fnxSetResources)
         fnxSetResources();
+    
+    if (GetLicenseManager())
+        GetLicenseManager()->LoadLicenseData();
 
     size_t lenAppName = _tcslen(szAppName);
     g_szAppName = new TCHAR[lenAppName + 1];
@@ -380,11 +386,13 @@ void SetUpdaterURL(const TCHAR* szURL)
 
 AbstractLicenseManager* GetLicenseManager()
 {
+    DEBUG_LOGC(g_pLicenseManager ? "GetLicenseManager: exists" : "GetLicenseManager: does not exist")
     return g_pLicenseManager;
 }
 
 void SetLicenseManager(AbstractLicenseManager* pLicenseManager)
 {
+    DEBUG_LOGC(pLicenseManager ? "SetLicenseManager: exists" : "SetLicenseManager: does not exist")
     g_pLicenseManager = pLicenseManager;
 }
 

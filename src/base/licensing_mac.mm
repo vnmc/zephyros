@@ -174,7 +174,9 @@ String LicenseData::Now()
 LicenseManagerImpl::LicenseManagerImpl()
     : m_windowController(nil)
 {
+    DEBUG_LOGC("LicenseManagerImpl constructor")
     InitConfig();
+    DEBUG_LOGC("Inited config")
     
     m_timerDelegate = [[LicenseManagerTimerDelegate alloc] init];
     m_timerDelegate->m_pLicenseManager = this;
@@ -187,6 +189,7 @@ LicenseManagerImpl::LicenseManagerImpl()
 
 LicenseManagerImpl::~LicenseManagerImpl()
 {
+    DEBUG_LOGC("LicenseManagerImpl destructor")
     if (m_pLicenseData != NULL)
         delete m_pLicenseData;
     

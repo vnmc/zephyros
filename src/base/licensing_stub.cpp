@@ -129,6 +129,10 @@ ReceiptChecker* LicenseManager::GetReceiptChecker()
 {
     return NULL;
 }
+    
+void LicenseManager::LoadLicenseData()
+{
+}
 
 void LicenseManager::Start()
 {
@@ -263,6 +267,10 @@ int LicenseManagerImpl::ActivateFromURL(String url)
 bool LicenseManagerImpl::Deactivate()
 {
     return false;
+}
+    
+void LicenseManagerImpl::LoadLicenseData()
+{
 }
 
 void LicenseManagerImpl::Start()

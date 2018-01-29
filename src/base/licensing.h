@@ -222,6 +222,8 @@ public:
 
     inline ReceiptChecker* GetReceiptChecker() { return m_config.pReceiptChecker; }
     inline void SetReceiptChecker(ReceiptChecker* pReceiptChecker) { m_config.pReceiptChecker = pReceiptChecker; }
+    
+    void LoadLicenseData();
 
     /**
      * Starts the license manager.

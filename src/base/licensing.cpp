@@ -97,11 +97,13 @@ String LicenseData::Decrypt(String s)
 
 LicenseManager::LicenseManager()
 {
+    DEBUG_LOGC(TEXT("LicenseManager::LicenseManager Creating license manager"))
     m_pMgr = new LicenseManagerImpl();
 }
 
 LicenseManager::~LicenseManager()
 {
+    DEBUG_LOGC(TEXT("LicenseManager::~LicenseManager"))
     delete m_pMgr;
 }
 
@@ -169,9 +171,15 @@ ReceiptChecker* LicenseManager::GetReceiptChecker()
 {
     return m_pMgr->GetReceiptChecker();
 }
+    
+void LicenseManager::LoadLicenseData()
+{
+    m_pMgr->LoadLicenseData();
+}
 
 void LicenseManager::Start()
 {
+    DEBUG_LOGC(TEXT("Delegating start"))
     m_pMgr->Start();
 }
 
@@ -223,6 +231,23 @@ void LicenseManager::OpenPurchaseLicenseURL()
 
 //////////////////////////////////////////////////////////////////////////
 // LicenseManagerImpl Implementation
+    
+void LicenseManagerImpl::LoadLicenseData()
+{
+    // check the configuration
+    if (m_config.demoTokensURL == NULL || m_config.activationURL == NULL)
+        DIE(TEXT("You must call LicenseManager::SetAPIURLs before you can use the license manager."));
+    if (m_config.currentLicenseInfo.pubkey == NULL)
+        DIE(TEXT("The public key must not be NULL. Please set it using LicenseManager::SetLicenseInfo."));
+    if (m_config.licenseInfoFilename == NULL)
+        DIE(TEXT("The license info filename must not be NULL. Please set it using LicenseManager::SetLicenseInfoFilename."));
+        
+    // create and read the license data
+    if (m_pLicenseData == NULL)
+        m_pLicenseData = new LicenseData(m_config.licenseInfoFilename);
+        
+    DEBUG_LOG(m_pLicenseData ? TEXT("Start: Has license data") : TEXT("Start: No license data"))
+}
 
 String LicenseManagerImpl::GetDemoButtonCaption()
 {
@@ -433,19 +458,7 @@ bool LicenseManagerImpl::Deactivate()
  */
 void LicenseManagerImpl::Start()
 {
-    // check the configuration
-    if (m_config.demoTokensURL == NULL || m_config.activationURL == NULL)
-        DIE(TEXT("You must call LicenseManager::SetAPIURLs before you can use the license manager."));
-    if (m_config.currentLicenseInfo.pubkey == NULL)
-        DIE(TEXT("The public key must not be NULL. Please set it using LicenseManager::SetLicenseInfo."));
-    if (m_config.licenseInfoFilename == NULL)
-        DIE(TEXT("The license info filename must not be NULL. Please set it using LicenseManager::SetLicenseInfoFilename."));
-
-    // create and read the license data
-    if (m_pLicenseData == NULL)
-        m_pLicenseData = new LicenseData(m_config.licenseInfoFilename);
-
-    DEBUG_LOG(m_pLicenseData ? TEXT("Start: Has license data") : TEXT("Start: No license data"))
+    DEBUG_LOGC(TEXT("LicenseManagerImpl::Start"))
     
     m_canStartApp = false;
 
