@@ -97,13 +97,11 @@ String LicenseData::Decrypt(String s)
 
 LicenseManager::LicenseManager()
 {
-    DEBUG_LOGC(TEXT("LicenseManager::LicenseManager Creating license manager"))
     m_pMgr = new LicenseManagerImpl();
 }
 
 LicenseManager::~LicenseManager()
 {
-    DEBUG_LOGC(TEXT("LicenseManager::~LicenseManager"))
     delete m_pMgr;
 }
 
@@ -179,7 +177,6 @@ void LicenseManager::LoadLicenseData()
 
 void LicenseManager::Start()
 {
-    DEBUG_LOGC(TEXT("Delegating start"))
     m_pMgr->Start();
 }
 
@@ -245,8 +242,6 @@ void LicenseManagerImpl::LoadLicenseData()
     // create and read the license data
     if (m_pLicenseData == NULL)
         m_pLicenseData = new LicenseData(m_config.licenseInfoFilename);
-        
-    DEBUG_LOG(m_pLicenseData ? TEXT("Start: Has license data") : TEXT("Start: No license data"))
 }
 
 String LicenseManagerImpl::GetDemoButtonCaption()
@@ -458,8 +453,6 @@ bool LicenseManagerImpl::Deactivate()
  */
 void LicenseManagerImpl::Start()
 {
-    DEBUG_LOGC(TEXT("LicenseManagerImpl::Start"))
-    
     m_canStartApp = false;
 
 #ifdef OS_WIN

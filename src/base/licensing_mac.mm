@@ -71,25 +71,18 @@ LicenseData::LicenseData(const TCHAR* szLicenseInfoFilename)
     NSString *dataFilePath = [[pathList objectAtIndex: 0] stringByAppendingPathComponent: [[NSBundle mainBundle] bundleIdentifier]];
     NSFileManager *fileManager= [NSFileManager defaultManager];
     
-    DEBUG_LOG(@"LicenseData:dfp(%@)", dataFilePath)
-
     BOOL isDir;
     if (![fileManager fileExistsAtPath: dataFilePath isDirectory: &isDir])
         [fileManager createDirectoryAtPath: dataFilePath withIntermediateDirectories: YES attributes: nil error: NULL];
     
     NSString *licenseFileName = [NSString stringWithUTF8String: szLicenseInfoFilename];
     NSString *licenseFilePath = [dataFilePath stringByAppendingPathComponent: licenseFileName];
-    DEBUG_LOG(@"LicenseData:lfp(%@)", licenseFilePath)
-    
+
     if (![fileManager fileExistsAtPath:licenseFilePath])
     {
-        DEBUG_LOG(@"!lfp")
-        
         pathList = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSSystemDomainMask, YES);
         dataFilePath = [[pathList objectAtIndex: 0] stringByAppendingPathComponent: [[NSBundle mainBundle] bundleIdentifier]];
         licenseFilePath = [dataFilePath stringByAppendingPathComponent: licenseFileName];
-        
-        DEBUG_LOG(@"LicenseData:lfp(%@)", licenseFilePath)
     }
     
     NSDictionary *root = [NSKeyedUnarchiver unarchiveObjectWithFile: licenseFilePath];
@@ -103,8 +96,6 @@ LicenseData::LicenseData(const TCHAR* szLicenseInfoFilename)
     
     if (root != nil)
     {
-        DEBUG_LOG(@"Found arch")
-
         arrDemoTokens = [root valueForKey: @"dtoks"];
         timestamp = [root valueForKey: @"tstmp"];
         activationCookie = [root valueForKey: @"ac"];
@@ -122,8 +113,6 @@ LicenseData::LicenseData(const TCHAR* szLicenseInfoFilename)
     m_licenseKey = licenseKey == nil ? "" : LicenseData::Decrypt(String([licenseKey UTF8String]));
     m_name = name == nil ? "" : LicenseData::Decrypt(String([name UTF8String]));
     m_company = company == nil ? "" : LicenseData::Decrypt(String([company UTF8String]));
-
-    DEBUG_LOG(@"LicenseData: %s %s %s %s", m_activationCookie.c_str(), m_name.c_str(), m_company.c_str(), m_licenseKey.c_str())
 }
 
 void LicenseData::Save()
@@ -174,9 +163,7 @@ String LicenseData::Now()
 LicenseManagerImpl::LicenseManagerImpl()
     : m_windowController(nil)
 {
-    DEBUG_LOGC("LicenseManagerImpl constructor")
     InitConfig();
-    DEBUG_LOGC("Inited config")
     
     m_timerDelegate = [[LicenseManagerTimerDelegate alloc] init];
     m_timerDelegate->m_pLicenseManager = this;
@@ -189,7 +176,6 @@ LicenseManagerImpl::LicenseManagerImpl()
 
 LicenseManagerImpl::~LicenseManagerImpl()
 {
-    DEBUG_LOGC("LicenseManagerImpl destructor")
     if (m_pLicenseData != NULL)
         delete m_pLicenseData;
     

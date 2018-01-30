@@ -386,13 +386,11 @@ void SetUpdaterURL(const TCHAR* szURL)
 
 AbstractLicenseManager* GetLicenseManager()
 {
-    DEBUG_LOGC(g_pLicenseManager ? "GetLicenseManager: exists" : "GetLicenseManager: does not exist")
     return g_pLicenseManager;
 }
 
 void SetLicenseManager(AbstractLicenseManager* pLicenseManager)
 {
-    DEBUG_LOGC(pLicenseManager ? "SetLicenseManager: exists" : "SetLicenseManager: does not exist")
     g_pLicenseManager = pLicenseManager;
 }
 
