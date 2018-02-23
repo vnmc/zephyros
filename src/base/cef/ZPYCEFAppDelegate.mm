@@ -80,7 +80,7 @@ extern bool g_isWindowLoaded;
 {
     [super applicationDidFinishLaunching: notification];
 
-    if (g_isWindowLoaded)
+    if ((!Zephyros::GetLicenseManager() || Zephyros::GetLicenseManager()->CanStartApp()) && g_isWindowLoaded)
     {
         self.window.isVisible = YES;
         [self.window makeKeyAndOrderFront: self];

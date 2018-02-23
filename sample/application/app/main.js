@@ -450,6 +450,7 @@ $(document).ready(function()
 		var args = getParameter().split('|');
 		app.startProcess(args[0], args.slice(1), '~', function(err, exitCode, data)
 		{
+			alert(JSON.stringify(err));
 			var msg = '<br><b>Program exited with code ' + exitCode + ', with the following output: </b><br>';
 			for (var i = 0; i < data.length; i++)
 				msg += data[i].text.replace('\n', '<br>');
