@@ -242,8 +242,16 @@ bool ShowOpenFileOrDirectoryDialog(JavaScript::Object options, Path& path)
     if (GetOpenFileName(&ofn))
     {
         TCHAR* szFile = ofn.lpstrFile;
-        if (_tcscmp(szFile + _tcslen(szFile) - _tcslen(szFolderSelection), szFolderSelection) == 0)
+        size_t lenFolderSelection = _tcslen(szFolderSelection);
+        size_t lenFile = _tcslen(szFile);
+
+        // check if the returned filename ends with the folder selection string
+        // (if the folder selection string ends with a dot, the dot might be cut off in the returned file name)
+        if ((_tcscmp(szFile + lenFile - lenFolderSelection, szFolderSelection) == 0) ||
+            (szFolderSelection[lenFolderSelection - 1] == TCHAR('.') && _tcsncmp(szFile + lenFile - lenFolderSelection + 1, szFolderSelection, lenFolderSelection - 1) == 0))
+        {
             PathRemoveFileSpec(szFile);
+        }
 
         path = Path(szFile);
         ret = true;

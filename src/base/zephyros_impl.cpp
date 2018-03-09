@@ -164,9 +164,6 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
     if (fnxSetResources)
         fnxSetResources();
     
-    if (GetLicenseManager())
-        GetLicenseManager()->LoadLicenseData();
-
     size_t lenAppName = _tcslen(szAppName);
     g_szAppName = new TCHAR[lenAppName + 1];
     g_szAppVersion = new TCHAR[_tcslen(szAppVersion) + 1];
@@ -182,6 +179,9 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
     _tcscpy(g_szAppURL, TEXT("http://"));
     _tcscat(g_szAppURL, szAppURL);
 #endif
+
+    if (GetLicenseManager())
+        GetLicenseManager()->LoadLicenseData();
 
     // initialize with default values
     InitDefaultStrings();
