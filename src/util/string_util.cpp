@@ -180,3 +180,41 @@ String ToUpper(String s)
     
     return ret;
 }
+
+int HexValue(TCHAR c)
+{
+    if (TEXT('0') <= c && c <= TEXT('9'))
+        return c - TEXT('0');
+    if (TEXT('a') <= c && c <= TEXT('f'))
+        return c - TEXT('a') + 10;
+    if (TEXT('A') <= c && c <= TEXT('F'))
+        return c - TEXT('A') + 10;
+    
+    return 0;
+}
+
+String DecodeURL(String url)
+{
+    StringStream out;
+    
+    for (String::size_type i = 0; i < url.length(); ++i)
+    {
+        switch (url.at(i))
+        {
+            case TEXT('%'):
+                out << (TCHAR) ((HexValue(url.at(i + 1)) << 4) | (HexValue(url.at(i + 2))));
+                i += 2;
+                break;
+                
+            case TEXT('+'):
+                out << TEXT(' ');
+                break;
+                
+            default:
+                out << url.at(i);
+                break;
+        }
+    }
+    
+    return out.str();
+}

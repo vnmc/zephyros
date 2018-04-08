@@ -252,7 +252,7 @@ CefRefPtr<CefResourceHandler> ClientHandler::GetResourceHandler(CefRefPtr<CefBro
     CEF_REQUIRE_IO_THREAD();
 
     String url = request->GetURL();
-	if (url.substr(0, 7) != TEXT("http://"))
+    if (url.substr(0, 6) != TEXT("app://"))
 		return NULL;
 
     // construct the path to the resource
@@ -262,8 +262,8 @@ CefRefPtr<CefResourceHandler> ClientHandler::GetResourceHandler(CefRefPtr<CefBro
         url.replace(startPos, appURL.length(), TEXT(""));
     else
     {
-       // remove the "http://" added artificially when the app URL is constructed
-       url = url.substr(7);
+        // remove the "app://" added artificially when the app URL is constructed
+        url = url.substr(6);
     }
 
     // load the data

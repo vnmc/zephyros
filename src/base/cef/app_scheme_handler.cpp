@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2018 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,29 +36,28 @@
 #include "lib/cef/include/cef_scheme.h"
 #include "lib/cef/include/wrapper/cef_helpers.h"
 
-#include "base/cef/local_scheme_handler.h"
+#include "base/cef/app_scheme_handler.h"
 #include "base/cef/mime_types.h"
+#include "base/cef/resource_util.h"
 
 #include "util/string_util.h"
-
-#include "native_extensions/file_util.h"
 
 
 namespace Zephyros {
 
-LocalSchemeHandler::LocalSchemeHandler()
-    : m_size(0), m_offset(0)
+AppSchemeHandler::AppSchemeHandler()
+    : m_offset(0)
 {
 }
 
-bool LocalSchemeHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback)
+bool AppSchemeHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr<CefCallback> callback)
 {
     CEF_REQUIRE_IO_THREAD();
         
     String url = request->GetURL();
-    Error err;
-    m_pData = NULL;
-    
+    if (url.substr(0, 6) != TEXT("app://"))
+        return NULL;
+
     // remove query and hash parts
     String::size_type posQuery = url.find(TEXT("?"));
     String::size_type posHash = url.find(TEXT("#"));
@@ -71,8 +70,8 @@ bool LocalSchemeHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr
     else if (posHash != String::npos)
         len = posHash;
     
-    // the URL is prefixed with "local://"
-    FileUtil::ReadFileBinary(DecodeURL(url.substr(8, len - 8)), &m_pData, m_size, err);
+    // the URL is prefixed with "app://"
+    m_status = LoadBinaryResource(DecodeURL(url.substr(6, len - 6)).c_str(), m_data) ? 200 : 404;
     m_mimeType = GetMIMETypeForFilename(url);
 
     // indicate the headers are available
@@ -80,60 +79,47 @@ bool LocalSchemeHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr
     return true;
 }
     
-void LocalSchemeHandler::GetResponseHeaders(CefRefPtr<CefResponse> response, int64& responseLength, CefString& redirectUrl)
+void AppSchemeHandler::GetResponseHeaders(CefRefPtr<CefResponse> response, int64& responseLength, CefString& redirectUrl)
 {
     CEF_REQUIRE_IO_THREAD();
         
     response->SetMimeType(m_mimeType);
-    response->SetStatus(m_pData == NULL ? 404 : 200);
+    response->SetStatus(m_status);
 
-    responseLength = m_size;
+    responseLength = m_data.length();
 }
     
-void LocalSchemeHandler::Cancel()
+void AppSchemeHandler::Cancel()
 {
     CEF_REQUIRE_IO_THREAD();
 }
     
-bool LocalSchemeHandler::ReadResponse(void* dataOut, int bytesToRead, int& bytesRead, CefRefPtr<CefCallback> callback)
+bool AppSchemeHandler::ReadResponse(void* dataOut, int bytesToRead, int& bytesRead, CefRefPtr<CefCallback> callback)
 {
     CEF_REQUIRE_IO_THREAD();
-        
-    bool hasData = false;
-    bytesRead = 0;
     
-    if (m_pData != NULL)
+    if (m_offset < m_data.length())
     {
-        if (m_offset < m_size)
-        {
-            // copy the next block of data into the buffer
-            int transferSize = std::min(bytesToRead, m_size - m_offset);
-            memcpy(dataOut, m_pData + m_offset, transferSize);
-            m_offset += transferSize;
-            
-            bytesRead = transferSize;
-            hasData = true;
-        }
-        
-        if (m_offset >= m_size)
-        {
-            delete[] m_pData;
-            m_pData = NULL;
-        }
+        // copy the next block of data into the buffer
+        int transferSize = std::min(bytesToRead, (int) (m_data.length() - m_offset));
+        memcpy(dataOut, m_data.c_str() + m_offset, transferSize);
+        m_offset += transferSize;
+
+        return true;
     }
     
-    return hasData;
+    return false;
 }
 
 
 /**
  * Return a new scheme handler instance to handle the request.
  */
-CefRefPtr<CefResourceHandler> LocalSchemeHandlerFactory::Create(
+CefRefPtr<CefResourceHandler> AppSchemeHandlerFactory::Create(
     CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& schemeName, CefRefPtr<CefRequest> request)
 {
     CEF_REQUIRE_IO_THREAD();
-    return new LocalSchemeHandler();
+    return new AppSchemeHandler();
 }
 
 } // namespace Zephyros

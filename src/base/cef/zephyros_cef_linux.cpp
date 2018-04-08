@@ -46,6 +46,7 @@
 #include "base/cef/client_app.h"
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
+#include "base/cef/app_scheme_handler.h"
 #include "base/cef/local_scheme_handler.h"
 
 #include "util/string_util.h"
@@ -161,10 +162,14 @@ int RunApplication(int argc, char* argv[])
     // initialize CEF
     CefInitialize(main_args, settings, app.get(), NULL);
 
+    // register the "app" scheme (for loading app resources)
+    CefRegisterSchemeHandlerFactory("app", "", new AppSchemeHandlerFactory());
+
     // register the "local" scheme (for loading resources from the local file system)
     CefRegisterSchemeHandlerFactory("local", "", new LocalSchemeHandlerFactory());
     
     std::vector<CefString> schemes;
+    schemes.push_back("app");
     schemes.push_back("local");
     CefCookieManager::GetGlobalManager(NULL)->SetSupportedSchemes(schemes, NULL);
 

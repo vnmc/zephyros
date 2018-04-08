@@ -46,5 +46,8 @@ String ToUpper(String s);
 
 String ToString(BYTE* data, const int len);
 
+int HexValue(TCHAR c);
+
+String DecodeURL(String url);
 
 #endif // Zephyros_StringUtil_h
