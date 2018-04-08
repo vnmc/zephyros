@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2018 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -52,6 +52,7 @@
 #include "base/cef/client_app.h"
 #include "base/cef/client_handler.h"
 #include "base/cef/extension_handler.h"
+#include "base/cef/app_scheme_handler.h"
 #include "base/cef/local_scheme_handler.h"
 #include "base/cef/zephyros_cef_win.h"
 
@@ -193,10 +194,14 @@ int RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
     // initialize CEF
     CefInitialize(main_args, settings, app.get(), NULL);
 
+    // register the "app" scheme (for loading app resources)
+    CefRegisterSchemeHandlerFactory("app", "", new AppSchemeHandlerFactory());
+
     // register the "local" scheme (for loading resources from the local file system)
     CefRegisterSchemeHandlerFactory("local", "", new LocalSchemeHandlerFactory());
     
     std::vector<CefString> schemes;
+    schemes.push_back("app");
     schemes.push_back("local");
     CefCookieManager::GetGlobalManager(NULL)->SetSupportedSchemes(schemes, NULL);
 

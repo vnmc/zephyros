@@ -179,7 +179,6 @@ int Run(MAIN_ARGS, void (*fnxSetResources)(), const TCHAR* szAppName, const TCHA
     _tcscpy(g_szAppURL, szAppURL);
 #endif
 #ifdef USE_CEF
-    //_tcscpy(g_szAppURL, TEXT("http://"));
     _tcscpy(g_szAppURL, TEXT("app://"));
     _tcscat(g_szAppURL, szAppURL);
 #endif

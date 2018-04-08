@@ -110,8 +110,8 @@ void GetSettings(CefSettings& settings)
 #if !defined(NDEBUG) && !defined(ZEPHYROS_NDEBUG)
     settings.log_severity = LOGSEVERITY_VERBOSE;
 #else
-    //settings.log_severity = LOGSEVERITY_WARNING;
-    settings.log_severity = LOGSEVERITY_VERBOSE;
+    settings.log_severity = LOGSEVERITY_WARNING;
+    //settings.log_severity = LOGSEVERITY_VERBOSE;
 #endif
 }
 

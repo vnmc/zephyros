@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2017 Vanamco AG, http://www.vanamco.com
+ * Copyright (c) 2015-2018 Vanamco AG, http://www.vanamco.com
  *
  * The MIT License (MIT)
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,47 +40,10 @@
 #include "base/cef/mime_types.h"
 #include "base/cef/resource_util.h"
 
+#include "util/string_util.h"
+
 
 namespace Zephyros {
-    
-int hexValue1(TCHAR c)
-{
-    if (TEXT('0') <= c && c <= TEXT('9'))
-        return c - TEXT('0');
-    if (TEXT('a') <= c && c <= TEXT('f'))
-        return c - TEXT('a') + 10;
-    if (TEXT('A') <= c && c <= TEXT('F'))
-        return c - TEXT('A') + 10;
-    
-    return 0;
-}
-    
-String DecodeURL1(String url)
-{
-    StringStream out;
-    
-    for (String::size_type i = 0; i < url.length(); ++i)
-    {
-        switch (url.at(i))
-        {
-        case TEXT('%'):
-            out << (TCHAR) ((hexValue1(url.at(i + 1)) << 4) | (hexValue1(url.at(i + 2))));
-            i += 2;
-            break;
-            
-        case TEXT('+'):
-            out << TEXT(' ');
-            break;
-                
-        default:
-            out << url.at(i);
-            break;
-        }
-    }
-    
-    return out.str();
-}
-    
 
 AppSchemeHandler::AppSchemeHandler()
     : m_offset(0)
@@ -108,7 +71,7 @@ bool AppSchemeHandler::ProcessRequest(CefRefPtr<CefRequest> request, CefRefPtr<C
         len = posHash;
     
     // the URL is prefixed with "app://"
-    m_status = LoadBinaryResource(DecodeURL1(url.substr(6, len - 6)).c_str(), m_data) ? 200 : 404;
+    m_status = LoadBinaryResource(DecodeURL(url.substr(6, len - 6)).c_str(), m_data) ? 200 : 404;
     m_mimeType = GetMIMETypeForFilename(url);
 
     // indicate the headers are available

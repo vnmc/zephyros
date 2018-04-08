@@ -39,49 +39,12 @@
 #include "base/cef/local_scheme_handler.h"
 #include "base/cef/mime_types.h"
 
+#include "util/string_util.h"
+
 #include "native_extensions/file_util.h"
 
 
 namespace Zephyros {
-    
-int hexValue(TCHAR c)
-{
-    if (TEXT('0') <= c && c <= TEXT('9'))
-        return c - TEXT('0');
-    if (TEXT('a') <= c && c <= TEXT('f'))
-        return c - TEXT('a') + 10;
-    if (TEXT('A') <= c && c <= TEXT('F'))
-        return c - TEXT('A') + 10;
-    
-    return 0;
-}
-    
-String DecodeURL(String url)
-{
-    StringStream out;
-    
-    for (String::size_type i = 0; i < url.length(); ++i)
-    {
-        switch (url.at(i))
-        {
-        case TEXT('%'):
-            out << (TCHAR) ((hexValue(url.at(i + 1)) << 4) | (hexValue(url.at(i + 2))));
-            i += 2;
-            break;
-            
-        case TEXT('+'):
-            out << TEXT(' ');
-            break;
-                
-        default:
-            out << url.at(i);
-            break;
-        }
-    }
-    
-    return out.str();
-}
-    
 
 LocalSchemeHandler::LocalSchemeHandler()
     : m_size(0), m_offset(0)
