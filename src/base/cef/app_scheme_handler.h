@@ -42,7 +42,7 @@ public:
     virtual bool ReadResponse(void* dataOut, int bytesToRead, int& bytesRead, CefRefPtr<CefCallback> callback) OVERRIDE;
     
 private:
-    std::string m_data;
+    String m_data;
     String m_mimeType;
     size_t m_offset;
     int m_status;
