@@ -19,33 +19,34 @@ set id=10000
 rem ### set webappDir to the name of the current directory
 for %%f in (%cd%) do set webappDir=%%~nxf
 
+rem ### not used anymore when resources are loaded through the app:// protocol
 rem ### Chromium lowercases the first part of the path ("domain")
-set webappDir=!webappDir:A=a!
-set webappDir=!webappDir:B=b!
-set webappDir=!webappDir:C=c!
-set webappDir=!webappDir:D=d!
-set webappDir=!webappDir:E=e!
-set webappDir=!webappDir:F=f!
-set webappDir=!webappDir:G=g!
-set webappDir=!webappDir:H=h!
-set webappDir=!webappDir:I=i!
-set webappDir=!webappDir:J=j!
-set webappDir=!webappDir:K=k!
-set webappDir=!webappDir:L=l!
-set webappDir=!webappDir:M=m!
-set webappDir=!webappDir:N=n!
-set webappDir=!webappDir:O=o!
-set webappDir=!webappDir:P=p!
-set webappDir=!webappDir:Q=q!
-set webappDir=!webappDir:R=r!
-set webappDir=!webappDir:S=s!
-set webappDir=!webappDir:T=t!
-set webappDir=!webappDir:U=u!
-set webappDir=!webappDir:V=v!
-set webappDir=!webappDir:W=w!
-set webappDir=!webappDir:X=x!
-set webappDir=!webappDir:Y=y!
-set webappDir=!webappDir:Z=z!
+rem set webappDir=!webappDir:A=a!
+rem set webappDir=!webappDir:B=b!
+rem set webappDir=!webappDir:C=c!
+rem set webappDir=!webappDir:D=d!
+rem set webappDir=!webappDir:E=e!
+rem set webappDir=!webappDir:F=f!
+rem set webappDir=!webappDir:G=g!
+rem set webappDir=!webappDir:H=h!
+rem set webappDir=!webappDir:I=i!
+rem set webappDir=!webappDir:J=j!
+rem set webappDir=!webappDir:K=k!
+rem set webappDir=!webappDir:L=l!
+rem set webappDir=!webappDir:M=m!
+rem set webappDir=!webappDir:N=n!
+rem set webappDir=!webappDir:O=o!
+rem set webappDir=!webappDir:P=p!
+rem set webappDir=!webappDir:Q=q!
+rem set webappDir=!webappDir:R=r!
+rem set webappDir=!webappDir:S=s!
+rem set webappDir=!webappDir:T=t!
+rem set webappDir=!webappDir:U=u!
+rem set webappDir=!webappDir:V=v!
+rem set webappDir=!webappDir:W=w!
+rem set webappDir=!webappDir:X=x!
+rem set webappDir=!webappDir:Y=y!
+rem set webappDir=!webappDir:Z=z!
 
 for /R %%f in (*) do (
 	set file=%%f

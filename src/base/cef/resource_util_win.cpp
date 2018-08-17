@@ -55,7 +55,7 @@ bool LoadBinaryResource(int binaryId, DWORD &dwSize, LPBYTE &pBytes)
 bool LoadBinaryResource(const TCHAR* szResourceName, String& resourceData)
 {
     int resourceId = Zephyros::GetResourceID(szResourceName);
-    if (resourceId == 0)
+    if (resourceId <= 0)
         return false;
 
     DWORD dwSize;
