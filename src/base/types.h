@@ -66,6 +66,7 @@ typedef std::stringstream StringStream;
 
 typedef std::string String;
 typedef std::stringstream StringStream;
+#define TO_STRING std::to_string
 
 #endif  // OS_WIN
 

@@ -336,10 +336,24 @@ public:
     inline virtual std::map<String, String> GetLicenseInformation() final
     {
         std::map<String, String> info;
+        bool isActivated = IsActivated();
 
+        info[TEXT("mac")] = NetworkUtil::GetPrimaryMACAddress();
         info[TEXT("licenseKey")] = m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT("");
         info[TEXT("fullName")] = m_pLicenseData ? m_pLicenseData->m_name : TEXT("");
         info[TEXT("company")] = m_pLicenseData ? m_pLicenseData->m_company : TEXT("");
+        info[TEXT("isActivated")] = isActivated ? TEXT("1") : TEXT("0");
+        info[TEXT("demoDaysLeft")] = m_pLicenseData ? TO_STRING(m_pLicenseData->m_demoTokens.size()) : TEXT("0");
+
+        if (isActivated)
+            info[TEXT("token")] = m_pLicenseData->m_activationCookie;
+        else
+        {
+            if (m_pLicenseData && m_pLicenseData->m_demoTokens.size() >0)
+                info[TEXT("token")] = m_pLicenseData->m_demoTokens[0];
+            else
+                info[TEXT("token")] = TEXT("");
+        }
 
         return info;
     }

@@ -1183,9 +1183,13 @@ declare module NativeInterface
 
     export interface ILicenseData
     {
+        mac: string;
         licenseKey: string;
         fullName: string;
         company: string;
+        isActivated: boolean;
+        demoDaysLeft: number;
+        token: string;
     }
 }
 

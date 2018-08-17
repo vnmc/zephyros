@@ -1208,7 +1208,15 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
                 JavaScript::Object obj = JavaScript::CreateObject();
 
                 for (std::map<String, String>::iterator it = info.begin(); it != info.end(); ++it)
-                    obj->SetString(it->first, it->second);
+                {
+                    String key = it->first;
+                    if (key == TEXT("isActivated"))
+                        obj->SetBool(key, it->second == TEXT("1"));
+                    else if (key == TEXT("demoDaysLeft"))
+                        obj->SetInt(key, atoi(it->second.c_str()));
+                    else
+                        obj->SetString(key, it->second);
+                }
 
                 ret->SetDictionary(0, obj);
             }
