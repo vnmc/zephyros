@@ -338,7 +338,7 @@ public:
         std::map<String, String> info;
         bool isActivated = IsActivated();
         int numDemoDays = GetNumberOfDemoDays();
-        int numDaysLeft = m_pLicenseData->m_demoTokens.size();
+        int numDaysLeft = GetNumDaysLeft();
 
         info[TEXT("mac")] = NetworkUtil::GetPrimaryMACAddress();
         info[TEXT("licenseKey")] = m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT("");
