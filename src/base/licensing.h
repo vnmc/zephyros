@@ -337,13 +337,16 @@ public:
     {
         std::map<String, String> info;
         bool isActivated = IsActivated();
+        int numDemoDays = GetNumberOfDemoDays();
+        int numDaysLeft = m_pLicenseData->m_demoTokens.size();
 
         info[TEXT("mac")] = NetworkUtil::GetPrimaryMACAddress();
         info[TEXT("licenseKey")] = m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT("");
         info[TEXT("fullName")] = m_pLicenseData ? m_pLicenseData->m_name : TEXT("");
         info[TEXT("company")] = m_pLicenseData ? m_pLicenseData->m_company : TEXT("");
         info[TEXT("isActivated")] = isActivated ? TEXT("1") : TEXT("0");
-        info[TEXT("demoDaysLeft")] = m_pLicenseData ? TO_STRING(m_pLicenseData->m_demoTokens.size()) : TEXT("0");
+        info[TEXT("demoDaysUsed")] = m_pLicenseData ? TO_STRING(numDemoDays - numDaysLeft) : TO_STRING(numDemoDays);
+        info[TEXT("demoDaysLeft")] = m_pLicenseData ? TO_STRING(numDaysLeft) : TEXT("0");
 
         if (isActivated)
             info[TEXT("token")] = m_pLicenseData->m_activationCookie;

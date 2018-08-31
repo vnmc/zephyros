@@ -1188,6 +1188,7 @@ declare module NativeInterface
         fullName: string;
         company: string;
         isActivated: boolean;
+        demoDaysUsed: number;
         demoDaysLeft: number;
         token: string;
     }

@@ -1212,7 +1212,7 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
                     String key = it->first;
                     if (key == TEXT("isActivated"))
                         obj->SetBool(key, it->second == TEXT("1"));
-                    else if (key == TEXT("demoDaysLeft"))
+                    else if (key == TEXT("demoDaysUsed") || key == TEXT("demoDaysLeft"))
                         obj->SetInt(key, _wtoi64(it->second.c_str()));
                     else
                         obj->SetString(key, it->second);
