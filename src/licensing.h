@@ -67,7 +67,7 @@ public:
     virtual bool CheckDemoValidity() { return false; }
     virtual bool IsInDemoMode() { return false; }
 
-    virtual std::map<String, String> GetLicenseInformation() = 0;
+    virtual void GetLicenseInformation(void* ret) {}
 
     virtual int ActivateFromURL(String url) { return ACTIVATION_FAILED; }
     virtual bool Deactivate() { return false; }
@@ -94,6 +94,8 @@ public:
 
     int GetNumberOfDemoDays();
     void SetNumberOfDemoDays(int numDemoDays);
+    
+    int GetNumDaysLeft();
 
     void SetAPIURLs(const TCHAR* demoTokensURL, const TCHAR* activationURL, const TCHAR* deactivationURL);
 
@@ -116,7 +118,7 @@ public:
     virtual bool CheckDemoValidity();
     virtual bool IsInDemoMode();
 
-    virtual std::map<String, String> GetLicenseInformation();
+    virtual void GetLicenseInformation(void* ret);
 
     virtual int ActivateFromURL(String url);
     virtual bool Deactivate();

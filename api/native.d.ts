@@ -79,11 +79,22 @@ declare module NativeInterface
          * with a custom protocol handled by your Zephyros app.
          *
          * @param callback
-         *   Function called a custom protocol URL was clicked with the URL as
+         *   Function called when a custom protocol URL was clicked with the URL as
          *   argument.
          *   
          */
         onCustomURL: (callback: (url: string) => void) => void;
+
+        /**
+         * The callback function will be called when the license data has changed,
+         * e.g., if the software was activated, or, if in demo mode, another demo
+         * token was consumed.
+         *
+         * @param calalback
+         *    Function called when the license data has changed.
+         *    The current licensing data is passed as the first argument.
+         */
+        onLicenseChanged: (callback: (data: ILicenseData) => void) => void;
 
         /**
          * The callback function will be invoked when the app is about to

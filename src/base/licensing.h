@@ -231,6 +231,8 @@ public:
     virtual void Start();
 
     bool RequestDemoTokens(String strMACAddr = TEXT(""));
+    
+    void FireLicenseChanged();
 
     String DecodeURI(String uri);
 
@@ -291,7 +293,13 @@ public:
 
         // consume a token if it isn't the same day
         m_canStartApp = false;
+        
+        size_t oldNumDemoTokens = m_pLicenseData->m_demoTokens.size();
         m_pLicenseData->GetDemoToken();
+        
+        if (oldNumDemoTokens != m_pLicenseData->m_demoTokens.size())
+            FireLicenseChanged();
+        
         ShowDemoDialog();
         return false;
     }
@@ -333,32 +341,31 @@ public:
 
     inline bool HasDemoTokens() { return m_pLicenseData->m_demoTokens.size() > 0; }
 
-    inline virtual std::map<String, String> GetLicenseInformation() final
+    inline virtual void GetLicenseInformation(void* ret) final
     {
-        std::map<String, String> info;
+        JavaScript::Object info = *(static_cast<JavaScript::Object*>(ret));
+
         bool isActivated = IsActivated();
         int numDemoDays = GetNumberOfDemoDays();
         int numDaysLeft = GetNumDaysLeft();
 
-        info[TEXT("mac")] = NetworkUtil::GetPrimaryMACAddress();
-        info[TEXT("licenseKey")] = m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT("");
-        info[TEXT("fullName")] = m_pLicenseData ? m_pLicenseData->m_name : TEXT("");
-        info[TEXT("company")] = m_pLicenseData ? m_pLicenseData->m_company : TEXT("");
-        info[TEXT("isActivated")] = isActivated ? TEXT("1") : TEXT("0");
-        info[TEXT("demoDaysUsed")] = m_pLicenseData ? TO_STRING(numDemoDays - numDaysLeft) : TO_STRING(numDemoDays);
-        info[TEXT("demoDaysLeft")] = m_pLicenseData ? TO_STRING(numDaysLeft) : TEXT("0");
+        info->SetString(TEXT("mac"), NetworkUtil::GetPrimaryMACAddress());
+        info->SetString(TEXT("licenseKey"), m_pLicenseData ? m_pLicenseData->m_licenseKey : TEXT(""));
+        info->SetString(TEXT("fullName"), m_pLicenseData ? m_pLicenseData->m_name : TEXT(""));
+        info->SetString(TEXT("company"), m_pLicenseData ? m_pLicenseData->m_company : TEXT(""));
+        info->SetBool(TEXT("isActivated"), isActivated);
+        info->SetInt(TEXT("demoDaysUsed"), m_pLicenseData ? numDemoDays - numDaysLeft : numDemoDays);
+        info->SetInt(TEXT("demoDaysLeft"), m_pLicenseData ? numDaysLeft : 0);
 
         if (isActivated)
-            info[TEXT("token")] = m_pLicenseData->m_activationCookie;
+            info->SetString(TEXT("token"), m_pLicenseData->m_activationCookie);
         else
         {
-            if (m_pLicenseData && m_pLicenseData->m_demoTokens.size() >0)
-                info[TEXT("token")] = m_pLicenseData->m_demoTokens[0];
+            if (m_pLicenseData && m_pLicenseData->m_demoTokens.size() > 0)
+                info->SetString(TEXT("token"), m_pLicenseData->m_demoTokens[0]);
             else
-                info[TEXT("token")] = TEXT("");
+                info->SetString(TEXT("token"), TEXT(""));
         }
-
-        return info;
     }
 
     bool CheckReceipt();

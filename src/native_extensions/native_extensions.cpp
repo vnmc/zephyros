@@ -155,6 +155,15 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             return NO_ERROR;
         }
     ));
+    
+    // onLicenseChanged: (callback: (data: ILicenseData) => void) => void
+    e->AddNativeJavaScriptCallback(
+        TEXT("onLicenseChanged"),
+        FUNC({
+            // only register callback
+            return NO_ERROR;
+        }
+    ));
 
     // onAppTerminating(callback: () => void) => void
     NativeFunction* fnxOnAppTerminating = FUNC({ return NO_ERROR; });
@@ -1197,28 +1206,15 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
 #else
 
     // getLicenseData: (callback: (data: ILicenseData) => void) => void;
-    typedef std::map<String, String> StringMap;
     e->AddNativeJavaScriptFunction(
         TEXT("getLicenseData"),
         FUNC({
             AbstractLicenseManager* pMgr = Zephyros::GetLicenseManager();
             if (pMgr)
             {
-                StringMap info(pMgr->GetLicenseInformation());
-                JavaScript::Object obj = JavaScript::CreateObject();
-
-                for (std::map<String, String>::iterator it = info.begin(); it != info.end(); ++it)
-                {
-                    String key = it->first;
-                    if (key == TEXT("isActivated"))
-                        obj->SetBool(key, it->second == TEXT("1"));
-                    else if (key == TEXT("demoDaysUsed") || key == TEXT("demoDaysLeft"))
-                        obj->SetInt(key, _wtoi64(it->second.c_str()));
-                    else
-                        obj->SetString(key, it->second);
-                }
-
-                ret->SetDictionary(0, obj);
+                JavaScript::Object info = JavaScript::CreateObject();
+                pMgr->GetLicenseInformation(&info);
+                ret->SetDictionary(0, info);
             }
             else
                 ret->SetNull(0);

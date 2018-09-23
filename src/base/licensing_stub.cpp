@@ -153,10 +153,8 @@ bool LicenseManager::IsInDemoMode()
     return false;
 }
 
-std::map<String, String> LicenseManager::GetLicenseInformation()
+void LicenseManager::GetLicenseInformation(void* ret)
 {
-    std::map<String, String> map;
-    return map;
 }
 
 int LicenseManager::ActivateFromURL(String url)
@@ -280,6 +278,10 @@ void LicenseManagerImpl::Start()
 bool LicenseManagerImpl::RequestDemoTokens(String strMACAddr)
 {
     return false;
+}
+
+void LicenseManagerImpl::FireLicenseChanged()
+{
 }
 
 #endif

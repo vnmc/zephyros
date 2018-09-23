@@ -30,6 +30,7 @@
 #include <tchar.h>
 #endif
 
+#include "base/types.h"
 #include "base/app.h"
 #include "base/licensing.h"
 
@@ -195,9 +196,9 @@ bool LicenseManager::IsInDemoMode()
     return !m_pMgr->IsActivated();
 }
 
-std::map<String, String> LicenseManager::GetLicenseInformation()
+void LicenseManager::GetLicenseInformation(void* ret)
 {
-    return m_pMgr->GetLicenseInformation();
+    m_pMgr->GetLicenseInformation(ret);
 }
 
 int LicenseManager::ActivateFromURL(String url)
@@ -382,7 +383,8 @@ int LicenseManagerImpl::Activate(String name, String company, String licenseKey)
         m_pLicenseData->m_name = name;
         m_pLicenseData->m_company = company;
         m_pLicenseData->Save();
-
+        
+        FireLicenseChanged();
         App::Alert(title, Zephyros::GetString(ZS_LIC_ACTIVATION_SUCCESS), App::AlertStyle::AlertInfo);
     }
 
@@ -512,6 +514,15 @@ bool LicenseManagerImpl::RequestDemoTokens(String strMACAddr)
         m_canStartApp = false;
 
     return ret;
+}
+    
+void LicenseManagerImpl::FireLicenseChanged()
+{
+    JavaScript::Array args = JavaScript::CreateArray();
+    JavaScript::Object info = JavaScript::CreateObject();
+    GetLicenseInformation(&info);
+    args->SetDictionary(0, info);
+    Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onLicenseChanged"), args);
 }
 
 #endif // !APPSTORE
