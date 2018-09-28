@@ -410,6 +410,9 @@ int LicenseManagerImpl::ActivateFromURL(String url)
         parts.push_back(strPart);
     }
 
+    if (parts.size() == 1 && parts[0] == TEXT("deactivate"))
+        return Deactivate();
+
     if (parts.size() != 3)
         return ACTIVATION_FAILED;
 
