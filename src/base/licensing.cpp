@@ -518,14 +518,17 @@ bool LicenseManagerImpl::RequestDemoTokens(String strMACAddr)
 
     return ret;
 }
-    
+
 void LicenseManagerImpl::FireLicenseChanged()
 {
     JavaScript::Array args = JavaScript::CreateArray();
     JavaScript::Object info = JavaScript::CreateObject();
     GetLicenseInformation(&info);
     args->SetDictionary(0, info);
-    Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onLicenseChanged"), args);
+
+    ClientExtensionHandlerPtr extensionHandler = Zephyros::GetNativeExtensions()->GetClientExtensionHandler();
+    if (extensionHandler.get() != NULL)
+        Zephyros::GetNativeExtensions()->GetClientExtensionHandler()->InvokeCallbacks(TEXT("onLicenseChanged"), args);
 }
 
 #endif // !APPSTORE

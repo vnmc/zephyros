@@ -89,6 +89,8 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
 
     if (!GetOverlappedResult(pWatcher->m_hDirectory, &(pWatcher->m_overlapped), &numBytesReturned, FALSE))
         return;
+    if (numBytesReturned == 0)
+        return;
 
     for (FILE_NOTIFY_INFORMATION* pInfo = (FILE_NOTIFY_INFORMATION*) buf; ; )
     {
@@ -170,6 +172,15 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
     }
 }
 
+String GetAbsoluteFilename(Zephyros::FileWatcher* pWatcher, String filename)
+{
+    String path = pWatcher->m_path.GetPath();
+    String ret = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
+    if (path.substr(0, 2) == TEXT("\\\\"))
+        ret = TEXT("\\") + ret;
+    return ret;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Worker Thread
@@ -196,8 +207,11 @@ DWORD WINAPI WatchDirectory(LPVOID param)
 
     // monitor the first directory/file change
     BYTE* buf = new BYTE[MAX_BUF_LEN];
+    ZeroMemory(buf, MAX_BUF_LEN);
+
     DWORD numBytesReturned;
     BOOL success = false;
+
     success = ReadDirectoryChangesW(
         pWatcher->m_hDirectory,
         buf,
@@ -240,7 +254,7 @@ DWORD WINAPI WatchDirectory(LPVOID param)
 
                 for (String filename : changedFilenames)
                 {
-                    String absoluteFilename = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
+                    String absoluteFilename = GetAbsoluteFilename(pWatcher, filename);
                     if (pWatcher->HasFileChanged(absoluteFilename))
                         changedFilenamesCopy.push_back(absoluteFilename);
                 }
@@ -260,7 +274,7 @@ DWORD WINAPI WatchDirectory(LPVOID param)
 
                 for (String filename : changedFilenames)
                 {
-                    String absoluteFilename = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
+                    String absoluteFilename = GetAbsoluteFilename(pWatcher, filename);
                     if (pWatcher->HasFileChanged(absoluteFilename))
                         changedFilenamesCopy.push_back(absoluteFilename);
                 }
