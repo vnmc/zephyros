@@ -52,6 +52,7 @@ typedef struct
     Zephyros::FileWatcher* watcher;
     Zephyros::Path* path;
     std::vector<String>* extensions;
+    double delay;
 } FileWatchThreadData;
 
 
@@ -213,13 +214,14 @@ FileWatcher::~FileWatcher()
     Stop();
 }
 
-void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions)
+void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions, double delay)
 {
     // prepare thread data
     FileWatchThreadData* data = new FileWatchThreadData;
     data->watcher = this;
     data->path = new Path(path);
     data->extensions = new std::vector<String>();
+    data->delay = delay;
 
     for (String ext : fileExtensions)
         data->extensions->push_back(ext);

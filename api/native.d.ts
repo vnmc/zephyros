@@ -655,8 +655,14 @@ declare module NativeInterface
          *   An array of file extensions starting with a dot ".".
          *   Only changes to files matching the extensions in this array will
          *   be reported. If the array is empty, all files are watched.
+         *
+         * @param delay
+         *   The delay between the detection of the file change and emitting
+         *   the "onFileChanged" event. If delay is > 0, the event isn't fired
+         *   until there haven't been any file changes for the amount of time
+         *   specified by "delay" (i.e., emitting the event is debounced).
          */
-        startWatchingFiles: (path: IPath, extensions: string[]) => void;
+        startWatchingFiles: (path: IPath, extensions: string[], delay: number) => void;
 
         /**
          * Stops file watching which was previously started by calling

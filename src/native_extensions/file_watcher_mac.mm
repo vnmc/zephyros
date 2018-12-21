@@ -116,6 +116,20 @@ void fsevents_callback(
     return self;
 }
 
+- (void) fireFileChangeEvents: (NSArray*) arrFilenames
+{
+    std::vector<std::string> filenames;
+    for (NSString *filename in arrFilenames)
+    {
+        String strFilename([filename UTF8String]);
+        if (m_fileWatcher->HasFileChanged(strFilename))
+            filenames.push_back(strFilename);
+    }
+    
+    if (filenames.size() > 0)
+        m_fileWatcher->FireFileChanged(filenames);
+}
+
 - (void) onNonemptyFileTimeout: (NSTimer*) timer
 {
     // invalidate the "empty" timeout if there was one and it hasn't fired yet
@@ -133,17 +147,7 @@ void fsevents_callback(
         m_fileWatcher->m_activity = nil;
     }
     
-    NSArray *arrFilenames = (NSArray*) timer.userInfo;
-    std::vector<std::string> filenames;
-    for (NSString *filename in arrFilenames)
-    {
-        String strFilename([filename UTF8String]);
-        if (m_fileWatcher->HasFileChanged(strFilename))
-            filenames.push_back(strFilename);
-    }
-    
-    if (filenames.size() > 0)
-        m_fileWatcher->FireFileChanged(filenames);
+    [self fireFileChangeEvents: (NSArray*) timer.userInfo];
 }
 
 @end
@@ -164,12 +168,13 @@ FileWatcher::~FileWatcher()
 {
 }
 
-void FileWatcher::Start(Path& path, std::vector<std::string>& fileExtensions)
+void FileWatcher::Start(Path& path, std::vector<std::string>& fileExtensions, double delay)
 {
     if (m_stream != nil)
         Stop();
     
     m_path = path;
+    m_delay = delay;
     std::string localPrefix = "file://localhost";
     NSString *dir = [NSString stringWithUTF8String: (m_path.GetPath().substr(0, localPrefix.size()) == localPrefix) ? m_path.GetPath().substr(localPrefix.size()).c_str() : m_path.GetPath().c_str()];
     
@@ -234,15 +239,24 @@ void FileWatcher::ScheduleNonEmptyFileCheck(std::vector<std::string>& filenames)
         for (String filename : filenames)
             [arrFilenames addObject: [NSString stringWithUTF8String: filename.c_str()]];
 
-        // disable app nap until the timer has been invoked
-        if (m_activity == nil && [[NSProcessInfo processInfo] respondsToSelector: @selector(beginActivityWithOptions:reason:)])
-            m_activity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason: @"File watching"];
-        
-        m_nonemptyFileTimeout = [NSTimer scheduledTimerWithTimeInterval: WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS
-                                                                 target: m_timerDelegate
-                                                               selector: @selector(onNonemptyFileTimeout:)
-                                                               userInfo: arrFilenames
-                                                                repeats: NO];
+        if (m_delay == 0.0)
+        {
+            // fire the events immediately if no delay was configured
+            [m_timerDelegate fireFileChangeEvents: arrFilenames];
+        }
+        else
+        {
+            // disable app nap until the timer has been invoked
+            if (m_activity == nil && [[NSProcessInfo processInfo] respondsToSelector: @selector(beginActivityWithOptions:reason:)])
+                m_activity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason: @"File watching"];
+            
+            
+            m_nonemptyFileTimeout = [NSTimer scheduledTimerWithTimeInterval: m_delay // WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS
+                                                                     target: m_timerDelegate
+                                                                   selector: @selector(onNonemptyFileTimeout:)
+                                                                   userInfo: arrFilenames
+                                                                    repeats: NO];
+        }
     }
     else
     {

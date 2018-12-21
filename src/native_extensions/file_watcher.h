@@ -125,7 +125,7 @@ public:
     FileWatcher();
     ~FileWatcher();
 
-    void Start(Path& path, std::vector<String>& fileExtensions);
+    void Start(Path& path, std::vector<String>& fileExtensions, double delay);
     void Stop();
 
     void FireFileChanged(std::vector<String>& files);
@@ -204,6 +204,7 @@ public:
     Path m_path;
     std::vector<String> m_fileExtensions;
     std::map<String, Hash> m_fileHashes;
+    double m_delay;
 
 #ifdef OS_MACOSX
     FSEventStreamRef m_stream;

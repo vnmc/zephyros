@@ -143,8 +143,32 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
     }
     else if (changedFilenames.size() > 0)
     {
-        hTimer = hTimerNonemptyFile;
-        waitTimeMilliseconds = (int) (WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS * 1000);
+        if (m_delay == 0.0)
+        {
+            if (hTimerEmptyFile != INVALID_HANDLE_VALUE)
+                CancelWaitableTimer(hTimerEmptyFile);
+            if (hTimerNonemptyFile != INVALID_HANDLE_VALUE)
+                CancelWaitableTimer(hTimerNonemptyFile);
+
+            hTimerEmptyFile = INVALID_HANDLE_VALUE;
+            hTimerNonemptyFile = INVALID_HANDLE_VALUE;
+
+            std::vector<String> changedFilenamesCopy;
+            for (String filename : changedFilenames)
+            {
+                String absoluteFilename = GetAbsoluteFilename(this, filename);
+                if (HasFileChanged(absoluteFilename))
+                    changedFilenamesCopy.push_back(absoluteFilename);
+            }
+            
+            if (changedFilenamesCopy.size() > 0)
+                FireFileChanged(changedFilenamesCopy);
+        }
+        else
+        {
+            hTimer = hTimerNonemptyFile;
+            waitTimeMilliseconds = (int) (WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS * 1000);
+        }
     }
 
     // start the timer
@@ -329,7 +353,7 @@ FileWatcher::~FileWatcher()
     CloseHandle(m_hEventTerminate);
 }
 
-void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions)
+void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions, double delay)
 {
     // if watching is already running, turn it off first
     if (m_hDirectory != INVALID_HANDLE_VALUE)
@@ -337,6 +361,7 @@ void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions)
 
     // set new configuration
     m_path = path;
+    m_delay = delay;
     m_fileExtensions.clear();
     m_fileExtensions.insert(m_fileExtensions.end(), fileExtensions.begin(), fileExtensions.end());
         

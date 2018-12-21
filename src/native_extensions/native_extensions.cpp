@@ -817,11 +817,12 @@ void DefaultNativeExtensions::AddNativeExtensions(NativeJavaScriptFunctionAdder*
             for (size_t i = 0; i < listFileExtensions->GetSize(); ++i)
                 fileExtensions.push_back(listFileExtensions->GetString((int) i));
             Path path(args->GetDictionary(0));
-            ((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_fileWatcher->Start(path, fileExtensions);
+            ((DefaultNativeExtensions*) Zephyros::GetNativeExtensions())->m_fileWatcher->Start(path, fileExtensions, args->GetDouble(2));
             return NO_ERROR;
         },
         ARG(VTYPE_DICTIONARY, "path")
         ARG(VTYPE_LIST, "fileExtensions")
+        ARG(VTYPE_DOUBLE, "delay")
     ));
 
     // stopWatchingFiles: () => void
