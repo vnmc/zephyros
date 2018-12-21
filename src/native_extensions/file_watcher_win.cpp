@@ -71,6 +71,15 @@ bool isFileEmpty(String directory, String filename)
     return isEmpty;
 }
 
+String GetAbsoluteFilename(Zephyros::FileWatcher* pWatcher, String filename)
+{
+    String path = pWatcher->m_path.GetPath();
+    String ret = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
+    if (path.substr(0, 2) == TEXT("\\\\"))
+        ret = TEXT("\\") + ret;
+    return ret;
+}
+
 //
 // Check the changed files. Add them to the change set if the file extension matches
 // one of the entries in the file watcher's extensions vector or if the vector is empty
@@ -133,7 +142,7 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
     allChangedFilenames.insert(checkAgainLaterFilenames.begin(), checkAgainLaterFilenames.end());
     allChangedFilenames.insert(changedFilenames.begin(), changedFilenames.end());
     
-    // find the right timer to start, depending on the file changes
+    // find the right timer to start, depending on the file changes7
     HANDLE hTimer = INVALID_HANDLE_VALUE;
     int waitTimeMilliseconds = 0;
     if (checkAgainLaterFilenames.size() > 0)
@@ -143,7 +152,7 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
     }
     else if (changedFilenames.size() > 0)
     {
-        if (m_delay == 0.0)
+        if (pWatcher->m_delay == 0.0)
         {
             if (hTimerEmptyFile != INVALID_HANDLE_VALUE)
                 CancelWaitableTimer(hTimerEmptyFile);
@@ -156,18 +165,18 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
             std::vector<String> changedFilenamesCopy;
             for (String filename : changedFilenames)
             {
-                String absoluteFilename = GetAbsoluteFilename(this, filename);
-                if (HasFileChanged(absoluteFilename))
+                String absoluteFilename = GetAbsoluteFilename(pWatcher, filename);
+                if (pWatcher->HasFileChanged(absoluteFilename))
                     changedFilenamesCopy.push_back(absoluteFilename);
             }
             
             if (changedFilenamesCopy.size() > 0)
-                FireFileChanged(changedFilenamesCopy);
+                pWatcher->FireFileChanged(changedFilenamesCopy);
         }
         else
         {
             hTimer = hTimerNonemptyFile;
-            waitTimeMilliseconds = (int) (WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS * 1000);
+            waitTimeMilliseconds = (int) (pWatcher->m_delay * 1000);
         }
     }
 
@@ -194,15 +203,6 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
         // start the timer
         SetWaitableTimer(hTimer, reinterpret_cast<LARGE_INTEGER*>(&ftime), 0L, NULL, NULL, FALSE);
     }
-}
-
-String GetAbsoluteFilename(Zephyros::FileWatcher* pWatcher, String filename)
-{
-    String path = pWatcher->m_path.GetPath();
-    String ret = StringReplace(pWatcher->m_path.GetPath() + TEXT("\\") + filename, TEXT("\\\\"), TEXT("\\"));
-    if (path.substr(0, 2) == TEXT("\\\\"))
-        ret = TEXT("\\") + ret;
-    return ret;
 }
 
 
@@ -384,7 +384,7 @@ void FileWatcher::Start(Path& path, std::vector<String>& fileExtensions, double 
         bool hasOwnErrorMsg = true;
         if (errCode == ERROR_PATH_NOT_FOUND)
             msg.append(TEXT(" because it doesn't exist."));
-        else if (errCode = ERROR_ACCESS_DENIED)
+        else if (errCode == ERROR_ACCESS_DENIED)
             msg.append(TEXT(" because the access to it was denied."));
         else
         {
