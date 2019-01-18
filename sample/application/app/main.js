@@ -155,6 +155,11 @@ $(document).ready(function()
 		});
 	});
 	
+	$('#getMACAddress').click(function()
+	{
+		app.getMACAddress(setMessage);
+	});
+
 	$('#showInFileManager').click(function()
 	{
 	    var p = getParameter();
@@ -374,7 +379,7 @@ $(document).ready(function()
 		var extensions = ['.txt', '.tx']
 		setMessage('Trying to start watching files in: ' + dir);
 		
-		app.startWatchingFiles(dir, extensions);
+		app.startWatchingFiles(dir, extensions, 0.5);
 		setMessage('Called function ok');
 		
 	});
