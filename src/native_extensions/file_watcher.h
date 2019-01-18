@@ -58,10 +58,6 @@
 // The latency with which to check for file changes
 #define FILE_WATCH_LATENCY 0.5
 
-// The wait period when a non-empty file has changed until the reload event is broadcast.
-// This value has to be greater than FILE_WATCH_LATENCY to be effective.
-#define WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS 0.6
-
 // The timeout until a reload event is broadcast after a file has become empty
 // (If the file "regains" contents within the timeout period, a reload will be broadcast then.)
 #define WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS 3

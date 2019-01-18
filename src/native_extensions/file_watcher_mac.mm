@@ -251,7 +251,7 @@ void FileWatcher::ScheduleNonEmptyFileCheck(std::vector<std::string>& filenames)
                 m_activity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason: @"File watching"];
             
             
-            m_nonemptyFileTimeout = [NSTimer scheduledTimerWithTimeInterval: m_delay // WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS
+            m_nonemptyFileTimeout = [NSTimer scheduledTimerWithTimeInterval: m_delay
                                                                      target: m_timerDelegate
                                                                    selector: @selector(onNonemptyFileTimeout:)
                                                                    userInfo: arrFilenames
@@ -268,7 +268,7 @@ void FileWatcher::ScheduleNonEmptyFileCheck(std::vector<std::string>& filenames)
             [arrFilenames addObject: [NSString stringWithUTF8String: filename.c_str()]];
         
         // postpone firing
-        m_nonemptyFileTimeout.fireDate = [NSDate dateWithTimeIntervalSinceNow: WAIT_FOR_NONEMPTY_FILES_TIMEOUT_SECONDS];
+        m_nonemptyFileTimeout.fireDate = [NSDate dateWithTimeIntervalSinceNow: m_delay];
     }
 }
 
@@ -294,7 +294,7 @@ void FileWatcher::ScheduleEmptyFileCheck(std::vector<std::string>& filenames)
     if (m_activity == nil && [[NSProcessInfo processInfo] respondsToSelector: @selector(beginActivityWithOptions:reason:)])
         m_activity = [[NSProcessInfo processInfo] beginActivityWithOptions: NSActivityUserInitiated reason: @"File watching"];
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS * NSEC_PER_SEC), dispatch_get_main_queue(),
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, fmax(m_delay, WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS) * NSEC_PER_SEC), dispatch_get_main_queue(),
     ^{
         //DEBUG_LOG(@"Empty file timout, canceled=%d", _emptyFileTimeoutCanceled);
         
