@@ -148,7 +148,7 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
     if (checkAgainLaterFilenames.size() > 0)
     {
         hTimer = hTimerEmptyFile;
-        waitTimeMilliseconds = (int) (WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS * 1000);
+        waitTimeMilliseconds = std::max((int) (WAIT_FOR_EMPTY_FILES_TIMEOUT_SECONDS * 1000), (int) (pWatcher->m_delay * 1000));
     }
     else if (changedFilenames.size() > 0)
     {
@@ -190,18 +190,16 @@ void ProcessChangedFiles(Zephyros::FileWatcher* pWatcher, BYTE* buf, std::set<St
         // set the time
         SYSTEMTIME time;
         GetSystemTime(&time);
-        time.wMilliseconds += waitTimeMilliseconds;
-        if (time.wMilliseconds > 1000)
-        {
-            time.wSecond += time.wMilliseconds / 1000;
-            time.wMilliseconds %= 1000;
-        }
 
         FILETIME ftime;
         SystemTimeToFileTime(&time, &ftime);
 
+        LARGE_INTEGER itime;
+        memcpy(&itime, &ftime, sizeof(LARGE_INTEGER));
+        itime.QuadPart += waitTimeMilliseconds * 1e4;
+
         // start the timer
-        SetWaitableTimer(hTimer, reinterpret_cast<LARGE_INTEGER*>(&ftime), 0L, NULL, NULL, FALSE);
+        SetWaitableTimer(hTimer, &itime, 0L, NULL, NULL, FALSE);
     }
 }
 
